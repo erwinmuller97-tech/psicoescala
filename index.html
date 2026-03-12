@@ -1,20 +1,4 @@
-<!DOC
-      case 'reloj':
-        titulo = 'Test del Reloj — Versión Cacho a la orden (11:10)';
-        instruccion = 'Se le entrega al paciente una hoja en blanco. Se lee la siguiente consigna:<br><br>' +
-          '<strong>"Quiero que dibuje un reloj con todos los números y que las agujas marquen las 11 y 10."</strong><br><br>' +
-          'No se da tiempo límite. No se permite referencia a relojes reales.';
-        cuerpo = '<table style="width:100%;border-collapse:collapse;margin-top:12px;">' +
-          '<tr style="background:#8b2e2e;color:#fff;"><th style="padding:8px;text-align:left;">Componente</th><th style="padding:8px;text-align:center;">Criterios</th><th style="padding:8px;text-align:center;">Puntaje</th></tr>' +
-          '<tr><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Esfera (0–2)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">2 = circular/ovalada normal · 1 = deformación moderada · 0 = ausente o no circular</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2</td></tr>' +
-          '<tr style="background:#fdf6ee;"><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Números (0–4)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">4 = todos correctos · 3 = error menor · 2 = error significativo · 1 = &gt;2 incorrectos · 0 = ausentes</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2 &nbsp; ☐ 3 &nbsp; ☐ 4</td></tr>' +
-          '<tr><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Agujas (0–4)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">4 = hora correcta, dos agujas con diferencia tamaño · 3 = error menor · 2 = una correcta · 1 = sin hora · 0 = ausentes</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2 &nbsp; ☐ 3 &nbsp; ☐ 4</td></tr>' +
-          '<tr style="background:#fdf6ee;font-weight:700;"><td style="padding:10px;">TOTAL</td><td style="padding:10px;font-size:0.82rem;color:#666;">Punto de corte: ≥ 6 sin deterioro · &lt; 6 positivo para deterioro<br>(Cacho et al. 1999 · Latini et al. 2011)</td><td style="padding:10px;text-align:center;font-size:1.1rem;">___ / 10</td></tr>' +
-          '</table>' +
-          '<div style="margin-top:24px;padding:12px;background:#fff8f0;border:1px solid #f0c090;border-radius:6px;font-size:0.8rem;color:#7a4a10;">' +
-          '<strong>Nota:</strong> No existen baremos normativos argentinos por edad para este test. La interpretación se basa en el punto de corte validado (sensibilidad 92.8%, especificidad 93.4%).' +
-          '</div>';
-        break;TYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -595,6 +579,246 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <button class="btn-secondary" onclick="document.getElementById('reloj-resultado').style.display='none';document.getElementById('reloj-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoReloj()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST MBI-HSS ── -->
+    <div class="vista" id="vista-mbi">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header">
+        <div class="vista-titulo">MBI-HSS · Inventario de Burnout de Maslach</div>
+        <div style="margin-bottom:16px;">
+          <button onclick="generarPDF('mbi')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        </div>
+      </div>
+
+      <div id="mbi-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label>
+              <select id="mbi-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="mbi-fecha"></div>
+          </div>
+          <div class="form-grid-3" style="margin-top:10px;">
+            <div class="field"><label>Área de trabajo</label><input type="text" id="mbi-area" placeholder="Ej: Salud mental, pediatría..."></div>
+            <div class="field"><label>Tiempo en el puesto</label><input type="text" id="mbi-tiempo" placeholder="Ej: 3 años"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Instrucciones</div>
+          <div style="background:var(--surface-2);border-radius:8px;padding:14px 16px;font-size:0.88rem;color:var(--text);line-height:1.6;margin-bottom:8px;">
+            Lea cada enunciado y marque con qué frecuencia experimenta ese sentimiento en relación a su trabajo. Use la escala de 0 a 6:
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">0 = Nunca</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">1 = Pocas veces/año</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">2 = Una vez al mes o menos</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">3 = Pocas veces al mes</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">4 = Una vez a la semana</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">5 = Pocas veces/semana</span><span style="background:var(--surface-2);border-radius:4px;padding:2px 7px;font-size:0.75rem;color:var(--text);">6 = Todos los días</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ítems</div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;padding:6px 0;border-bottom:2px solid var(--accent);margin-bottom:4px;">
+            <div></div><div style="font-size:0.75rem;font-weight:600;color:var(--muted);">Ítem</div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;"><span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">0</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">1</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">2</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">3</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">4</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">5</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">6</span></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">1.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento emocionalmente agotado/a por mi trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-1" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">2.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento cansado/a al final de la jornada de trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-2" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">3.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento fatigado/a cuando me levanto por la mañana y tengo que enfrentarme a otro día de trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-3" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">4.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Fácilmente comprendo cómo se sienten las personas que tengo que atender</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-4" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">5.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Creo que trato a algunas personas como si fueran objetos impersonales</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#e65100;">Despersonalización</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-5" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">6.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Trabajar todo el día con personas es realmente estresante para mí</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-6" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">7.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Trato con mucha efectividad los problemas de las personas</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-7" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">8.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Siento que mi trabajo me está desgastando</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-8" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">9.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Siento que estoy influyendo positivamente en la vida de los demás con mi trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-9" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">10.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me he vuelto insensible con la gente desde que ejerzo esta ocupación</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#e65100;">Despersonalización</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-10" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">11.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me preocupa el hecho de que este trabajo me esté endureciendo emocionalmente</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#e65100;">Despersonalización</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-11" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">12.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento muy energético/a</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-12" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">13.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento frustrado/a por mi trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-13" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">14.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Siento que estoy trabajando demasiado</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-14" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">15.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">No me preocupa realmente lo que ocurre a algunas personas a las que doy servicio</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#e65100;">Despersonalización</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-15" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">16.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Trabajar directamente con personas me produce estrés</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-16" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">17.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Fácilmente puedo crear un clima agradable en mi trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-17" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">18.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento estimulado/a después de trabajar en contacto con personas</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-18" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">19.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">He conseguido muchas cosas valiosas en este trabajo</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-19" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">20.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Me siento como si estuviera al límite de mis posibilidades</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#c62828;">Cansancio emocional</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-20" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">21.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">En mi trabajo, trato los problemas emocionales con mucha calma</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#2e7d32;">Realización personal</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-21" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;color:var(--text);font-size:0.9rem;">22.</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:0.88rem;color:var(--text);">Creo que las personas a quienes atiendo me culpan de algunos de sus problemas</span>
+              <span style="font-size:0.72rem;font-weight:600;color:#e65100;">Despersonalización</span>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="0" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">0</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="1" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">1</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="2" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">2</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="3" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">3</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="4" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">4</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="5" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">5</span></label><label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="mbi-22" value="6" style="accent-color:var(--accent);"><span style="font-size:0.7rem;color:var(--muted);">6</span></label></div>
+          </div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarMBI()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularMBI()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mbi-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div id="mbi-resumen" style="margin-bottom:16px;"></div>
+          <div class="interp-box">
+            <div class="interp-titulo">📋 Interpretación clínica</div>
+            <div class="interp-texto" id="mbi-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('mbi-resultado').style.display='none';document.getElementById('mbi-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('mbi')">📄 Formulario en blanco</button>
+          <button class="btn-primary" onclick="guardarResultadoMBI()">💾 Guardar resultado</button>
         </div>
       </div>
     </div>
@@ -3024,7 +3248,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente'].forEach(function(id){
+   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3277,6 +3501,7 @@ function irTest(t) {
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
   if (t === 'reloj') iniciarReloj();
+  if (t === 'mbi') iniciarMBI();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
   if (t === 'acer') iniciarACER();
@@ -5788,6 +6013,41 @@ var PDF_TESTS = {
       ]}
     ],
     footer: 'Derogatis LR (1994). SCL-90-R. NCS Pearson. Adaptación argentina: Casullo MM & Pérez M (2008). UBA/CONICET. T ≥ 63 = en riesgo clínico.'
+  },
+
+  'mbi': {
+    titulo: 'MBI-HSS · Inventario de Burnout de Maslach',
+    referencia: 'Maslach C, Jackson SE (1981). MBI-HSS. Consulting Psychologists Press. CE: ítems 1,2,3,6,8,13,14,16,20 (≥27 alto) · DP: ítems 5,10,11,15,22 (≥10 alto) · RP: ítems 4,7,9,12,17,18,19,21 (≤33 bajo)',
+    instruccion: 'Lea cada enunciado y marque con qué frecuencia experimenta ese sentimiento en relación a su trabajo. Marque un número del 0 al 6.',
+    escala: ['0=Nunca','1=Pocas veces/año','2=Una vez/mes','3=Pocas veces/mes','4=Una vez/semana','5=Pocas veces/semana','6=Todos los días'],
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1, txt:'(CE) Me siento emocionalmente agotado/a por mi trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:2, txt:'(CE) Me siento cansado/a al final de la jornada de trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:3, txt:'(CE) Me siento fatigado/a cuando me levanto por la mañana y tengo que enfrentarme a otro día de trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:4, txt:'(RP) Fácilmente comprendo cómo se sienten las personas que tengo que atender', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:5, txt:'(DP) Creo que trato a algunas personas como si fueran objetos impersonales', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:6, txt:'(CE) Trabajar todo el día con personas es realmente estresante para mí', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:7, txt:'(RP) Trato con mucha efectividad los problemas de las personas', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:8, txt:'(CE) Siento que mi trabajo me está desgastando', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:9, txt:'(RP) Siento que estoy influyendo positivamente en la vida de los demás con mi trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:10, txt:'(DP) Me he vuelto insensible con la gente desde que ejerzo esta ocupación', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:11, txt:'(DP) Me preocupa el hecho de que este trabajo me esté endureciendo emocionalmente', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:12, txt:'(RP) Me siento muy energético/a', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:13, txt:'(CE) Me siento frustrado/a por mi trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:14, txt:'(CE) Siento que estoy trabajando demasiado', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:15, txt:'(DP) No me preocupa realmente lo que ocurre a algunas personas a las que doy servicio', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:16, txt:'(CE) Trabajar directamente con personas me produce estrés', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:17, txt:'(RP) Fácilmente puedo crear un clima agradable en mi trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:18, txt:'(RP) Me siento estimulado/a después de trabajar en contacto con personas', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:19, txt:'(RP) He conseguido muchas cosas valiosas en este trabajo', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:20, txt:'(CE) Me siento como si estuviera al límite de mis posibilidades', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:21, txt:'(RP) En mi trabajo, trato los problemas emocionales con mucha calma', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']},
+        {n:22, txt:'(DP) Creo que las personas a quienes atiendo me culpan de algunos de sus problemas', opciones:['☐0','☐1','☐2','☐3','☐4','☐5','☐6']}
+      ]
+    }],
+    footer: 'CE alto ≥27 (máx.54) · DP alto ≥10 (máx.30) · RP bajo ≤33 (máx.48). Burnout: CE alto + DP alto + RP bajo.'
   }
 };
 
@@ -5974,6 +6234,110 @@ function guardarResultadoReloj(){
   }).then(function(r){
     if(r && !r.error){ alert('Resultado guardado correctamente.'); }
     else { alert('Error al guardar. Verificá la conexión.'); }
+  });
+}
+
+function iniciarMBI(){
+  document.getElementById('mbi-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mbi-form').style.display = 'block';
+  document.getElementById('mbi-resultado').style.display = 'none';
+}
+function limpiarMBI(){
+  for(var i=1;i<=22;i++){
+    document.querySelectorAll('input[name="mbi-'+i+'"]').forEach(function(r){r.checked=false;});
+  }
+}
+function calcularMBI(){
+  var subescalas = {
+    CE: [1,2,3,6,8,13,14,16,20],
+    DP: [5,10,11,15,22],
+    RP: [4,7,9,12,17,18,19,21]
+  };
+  var vals = {};
+  for(var i=1;i<=22;i++){
+    var sel = document.querySelector('input[name="mbi-'+i+'"]:checked');
+    if(!sel){ alert('Por favor completá todos los ítems (falta ítem '+i+').'); return; }
+    vals[i] = parseInt(sel.value);
+  }
+  var scores = {CE:0, DP:0, RP:0};
+  for(var sub in subescalas){
+    subescalas[sub].forEach(function(n){ scores[sub] += vals[n]; });
+  }
+
+  // Clasificación por subescala
+  function classCE(v){ return v>=27?'Alto':v>=19?'Medio':'Bajo'; }
+  function classDP(v){ return v>=10?'Alto':v>=6?'Medio':'Bajo'; }
+  function classRP(v){ return v<=33?'Alto':v<=39?'Medio':'Bajo'; } // RP invertido
+
+  var ceCls = classCE(scores.CE);
+  var dpCls = classDP(scores.DP);
+  var rpCls = classRP(scores.RP);
+
+  var colorCls = {'Alto':'#c62828','Medio':'#e65100','Bajo':'#2e7d32'};
+  var colorRPCls = {'Alto':'#c62828','Medio':'#e65100','Bajo':'#2e7d32'}; // RP: Alto = más burnout
+
+  // Burnout presente si CE alto + DP alto + RP alto (realizacion baja)
+  var burnout = (ceCls==='Alto' && dpCls==='Alto' && rpCls==='Alto');
+  var riesgo  = (!burnout && (ceCls==='Alto' || dpCls==='Alto' || rpCls==='Alto'));
+
+  var resumenHtml =
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">' +
+    '<div style="background:var(--surface-2);border-radius:10px;padding:14px;text-align:center;">' +
+      '<div style="font-size:1.6rem;font-weight:700;color:#c62828;">'+scores.CE+'</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Cansancio emocional</div>' +
+      '<div style="font-size:0.78rem;font-weight:600;margin-top:4px;color:'+colorCls[ceCls]+';">'+ceCls+' (corte ≥27)</div></div>' +
+    '<div style="background:var(--surface-2);border-radius:10px;padding:14px;text-align:center;">' +
+      '<div style="font-size:1.6rem;font-weight:700;color:#e65100;">'+scores.DP+'</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Despersonalización</div>' +
+      '<div style="font-size:0.78rem;font-weight:600;margin-top:4px;color:'+colorCls[dpCls]+';">'+dpCls+' (corte ≥10)</div></div>' +
+    '<div style="background:var(--surface-2);border-radius:10px;padding:14px;text-align:center;">' +
+      '<div style="font-size:1.6rem;font-weight:700;color:#2e7d32;">'+scores.RP+'</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Realización personal</div>' +
+      '<div style="font-size:0.78rem;font-weight:600;margin-top:4px;color:'+colorRPCls[rpCls]+';">'+rpCls+' (corte ≤33)</div></div>' +
+    '</div>' +
+    '<div style="text-align:center;padding:12px;border-radius:8px;background:'+(burnout?'#ffebee':riesgo?'#fff8e1':'#e8f5e9')+';">' +
+      '<span style="font-size:1rem;font-weight:700;color:'+(burnout?'#c62828':riesgo?'#e65100':'#2e7d32')+'">' +
+      (burnout?'⚠ SÍNDROME DE BURNOUT PRESENTE':riesgo?'⚠ RIESGO DE BURNOUT':'✓ SIN INDICADORES DE BURNOUT') +
+      '</span></div>';
+
+  var interp = '';
+  if(burnout){
+    interp = 'Se observan puntuaciones en rango alto en las tres subescalas indicativas del síndrome de Burnout: elevado cansancio emocional ('+scores.CE+'), despersonalización ('+scores.DP+') y baja realización personal ('+scores.RP+'). Este perfil es consistente con un agotamiento profesional severo. Se recomienda intervención clínica urgente y evaluación de condiciones laborales.';
+  } else if(riesgo){
+    interp = 'Se detecta riesgo de Burnout. ';
+    if(ceCls==='Alto') interp += 'El cansancio emocional ('+scores.CE+') se encuentra en rango alto, indicando agotamiento de los recursos emocionales. ';
+    if(dpCls==='Alto') interp += 'La despersonalización ('+scores.DP+') es elevada, con actitudes de distanciamiento hacia las personas atendidas. ';
+    if(rpCls==='Alto') interp += 'La realización personal ('+scores.RP+') se encuentra en rango bajo, con sentimientos de incompetencia y fracaso profesional. ';
+    interp += 'Se recomienda seguimiento clínico y evaluación del contexto laboral.';
+  } else {
+    interp = 'Las puntuaciones no alcanzan los umbrales indicativos del síndrome de Burnout. Cansancio emocional ('+scores.CE+'), despersonalización ('+scores.DP+') y realización personal ('+scores.RP+') se encuentran dentro de rangos esperables. Se sugiere reevaluación periódica dado el contexto de trabajo en salud.';
+  }
+  interp += '<br><br><em style="font-size:0.78rem;color:var(--muted);">Fuente: Maslach C, Jackson SE (1981). MBI-HSS. Consulting Psychologists Press. Puntos de corte: CE alto ≥27, DP alto ≥10, RP bajo ≤33.</em>';
+
+  document.getElementById('mbi-resumen').innerHTML = resumenHtml;
+  document.getElementById('mbi-interp').innerHTML = interp;
+  document.getElementById('mbi-form').style.display = 'none';
+  document.getElementById('mbi-resultado').style.display = 'block';
+}
+function guardarResultadoMBI(){
+  if(!SESSION) return;
+  var pacId = document.getElementById('mbi-paciente').value;
+  var fecha = document.getElementById('mbi-fecha').value;
+  if(!pacId){ alert('Seleccioná un paciente.'); return; }
+  // Recalcular scores
+  var subescalas = {CE:[1,2,3,6,8,13,14,16,20],DP:[5,10,11,15,22],RP:[4,7,9,12,17,18,19,21]};
+  var vals = {}; var scores = {CE:0,DP:0,RP:0};
+  for(var i=1;i<=22;i++){ var sel=document.querySelector('input[name="mbi-'+i+'"]:checked'); if(sel) vals[i]=parseInt(sel.value); }
+  for(var sub in subescalas){ subescalas[sub].forEach(function(n){ scores[sub]+=(vals[n]||0); }); }
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId,
+    test:'MBI-HSS',
+    fecha:fecha,
+    resultado:JSON.stringify({CE:scores.CE,DP:scores.DP,RP:scores.RP}),
+    notas:'Inventario de Burnout de Maslach — Versión HSS'
+  }).then(function(r){
+    if(r&&!r.error){ alert('Resultado guardado correctamente.'); }
+    else { alert('Error al guardar.'); }
   });
 }
 
