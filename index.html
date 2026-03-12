@@ -333,6 +333,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   body { background: white; }
   .card, .resultado-box { box-shadow: none; border-color: #ddd; }
 }
+
+.asrs-item { display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--border); }
+.asrs-item:last-child { border-bottom:none; }
+.asrs-item-num { font-family:var(--mono); font-size:0.85rem; color:var(--muted); min-width:22px; padding-top:2px; }
+.asrs-item-body { flex:1; }
+.asrs-item-txt { font-size:0.88rem; color:var(--text); margin-bottom:10px; line-height:1.5; }
+.asrs-item-opts { display:flex; flex-wrap:wrap; gap:6px 16px; }
+.radio-lbl { font-size:0.8rem; color:var(--text); display:flex; align-items:center; gap:5px; cursor:pointer; white-space:nowrap; }
+.radio-lbl input { accent-color:var(--accent); }
 </style>
 </head>
 <body>
@@ -409,6 +418,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <span class="sector-tag">GAD-7</span>
             <span class="sector-tag">SPAI-B</span>
             <span class="sector-tag">SCL-90-R</span>
+          </div>
+        </div>
+        <div class="sector-card" onclick="irSector('tdah')">
+          <div class="sector-icon">⚡</div>
+          <div class="sector-titulo">TDAH</div>
+          <div class="sector-sub">Evaluación del Trastorno por Déficit de Atención e Hiperactividad en adultos.</div>
+          <div class="sector-tests">
+            <span class="sector-tag">ASRS-V1.1</span>
           </div>
         </div>
         <div class="sector-card" onclick="irSector('neuro')">
@@ -2494,6 +2511,44 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       </div>
     </div>
 
+    
+    <!-- ── TEST ASRS-V1.1 ── -->
+    <div class="vista" id="vista-asrs">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">ASRS-V1.1 · Escala de Autodetección de TDAH en Adultos</div></div>
+      <div id="asrs-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="asrs-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="asrs-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:18px;">Marque con qué frecuencia se ha sentido y comportado de cada manera en los <strong>últimos 6 meses</strong>.</p>
+          <div class="card-title" style="margin-bottom:16px;">Sección A — Ítems 1 a 6 <span style="font-size:0.75rem;font-weight:400;color:var(--muted)">(Screener diagnóstico)</span></div>
+          <div id="asrs-items-a"></div>
+          <div class="card-title" style="margin:24px 0 16px;">Sección B — Ítems 7 a 18 <span style="font-size:0.75rem;font-weight:400;color:var(--muted)">(Perfil sintomático completo)</span></div>
+          <div id="asrs-items-b"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="limpiarAsrs()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularAsrs()">Calcular resultado →</button>
+        </div>
+      </div>
+      <div id="asrs-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="asrs-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="asrs-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('asrs-resultado').style.display='none';document.getElementById('asrs-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarAsrs()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
       </div><!-- /app-content -->
 </div><!-- /screen-app -->
 
@@ -2638,7 +2693,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente'].forEach(function(id){
+   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -2850,6 +2905,16 @@ function irSector(s) {
         '<span class="test-tag">7 subpruebas · Leis et al. 2018</span>'+
       '</div>';
   }
+  if (s === 'tdah') {
+    document.getElementById('sector-titulo').textContent = 'TDAH';
+    document.getElementById('tests-grid').innerHTML =
+      '<div class="test-card" onclick="irTest(\'asrs\')">' +
+        '<div class="test-icon">⚡</div>' +
+        '<div class="test-nombre">ASRS-V1.1</div>' +
+        '<div class="test-desc">Escala de Autodetección de TDAH en Adultos — Sección A (screener) + Sección B (perfil completo)</div>' +
+        '<span class="test-tag">Kessler et al. 2005 · OMS</span>' +
+      '</div>';
+  }
 }
 
 function irTest(t) {
@@ -2868,6 +2933,7 @@ function irTest(t) {
   if (t === 'digitos') iniciarDigitos();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
+  if (t === 'asrs') iniciarAsrs();
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
 }
@@ -4723,6 +4789,201 @@ function guardarResultadoSignoret(){
   },SESSION.access_token)
   .then(function(){alert('Resultado guardado.');})
   .catch(function(){alert('Error al guardar.');});
+}
+
+// ══ ASRS-V1.1 ════════════════════════════════════════════════════════════════
+// Kessler RC et al. (2005). Psychological Medicine. OMS.
+// Escala: 0=Nunca, 1=Rara vez, 2=A veces, 3=A menudo, 4=Muy a menudo
+// Sección A (ítems 1-6): positivo si ítem 1-3 ≥ 2, ítem 4-6 ≥ 3 → corte ≥ 4 positivos
+// Sección B (ítems 7-18): perfil descriptivo
+
+var ASRS_ITEMS = [
+  // Sección A
+  {n:1,  txt:'¿Con qué frecuencia tiene dificultad para acabar con los detalles finales de un proyecto después de haber hecho las partes difíciles?', sec:'A'},
+  {n:2,  txt:'¿Con qué frecuencia tiene dificultad para ordenar las cosas cuando está realizando una tarea que requiere organización?', sec:'A'},
+  {n:3,  txt:'¿Con qué frecuencia tiene dificultad para recordar sus citas u obligaciones?', sec:'A'},
+  {n:4,  txt:'Cuando tiene una actividad que requiere que usted piense mucho, ¿con qué frecuencia la evita o la deja para después?', sec:'A'},
+  {n:5,  txt:'¿Con qué frecuencia mueve o agita sus manos o sus pies cuando tiene que permanecer sentado(a) por mucho tiempo?', sec:'A'},
+  {n:6,  txt:'¿Con qué frecuencia se siente usted demasiado activo(a) y como que tiene que hacer cosas, como si tuviera un motor?', sec:'A'},
+  // Sección B
+  {n:7,  txt:'¿Con qué frecuencia comete errores por falta de cuidado cuando está trabajando en un proyecto aburrido o difícil?', sec:'B'},
+  {n:8,  txt:'¿Con qué frecuencia tiene dificultad para mantener la atención cuando está haciendo trabajos aburridos o repetitivos?', sec:'B'},
+  {n:9,  txt:'¿Con qué frecuencia tiene dificultad para concentrarse en lo que la gente le dice, aún cuando estén hablando con usted directamente?', sec:'B'},
+  {n:10, txt:'¿Con qué frecuencia pierde o tiene dificultad para encontrar cosas en la casa o en el trabajo?', sec:'B'},
+  {n:11, txt:'¿Con qué frecuencia se distrae por ruidos o actividades a su alrededor?', sec:'B'},
+  {n:12, txt:'¿Con qué frecuencia se levanta de su asiento en reuniones o en otras situaciones en las que se supone debe permanecer sentado?', sec:'B'},
+  {n:13, txt:'¿Con qué frecuencia se siente inquieto o nervioso?', sec:'B'},
+  {n:14, txt:'¿Con qué frecuencia tiene dificultades para relajarse cuando tiene tiempo para usted mismo?', sec:'B'},
+  {n:15, txt:'¿Con qué frecuencia siente que habla demasiado cuando está en reuniones sociales?', sec:'B'},
+  {n:16, txt:'Cuando está en una conversación, ¿con qué frecuencia se descubre a sí mismo terminando las frases de la gente que está hablando, antes de que ellos terminen?', sec:'B'},
+  {n:17, txt:'¿Con qué frecuencia tiene dificultad para esperar su turno en situaciones en que debe hacerlo?', sec:'B'},
+  {n:18, txt:'¿Con qué frecuencia interrumpe a otros cuando están ocupados?', sec:'B'}
+];
+
+var ASRS_ESCALA = ['Nunca','Rara vez','A veces','A menudo','Muy a menudo'];
+
+// Síntomas de TDAH que evalúa cada ítem (para interpretación narrativa)
+var ASRS_SINTOMA = [
+  'dificultad para completar tareas hasta el final',
+  'dificultad de organización',
+  'olvidos de citas y obligaciones',
+  'evitación de tareas que requieren esfuerzo mental',
+  'inquietud motora (manos/pies)',
+  'hiperactividad interna ("motor")',
+  'errores por descuido',
+  'dificultad para sostener la atención',
+  'dificultad para escuchar activamente',
+  'pérdida frecuente de objetos',
+  'distractibilidad por estímulos externos',
+  'dificultad para permanecer sentado',
+  'inquietud / nerviosismo',
+  'dificultad para relajarse',
+  'habla excesiva',
+  'completar frases ajenas / impulsividad verbal',
+  'dificultad para esperar el turno',
+  'interrupciones frecuentes'
+];
+
+function iniciarAsrs() {
+  document.getElementById('asrs-fecha').value = new Date().toISOString().split('T')[0];
+  // Renderizar ítems
+  var htmlA = '', htmlB = '';
+  ASRS_ITEMS.forEach(function(item) {
+    var opts = ASRS_ESCALA.map(function(lbl, i) {
+      return '<label class="radio-lbl"><input type="radio" name="asrs_' + item.n + '" value="' + i + '"> ' + lbl + '</label>';
+    }).join('');
+    var bloque =
+      '<div class="asrs-item" id="asrs-item-' + item.n + '">' +
+        '<div class="asrs-item-num">' + item.n + '</div>' +
+        '<div class="asrs-item-body">' +
+          '<div class="asrs-item-txt">' + item.txt + '</div>' +
+          '<div class="asrs-item-opts">' + opts + '</div>' +
+        '</div>' +
+      '</div>';
+    if (item.sec === 'A') htmlA += bloque;
+    else htmlB += bloque;
+  });
+  document.getElementById('asrs-items-a').innerHTML = htmlA;
+  document.getElementById('asrs-items-b').innerHTML = htmlB;
+  document.getElementById('asrs-form').style.display = 'block';
+  document.getElementById('asrs-resultado').style.display = 'none';
+}
+
+function limpiarAsrs() {
+  ASRS_ITEMS.forEach(function(item) {
+    var radios = document.querySelectorAll('input[name="asrs_' + item.n + '"]');
+    radios.forEach(function(r){ r.checked = false; });
+  });
+}
+
+function calcularAsrs() {
+  // Leer respuestas
+  var vals = {};
+  var sinResponder = [];
+  ASRS_ITEMS.forEach(function(item) {
+    var sel = document.querySelector('input[name="asrs_' + item.n + '"]:checked');
+    if (!sel) sinResponder.push(item.n);
+    else vals[item.n] = parseInt(sel.value);
+  });
+  if (sinResponder.length > 0) {
+    alert('Por favor respondé todos los ítems. Faltan: ' + sinResponder.join(', '));
+    return;
+  }
+
+  // ── Scoring Sección A ────────────────────────────────────────────────────
+  // Ítems 1-3: positivo si >= 2 (A veces o más)
+  // Ítems 4-6: positivo si >= 3 (A menudo o más)
+  var posA = 0;
+  var positivosA = [];
+  [1,2,3].forEach(function(n){ if(vals[n] >= 2){ posA++; positivosA.push(n); }});
+  [4,5,6].forEach(function(n){ if(vals[n] >= 3){ posA++; positivosA.push(n); }});
+  var screeningPos = posA >= 4;
+
+  // ── Scoring Sección B ────────────────────────────────────────────────────
+  // Positivo si >= 2 (A veces o más) para todos
+  var posB = 0;
+  var positivosB = [];
+  for (var n = 7; n <= 18; n++) {
+    if (vals[n] >= 2) { posB++; positivosB.push(n); }
+  }
+
+  // ── Total ────────────────────────────────────────────────────────────────
+  var totalPos = posA + posB;
+
+  // ── Detalle visual ───────────────────────────────────────────────────────
+  var colorScreen = screeningPos ? 'var(--red)' : 'var(--green)';
+  var badgeScreen = screeningPos ? 'bg-grave' : 'bg-minima';
+  var lblScreen   = screeningPos ? 'POSITIVO' : 'NEGATIVO';
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num" style="color:' + colorScreen + '">' + posA + '/6</div><div class="detalle-lbl">Ítems positivos<br>Sección A</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num"><span class="badge ' + badgeScreen + '" style="padding:4px 12px;border-radius:20px;font-size:0.72rem;">' + lblScreen + '</span></div><div class="detalle-lbl">Screening TDAH</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + posB + '/12</div><div class="detalle-lbl">Ítems positivos<br>Sección B</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + totalPos + '/18</div><div class="detalle-lbl">Total ítems<br>positivos</div></div>';
+
+  // ── Interpretación ───────────────────────────────────────────────────────
+  var interp = '';
+
+  // Sección A
+  interp += '<p><strong>Sección A — Screener (ítems 1–6):</strong> ' + posA + ' de 6 ítems positivos. ';
+  if (screeningPos) {
+    interp += 'El resultado es <strong>positivo</strong> (≥ 4 ítems con frecuencia significativa). ';
+    interp += 'Esto indica que los síntomas reportados son <strong>compatibles con un cuadro de TDAH del adulto</strong> y se recomienda una evaluación clínica completa.</p>';
+  } else {
+    interp += 'El resultado es <strong>negativo</strong> (menos de 4 ítems con frecuencia significativa). ';
+    interp += 'El cribado no alcanza el umbral diagnóstico del ASRS-V1.1. Sin embargo, los síntomas presentes en Sección B pueden requerir atención clínica.</p>';
+  }
+
+  // Síntomas positivos Sección A
+  if (positivosA.length > 0) {
+    var sintA = positivosA.map(function(n){ return '<em>' + ASRS_SINTOMA[n-1] + '</em>'; });
+    interp += '<p>Síntomas de Sección A con frecuencia significativa: ' + sintA.join(', ') + '.</p>';
+  }
+
+  // Sección B
+  interp += '<p><strong>Sección B — Perfil sintomático (ítems 7–18):</strong> ' + posB + ' de 12 ítems con frecuencia significativa.</p>';
+  if (positivosB.length > 0) {
+    var sintB = positivosB.map(function(n){ return '<em>' + ASRS_SINTOMA[n-1] + '</em>'; });
+    interp += '<p>Síntomas de Sección B presentes: ' + sintB.join(', ') + '.</p>';
+  } else {
+    interp += '<p>No se registran síntomas adicionales con frecuencia significativa en Sección B.</p>';
+  }
+
+  // Perfil global
+  interp += '<p><strong>Perfil global:</strong> ';
+  if (totalPos >= 14) {
+    interp += 'Alta densidad sintomática (' + totalPos + '/18). El patrón de respuestas sugiere una presencia amplia y consistente de síntomas de TDAH en múltiples dominios.';
+  } else if (totalPos >= 8) {
+    interp += 'Densidad sintomática moderada (' + totalPos + '/18). Se observa un patrón de síntomas relevante que amerita evaluación clínica detallada.';
+  } else if (totalPos >= 4) {
+    interp += 'Densidad sintomática leve (' + totalPos + '/18). Algunos síntomas presentes, pero el patrón es subclínico a nivel global.';
+  } else {
+    interp += 'Baja densidad sintomática (' + totalPos + '/18). El perfil de síntomas no sugiere TDAH en este momento.';
+  }
+  interp += '</p>';
+
+  interp += '<p style="font-size:0.8rem;color:var(--muted);">Este instrumento es una herramienta de cribado y no reemplaza la evaluación clínica integral. Un resultado positivo en el screener requiere evaluación diagnóstica completa. Fuente: Kessler RC et al. (2005). <em>Psychological Medicine</em>. OMS-ASRS-V1.1.</p>';
+
+  document.getElementById('asrs-detalle').innerHTML = detalleHtml;
+  document.getElementById('asrs-interp').innerHTML = interp;
+  document.getElementById('asrs-form').style.display = 'none';
+  document.getElementById('asrs-resultado').style.display = 'block';
+}
+
+function guardarAsrs() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('asrs-paciente').value;
+  var fecha = document.getElementById('asrs-fecha').value;
+  if (!pacId) { alert('Seleccioná un paciente.'); return; }
+  var sel = document.querySelector('input[name="asrs_1"]:checked');
+  if (!sel) { alert('Calculá el resultado antes de guardar.'); return; }
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'ASRS-V1.1', fecha: fecha,
+    puntaje_total: null, categoria: 'Ver detalle'
+  }, SESSION.access_token)
+  .then(function(){ alert('Resultado guardado.'); })
+  .catch(function(){ alert('Error al guardar.'); });
 }
 
 </script>
