@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PsicoEscala</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap">
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -553,6 +556,18 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 
     <!-- ── INICIO ── -->
     <div class="vista active" id="vista-inicio">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div id="saludo-txt" style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:400;color:var(--text);"></div>
+          <div id="fecha-txt" style="font-size:0.82rem;color:var(--muted);margin-top:2px;font-family:'Outfit',sans-serif;text-transform:capitalize;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600;margin-bottom:12px;">Últimas evaluaciones</div>
+        <div id="ultimas-lista"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Aún no hay evaluaciones registradas.</div></div></div>
+      </div>
+
       <div class="home-hero">
         <div class="home-logo-svg"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" fill="none">
   <circle cx="40" cy="40" r="36" fill="#f5ede0" opacity="0.7"/>
@@ -3881,6 +3896,7 @@ function irSector(s) {
 function irTest(t) {
   document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
   document.getElementById('vista-' + t).classList.add('active');
+  llenarSelectPacientes(); // siempre actualizar la lista antes de abrir el test
   if (t === 'bdi') iniciarBDI();
   if (t === 'stai') iniciarSTAI();
   if (t === 'rey') iniciarRey();
@@ -4013,8 +4029,9 @@ function guardarResultadoBDI() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4180,8 +4197,9 @@ function guardarResultadoSTAI() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4345,7 +4363,7 @@ function guardarResultadoRey() {
       var el=document.getElementById('rey-'+v.key); if(!el)return;
       var raw=el.value; if(raw==='')return;
       var bruto=parseFloat(raw);
-      var bar=REY_BAR[sexo][gi][v.key]; if(!bar)return;
+      var barArr=REY_BAR[sexo][v.key]; if(!barArr||!barArr[gi])return; var bar=barArr[gi];
       var z=parseFloat(((bruto-bar.m)/bar.d).toFixed(2));
       datosObj.variables.push({key:v.key,label:v.label,bruto:bruto,m:bar.m,ds:bar.d,z:z});
       if(v.key==='sum') zSum=z;
@@ -4365,8 +4383,9 @@ function guardarResultadoRey() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4614,8 +4633,9 @@ function guardarResultadoTMT() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4803,8 +4823,9 @@ function guardarResultadoFLV() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4877,8 +4898,9 @@ function guardarResultadoPHQ() {
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
     // Animar el botón que estaba activo
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   });
 }
 
@@ -4942,8 +4964,9 @@ function guardarResultadoGAD(){
     datos:{ total:pts }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 // ══ SPAI-B ═══════════════════════════════════════════════════════════════════
@@ -5030,8 +5053,9 @@ function guardarResultadoSPAIB(){
     datos:{ total:pts }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 // ══ MoCA ═════════════════════════════════════════════════════════════════════
@@ -5111,8 +5135,9 @@ function guardarResultadoMoCA(){
     datos:{ total:pts, m:mocaM, ds:mocaDS, ne:document.getElementById('moca-ne').value, dominios:mocaVals }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 // ══ IFS ══════════════════════════════════════════════════════════════════════
@@ -5203,8 +5228,9 @@ function guardarResultadoIFS(){
     datos:datosObj
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 // ══ DÍGITOS WAIS ═════════════════════════════════════════════════════════════
 // Baremos Fay, Leiva & Margulis (2018) — CABA. Por edad y NE.
@@ -5332,8 +5358,9 @@ function guardarResultadoDigitos(){
     puntaje_total:total?parseInt(total):null,categoria:'Ver detalle',datos:datosObj
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 // ══ ACE-R ════════════════════════════════════════════════════════════════════
@@ -5410,8 +5437,9 @@ function guardarResultadoACER(){
     datos:{ total:pts }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 // ══ WCST-64 ══════════════════════════════════════════════════════════════════
@@ -5491,8 +5519,9 @@ function guardarResultadoWCST(){
     datos:{ categorias:vCat?parseInt(vCat):null }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 function calcularEdad(fnac) {
@@ -5840,8 +5869,9 @@ function guardarResultadoScl90() {
   .then(function(){
     cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   })
   .catch(function(){ toast('Error al guardar', 'error'); });
 }
@@ -5973,8 +6003,9 @@ function guardarResultadoSignoret(){
   },SESSION.access_token)
   .then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };})
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };})
   .catch(function(){ toast('Error al guardar', 'error'); });
 }
 
@@ -6871,8 +6902,9 @@ function guardarResultadoReloj(){
     }
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 function iniciarMBI(){
@@ -6978,8 +7010,9 @@ function guardarResultadoMBI(){
            RP_cat:scores.RP<=33?'Bajo':scores.RP<=39?'Moderado':'Alto'}
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
-    var btn = document.querySelector('.vista.active .btn-primary');
-    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); };});
 }
 
 
