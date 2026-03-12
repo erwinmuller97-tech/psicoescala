@@ -424,6 +424,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <span class="sector-tag">Dígitos</span>
             <span class="sector-tag">ACE-R</span>
             <span class="sector-tag">WCST-64</span>
+            <span class="sector-tag">BEM Signoret</span>
           </div>
         </div>
       </div>
@@ -2434,6 +2435,65 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       </div>
     </div>
 
+    
+    <!-- ── TEST BEM 144 SIGNORET ── -->
+    <div class="vista" id="vista-signoret">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">BEM 144 · Batería de Eficacia Mnésica Signoret</div></div>
+      <div id="signoret-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="signoret-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Grupo de edad *</label>
+              <select id="signoret-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">≤ 45 años</option>
+                <option value="1">46–55 años</option>
+                <option value="2">56–65 años</option>
+                <option value="3">66–75 años</option>
+                <option value="4">76–85 años</option>
+                <option value="5">≥ 86 años</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="signoret-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Memoria Lógica Verbal <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(Historia · máx. 12 c/u)</span></div>
+          <div class="form-grid">
+            <div class="field"><label>Recuerdo Lógico Inmediato</label><input type="number" id="sig-rli" min="0" max="12" placeholder="0–12"></div>
+            <div class="field"><label>Recuerdo Lógico Diferido</label><input type="number" id="sig-rld" min="0" max="12" placeholder="0–12"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Memoria Episódica Verbal <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(Lista de palabras · máx. 12 c/u)</span></div>
+          <div class="form-grid">
+            <div class="field"><label>Aprendizaje Serial (AS3)</label><input type="number" id="sig-as" min="0" max="12" placeholder="0–12"></div>
+            <div class="field"><label>Recuerdo Serial (libre diferido)</label><input type="number" id="sig-rs" min="0" max="12" placeholder="0–12"></div>
+            <div class="field"><label>Recuerdo con Claves Semánticas</label><input type="number" id="sig-rc" min="0" max="12" placeholder="0–12"></div>
+            <div class="field"><label>Reconocimiento (elección múltiple)</label><input type="number" id="sig-reco" min="0" max="12" placeholder="0–12"></div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:10px;">Rec-CE (promedio Claves + Reconocimiento) se calcula automáticamente.</p>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn-secondary" onclick="limpiarSignoret()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularSignoret()">Calcular resultado →</button>
+        </div>
+      </div>
+      <div id="signoret-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="signoret-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="signoret-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('signoret-resultado').style.display='none';document.getElementById('signoret-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoSignoret()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
       </div><!-- /app-content -->
 </div><!-- /screen-app -->
 
@@ -2578,7 +2638,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente'].forEach(function(id){
+   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -2782,6 +2842,12 @@ function irSector(s) {
         '<div class="test-nombre">WCST-64</div>' +
         '<div class="test-desc">Wisconsin Card Sorting Test — 64 cartas. Flexibilidad cognitiva y perseveración</div>' +
         '<span class="test-tag">Baremos Córdoba 2023</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'signoret\')">'+
+        '<div class="test-icon">📖</div>'+
+        '<div class="test-nombre">BEM 144 · Signoret</div>'+
+        '<div class="test-desc">Batería de Eficacia Mnésica — Memoria lógica y episódica verbal</div>'+
+        '<span class="test-tag">7 subpruebas · Leis et al. 2018</span>'+
       '</div>';
   }
 }
@@ -2801,6 +2867,7 @@ function irTest(t) {
   if (t === 'ifs') iniciarIFS();
   if (t === 'digitos') iniciarDigitos();
   if (t === 'scl90') iniciarScl90();
+  if (t === 'signoret') iniciarSignoret();
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
 }
@@ -4532,6 +4599,130 @@ function guardarResultadoScl90() {
   }, SESSION.access_token)
   .then(function(){ alert('Resultado guardado.'); })
   .catch(function(){ alert('Error al guardar.'); });
+}
+
+// ══ BEM 144 SIGNORET ══════════════════════════════════════════════════════════
+// Leis et al. (2018). Neurología Argentina. CABA. N=227 controles sanos.
+// Grupos: 0=≤45, 1=46-55, 2=56-65, 3=66-75, 4=76-85, 5=≥86
+// Tabla 3: Memoria Lógica Verbal
+var SIG_NORMS = {
+  rli:  { M:[9.19,9.07,8.91,9.12,7.91,7.58], DS:[2.12,1.83,1.54,1.33,1.31,0.74] },
+  rld:  { M:[9.22,8.97,8.83,8.75,7.70,7.25], DS:[2.07,1.90,1.63,1.50,1.22,0.61] },
+  as:   { M:[9.92,9.88,9.27,8.96,7.82,6.80], DS:[1.69,1.04,1.79,1.54,1.62,1.09] },
+  rs:   { M:[8.97,9.16,8.23,7.89,6.86,5.80], DS:[1.87,1.67,1.83,1.70,1.45,1.09] },
+  rc:   { M:[11.00,11.16,11.20,10.20,10.00,10.00], DS:[1.62,1.39,1.03,2.20,1.79,1.22] },
+  reco: { M:[11.85,11.91,11.70,11.69,11.43,11.00], DS:[0.47,0.29,0.53,0.70,0.81,1.73] },
+  recce:{ M:[11.42,11.53,11.45,10.94,10.45,10.50], DS:[0.94,0.75,0.72,1.27,1.98,1.45] }
+};
+var SIG_LABELS = ['≤ 45','46–55','56–65','66–75','76–85','≥ 86'];
+var SIG_SUBPRUEBAS = [
+  { id:'rli',   label:'Recuerdo Lógico Inmediato',    corte:7  },
+  { id:'rld',   label:'Recuerdo Lógico Diferido',     corte:6  },
+  { id:'as',    label:'Aprendizaje Serial',            corte:null },
+  { id:'rs',    label:'Recuerdo Serial',               corte:6  },
+  { id:'rc',    label:'Recuerdo con Claves Semánticas',corte:10 },
+  { id:'reco',  label:'Reconocimiento',                corte:11 },
+  { id:'recce', label:'Rec-CE (Claves + Reconoc.)',    corte:10.5}
+];
+
+function iniciarSignoret(){
+  document.getElementById('signoret-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('signoret-form').style.display='block';
+  document.getElementById('signoret-resultado').style.display='none';
+}
+function limpiarSignoret(){
+  ['sig-rli','sig-rld','sig-as','sig-rs','sig-rc','sig-reco'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('signoret-edad').value='';
+}
+function calcularSignoret(){
+  var gi=document.getElementById('signoret-edad').value;
+  if(gi===''){alert('Seleccioná el grupo de edad.');return;}
+  gi=parseInt(gi);
+
+  var vals={
+    rli:  document.getElementById('sig-rli').value,
+    rld:  document.getElementById('sig-rld').value,
+    as:   document.getElementById('sig-as').value,
+    rs:   document.getElementById('sig-rs').value,
+    rc:   document.getElementById('sig-rc').value,
+    reco: document.getElementById('sig-reco').value
+  };
+
+  // Calcular Rec-CE si hay claves y reconocimiento
+  var recce = null;
+  if(vals.rc!=='' && vals.reco!==''){
+    recce = (parseFloat(vals.rc)+parseFloat(vals.reco))/2;
+  }
+
+  function zClf(z){
+    if(z>=-1.0)return{clf:'Normal',col:'var(--green)',badge:'bg-minima'};
+    if(z>=-1.5)return{clf:'Leve ↓',col:'var(--yellow)',badge:'bg-leve'};
+    if(z>=-2.0)return{clf:'Moderado ↓',col:'var(--orange)',badge:'bg-moderada'};
+    return{clf:'Bajo ↓',col:'var(--red)',badge:'bg-grave'};
+  }
+
+  var detalleHtml='';
+  var interpPs=[];
+  var alteradas=[];
+  var hayAlgo=false;
+
+  SIG_SUBPRUEBAS.forEach(function(sp){
+    var raw = sp.id==='recce' ? (recce!==null?String(recce):'') : vals[sp.id];
+    if(raw===''||raw===null||raw===undefined) return;
+    hayAlgo=true;
+    var br=parseFloat(raw);
+    var M=SIG_NORMS[sp.id].M[gi];
+    var DS=SIG_NORMS[sp.id].DS[gi];
+    var z=(br-M)/DS;
+    var r=zClf(z);
+    if(z<-1.5) alteradas.push(sp.label);
+    detalleHtml+=
+      '<div class="detalle-item"><div class="detalle-num">'+br.toFixed(sp.id==='recce'?1:0)+'</div><div class="detalle-lbl">'+sp.label+'</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+r.col+'">'+(z>=0?'+':'')+z.toFixed(2)+'</div><div class="detalle-lbl">Z</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num"><span class="badge '+r.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+r.clf+'</span></div><div class="detalle-lbl">Clasif.</div></div>';
+    interpPs.push('<em>'+sp.label+'</em> (bruto='+br.toFixed(sp.id==="recce"?1:0)+', grupo '+SIG_LABELS[gi]+'): Z='+(z>=0?'+':'')+z.toFixed(2)+' → <strong>'+r.clf+'</strong>.');
+    if(sp.corte!==null){
+      var bajo = br<=sp.corte;
+      if(bajo) interpPs[interpPs.length-1]+=' Punto de corte ≤'+sp.corte+': ⚠️ por debajo.';
+    }
+  });
+
+  if(!hayAlgo){alert('Ingresá al menos un puntaje.');return;}
+
+  // Interpretación clínica
+  var interp='<p>Baremos: Leis et al. (2018), versión argentina BEM 144. CABA. Grupo etario: '+SIG_LABELS[gi]+' años. Z score: M=0, DS=1. Criterio de alteración: Z ≤ −1,5.</p>';
+  interp+=interpPs.map(function(p){return'<p>'+p+'</p>';}).join('');
+
+  // Perfil amnésico hipocampal
+  var rsZ=vals.rs!==''?(parseFloat(vals.rs)-SIG_NORMS.rs.M[gi])/SIG_NORMS.rs.DS[gi]:null;
+  var rcceZ=recce!==null?(recce-SIG_NORMS.recce.M[gi])/SIG_NORMS.recce.DS[gi]:null;
+  if(rsZ!==null && rcceZ!==null && rsZ<=-1.5 && rcceZ<=-1.5){
+    interp+='<p>⚠️ <strong>Perfil compatible con amnesia de tipo hipocampal:</strong> Z ≤ −1,5 en Recuerdo Serial y Rec-CE. Sugiere alteración en la codificación y recuperación de material verbal episódico.</p>';
+  } else if(rsZ!==null && rcceZ!==null && rsZ<=-1.5 && rcceZ>-1.5){
+    interp+='<p>Rendimiento dispar en facilitación: el recuerdo libre está alterado pero el rendimiento en claves/reconocimiento es relativamente preservado. Puede orientar hacia un perfil cognitivo de tipo subcortical.</p>';
+  }
+
+  interp+='<p><em>Fuente: Leis A et al. Datos normativos de la versión argentina de la BEM 144. Neurología Argentina 2018;10(3):119-182.</em></p>';
+
+  document.getElementById('signoret-detalle').innerHTML=detalleHtml;
+  document.getElementById('signoret-interp').innerHTML=interp;
+  document.getElementById('signoret-form').style.display='none';
+  document.getElementById('signoret-resultado').style.display='block';
+}
+function guardarResultadoSignoret(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('signoret-paciente').value;
+  var fecha=document.getElementById('signoret-fecha').value;
+  if(!pacId){alert('Seleccioná un paciente.');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,
+    test:'BEM 144 Signoret',fecha:fecha,
+    puntaje_total:null,categoria:'Ver detalle'
+  },SESSION.access_token)
+  .then(function(){alert('Resultado guardado.');})
+  .catch(function(){alert('Error al guardar.');});
 }
 
 </script>
