@@ -472,7 +472,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 </div>
 
 <!-- ══ LOGIN ══ -->
-<div id="screen-login" class="screen" style="display:none;">
+<div id="screen-login" class="screen">
   <div class="login-box">
     <div class="login-logo">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="display:block;width:72px;height:72px;margin:0 auto 14px;">
@@ -498,7 +498,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 </div>
 
 <!-- ══ APP ══ -->
-<div id="screen-app" class="screen" style="display:none;">
+<div id="screen-app" class="screen">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
@@ -3266,7 +3266,7 @@ function verificarGate(){
   if(input==='Sigrid1109'){
     document.getElementById('screen-gate').style.display='none';
     var login=document.getElementById('screen-login');
-    login.style.display='';
+    login.style.display='flex';
     login.classList.add('active');
   } else {
     document.getElementById('gate-error').style.display='block';
@@ -3328,7 +3328,9 @@ function doLogin() {
     SESSION = data;
     try { localStorage.setItem('psico_session', JSON.stringify(data)); } catch(e) {}
     document.getElementById('topbar-email').textContent = email;
+    document.getElementById('screen-gate').style.display = 'none';
     document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-login').style.display = 'none';
     document.getElementById('screen-app').classList.add('active');
     actualizarSaludo();
     cargarPacientes();
@@ -3339,6 +3341,7 @@ function doLogout() {
   SESSION = null; PACIENTES = []; RESULTADOS = [];
   try { localStorage.removeItem('psico_session'); } catch(e) {}
   document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').style.display = 'flex';
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('login-pass').value = '';
 }
@@ -7215,6 +7218,7 @@ window.addEventListener('DOMContentLoaded', function() {
       emailGuardado = saved.user && saved.user.email ? saved.user.email : '';
     } catch(e) {}
     document.getElementById('topbar-email').textContent = emailGuardado;
+    document.getElementById('screen-gate').style.display = 'none';
     document.getElementById('screen-login').classList.remove('active');
     document.getElementById('screen-app').classList.add('active');
     actualizarSaludo();
