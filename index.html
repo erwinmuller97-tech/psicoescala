@@ -4867,7 +4867,7 @@ var ASRS_ITEMS = [
   {n:18, txt:'¿Con qué frecuencia interrumpe a otros cuando están ocupados?', sec:'B'}
 ];
 
-var ASRS_ESCALA = ['Nunca','Rara vez','A veces','A menudo','Muy a menudo'];
+var ASRS_ESCALA = ['Nunca','Raramente','A veces','Frecuentemente','Muy frecuentemente'];
 
 // Síntomas de TDAH que evalúa cada ítem (para interpretación narrativa)
 var ASRS_SINTOMA = [
@@ -4937,79 +4937,89 @@ function calcularAsrs() {
     return;
   }
 
-  // ── Scoring Sección A ────────────────────────────────────────────────────
-  // Ítems 1-3: positivo si >= 2 (A veces o más)
-  // Ítems 4-6: positivo si >= 3 (A menudo o más)
+  // ── Sección A: screener (ítems 1-6) ─────────────────────────────────────
+  // Ítems 1-3: positivo si ≥2 / Ítems 4-6: positivo si ≥3
   var posA = 0;
   var positivosA = [];
   [1,2,3].forEach(function(n){ if(vals[n] >= 2){ posA++; positivosA.push(n); }});
   [4,5,6].forEach(function(n){ if(vals[n] >= 3){ posA++; positivosA.push(n); }});
   var screeningPos = posA >= 4;
 
-  // ── Scoring Sección B ────────────────────────────────────────────────────
-  // Positivo si >= 2 (A veces o más) para todos
-  var posB = 0;
-  var positivosB = [];
-  for (var n = 7; n <= 18; n++) {
-    if (vals[n] >= 2) { posB++; positivosB.push(n); }
-  }
+  // ── Sección B: sumatoria ítems 7-18 (rango 0-48) ────────────────────────
+  var scoreB = 0;
+  for (var n = 7; n <= 18; n++) scoreB += vals[n];
+  var nivelB = scoreB <= 16 ? 'Bajo' : scoreB <= 32 ? 'Moderado' : 'Alto';
+  var colB   = scoreB <= 16 ? 'var(--green)' : scoreB <= 32 ? 'var(--yellow)' : 'var(--red)';
 
-  // ── Total ────────────────────────────────────────────────────────────────
-  var totalPos = posA + posB;
+  // ── Total ASRS ítems 1-18 (rango 0-72) ───────────────────────────────────
+  var total = 0;
+  for (var n = 1; n <= 18; n++) total += vals[n];
+  var nivelT = total <= 23 ? 'Bajo' : total <= 47 ? 'Moderado' : 'Alto';
+  var colT   = total <= 23 ? 'var(--green)' : total <= 47 ? 'var(--yellow)' : 'var(--red)';
 
-  // ── Detalle visual ───────────────────────────────────────────────────────
+  // ── Detalle visual ────────────────────────────────────────────────────────
   var colorScreen = screeningPos ? 'var(--red)' : 'var(--green)';
-  var badgeScreen = screeningPos ? 'bg-grave' : 'bg-minima';
-  var lblScreen   = screeningPos ? 'POSITIVO' : 'NEGATIVO';
+  var badgeScreen = screeningPos ? 'bg-grave'   : 'bg-minima';
+  var lblScreen   = screeningPos ? 'POSITIVO'   : 'NEGATIVO';
 
   var detalleHtml =
     '<div class="detalle-item"><div class="detalle-num" style="color:' + colorScreen + '">' + posA + '/6</div><div class="detalle-lbl">Ítems positivos<br>Sección A</div></div>' +
     '<div class="detalle-item"><div class="detalle-num"><span class="badge ' + badgeScreen + '" style="padding:4px 12px;border-radius:20px;font-size:0.72rem;">' + lblScreen + '</span></div><div class="detalle-lbl">Screening TDAH</div></div>' +
-    '<div class="detalle-item"><div class="detalle-num">' + posB + '/12</div><div class="detalle-lbl">Ítems positivos<br>Sección B</div></div>' +
-    '<div class="detalle-item"><div class="detalle-num">' + totalPos + '/18</div><div class="detalle-lbl">Total ítems<br>positivos</div></div>';
+    '<div class="detalle-item"><div class="detalle-num" style="color:' + colB + '">' + scoreB + '/48</div><div class="detalle-lbl">Score Sección B<br>' + nivelB + '</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num" style="color:' + colT + '">' + total + '/72</div><div class="detalle-lbl">Total ASRS<br>' + nivelT + '</div></div>';
 
-  // ── Interpretación ───────────────────────────────────────────────────────
+  // ── Interpretación ────────────────────────────────────────────────────────
   var interp = '';
 
   // Sección A
   interp += '<p><strong>Sección A — Screener (ítems 1–6):</strong> ' + posA + ' de 6 ítems positivos. ';
   if (screeningPos) {
-    interp += 'El resultado es <strong>positivo</strong> (≥ 4 ítems con frecuencia significativa). ';
-    interp += 'Esto indica que los síntomas reportados son <strong>compatibles con un cuadro de TDAH del adulto</strong> y se recomienda una evaluación clínica completa.</p>';
+    interp += 'Resultado <strong>positivo</strong> (≥ 4 ítems con frecuencia clínicamente significativa). ';
+    interp += 'El patrón de respuestas es <strong>compatible con TDAH del adulto</strong>. Se recomienda evaluación diagnóstica estructurada (ej. DIVA-5, entrevista clínica).';
   } else {
-    interp += 'El resultado es <strong>negativo</strong> (menos de 4 ítems con frecuencia significativa). ';
-    interp += 'El cribado no alcanza el umbral diagnóstico del ASRS-V1.1. Sin embargo, los síntomas presentes en Sección B pueden requerir atención clínica.</p>';
+    interp += 'Resultado <strong>negativo</strong> (menos de 4 ítems con frecuencia significativa). ';
+    interp += 'El cribado no alcanza el umbral diagnóstico del ASRS-V1.1.';
   }
+  interp += '</p>';
 
   // Síntomas positivos Sección A
   if (positivosA.length > 0) {
     var sintA = positivosA.map(function(n){ return '<em>' + ASRS_SINTOMA[n-1] + '</em>'; });
-    interp += '<p>Síntomas de Sección A con frecuencia significativa: ' + sintA.join(', ') + '.</p>';
+    interp += '<p>Síntomas positivos en Sección A: ' + sintA.join(', ') + '.</p>';
   }
 
   // Sección B
-  interp += '<p><strong>Sección B — Perfil sintomático (ítems 7–18):</strong> ' + posB + ' de 12 ítems con frecuencia significativa.</p>';
-  if (positivosB.length > 0) {
-    var sintB = positivosB.map(function(n){ return '<em>' + ASRS_SINTOMA[n-1] + '</em>'; });
-    interp += '<p>Síntomas de Sección B presentes: ' + sintB.join(', ') + '.</p>';
+  interp += '<p><strong>Sección B — Intensidad sintomática (ítems 7–18):</strong> puntaje ' + scoreB + '/48 — nivel <strong>' + nivelB + '</strong>. ';
+  if (scoreB >= 33) {
+    interp += 'Alta densidad de síntomas adicionales. El perfil sugiere afectación significativa en múltiples dominios del funcionamiento.';
+  } else if (scoreB >= 17) {
+    interp += 'Presencia moderada de síntomas adicionales. Amerita atención clínica y seguimiento.';
   } else {
-    interp += '<p>No se registran síntomas adicionales con frecuencia significativa en Sección B.</p>';
-  }
-
-  // Perfil global
-  interp += '<p><strong>Perfil global:</strong> ';
-  if (totalPos >= 14) {
-    interp += 'Alta densidad sintomática (' + totalPos + '/18). El patrón de respuestas sugiere una presencia amplia y consistente de síntomas de TDAH en múltiples dominios.';
-  } else if (totalPos >= 8) {
-    interp += 'Densidad sintomática moderada (' + totalPos + '/18). Se observa un patrón de síntomas relevante que amerita evaluación clínica detallada.';
-  } else if (totalPos >= 4) {
-    interp += 'Densidad sintomática leve (' + totalPos + '/18). Algunos síntomas presentes, pero el patrón es subclínico a nivel global.';
-  } else {
-    interp += 'Baja densidad sintomática (' + totalPos + '/18). El perfil de síntomas no sugiere TDAH en este momento.';
+    interp += 'Baja intensidad de síntomas adicionales en Sección B.';
   }
   interp += '</p>';
 
-  interp += '<p style="font-size:0.8rem;color:var(--muted);">Este instrumento es una herramienta de cribado y no reemplaza la evaluación clínica integral. Un resultado positivo en el screener requiere evaluación diagnóstica completa. Fuente: Kessler RC et al. (2005). <em>Psychological Medicine</em>. OMS-ASRS-V1.1.</p>';
+  // Síntomas B presentes (≥2)
+  var positivosB = [];
+  for (var n = 7; n <= 18; n++) { if (vals[n] >= 2) positivosB.push(n); }
+  if (positivosB.length > 0) {
+    var sintB = positivosB.map(function(n){ return '<em>' + ASRS_SINTOMA[n-1] + '</em>'; });
+    interp += '<p>Síntomas de Sección B con frecuencia significativa (≥ A veces): ' + sintB.join(', ') + '.</p>';
+  }
+
+  // Total
+  interp += '<p><strong>Puntaje total ASRS (ítems 1–18):</strong> ' + total + '/72 — nivel <strong>' + nivelT + '</strong>. ';
+  if (total >= 48) {
+    interp += 'La carga sintomática global es alta y consistente con un perfil de TDAH adulto.';
+  } else if (total >= 24) {
+    interp += 'Carga sintomática moderada a nivel global.';
+  } else {
+    interp += 'Baja carga sintomática global.';
+  }
+  interp += '</p>';
+
+  interp += '<p style="font-size:0.8rem;color:var(--muted);">Nota: los rangos de Sección B y total son orientativos; no existen baremos oficiales para estas sumatorias. El screener de Sección A es el único con punto de corte validado. ' +
+    'Fuente: Kessler RC et al. (2005). <em>Psychological Medicine</em>. OMS-ASRS-V1.1.</p>';
 
   document.getElementById('asrs-detalle').innerHTML = detalleHtml;
   document.getElementById('asrs-interp').innerHTML = interp;
