@@ -3677,7 +3677,15 @@ function guardarResultadoBDI() {
   var cat   = document.getElementById('bdi-cat').textContent;
   var fecha = document.getElementById('bdi-fecha').value;
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
-  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'BDI-II', fecha: fecha, puntaje_total: pts, categoria: cat };
+  var iteItems = [];
+  document.querySelectorAll('#bdi-items-container .bdi-item').forEach(function(item,i){
+    var sel = item.querySelector('input[type=radio]:checked');
+    iteItems.push(sel ? parseInt(sel.value) : null);
+  });
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'BDI-II', fecha: fecha,
+    puntaje_total: pts, categoria: cat,
+    datos: { items: iteItems }
+  };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
     .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
 }
@@ -3835,7 +3843,8 @@ function guardarResultadoSTAI() {
   var body = {
     user_id: SESSION.user.id, paciente_id: pacId, test: 'STAI', fecha: fecha,
     puntaje_total: null, categoria: catE + ' / ' + catR,
-    detalle: { estado: parseInt(ptsE), rasgo: parseInt(ptsR) }
+    detalle: { estado: parseInt(ptsE), rasgo: parseInt(ptsR) },
+    datos: { estado: parseInt(ptsE), cat_estado: catE, rasgo: parseInt(ptsR), cat_rasgo: catR }
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
     .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
@@ -3991,9 +4000,27 @@ function guardarResultadoRey() {
   var fecha = document.getElementById('rey-fecha').value;
   var sum   = document.getElementById('rey-sum').value;
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var sexo=document.getElementById('rey-sexo').value;
+  var edadI=document.getElementById('rey-edad').value;
+  var datosObj={sexo:sexo,edad_grupo:edadI,variables:[]};
+  var zSum=null;
+  if(sexo&&edadI!==''){
+    var gi=parseInt(edadI);
+    REY_VARS.forEach(function(v){
+      var el=document.getElementById('rey-'+v.key); if(!el)return;
+      var raw=el.value; if(raw==='')return;
+      var bruto=parseFloat(raw);
+      var bar=REY_BAR[sexo][gi][v.key]; if(!bar)return;
+      var z=parseFloat(((bruto-bar.m)/bar.d).toFixed(2));
+      datosObj.variables.push({key:v.key,label:v.label,bruto:bruto,m:bar.m,ds:bar.d,z:z});
+      if(v.key==='sum') zSum=z;
+    });
+  }
+  var catRey = zSum===null ? 'Ver detalle' : (zSum>=-1.0?'Normal':zSum>=-1.5?'Leve ↓':zSum>=-2.0?'Moderado ↓':'Bajo ↓');
   var body = {
     user_id: SESSION.user.id, paciente_id: pacId, test: 'Rey Verbal',
-    fecha: fecha, puntaje_total: sum ? parseInt(sum) : null, categoria: 'Ver detalle'
+    fecha: fecha, puntaje_total: sum ? parseInt(sum) : null,
+    categoria: catRey, puntaje_z: zSum, datos: datosObj
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
     .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
@@ -4211,9 +4238,31 @@ function guardarResultadoTMT() {
   var fecha = document.getElementById('tmt-fecha').value;
   var tA    = document.getElementById('tmt-a').value;
   var tB    = document.getElementById('tmt-b').value;
+  var escol = document.getElementById('tmt-escol').value;
+  var edadI = document.getElementById('tmt-edad').value;
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
   var cat = 'A:' + (tA||'—') + 's / B:' + (tB||'—') + 's';
-  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'TMT A-B', fecha: fecha, puntaje_total: null, categoria: cat };
+  var datosObj = { tmt_a_seg: tA ? parseFloat(tA) : null, tmt_b_seg: tB ? parseFloat(tB) : null };
+  // Calcular Z si hay baremos disponibles
+  if (escol && edadI !== '') {
+    var gi = parseInt(edadI);
+    if (tA !== '') {
+      var mdsA = escol === 'baja' ? TMT_M_DS.baja.a : TMT_M_DS[escol][gi].a;
+      datosObj.tmt_a_z = parseFloat(((mdsA.m - parseFloat(tA)) / mdsA.ds).toFixed(2));
+      datosObj.tmt_a_m = mdsA.m; datosObj.tmt_a_ds = mdsA.ds;
+    }
+    if (tB !== '') {
+      var mdsB = escol === 'baja' ? TMT_M_DS.baja.b : TMT_M_DS[escol][gi].b;
+      datosObj.tmt_b_z = parseFloat(((mdsB.m - parseFloat(tB)) / mdsB.ds).toFixed(2));
+      datosObj.tmt_b_m = mdsB.m; datosObj.tmt_b_ds = mdsB.ds;
+    }
+  }
+  var zPrincipal = datosObj.tmt_b_z !== undefined ? datosObj.tmt_b_z : (datosObj.tmt_a_z !== undefined ? datosObj.tmt_a_z : null);
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'TMT A-B', fecha: fecha,
+    puntaje_total: null, categoria: cat,
+    puntaje_z: zPrincipal,
+    datos: datosObj
+  };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
     .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
 }
@@ -4372,7 +4421,27 @@ function guardarResultadoFLV() {
   var pacId = document.getElementById('flv-paciente').value;
   var fecha = document.getElementById('flv-fecha').value;
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
-  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'Fluencia Verbal', fecha: fecha, puntaje_total: null, categoria: 'Ver detalle' };
+  var sexo=document.getElementById('flv-sexo').value;
+  var ne=document.getElementById('flv-ne').value;
+  var edadI=document.getElementById('flv-edad').value;
+  var datosObj={sexo:sexo,ne:ne,edad_grupo:edadI,variables:[]};
+  var zAll=[];
+  if(sexo&&ne&&edadI!==''){
+    var gi=parseInt(edadI);
+    FLV_VARS.forEach(function(v){
+      var raw=document.getElementById(v.id).value;
+      if(raw==='')return;
+      var bruto=parseFloat(raw);
+      var bar=FLV_BAR[v.key][sexo][ne][gi];
+      var z=parseFloat(((bruto-bar.m)/bar.ds).toFixed(2));
+      datosObj.variables.push({label:v.label,tipo:v.tipo,bruto:bruto,m:bar.m,ds:bar.ds,z:z});
+      zAll.push(z);
+    });
+  }
+  var zPrincipal = zAll.length ? parseFloat((zAll.reduce(function(a,b){return a+b;},0)/zAll.length).toFixed(2)) : null;
+  var cat = zAll.length ? (zPrincipal >= -1.0 ? 'Normal' : zPrincipal >= -1.5 ? 'Leve ↓' : zPrincipal >= -2.0 ? 'Moderado ↓' : 'Bajo ↓') : 'Ver detalle';
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'Fluencia Verbal', fecha: fecha,
+    puntaje_total: null, categoria: cat, puntaje_z: zPrincipal, datos: datosObj };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
     .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
 }
@@ -4438,8 +4507,11 @@ function guardarResultadoPHQ() {
   var cat=document.getElementById('phq-cat').textContent;
   var fecha=document.getElementById('phq-fecha').value;
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'PHQ-9',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'PHQ-9', fecha:fecha,
+    puntaje_total:pts, categoria:cat,
+    datos:{ total:pts }
+  },SESSION.access_token).then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
 }
 
 // ══ GAD-7 ════════════════════════════════════════════════════════════════════
@@ -4496,8 +4568,11 @@ function guardarResultadoGAD(){
   var cat=document.getElementById('gad-cat').textContent;
   var fecha=document.getElementById('gad-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'GAD-7',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'GAD-7', fecha:fecha,
+    puntaje_total:pts, categoria:cat,
+    datos:{ total:pts }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 // ══ SPAI-B ═══════════════════════════════════════════════════════════════════
@@ -4578,8 +4653,11 @@ function guardarResultadoSPAIB(){
   var cat=document.getElementById('spaib-cat').textContent;
   var fecha=document.getElementById('spaib-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'SPAI-B',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'SPAI-B', fecha:fecha,
+    puntaje_total:pts, categoria:cat,
+    datos:{ total:pts }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 // ══ MoCA ═════════════════════════════════════════════════════════════════════
@@ -4644,8 +4722,15 @@ function guardarResultadoMoCA(){
   var cat=document.getElementById('moca-cat').textContent;
   var fecha=document.getElementById('moca-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'MoCA',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  var mocaVals={};
+  ['moca-visuo','moca-ident','moca-aten','moca-leng','moca-abst','moca-recu','moca-orie'].forEach(function(id){
+    var v=document.getElementById(id).value; if(v!=='') mocaVals[id]=parseInt(v);
+  });
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'MoCA', fecha:fecha,
+    puntaje_total:pts, categoria:cat,
+    datos:{ total:pts, ne:document.getElementById('moca-ne').value, dominios:mocaVals }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 // ══ IFS ══════════════════════════════════════════════════════════════════════
@@ -4711,6 +4796,28 @@ function calcularIFS(){
   document.getElementById('ifs-interp').innerHTML=interp;
   document.getElementById('ifs-form').style.display='none';
   document.getElementById('ifs-resultado').style.display='block';
+}
+
+function guardarResultadoIFS(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('ifs-paciente').value;
+  var fecha=document.getElementById('ifs-fecha')?document.getElementById('ifs-fecha').value:'';
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  var gi=parseInt(document.getElementById('ifs-edad').value);
+  var ne=parseInt(document.getElementById('ifs-ne').value);
+  var bar=IFS_BAR[ne][gi];
+  var total=parseInt(document.getElementById('ifs-pts-total').textContent);
+  var cat=document.getElementById('ifs-cat').textContent;
+  var z=parseFloat(((total-bar.M)/bar.DS).toFixed(2));
+  var datosObj={total:total,m:bar.M,ds:bar.DS,ne:ne,edad_grupo:gi,subtests:{}};
+  IFS_SUBTESTS.forEach(function(s){
+    var v=document.getElementById(s.id).value;
+    if(v!=='') datosObj.subtests[s.id]=parseInt(v);
+  });
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'IFS',fecha:fecha,
+    puntaje_total:total,categoria:cat,puntaje_z:z,datos:datosObj
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 // ══ DÍGITOS WAIS ═════════════════════════════════════════════════════════════
 // Baremos Fay, Leiva & Margulis (2018) — CABA. Por edad y NE.
@@ -4829,8 +4936,14 @@ function guardarResultadoDigitos(){
   var pacId=document.getElementById('digitos-paciente').value;
   var fecha=document.getElementById('digitos-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,puntaje_total:null,categoria:'Ver detalle'},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  var dir=document.getElementById('digitos-dir').value;
+  var inv=document.getElementById('digitos-inv').value;
+  var total=document.getElementById('digitos-bruto-total').value;
+  var datosObj={dir:dir?parseInt(dir):null,inv:inv?parseInt(inv):null,total:total?parseInt(total):null};
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,
+    puntaje_total:total?parseInt(total):null,categoria:'Ver detalle',datos:datosObj
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 // ══ ACE-R ════════════════════════════════════════════════════════════════════
@@ -4901,8 +5014,11 @@ function guardarResultadoACER(){
   var cat=document.getElementById('acer-cat').textContent;
   var fecha=document.getElementById('acer-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'ACE-R',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'ACE-R', fecha:fecha,
+    puntaje_total:pts, categoria:cat,
+    datos:{ total:pts }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 // ══ WCST-64 ══════════════════════════════════════════════════════════════════
@@ -4976,8 +5092,11 @@ function guardarResultadoWCST(){
   var vCat=document.getElementById('wcst-cat').value;
   var fecha=document.getElementById('wcst-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
-  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'WCST-64',fecha:fecha,puntaje_total:vCat?parseInt(vCat):null,categoria:'Ver detalle'},SESSION.access_token)
-    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'WCST-64',fecha:fecha,
+    puntaje_total:vCat?parseInt(vCat):null,categoria:'Ver detalle',
+    datos:{ categorias:vCat?parseInt(vCat):null }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 function calcularEdad(fnac) {
@@ -5306,9 +5425,10 @@ function guardarResultadoScl90() {
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'SCL-90-R', fecha: fecha,
-    puntaje_total: null, categoria: 'Ver detalle'
+    puntaje_total: null, categoria: 'Ver detalle',
+    datos: { nota: 'Ver resultado completo en pantalla' }
   }, SESSION.access_token)
-  .then(function(){ alert('Resultado guardado.'); })
+  .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); })
   .catch(function(){ alert('Error al guardar.'); });
 }
 
@@ -5430,9 +5550,10 @@ function guardarResultadoSignoret(){
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,
     test:'BEM 144 Signoret',fecha:fecha,
-    puntaje_total:null,categoria:'Ver detalle'
+    puntaje_total:null,categoria:'Ver detalle',
+    datos:{ nota:'Ver resultado completo en pantalla' }
   },SESSION.access_token)
-  .then(function(){alert('Resultado guardado.');})
+  .then(function(){cargarResultados();toast('Resultado guardado ✓');})
   .catch(function(){alert('Error al guardar.');});
 }
 
@@ -6298,18 +6419,15 @@ function guardarResultadoReloj(){
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'Test del Reloj (Cacho)',
     fecha: fecha,
-    resultado: JSON.stringify({
+    puntaje_total: total,
+    categoria: cat,
+    datos: {
       total: total,
       esfera: parseInt(esfera.value),
       numeros: parseInt(numeros.value),
-      agujas: parseInt(agujas.value),
-      categoria: cat
-    }),
-    notas: 'Versión a la orden · Cacho et al. 1999'
-  }).then(function(r){
-    if(r && !r.error){ alert('Resultado guardado correctamente.'); }
-    else { alert('Error al guardar. Verificá la conexión.'); }
-  });
+      agujas: parseInt(agujas.value)
+    }
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 function iniciarMBI(){
@@ -6404,16 +6522,16 @@ function guardarResultadoMBI(){
   var vals = {}; var scores = {CE:0,DP:0,RP:0};
   for(var i=1;i<=22;i++){ var sel=document.querySelector('input[name="mbi-'+i+'"]:checked'); if(sel) vals[i]=parseInt(sel.value); }
   for(var sub in subescalas){ subescalas[sub].forEach(function(n){ scores[sub]+=(vals[n]||0); }); }
+  var catMBI = (scores.CE>=27 && scores.DP>=10) ? 'Burnout presente' : (scores.CE>=20||scores.DP>=8) ? 'Riesgo' : 'Sin indicadores';
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id, paciente_id:pacId,
-    test:'MBI-HSS',
-    fecha:fecha,
-    resultado:JSON.stringify({CE:scores.CE,DP:scores.DP,RP:scores.RP}),
-    notas:'Inventario de Burnout de Maslach — Versión HSS'
-  }).then(function(r){
-    if(r&&!r.error){ alert('Resultado guardado correctamente.'); }
-    else { alert('Error al guardar.'); }
-  });
+    test:'MBI-HSS', fecha:fecha,
+    puntaje_total:null, categoria:catMBI,
+    datos:{CE:scores.CE, DP:scores.DP, RP:scores.RP,
+           CE_cat:scores.CE>=27?'Alto':scores.CE>=19?'Moderado':'Bajo',
+           DP_cat:scores.DP>=10?'Alto':scores.DP>=6?'Moderado':'Bajo',
+           RP_cat:scores.RP<=33?'Bajo':scores.RP<=39?'Moderado':'Alto'}
+  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
 }
 
 </script>
