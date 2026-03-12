@@ -518,7 +518,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <label>Notas</label>
             <textarea id="fp-notas" placeholder="Observaciones adicionales..."></textarea>
           </div>
-          <div class="btn-row">
+          
+        <button class="btn-secondary" onclick="generarPDF('scl90')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row">
             <button class="btn-secondary" onclick="cancelarFormPac()">Cancelar</button>
             <button class="btn-primary" onclick="guardarPaciente()">Guardar paciente</button>
           </div>
@@ -561,7 +563,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="card">
           <div class="card-title">Ítems del inventario</div>
           <div class="bdi-items" id="bdi-items-container"></div>
-          <div class="btn-row" style="margin-top:20px;">
+          
+        <button class="btn-secondary" onclick="generarPDF('bdi')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarBDI()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularBDI()">Calcular resultado →</button>
           </div>
@@ -625,7 +629,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           </div>
           <div id="stai-items-e" class="stai-items"></div>
           <div id="stai-items-r" class="stai-items" style="display:none;"></div>
-          <div class="btn-row" style="margin-top:20px;">
+          
+        <button class="btn-secondary" onclick="generarPDF('stai')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarSTAI()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularSTAI()">Calcular resultado →</button>
           </div>
@@ -962,7 +968,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title">Ítems del cuestionario</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</p>
           <div id="phq-items-container"></div>
-          <div class="btn-row" style="margin-top:20px;">
+          
+        <button class="btn-secondary" onclick="generarPDF('phq')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarPHQ()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularPHQ()">Calcular resultado →</button>
           </div>
@@ -1006,7 +1014,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title">Ítems del cuestionario</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</p>
           <div id="gad-items-container"></div>
-          <div class="btn-row" style="margin-top:20px;">
+          
+        <button class="btn-secondary" onclick="generarPDF('gad')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarGAD()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularGAD()">Calcular resultado →</button>
           </div>
@@ -1064,7 +1074,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title">Ítems del inventario</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Indicá con qué frecuencia experimentás lo siguiente: <strong>1=Nunca · 2=Raramente · 3=A veces · 4=A menudo · 5=Siempre</strong></p>
           <div id="spaib-items-container"></div>
-          <div class="btn-row" style="margin-top:20px;">
+          
+        <button class="btn-secondary" onclick="generarPDF('spaib')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
+        <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarSPAIB()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularSPAIB()">Calcular resultado →</button>
           </div>
@@ -2467,6 +2479,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             </div>
           </div>
         </div>
+        
+        <button class="btn-secondary" onclick="generarPDF('scl90')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
         <div class="btn-row" style="margin-top:4px;">
           <button class="btn-secondary" onclick="limpiarScl90()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularScl90()">Calcular resultado →</button>
@@ -2571,6 +2585,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title" style="margin:24px 0 16px;">Sección B — Ítems 7 a 18 <span style="font-size:0.75rem;font-weight:400;color:var(--muted)">(Perfil sintomático completo)</span></div>
           <div id="asrs-items-b"></div>
         </div>
+        
+        <button class="btn-secondary" onclick="generarPDF('asrs')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
         <div class="btn-row">
           <button class="btn-secondary" onclick="limpiarAsrs()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularAsrs()">Calcular resultado →</button>
@@ -2615,6 +2631,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title" style="margin-bottom:16px;">Ítems 1–25</div>
           <div id="wurs-items"></div>
         </div>
+        
+        <button class="btn-secondary" onclick="generarPDF('wurs')" style="font-size:0.85rem;margin-right:auto;">🖨 Imprimir en blanco para completar a mano</button>
         <div class="btn-row">
           <button class="btn-secondary" onclick="limpiarWurs()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularWurs()">Calcular resultado →</button>
