@@ -1148,7 +1148,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="card-title">Datos de la evaluación</div>
           <div class="form-grid-3">
             <div class="field"><label>Paciente *</label><select id="digitos-paciente"><option value="">— Seleccionar paciente —</option></select></div>
-            <div class="field"><label>Grupo de edad *</label>
+            <div class="field"><label>Grupo de edad (Fay et al.) *</label>
               <select id="digitos-edad">
                 <option value="">— Seleccionar —</option>
                 <option value="0">40–49 años</option>
@@ -1175,12 +1175,32 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <div class="field"><label>Dígitos Directos (span 2–9)</label><input type="number" id="digitos-dir" min="2" max="9" placeholder="Ej: 6"></div>
             <div class="field"><label>Dígitos Inversos (span 2–8)</label><input type="number" id="digitos-inv" min="2" max="8" placeholder="Ej: 4"></div>
           </div>
-          <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
-            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;"><strong>Puntuación Escalar Total</strong> (opcional) — suma de escalares de Directos + Inversos, convertida según tablas WAIS por edad. M=10, DS=3.</p>
-            <div class="form-grid">
-              <div class="field"><label>Puntuación Escalar Total (1–19)</label><input type="number" id="digitos-escalar" min="1" max="19" placeholder="1–19"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntaje Total — WAIS-III</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">El puntaje bruto total (Directos + Inversos) se convierte automáticamente a puntuación escalar según baremos WAIS-III. Seleccioná el grupo de edad correspondiente.</p>
+          <div class="form-grid">
+            <div class="field"><label>Grupo de edad WAIS-III *</label>
+              <select id="digitos-edad-w3">
+                <option value="">— Seleccionar —</option>
+                <option value="0">16–17 años</option>
+                <option value="1">18–19 años</option>
+                <option value="2">20–24 años</option>
+                <option value="3">25–29 años</option>
+                <option value="4">30–34 años</option>
+                <option value="5">35–44 años</option>
+                <option value="6">45–54 años</option>
+                <option value="7">55–64 años</option>
+                <option value="8">65–69 años</option>
+                <option value="9">70–74 años</option>
+                <option value="10">75–79 años</option>
+                <option value="11">80–84 años</option>
+                <option value="12">85–89 años</option>
+              </select>
             </div>
+            <div class="field"><label>Puntaje Bruto Total (Directo + Inverso)</label><input type="number" id="digitos-bruto-total" min="0" max="30" placeholder="Ej: 21"></div>
           </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:8px;">La escalar y el Z se calcularán automáticamente. Z con M=10, DS=3 (estándar WAIS-III).</p>
           <div class="btn-row" style="margin-top:20px;">
             <button class="btn-secondary" onclick="limpiarDigitos()">🗑 Limpiar</button>
             <button class="btn-primary" onclick="calcularDigitos()">Calcular resultado →</button>
@@ -2801,6 +2821,43 @@ function calcularIFS(){
 // ══ DÍGITOS WAIS ═════════════════════════════════════════════════════════════
 // Baremos Fay, Leiva & Margulis (2018) — CABA. Por edad y NE.
 // [40-49, 50-59, 60-69, 70-79, 80-91]
+// ── WAIS-III Dígitos Total: bruto → escalar por grupo de edad ──────────────
+// Grupos: 0=16-17, 1=18-19, 2=20-24, 3=25-29, 4=30-34, 5=35-44,
+//         6=45-54, 7=55-64, 8=65-69, 9=70-74, 10=75-79, 11=80-84, 12=85-89
+// Tabla A.1 WAIS-III. Índice: bruto (0-30) → PE (1-19)
+var W3_DIG = [
+  // 16-17
+  [1,1,1,2,2,3,3,4,4,5,5,6,6,7,8,8,9,10,10,11,12,13,13,14,15,16,17,18,19,19,19],
+  // 18-19
+  [1,1,1,1,2,2,3,3,4,4,5,6,6,7,8,8,9,10,10,11,12,13,13,14,15,15,16,17,18,19,19],
+  // 20-24
+  [1,1,1,1,2,2,3,3,4,4,5,6,6,7,8,8,9,10,10,11,12,13,13,14,15,15,16,19,19,19,19],
+  // 25-29
+  [1,1,1,1,2,2,3,3,4,4,5,6,6,7,8,8,9,10,10,11,12,12,13,14,15,15,16,17,18,19,19],
+  // 30-34
+  [1,1,1,2,2,3,3,4,4,5,5,6,7,7,8,9,9,10,11,11,12,13,14,14,15,16,17,17,18,19,19],
+  // 35-44
+  [1,1,1,2,2,3,3,4,4,5,5,6,7,7,8,9,9,10,11,11,12,13,14,14,15,16,17,17,18,19,19],
+  // 45-54
+  [1,1,1,2,2,3,3,4,4,5,5,6,7,7,8,9,9,10,11,11,12,13,14,14,15,16,17,17,18,19,19],
+  // 55-64
+  [1,1,2,2,3,3,4,4,5,6,6,7,7,8,9,9,10,11,11,12,13,13,14,15,15,16,17,18,19,19,19],
+  // 65-69
+  [1,1,2,2,3,3,4,4,5,6,6,7,7,8,9,9,10,11,12,12,13,14,14,15,16,17,18,19,19,19,19],
+  // 70-74
+  [1,1,2,2,3,3,4,4,5,6,6,7,8,8,9,10,11,11,12,13,14,14,15,16,17,18,19,19,19,19,19],
+  // 75-79
+  [1,1,2,2,3,3,4,4,5,6,6,7,8,8,9,10,11,12,12,13,19,19,19,19,19,19,19,19,19,19,19],
+  // 80-84
+  [1,2,2,3,3,4,4,5,5,6,7,7,8,9,10,10,11,12,13,14,15,16,17,18,19,19,19,19,19,19,19],
+  // 85-89
+  [1,2,2,3,3,4,4,5,5,6,7,7,9,9,10,11,12,13,14,15,16,17,18,19,19,19,19,19,19,19,19]
+];
+function brutoToEscalarW3(bruto, gi) {
+  if(gi<0||gi>12||bruto<0||bruto>30) return null;
+  return W3_DIG[gi][bruto];
+}
+
 var DIG_BAR = {
   dir: {
     alto: [{M:6.9,DS:1.1},{M:6.7,DS:1.2},{M:6.4,DS:1.2},{M:6.1,DS:1.3},{M:5.8,DS:1.4}],
@@ -2817,7 +2874,8 @@ function iniciarDigitos(){
   document.getElementById('digitos-resultado').style.display='none';
 }
 function limpiarDigitos(){
-  ['digitos-dir','digitos-inv','digitos-escalar'].forEach(function(id){document.getElementById(id).value='';});
+  ['digitos-dir','digitos-inv','digitos-bruto-total','digitos-escalar'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var el=document.getElementById('digitos-edad-w3');if(el)el.value='';
 }
 function calcularDigitos(){
   var gi=document.getElementById('digitos-edad').value;
@@ -2826,7 +2884,8 @@ function calcularDigitos(){
   gi=parseInt(gi);
   var vDir=document.getElementById('digitos-dir').value;
   var vInv=document.getElementById('digitos-inv').value;
-  var vEsc=document.getElementById('digitos-escalar').value;
+  var vBrutoTotal=document.getElementById('digitos-bruto-total').value;
+  var giW3=document.getElementById('digitos-edad-w3').value;
   if(vDir===''&&vInv===''){alert('Ingresá al menos un puntaje de span.');return;}
   function zClf(z){
     if(z>=-1.0)return{clf:'Normal',col:'var(--green)',badge:'bg-minima'};
@@ -2840,26 +2899,32 @@ function calcularDigitos(){
     detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+r.col+'">'+br+'</div><div class="detalle-lbl">Span Directos</div></div>'+
       '<div class="detalle-item"><div class="detalle-num" style="color:'+r.col+'">'+(z>=0?'+':'')+z.toFixed(2)+'</div><div class="detalle-lbl">Z Directos</div></div>'+
       '<div class="detalle-item"><div class="detalle-num"><span class="badge '+r.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+r.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
-    interpPs.push('Dígitos Directos (span='+br+'): Z='+(z>=0?'+':'')+z.toFixed(2)+' → <strong>'+r.clf+'</strong>. Evalúa memoria auditiva inmediata.');
+    interpPs.push('Dígitos Directos (span='+br+'): Z='+(z>=0?'+':'')+z.toFixed(2)+' → <strong>'+r.clf+'</strong>. Evalúa memoria auditiva inmediata. (Fay et al., 2018)');
   }
   if(vInv!==''){
     var brI=parseInt(vInv);var barI=DIG_BAR.inv[ne][gi];var zI=(brI-barI.M)/barI.DS;var rI=zClf(zI);
     detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+rI.col+'">'+brI+'</div><div class="detalle-lbl">Span Inversos</div></div>'+
       '<div class="detalle-item"><div class="detalle-num" style="color:'+rI.col+'">'+(zI>=0?'+':'')+zI.toFixed(2)+'</div><div class="detalle-lbl">Z Inversos</div></div>'+
       '<div class="detalle-item"><div class="detalle-num"><span class="badge '+rI.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+rI.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
-    interpPs.push('Dígitos Inversos (span='+brI+'): Z='+(zI>=0?'+':'')+zI.toFixed(2)+' → <strong>'+rI.clf+'</strong>. Evalúa memoria de trabajo.');
+    interpPs.push('Dígitos Inversos (span='+brI+'): Z='+(zI>=0?'+':'')+zI.toFixed(2)+' → <strong>'+rI.clf+'</strong>. Evalúa memoria de trabajo. (Fay et al., 2018)');
   }
-  // Puntuación escalar total (M=10, DS=3 — estándar WAIS)
-  if(vEsc!==''){
-    var pe=parseInt(vEsc);var zE=(pe-10)/3;var rE=zClf(zE);
-    detalleHtml+='<div class="detalle-item" style="border-top:1px solid var(--border);padding-top:10px;margin-top:6px;grid-column:1/-1;"></div>'+
-      '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">'+pe+'</div><div class="detalle-lbl">PE Total</div></div>'+
-      '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">'+(zE>=0?'+':'')+zE.toFixed(2)+'</div><div class="detalle-lbl">Z Escalar Total</div></div>'+
-      '<div class="detalle-item"><div class="detalle-num"><span class="badge '+rE.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+rE.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
-    interpPs.push('Puntuación Escalar Total (PE='+pe+'): Z='+(zE>=0?'+':'')+zE.toFixed(2)+' → <strong>'+rE.clf+'</strong>. Calculado con M=10, DS=3 (estándar WAIS).');
+  // WAIS-III Total
+  if(vBrutoTotal!==''&&giW3!==''){
+    var bt=parseInt(vBrutoTotal);var giW=parseInt(giW3);
+    var pe=brutoToEscalarW3(bt,giW);
+    if(pe!==null){
+      var zE=(pe-10)/3;var rE=zClf(zE);
+      var edLabelsW3=['16–17','18–19','20–24','25–29','30–34','35–44','45–54','55–64','65–69','70–74','75–79','80–84','85–89'];
+      detalleHtml+='<div style="grid-column:1/-1;border-top:2px solid var(--border);margin:10px 0 4px;padding-top:4px;font-size:0.75rem;color:var(--muted);font-weight:600;">TOTAL WAIS-III</div>'+
+        '<div class="detalle-item"><div class="detalle-num">'+bt+'</div><div class="detalle-lbl">Bruto Total</div></div>'+
+        '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">PE '+pe+'</div><div class="detalle-lbl">Escalar (WAIS-III)</div></div>'+
+        '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">'+(zE>=0?'+':'')+zE.toFixed(2)+'</div><div class="detalle-lbl">Z Total</div></div>'+
+        '<div class="detalle-item"><div class="detalle-num"><span class="badge '+rE.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+rE.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
+      interpPs.push('Total Dígitos WAIS-III (bruto='+bt+', grupo '+edLabelsW3[giW]+'): PE='+pe+' → Z='+(zE>=0?'+':'')+zE.toFixed(2)+' → <strong>'+rE.clf+'</strong>. M=10, DS=3 (estándar WAIS-III).');
+    }
   }
   var interp=interpPs.map(function(p){return'<p>'+p+'</p>';}).join('');
-  interp+='<p><em>Baremos span: Fay, Leiva & Margulis (2018), CABA, ajustados por edad y NE. PE Total: norma WAIS M=10 DS=3. Interpretación orientativa.</em></p>';
+  interp+='<p><em>Baremos span: Fay, Leiva & Margulis (2018), CABA. Total: Tabla A.1 WAIS-III. Interpretación orientativa.</em></p>';
   document.getElementById('digitos-detalle').innerHTML=detalleHtml;
   document.getElementById('digitos-interp').innerHTML=interp;
   document.getElementById('digitos-form').style.display='none';
