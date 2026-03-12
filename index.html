@@ -396,6 +396,57 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   .app-main { margin-left:0; }
   .card { box-shadow:none; border:1px solid #ccc; }
 }
+
+/* ══ TOAST ══ */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:#2d6a4f; color:#fff; padding:11px 22px; border-radius:10px;
+  font-size:0.86rem; font-family:'Outfit',sans-serif; font-weight:500;
+  box-shadow:0 4px 18px rgba(0,0,0,0.18); opacity:0;
+  transition:opacity .25s, transform .25s; pointer-events:none; z-index:9999;
+  white-space:nowrap; letter-spacing:0.2px;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.error { background:#c0392b; }
+
+/* ══ BTN-XS ══ */
+.btn-xs {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:500;
+  font-family:'Outfit',sans-serif; cursor:pointer; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); transition:all .15s; line-height:1.4;
+}
+.btn-xs:hover { background:var(--surface-2); }
+.btn-xs.btn-xs-primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn-xs.btn-xs-primary:hover { background:var(--accentdk); }
+.btn-xs.btn-xs-danger { background:#fdf0f0; color:#c0392b; border-color:#f5c6c6; }
+.btn-xs.btn-xs-danger:hover { background:#fde3e3; }
+
+/* ══ STAI TABS ══ */
+.stai-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:20px; }
+.stai-tab {
+  padding:9px 20px; font-size:0.84rem; font-weight:500; cursor:pointer;
+  color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px;
+  font-family:'Outfit',sans-serif; transition:all .15s;
+}
+.stai-tab:hover { color:var(--text); }
+.stai-tab.active { color:var(--accentdk); border-bottom-color:var(--accent); font-weight:600; }
+
+/* ══ PAC-ACCIONES ══ */
+.pac-acciones { display:flex; gap:6px; align-items:center; }
+
+/* ══ FEEDBACK AL GUARDAR ══ */
+@keyframes savePulse {
+  0%   { box-shadow:0 0 0 0 rgba(45,106,79,0.5); }
+  70%  { box-shadow:0 0 0 10px rgba(45,106,79,0); }
+  100% { box-shadow:0 0 0 0 rgba(45,106,79,0); }
+}
+.btn-saved {
+  background:#2d6a4f !important; color:#fff !important;
+  animation:savePulse 0.6s ease-out;
+  transition:background .3s !important;
+}
+
 </style>
 </head>
 <body>
@@ -3221,6 +3272,22 @@ var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 var SESSION = null;
 var PACIENTES = [];
 var RESULTADOS = [];
+
+// ── Restaurar sesión guardada ──────────────────
+(function() {
+  try {
+    var saved = localStorage.getItem('psico_session');
+    if (saved) {
+      var s = JSON.parse(saved);
+      // Verificar que el token no esté expirado (exp en segundos)
+      if (s && s.access_token && s.expires_at && Date.now()/1000 < s.expires_at - 60) {
+        SESSION = s;
+      } else {
+        localStorage.removeItem('psico_session');
+      }
+    }
+  } catch(e) {}
+})();
 var pacienteSelModal = null;
 var sectorActual = '';
 
@@ -3251,6 +3318,7 @@ function doLogin() {
       errEl.textContent = 'Email o contraseña incorrectos.'; errEl.style.display = 'block'; return;
     }
     SESSION = data;
+    try { localStorage.setItem('psico_session', JSON.stringify(data)); } catch(e) {}
     document.getElementById('topbar-email').textContent = email;
     document.getElementById('screen-login').classList.remove('active');
     document.getElementById('screen-app').classList.add('active');
@@ -3261,6 +3329,7 @@ function doLogin() {
 }
 function doLogout() {
   SESSION = null; PACIENTES = []; RESULTADOS = [];
+  try { localStorage.removeItem('psico_session'); } catch(e) {}
   document.getElementById('screen-app').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('login-pass').value = '';
@@ -3307,7 +3376,7 @@ function renderPacientes() {
       (meta ? '<div class="pac-meta">' + meta + '</div>' : '') + '</div>' +
       '<div class="pac-acciones">' +
       '<button class="btn-xs btn-xs-primary" onclick="abrirModalPac(\'' + p.id + '\');event.stopPropagation()">Ver</button>' +
-      '<button class="btn-xs" style="background:#fad8d8;color:var(--red);border:none;" onclick="borrarPaciente(\'' + p.id + '\',\'' + p.nombre.replace(/'/g,"\\'") + '\');event.stopPropagation()">🗑</button>' +
+      '<button class="btn-xs btn-xs-danger" >✕</button>' +
       '</div></div>';
   }).join('');
 }
@@ -3413,7 +3482,7 @@ function renderHistorial() {
         '<td style="padding:10px 12px;font-size:0.84rem;">' + (r.categoria || '—') + '</td>' +
         '<td style="padding:10px 12px;font-size:0.82rem;color:var(--muted);">' + (r.fecha || '') + '</td>' +
         '<td style="padding:10px 12px;text-align:center;">' +
-        '<button class="btn-xs" style="background:#fad8d8;color:var(--red);border:none;" onclick="borrarResultado(\'' + r.id + '\')">🗑</button>' +
+        '<button class="btn-xs btn-xs-danger" onclick="borrarResultado(\\\'' + r.id + '\\\')">✕</button>' +
         '</td></tr>';
     }).join('') + '</tbody></table>';
   el.innerHTML = html;
@@ -3940,7 +4009,13 @@ function guardarResultadoBDI() {
     datos: { items: iteItems }
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+    .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ STAI ═════════════════════════════════════════════════════════════════════
@@ -4095,12 +4170,19 @@ function guardarResultadoSTAI() {
   if (!pacId) { toast('Seleccioná un paciente primero'); return; }
   var body = {
     user_id: SESSION.user.id, paciente_id: pacId, test: 'STAI', fecha: fecha,
-    puntaje_total: null, categoria: catE + ' / ' + catR,
+    puntaje_total: parseInt(ptsE),
+    categoria: catE + ' / ' + catR,
     detalle: { estado: parseInt(ptsE), rasgo: parseInt(ptsR) },
     datos: { estado: parseInt(ptsE), cat_estado: catE, rasgo: parseInt(ptsR), cat_rasgo: catR }
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+    .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ REY VERBAL — BAREMOS ════════════════════════════════════════════════════
@@ -4279,7 +4361,13 @@ function guardarResultadoRey() {
     datos: datosObj
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+    .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ TMT — BAREMOS ════════════════════════════════════════════════════════════
@@ -4522,7 +4610,13 @@ function guardarResultadoTMT() {
     datos: datosObj
   };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+    .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ FLUENCIA VERBAL — BAREMOS ════════════════════════════════════════════════
@@ -4705,7 +4799,13 @@ function guardarResultadoFLV() {
     percentil: zPrincipal!==null ? Math.max(1,Math.min(99,Math.round(50+28.57*zPrincipal))) : null,
     datos: datosObj };
   supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
-    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+    .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ PHQ-9 ════════════════════════════════════════════════════════════════════
@@ -4773,7 +4873,13 @@ function guardarResultadoPHQ() {
     user_id:SESSION.user.id, paciente_id:pacId, test:'PHQ-9', fecha:fecha,
     puntaje_total:pts, categoria:cat,
     datos:{ total:pts }
-  },SESSION.access_token).then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+  },SESSION.access_token).then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    // Animar el botón que estaba activo
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  });
 }
 
 // ══ GAD-7 ════════════════════════════════════════════════════════════════════
@@ -4834,7 +4940,10 @@ function guardarResultadoGAD(){
     user_id:SESSION.user.id, paciente_id:pacId, test:'GAD-7', fecha:fecha,
     puntaje_total:pts, categoria:cat,
     datos:{ total:pts }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 // ══ SPAI-B ═══════════════════════════════════════════════════════════════════
@@ -4919,7 +5028,10 @@ function guardarResultadoSPAIB(){
     user_id:SESSION.user.id, paciente_id:pacId, test:'SPAI-B', fecha:fecha,
     puntaje_total:pts, categoria:cat,
     datos:{ total:pts }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 // ══ MoCA ═════════════════════════════════════════════════════════════════════
@@ -4997,7 +5109,10 @@ function guardarResultadoMoCA(){
     puntaje_total:pts, categoria:cat,
     puntaje_z:mocaZ, puntaje_t:mocaT, percentil:mocaPerc,
     datos:{ total:pts, m:mocaM, ds:mocaDS, ne:document.getElementById('moca-ne').value, dominios:mocaVals }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 // ══ IFS ══════════════════════════════════════════════════════════════════════
@@ -5086,7 +5201,10 @@ function guardarResultadoIFS(){
     puntaje_total:total,categoria:cat,
     puntaje_z:z, puntaje_t:parseFloat((50+10*z).toFixed(1)), percentil:Math.max(1,Math.min(99,Math.round(50+28.57*z))),
     datos:datosObj
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 // ══ DÍGITOS WAIS ═════════════════════════════════════════════════════════════
 // Baremos Fay, Leiva & Margulis (2018) — CABA. Por edad y NE.
@@ -5212,7 +5330,10 @@ function guardarResultadoDigitos(){
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,
     puntaje_total:total?parseInt(total):null,categoria:'Ver detalle',datos:datosObj
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 // ══ ACE-R ════════════════════════════════════════════════════════════════════
@@ -5287,7 +5408,10 @@ function guardarResultadoACER(){
     user_id:SESSION.user.id, paciente_id:pacId, test:'ACE-R', fecha:fecha,
     puntaje_total:pts, categoria:cat,
     datos:{ total:pts }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 // ══ WCST-64 ══════════════════════════════════════════════════════════════════
@@ -5365,7 +5489,10 @@ function guardarResultadoWCST(){
     user_id:SESSION.user.id,paciente_id:pacId,test:'WCST-64',fecha:fecha,
     puntaje_total:vCat?parseInt(vCat):null,categoria:'Ver detalle',
     datos:{ categorias:vCat?parseInt(vCat):null }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 function calcularEdad(fnac) {
@@ -5385,10 +5512,13 @@ function actualizarSaludo() {
   document.getElementById('fecha-txt').textContent = dias[hoy.getDay()] + ', ' + hoy.getDate() + ' de ' + meses[hoy.getMonth()] + ' de ' + hoy.getFullYear();
 }
 
-function toast(msg) {
+function toast(msg, tipo) {
   var el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, 2800);
+  el.textContent = msg;
+  el.className = 'toast' + (tipo === 'error' ? ' error' : '');
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 3000);
 }
 // ══ SCL-90-R ══════════════════════════════════════════════════════════════════
 // Casullo & Pérez (2008). Adaptación UBA/CONICET. Buenos Aires.
@@ -5704,11 +5834,16 @@ function guardarResultadoScl90() {
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'SCL-90-R', fecha: fecha,
-    puntaje_total: null, categoria: 'Ver detalle',
+    puntaje_total: igt ? Math.round(parseFloat(igt.textContent)) : null, categoria: 'Ver detalle',
     datos: { subescalas: subescalas, igt: igt?parseFloat(igt.textContent):null, gsi: gsi?parseFloat(gsi.textContent):null }
   }, SESSION.access_token)
-  .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); })
-  .catch(function(){ alert('Error al guardar.'); });
+  .then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); }
+  })
+  .catch(function(){ toast('Error al guardar', 'error'); });
 }
 
 // ══ BEM 144 SIGNORET ══════════════════════════════════════════════════════════
@@ -5836,8 +5971,11 @@ function guardarResultadoSignoret(){
     puntaje_total:totalPts,categoria:'Ver detalle',
     datos:sigDatos
   },SESSION.access_token)
-  .then(function(){cargarResultados();toast('Resultado guardado ✓');})
-  .catch(function(){alert('Error al guardar.');});
+  .then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };})
+  .catch(function(){ toast('Error al guardar', 'error'); });
 }
 
 // ══ ASRS-V1.1 ════════════════════════════════════════════════════════════════
@@ -6056,7 +6194,7 @@ function guardarAsrs() {
     datos: { parte_a_positivos: asrsParteA, total_18: asrsTotal }
   }, SESSION.access_token)
   .then(function(){ alert('Resultado guardado.'); })
-  .catch(function(){ alert('Error al guardar.'); });
+  .catch(function(){ toast('Error al guardar', 'error'); });
 }
 
 // ══ WURS-25 ════════════════════════════════════════════════════════════════
@@ -6238,7 +6376,7 @@ function guardarWurs() {
     datos: { total: wursPts }
   }, SESSION.access_token)
   .then(function(){ alert('Resultado guardado.'); })
-  .catch(function(){ alert('Error al guardar.'); });
+  .catch(function(){ toast('Error al guardar', 'error'); });
 }
 
 // ══ SISTEMA PDF IMPRIMIBLE ════════════════════════════════════════════════
@@ -6731,7 +6869,10 @@ function guardarResultadoReloj(){
       numeros: parseInt(numeros.value),
       agujas: parseInt(agujas.value)
     }
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
 function iniciarMBI(){
@@ -6830,14 +6971,35 @@ function guardarResultadoMBI(){
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id, paciente_id:pacId,
     test:'MBI-HSS', fecha:fecha,
-    puntaje_total:null, categoria:catMBI,
+    puntaje_total:scores.CE, categoria:catMBI,
     datos:{CE:scores.CE, DP:scores.DP, RP:scores.RP,
            CE_cat:scores.CE>=27?'Alto':scores.CE>=19?'Moderado':'Bajo',
            DP_cat:scores.DP>=10?'Alto':scores.DP>=6?'Moderado':'Bajo',
            RP_cat:scores.RP<=33?'Bajo':scores.RP<=39?'Moderado':'Alto'}
-  },SESSION.access_token).then(function(){cargarResultados();toast('Resultado guardado ✓');});
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado', 'success');
+    var btn = document.querySelector('.vista.active .btn-primary');
+    if(btn){ btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1200); };});
 }
 
+
+// ── Auto-iniciar si hay sesión ─────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  if (SESSION && SESSION.access_token) {
+    // Hay sesión guardada — mostrar app directamente
+    var emailGuardado = '';
+    try {
+      var saved = JSON.parse(localStorage.getItem('psico_session') || '{}');
+      emailGuardado = saved.user && saved.user.email ? saved.user.email : '';
+    } catch(e) {}
+    document.getElementById('topbar-email').textContent = emailGuardado;
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-app').classList.add('active');
+    actualizarSaludo();
+    cargarPacientes();
+    cargarResultados();
+  }
+});
 </script>
 </body>
 </html>
