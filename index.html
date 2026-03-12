@@ -1,0 +1,3048 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PsicoEscala</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #fdf6ee;
+  --surface:   #fffbf5;
+  --surface2:  #f5ede0;
+  --border:    #e8d9c4;
+  --border2:   #d9c8ae;
+  --accent:    #e07b3a;
+  --accentdk:  #b85e1f;
+  --accentlt:  #f5a66a;
+  --text:      #2a1f14;
+  --muted:     #8a7060;
+  --green:     #2e7a4f;
+  --yellow:    #9a6e00;
+  --orange:    #c25000;
+  --red:       #a82828;
+  --radius:    12px;
+  --shadow:    0 2px 12px rgba(180,120,60,0.10);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+
+/* ══ PANTALLAS ══ */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ══ LOGIN ══ */
+#screen-login {
+  min-height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #fdf0e0 0%, #fce8d0 50%, #f9dfc0 100%);
+}
+#screen-login.active { display: flex; }
+
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 40px rgba(180,100,40,0.15);
+}
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-logo-icon {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--accent), var(--accentlt));
+  border-radius: 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(224,123,58,0.35);
+}
+.login-titulo { font-family: 'Lora', serif; font-size: 1.9rem; font-weight: 600; color: var(--accentdk); }
+.login-sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.login-field input {
+  width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 11px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.92rem; transition: border-color 0.15s;
+}
+.login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.12); }
+.login-field input::placeholder { color: #c4b09a; }
+
+.btn-login {
+  width: 100%; padding: 13px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
+  border: none; border-radius: 8px; color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 8px;
+  box-shadow: 0 3px 12px rgba(224,123,58,0.35); transition: opacity 0.2s, transform 0.1s;
+}
+.btn-login:hover { opacity: 0.88; transform: translateY(-1px); }
+.login-forgot { text-align: center; margin-top: 14px; font-size: 0.82rem; }
+.login-forgot a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.login-forgot a:hover { text-decoration: underline; }
+.login-error { background: #fde8e8; border: 1px solid #f5c0c0; border-radius: 8px; padding: 10px 14px; font-size: 0.84rem; color: var(--red); margin-bottom: 14px; display: none; }
+
+/* ══ APP SHELL ══ */
+#screen-app { display: none; flex-direction: column; min-height: 100vh; }
+#screen-app.active { display: flex; }
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo { display: flex; align-items: center; gap: 10px; }
+.topbar-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accentlt));
+  border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.topbar-nombre { font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 600; color: var(--accentdk); }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar-user { font-size: 0.82rem; color: var(--muted); }
+.btn-salir {
+  padding: 7px 14px; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--muted); font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.btn-salir:hover { border-color: var(--accent); color: var(--accentdk); }
+
+.app-content { flex: 1; padding: 36px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+/* ══ VISTAS ══ */
+.vista { display: none; }
+.vista.active { display: block; }
+
+/* ══ INICIO ══ */
+.inicio-saludo { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--accentdk); margin-bottom: 6px; }
+.inicio-fecha { font-size: 0.84rem; color: var(--muted); margin-bottom: 32px; }
+
+.sectores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 36px; }
+.sector-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 28px 28px 24px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+}
+.sector-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accentlt));
+}
+.sector-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(180,100,40,0.15); border-color: var(--accentlt); }
+.sector-icon { font-size: 2rem; margin-bottom: 12px; }
+.sector-titulo { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 6px; }
+.sector-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+.sector-tests { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.sector-tag {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 20px;
+  padding: 3px 10px; font-size: 0.72rem; color: var(--muted); font-weight: 500;
+}
+
+/* ══ PACIENTES ══ */
+.vista-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.vista-titulo { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--accentdk); }
+.btn-primary {
+  padding: 9px 18px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
+  border: none; border-radius: 7px; color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(224,123,58,0.25);
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-secondary {
+  padding: 9px 18px; background: var(--surface2); border: 1.5px solid var(--border2);
+  border-radius: 7px; color: var(--muted); font-family: 'DM Sans', sans-serif;
+  font-size: 0.86rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accentdk); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; box-shadow: var(--shadow); }
+.card-title { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.card-title::before { content: ''; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; }
+
+.pacientes-lista { display: flex; flex-direction: column; gap: 10px; }
+.paciente-item {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 9px;
+  padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; transition: all 0.15s;
+}
+.paciente-item:hover { border-color: var(--accentlt); background: #fdf0e2; }
+.pac-nombre { font-weight: 500; color: var(--text); }
+.pac-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.pac-acciones { display: flex; gap: 8px; }
+.btn-xs {
+  padding: 5px 12px; border-radius: 5px; font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s;
+}
+.btn-xs-primary { background: var(--accent); color: white; }
+.btn-xs-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+.btn-xs:hover { opacity: 0.8; }
+
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-txt { font-size: 0.9rem; }
+
+/* ══ FORMULARIOS ══ */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.field label { display: block; font-size: 0.73rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.field input, .field select, .field textarea {
+  width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 7px; padding: 9px 12px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; transition: border-color 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.1);
+}
+.field input::placeholder, .field textarea::placeholder { color: #c4b09a; }
+.field select option { background: var(--surface2); }
+.field textarea { resize: vertical; min-height: 80px; }
+.btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+/* ══ SECTOR / TESTS ══ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+  font-size: 0.84rem; cursor: pointer; margin-bottom: 20px; transition: color 0.15s;
+}
+.back-btn:hover { color: var(--accent); }
+
+.tests-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.test-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px 20px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+  text-align: center;
+}
+.test-card:hover { transform: translateY(-3px); border-color: var(--accentlt); box-shadow: 0 8px 24px rgba(180,100,40,0.15); }
+.test-icon { font-size: 2rem; margin-bottom: 10px; }
+.test-nombre { font-family: 'Lora', serif; font-size: 0.95rem; font-weight: 600; color: var(--accentdk); margin-bottom: 4px; }
+.test-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+.test-tag { display: inline-block; margin-top: 10px; padding: 2px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; font-size: 0.68rem; color: var(--muted); }
+
+/* ══ TEST BDI ══ */
+.section-label { font-size: 0.71rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin: 20px 0 10px; padding-bottom: 5px; border-bottom: 1.5px solid var(--border); }
+
+.bdi-items { display: flex; flex-direction: column; gap: 16px; }
+.bdi-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.bdi-pregunta { font-size: 0.84rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.bdi-opciones { display: flex; flex-direction: column; gap: 6px; }
+.bdi-opcion { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 6px; transition: background 0.12s; }
+.bdi-opcion:hover { background: rgba(224,123,58,0.06); }
+.bdi-opcion input[type=radio] { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+.bdi-opcion-texto { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
+.bdi-score { font-size: 0.7rem; color: var(--muted); margin-left: auto; font-family: 'DM Mono', monospace; padding-left: 8px; }
+
+/* ══ TEST STAI ══ */
+.stai-tabs { display: flex; gap: 0; margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border); }
+.stai-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 0.86rem; font-weight: 500; color: var(--muted); background: var(--surface2); transition: all 0.15s; }
+.stai-tab.active { background: var(--accent); color: white; font-weight: 600; }
+
+.stai-items { display: flex; flex-direction: column; gap: 10px; }
+.stai-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.stai-texto { font-size: 0.84rem; color: var(--text); flex: 1; }
+.stai-escala { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.stai-escala label { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+.stai-escala input[type=radio] { accent-color: var(--accent); }
+.stai-escala-lbl { font-size: 0.64rem; color: var(--muted); }
+
+/* ══ RESULTADOS TEST ══ */
+.resultado-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 28px 32px; box-shadow: var(--shadow);
+}
+.resultado-puntaje {
+  display: flex; align-items: center; gap: 24px; margin-bottom: 24px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--border);
+}
+.puntaje-grande { font-family: 'Lora', serif; font-size: 4rem; font-weight: 600; line-height: 1; color: var(--accentdk); }
+.puntaje-info { flex: 1; }
+.puntaje-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.puntaje-categoria { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 600; margin-top: 4px; }
+.puntaje-rango { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+.badge-grande { display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-top: 8px; }
+.bg-minima   { background: #d4f0e2; color: var(--green); }
+.bg-leve     { background: #fdf0c4; color: var(--yellow); }
+.bg-moderada { background: #fde8d0; color: var(--orange); }
+.bg-grave    { background: #fad8d8; color: var(--red); }
+.bg-bajo     { background: #d4f0e2; color: var(--green); }
+.bg-medio    { background: #fdf0c4; color: var(--yellow); }
+.bg-alto     { background: #fad8d8; color: var(--red); }
+
+.resultado-detalle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.detalle-item { background: var(--surface2); border-radius: 8px; padding: 12px 14px; text-align: center; }
+.detalle-num { font-family: 'DM Mono', monospace; font-size: 1.4rem; font-weight: 500; color: var(--accentdk); }
+.detalle-lbl { font-size: 0.7rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+.interp-box { background: #fef5ec; border: 1px solid #f0d4b0; border-radius: 9px; padding: 18px 22px; margin-top: 16px; }
+.interp-titulo { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--accentdk); margin-bottom: 10px; font-weight: 600; }
+.interp-texto { font-size: 0.86rem; color: var(--text); line-height: 1.8; }
+.interp-texto p { margin-bottom: 8px; }
+.interp-texto p:last-child { margin-bottom: 0; }
+
+/* ══ MODAL ══ */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,31,20,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--surface); border-radius: 16px; padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
+.modal-titulo { font-family: 'Lora', serif; font-size: 1.2rem; color: var(--accentdk); margin-bottom: 20px; font-weight: 600; }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+/* ══ STAI PERCENTILES TABLE ══ */
+.tabla-perc { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 12px; }
+.tabla-perc th { padding: 8px 12px; background: var(--surface2); border: 1px solid var(--border); font-weight: 600; color: var(--muted); text-align: center; font-size: 0.72rem; text-transform: uppercase; }
+.tabla-perc td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; color: var(--text); }
+.tabla-perc tr:nth-child(even) td { background: var(--surface2); }
+
+/* ══ TOAST ══ */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 12px 20px; border-radius: 8px; font-size: 0.86rem; font-weight: 500; z-index: 1000; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .sectores-grid, .tests-grid, .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+  .app-content { padding: 20px 16px; }
+  .topbar { padding: 0 16px; }
+  .resultado-detalle { grid-template-columns: 1fr 1fr; }
+  .stai-item { flex-direction: column; align-items: flex-start; }
+}
+@media print {
+  .topbar, .btn-primary, .btn-secondary, .back-btn, .btn-salir { display: none !important; }
+  body { background: white; }
+  .card, .resultado-box { box-shadow: none; border-color: #ddd; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ LOGIN ══ -->
+<div id="screen-login" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🧩</div>
+      <div class="login-titulo">PsicoEscala</div>
+      <div class="login-sub">Plataforma de evaluación psicológica</div>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-field"><label>Email</label><input type="email" id="login-email" placeholder="tu@email.com"></div>
+    <div class="login-field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()"></div>
+    <button class="btn-login" onclick="doLogin()">Ingresar</button>
+    <div class="login-forgot"><a onclick="doForgot()">¿Olvidaste tu contraseña?</a></div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="screen-app" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">🧩</div>
+      <span class="topbar-nombre">PsicoEscala</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topbar-email"></span>
+      <button class="btn-salir" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="app-content">
+
+    <!-- NAV TABS -->
+    <div style="display:flex; gap:6px; margin-bottom:28px; border-bottom:2px solid var(--border); padding-bottom:0;">
+      <button class="nav-tab active" onclick="irVista('inicio')" id="tab-inicio" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid var(--accent); margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; color:var(--accentdk);">Inicio</button>
+      <button class="nav-tab" onclick="irVista('pacientes')" id="tab-pacientes" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Pacientes</button>
+      <button class="nav-tab" onclick="irVista('historial')" id="tab-historial" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Historial</button>
+    </div>
+
+    <!-- ── INICIO ── -->
+    <div class="vista active" id="vista-inicio">
+      <div class="inicio-saludo" id="saludo-txt">Buenos días</div>
+      <div class="inicio-fecha" id="fecha-txt"></div>
+
+      <div class="sectores-grid">
+        <div class="sector-card" onclick="irSector('clinica')">
+          <div class="sector-icon">🧠</div>
+          <div class="sector-titulo">Psicología Clínica</div>
+          <div class="sector-sub">Tests para evaluación del estado emocional, ansiedad y depresión.</div>
+          <div class="sector-tests">
+            <span class="sector-tag">BDI-II</span>
+            <span class="sector-tag">STAI</span>
+            <span class="sector-tag">PHQ-9</span>
+            <span class="sector-tag">GAD-7</span>
+            <span class="sector-tag">SPAI-B</span>
+          </div>
+        </div>
+        <div class="sector-card" onclick="irSector('neuro')">
+          <div class="sector-icon">🔬</div>
+          <div class="sector-titulo">Neuropsicológicos</div>
+          <div class="sector-sub">Tests para evaluación de memoria, atención y funciones ejecutivas.</div>
+          <div class="sector-tests">
+            <span class="sector-tag">Rey Verbal</span>
+            <span class="sector-tag">TMT A/B</span>
+            <span class="sector-tag">Fluencia</span>
+            <span class="sector-tag">MoCA</span>
+            <span class="sector-tag">IFS</span>
+            <span class="sector-tag">Dígitos</span>
+            <span class="sector-tag">ACE-R</span>
+            <span class="sector-tag">WCST-64</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Últimas evaluaciones</div>
+        <div id="ultimas-lista"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Aún no hay evaluaciones registradas.</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── PACIENTES ── -->
+    <div class="vista" id="vista-pacientes">
+      <div id="subvista-lista-pac">
+        <div class="vista-header">
+          <div class="vista-titulo">Pacientes</div>
+          <button class="btn-primary" onclick="mostrarFormPac()">+ Nuevo paciente</button>
+        </div>
+        <div class="card">
+          <div id="pacientes-lista-contenido"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-txt">No hay pacientes registrados aún.</div></div></div>
+        </div>
+      </div>
+
+      <div id="subvista-form-pac" style="display:none;">
+        <div class="back-btn" onclick="cancelarFormPac()">← Volver</div>
+        <div class="card">
+          <div class="card-title" id="form-pac-titulo">Nuevo paciente</div>
+          <div class="form-grid">
+            <div class="field"><label>Nombre y apellido *</label><input type="text" id="fp-nombre" placeholder="Ej: María López"></div>
+            <div class="field"><label>Fecha de nacimiento</label><input type="date" id="fp-fnac"></div>
+          </div>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Sexo</label>
+              <select id="fp-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="field"><label>Escolaridad</label><input type="text" id="fp-escolaridad" placeholder="Ej: Universitario"></div>
+            <div class="field"><label>Teléfono</label><input type="text" id="fp-tel" placeholder="Opcional"></div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Notas</label>
+            <textarea id="fp-notas" placeholder="Observaciones adicionales..."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="cancelarFormPac()">Cancelar</button>
+            <button class="btn-primary" onclick="guardarPaciente()">Guardar paciente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORIAL ── -->
+    <div class="vista" id="vista-historial">
+      <div class="vista-header"><div class="vista-titulo">Historial de evaluaciones</div></div>
+      <div class="card">
+        <div id="historial-contenido"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No hay evaluaciones registradas aún.</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── SECTOR ── -->
+    <div class="vista" id="vista-sector">
+      <div class="back-btn" onclick="irVista('inicio')">← Volver al inicio</div>
+      <div class="vista-header"><div class="vista-titulo" id="sector-titulo">Tests</div></div>
+      <div class="tests-grid" id="tests-grid"></div>
+    </div>
+
+    <!-- ── TEST BDI ── -->
+    <div class="vista" id="vista-bdi">
+      <div class="back-btn" id="bdi-back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">BDI-II · Inventario de Depresión de Beck</div></div>
+
+      <div id="bdi-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Paciente *</label>
+              <select id="bdi-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="bdi-fecha"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ítems del inventario</div>
+          <div class="bdi-items" id="bdi-items-container"></div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarBDI()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularBDI()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="bdi-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="bdi-pts">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total BDI-II</div>
+              <div class="puntaje-categoria" id="bdi-cat">—</div>
+              <div class="puntaje-rango" id="bdi-rango">—</div>
+              <span class="badge-grande" id="bdi-badge">—</span>
+            </div>
+          </div>
+          <div class="interp-box">
+            <div class="interp-titulo">📋 Interpretación clínica</div>
+            <div class="interp-texto" id="bdi-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('bdi-resultado').style.display='none'; document.getElementById('bdi-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoBDI()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST STAI ── -->
+    <div class="vista" id="vista-stai">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">STAI · Inventario de Ansiedad Estado-Rasgo</div></div>
+
+      <div id="stai-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Paciente *</label>
+              <select id="stai-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field">
+              <label>Sexo *</label>
+              <select id="stai-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="v">Varón</option>
+                <option value="m">Mujer</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="stai-fecha"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="stai-tabs">
+            <div class="stai-tab active" id="stai-tab-e" onclick="staiTab('e')">Ansiedad Estado (E)</div>
+            <div class="stai-tab" id="stai-tab-r" onclick="staiTab('r')">Ansiedad Rasgo (R)</div>
+          </div>
+          <div id="stai-items-e" class="stai-items"></div>
+          <div id="stai-items-r" class="stai-items" style="display:none;"></div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarSTAI()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularSTAI()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="stai-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div style="display:flex; gap:32px; flex-wrap:wrap;">
+              <div>
+                <div class="puntaje-label">Ansiedad Estado</div>
+                <div class="puntaje-grande" id="stai-pts-e" style="font-size:3rem;">0</div>
+                <span class="badge-grande" id="stai-badge-e">—</span>
+              </div>
+              <div>
+                <div class="puntaje-label">Ansiedad Rasgo</div>
+                <div class="puntaje-grande" id="stai-pts-r" style="font-size:3rem;">0</div>
+                <span class="badge-grande" id="stai-badge-r">—</span>
+              </div>
+            </div>
+          </div>
+          <div class="resultado-detalle" id="stai-percentiles"></div>
+          <div class="interp-box">
+            <div class="interp-titulo">📋 Interpretación clínica</div>
+            <div class="interp-texto" id="stai-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('stai-resultado').style.display='none'; document.getElementById('stai-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoSTAI()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST REY VERBAL ── -->
+    <div class="vista" id="vista-rey">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Rey Verbal · Test de Aprendizaje Verbal</div></div>
+
+      <div id="rey-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Paciente *</label>
+              <select id="rey-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field">
+              <label>Sexo *</label>
+              <select id="rey-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="h">Hombre</option>
+                <option value="m">Mujer</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Grupo de edad *</label>
+              <select id="rey-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">16–19 años</option>
+                <option value="1">20–29 años</option>
+                <option value="2">30–39 años</option>
+                <option value="3">40–49 años</option>
+                <option value="4">50–59 años</option>
+                <option value="5">60–69 años</option>
+                <option value="6">70 o más</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="max-width:200px;">
+            <label>Fecha</label>
+            <input type="date" id="rey-fecha">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Puntajes brutos</div>
+          <div class="section-label">Ensayos de aprendizaje y Lista B</div>
+          <div class="form-grid">
+            <div class="field"><label>Trial I</label><input type="number" id="rey-t1" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Trial II</label><input type="number" id="rey-t2" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Trial III</label><input type="number" id="rey-t3" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Trial IV</label><input type="number" id="rey-t4" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Trial V</label><input type="number" id="rey-t5" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Sumatoria (I–V)</label><input type="number" id="rey-sum" placeholder="0–75" min="0" max="75"></div>
+            <div class="field"><label>Lista B</label><input type="number" id="rey-lb" placeholder="0–15" min="0" max="15"></div>
+          </div>
+          <div class="section-label">Recuerdo demorado y reconocimiento</div>
+          <div class="form-grid">
+            <div class="field"><label>Trial VI (recuerdo CP)</label><input type="number" id="rey-t6" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Trial VII (recuerdo LP)</label><input type="number" id="rey-t7" placeholder="0–15" min="0" max="15"></div>
+            <div class="field"><label>Reconocimiento</label><input type="number" id="rey-rec" placeholder="0–15" min="0" max="15"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="limpiarRey()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularRey()">Calcular puntajes Z →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="rey-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div class="puntaje-label">Rey Verbal · Resultados por variable</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-top:4px;" id="rey-res-meta"></div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;" id="rey-tabla">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Variable</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Puntaje bruto</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Media</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">DS</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Z</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="rey-tabla-body"></tbody>
+          </table>
+          <div class="interp-box" style="margin-top:20px;">
+            <div class="interp-titulo">📋 Síntesis interpretativa</div>
+            <div class="interp-texto" id="rey-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('rey-resultado').style.display='none';document.getElementById('rey-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoRey()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST TMT ── -->
+    <div class="vista" id="vista-tmt">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">TMT · Trail Making Test A y B</div></div>
+
+      <div id="tmt-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Paciente *</label>
+              <select id="tmt-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="tmt-fecha"></div>
+          </div>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Grupo de edad *</label>
+              <select id="tmt-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">16–29 años</option>
+                <option value="1">30–49 años</option>
+                <option value="2">50–64 años</option>
+                <option value="3">65 o más años</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Escolaridad *</label>
+              <select id="tmt-escol">
+                <option value="">— Seleccionar —</option>
+                <option value="baja">0–6 años (baja)</option>
+                <option value="media">7–10 años (media)</option>
+                <option value="alta">11 o más años (alta)</option>
+              </select>
+            </div>
+            <div class="field" style="opacity:0.5;">
+              <label>Nota</label>
+              <input type="text" disabled placeholder="Baja escolaridad: sin división por edad">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Tiempos de ejecución (en segundos)</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>TMT-A · Tiempo en segundos</label>
+              <input type="number" id="tmt-a" placeholder="Ej: 45" min="0" step="1">
+            </div>
+            <div class="field">
+              <label>TMT-B · Tiempo en segundos</label>
+              <input type="number" id="tmt-b" placeholder="Ej: 90" min="0" step="1">
+            </div>
+          </div>
+          <div style="background:#fef5ec;border:1px solid #f0d4b0;border-radius:8px;padding:10px 14px;font-size:0.8rem;color:var(--muted);margin-top:4px;">
+            ⏱ Recordá: el tiempo se carga en segundos. Ej: 1 minuto 30 segundos = 90 segundos.
+          </div>
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn-secondary" onclick="limpiarTMT()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularTMT()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tmt-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div class="puntaje-label">Trail Making Test · Resultados</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-top:4px;" id="tmt-res-meta"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;" id="tmt-res-cards"></div>
+
+          <div class="interp-box">
+            <div class="interp-titulo">📋 Interpretación clínica</div>
+            <div class="interp-texto" id="tmt-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('tmt-resultado').style.display='none';document.getElementById('tmt-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoTMT()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST FLUENCIA VERBAL ── -->
+    <div class="vista" id="vista-flv">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Fluencia Verbal · Semántica y Fonológica</div></div>
+
+      <div id="flv-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Paciente *</label>
+              <select id="flv-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="flv-fecha"></div>
+          </div>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Sexo *</label>
+              <select id="flv-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="v">Varón</option>
+                <option value="m">Mujer</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Nivel educativo *</label>
+              <select id="flv-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="alto">NE Alto (≥ 12 años de educación formal)</option>
+                <option value="bajo">NE Bajo (< 12 años de educación formal)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Grupo de edad *</label>
+              <select id="flv-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">15–29 años</option>
+                <option value="1">30–49 años</option>
+                <option value="2">50–70 años</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Puntajes brutos</div>
+          <div class="section-label">Fluencia Semántica</div>
+          <div class="form-grid">
+            <div class="field"><label>Animales</label><input type="number" id="flv-animales" placeholder="N° de animales" min="0"></div>
+            <div class="field"><label>Frutas</label><input type="number" id="flv-frutas" placeholder="N° de frutas" min="0"></div>
+          </div>
+          <div class="section-label">Fluencia Fonológica</div>
+          <div class="form-grid">
+            <div class="field"><label>Letra P</label><input type="number" id="flv-p" placeholder="N° de palabras con P" min="0"></div>
+            <div class="field"><label>Letra F</label><input type="number" id="flv-f" placeholder="N° de palabras con F" min="0"></div>
+          </div>
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn-secondary" onclick="limpiarFLV()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularFLV()">Calcular puntajes Z →</button>
+          </div>
+          <div style="background:#fef5ec;border:1px solid #f0d4b0;border-radius:8px;padding:12px 16px;font-size:0.78rem;color:var(--muted);margin-top:14px;line-height:1.7;">
+            <strong style="color:var(--accentdk);">Referencia normativa:</strong> Marino, J. & Alderete, A. M. (2010). Valores Normativos de Pruebas de Fluidez Verbal Categoriales, Fonológicas, Gramaticales y Combinadas y Análisis Comparativo de la Capacidad de Iniciación. <em>Revista Neuropsicología, Neuropsiquiatría y Neurociencias, 10</em>(1), 79–93.<br>
+            <strong style="color:var(--accentdk);">Nivel educativo:</strong> NE Alto = 12 o más años de educación formal (secundaria completa o más) · NE Bajo = menos de 12 años (secundaria incompleta o menos). Muestra: 259 adultos argentinos de 15–70 años (UNC, Córdoba).
+          </div>
+        </div>
+      </div>
+
+      <div id="flv-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div class="puntaje-label">Fluencia Verbal · Resultados por variable</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-top:4px;" id="flv-res-meta"></div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Variable</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Bruto</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Media</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">DS</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Z</th>
+                <th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="flv-tabla-body"></tbody>
+          </table>
+          <div class="interp-box" style="margin-top:20px;">
+            <div class="interp-titulo">📋 Síntesis interpretativa</div>
+            <div class="interp-texto" id="flv-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('flv-resultado').style.display='none';document.getElementById('flv-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoFLV()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST PHQ-9 ── -->
+    <div class="vista" id="vista-phq">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">PHQ-9 · Cuestionario de Salud del Paciente</div></div>
+      <div id="phq-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label><select id="phq-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="phq-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems del cuestionario</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</p>
+          <div id="phq-items-container"></div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarPHQ()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularPHQ()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="phq-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="phq-pts">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total PHQ-9</div>
+              <div class="puntaje-categoria" id="phq-cat">—</div>
+              <div class="puntaje-rango" id="phq-rango">—</div>
+              <span class="badge-grande" id="phq-badge">—</span>
+            </div>
+          </div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="phq-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('phq-resultado').style.display='none';document.getElementById('phq-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoPHQ()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST GAD-7 ── -->
+    <div class="vista" id="vista-gad">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">GAD-7 · Escala de Trastorno de Ansiedad Generalizada</div></div>
+      <div id="gad-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label><select id="gad-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="gad-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems del cuestionario</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</p>
+          <div id="gad-items-container"></div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarGAD()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularGAD()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="gad-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="gad-pts">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total GAD-7</div>
+              <div class="puntaje-categoria" id="gad-cat">—</div>
+              <div class="puntaje-rango" id="gad-rango">—</div>
+              <span class="badge-grande" id="gad-badge">—</span>
+            </div>
+          </div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="gad-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('gad-resultado').style.display='none';document.getElementById('gad-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoGAD()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST SPAI-B ── -->
+    <div class="vista" id="vista-spaib">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">SPAI-B · Inventario de Fobia y Ansiedad Social (Forma Breve)</div></div>
+      <div id="spaib-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="spaib-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Sexo *</label>
+              <select id="spaib-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="v">Varón</option>
+                <option value="m">Mujer</option>
+              </select>
+            </div>
+            <div class="field"><label>Grupo de edad *</label>
+              <select id="spaib-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="18-35">18–35 años</option>
+                <option value="36-80">36–80 años</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Fecha</label><input type="date" id="spaib-fecha"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems del inventario</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Indicá con qué frecuencia experimentás lo siguiente: <strong>1=Nunca · 2=Raramente · 3=A veces · 4=A menudo · 5=Siempre</strong></p>
+          <div id="spaib-items-container"></div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarSPAIB()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularSPAIB()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="spaib-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="spaib-pts">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total SPAI-B</div>
+              <div class="puntaje-categoria" id="spaib-cat">—</div>
+              <span class="badge-grande" id="spaib-badge">—</span>
+            </div>
+          </div>
+          <div class="resultado-detalle" id="spaib-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="spaib-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('spaib-resultado').style.display='none';document.getElementById('spaib-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoSPAIB()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST MoCA ── -->
+    <div class="vista" id="vista-moca">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">MoCA · Montreal Cognitive Assessment</div></div>
+      <div id="moca-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="moca-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Escolaridad *</label>
+              <select id="moca-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="primaria">Primaria o menos (≤6 años)</option>
+                <option value="media">Secundaria incompleta (7–12 años)</option>
+                <option value="alta">Secundaria completa o más (>12 años)</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="moca-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes por dominio</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá el puntaje bruto obtenido en cada dominio según el protocolo MoCA.</p>
+          <div class="form-grid">
+            <div class="field"><label>Visuoespacial / Ejecutivo (0–5)</label><input type="number" id="moca-visuo" min="0" max="5" placeholder="0–5"></div>
+            <div class="field"><label>Identificación / Denominación (0–3)</label><input type="number" id="moca-ident" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>Atención (0–6)</label><input type="number" id="moca-aten" min="0" max="6" placeholder="0–6"></div>
+            <div class="field"><label>Lenguaje (0–3)</label><input type="number" id="moca-leng" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>Abstracción (0–2)</label><input type="number" id="moca-abst" min="0" max="2" placeholder="0–2"></div>
+            <div class="field"><label>Recuerdo diferido (0–5)</label><input type="number" id="moca-recu" min="0" max="5" placeholder="0–5"></div>
+            <div class="field"><label>Orientación (0–6)</label><input type="number" id="moca-orie" min="0" max="6" placeholder="0–6"></div>
+          </div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarMoCA()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularMoCA()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="moca-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="moca-pts-total">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total MoCA</div>
+              <div class="puntaje-categoria" id="moca-cat">—</div>
+              <span class="badge-grande" id="moca-badge">—</span>
+            </div>
+          </div>
+          <div class="resultado-detalle" id="moca-dominios"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="moca-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('moca-resultado').style.display='none';document.getElementById('moca-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoMoCA()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST IFS ── -->
+    <div class="vista" id="vista-ifs">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">IFS · INECO Frontal Screening</div></div>
+      <div id="ifs-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="ifs-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Grupo de edad *</label>
+              <select id="ifs-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">20–34 años</option>
+                <option value="1">35–49 años</option>
+                <option value="2">50–64 años</option>
+                <option value="3">65–88 años</option>
+              </select>
+            </div>
+            <div class="field"><label>Escolaridad *</label>
+              <select id="ifs-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="0">2–7 años</option>
+                <option value="1">8–12 años</option>
+                <option value="2">&gt;12 años</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Fecha</label><input type="date" id="ifs-fecha"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes por subtest</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá el puntaje bruto de cada subtest según el protocolo IFS (Torralva et al., 2009).</p>
+          <div class="form-grid">
+            <div class="field"><label>1. Series Motoras (0–3)</label><input type="number" id="ifs-motor" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>2. Instrucciones Conflictivas (0–3)</label><input type="number" id="ifs-conflicto" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>3. Go-No Go (0–3)</label><input type="number" id="ifs-gonogo" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>4. Dígitos hacia atrás (0–6)</label><input type="number" id="ifs-digitos" min="0" max="6" placeholder="0–6"></div>
+            <div class="field"><label>5. Meses hacia atrás (0–2)</label><input type="number" id="ifs-meses" min="0" max="2" placeholder="0–2"></div>
+            <div class="field"><label>6. Corsi inverso (0–4)</label><input type="number" id="ifs-corsi" min="0" max="4" placeholder="0–4"></div>
+            <div class="field"><label>7. Refranes (0–3)</label><input type="number" id="ifs-refranes" min="0" max="3" placeholder="0–3"></div>
+            <div class="field"><label>8. Hayling modificado (0–6)</label><input type="number" id="ifs-hayling" min="0" max="6" placeholder="0–6"></div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:10px;">Dígitos: puntaje = número de serie lograda (máx 6ª serie = 6 pts). Hayling: 2pts c/u en 3 ítems de inhibición. Total IFS = /30.</p>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarIFS()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularIFS()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="ifs-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="ifs-pts-total">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total IFS</div>
+              <div class="puntaje-categoria" id="ifs-cat">—</div>
+              <span class="badge-grande" id="ifs-badge">—</span>
+            </div>
+          </div>
+          <div class="resultado-detalle" id="ifs-subtests"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="ifs-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('ifs-resultado').style.display='none';document.getElementById('ifs-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoIFS()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST DÍGITOS WAIS ── -->
+    <div class="vista" id="vista-digitos">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Dígitos WAIS · Directos e Inversos</div></div>
+      <div id="digitos-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="digitos-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Grupo de edad *</label>
+              <select id="digitos-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">40–49 años</option>
+                <option value="1">50–59 años</option>
+                <option value="2">60–69 años</option>
+                <option value="3">70–79 años</option>
+                <option value="4">80–91 años</option>
+              </select>
+            </div>
+            <div class="field"><label>Escolaridad *</label>
+              <select id="digitos-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="bajo">Bajo (&lt;12 años)</option>
+                <option value="alto">Alto (≥12 años)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Fecha</label><input type="date" id="digitos-fecha"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes de span</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá el span máximo logrado (cantidad de dígitos en la secuencia más larga respondida correctamente).</p>
+          <div class="form-grid">
+            <div class="field"><label>Dígitos Directos (span 2–9)</label><input type="number" id="digitos-dir" min="2" max="9" placeholder="Ej: 6"></div>
+            <div class="field"><label>Dígitos Inversos (span 2–8)</label><input type="number" id="digitos-inv" min="2" max="8" placeholder="Ej: 4"></div>
+          </div>
+          <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;"><strong>Puntuación Escalar Total</strong> (opcional) — suma de escalares de Directos + Inversos, convertida según tablas WAIS por edad. M=10, DS=3.</p>
+            <div class="form-grid">
+              <div class="field"><label>Puntuación Escalar Total (1–19)</label><input type="number" id="digitos-escalar" min="1" max="19" placeholder="1–19"></div>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarDigitos()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularDigitos()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="digitos-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="digitos-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="digitos-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('digitos-resultado').style.display='none';document.getElementById('digitos-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoDigitos()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST ACE-R ── -->
+    <div class="vista" id="vista-acer">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">ACE-R · Addenbrooke's Cognitive Examination Revisado</div></div>
+      <div id="acer-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="acer-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Escolaridad *</label>
+              <select id="acer-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="baja">Baja (≤6 años)</option>
+                <option value="alta">Alta (&gt;6 años)</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="acer-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes por dominio</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá el puntaje bruto de cada dominio según el protocolo ACE-R (Torralva et al., 2011).</p>
+          <div class="form-grid">
+            <div class="field"><label>Orientación (0–10)</label><input type="number" id="acer-orient" min="0" max="10" placeholder="0–10"></div>
+            <div class="field"><label>Atención (0–8)</label><input type="number" id="acer-aten" min="0" max="8" placeholder="0–8"></div>
+            <div class="field"><label>Memoria (0–26)</label><input type="number" id="acer-memo" min="0" max="26" placeholder="0–26"></div>
+            <div class="field"><label>Fluencia verbal (0–14)</label><input type="number" id="acer-fluencia" min="0" max="14" placeholder="0–14"></div>
+            <div class="field"><label>Lenguaje (0–26)</label><input type="number" id="acer-lenguaje" min="0" max="26" placeholder="0–26"></div>
+            <div class="field"><label>Habilidades visuoespaciales (0–16)</label><input type="number" id="acer-visuo" min="0" max="16" placeholder="0–16"></div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:12px;">El índice VLOM se calcula automáticamente. Para ello se requiere ingresar Orientación, Memoria, Fluencia y Lenguaje.</p>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarACER()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularACER()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="acer-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="acer-pts-total">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total ACE-R</div>
+              <div class="puntaje-categoria" id="acer-cat">—</div>
+              <span class="badge-grande" id="acer-badge">—</span>
+            </div>
+          </div>
+          <div class="resultado-detalle" id="acer-dominios"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="acer-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('acer-resultado').style.display='none';document.getElementById('acer-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoACER()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST WCST-64 ── -->
+    <div class="vista" id="vista-wcst">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">WCST-64 · Wisconsin Card Sorting Test</div></div>
+      <div id="wcst-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="wcst-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Grupo de edad *</label>
+              <select id="wcst-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="0">18–29 años</option>
+                <option value="1">30–39 años</option>
+                <option value="2">40–49 años</option>
+                <option value="3">50–59 años</option>
+                <option value="4">60–69 años</option>
+                <option value="5">70–79 años</option>
+                <option value="6">80–89 años</option>
+              </select>
+            </div>
+            <div class="field"><label>Escolaridad *</label>
+              <select id="wcst-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="bajo">Bajo (&lt;12 años)</option>
+                <option value="alto">Alto (≥12 años)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Fecha</label><input type="date" id="wcst-fecha"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Variables del WCST-64</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá los valores obtenidos en la administración del WCST de 64 cartas (Miranda et al., 2020; Farías Sarquís et al., 2023).</p>
+          <div class="form-grid">
+            <div class="field"><label>Categorías completadas (0–6)</label><input type="number" id="wcst-cat" min="0" max="6" placeholder="0–6"></div>
+            <div class="field"><label>Intentos para 1ª categoría (1–64)</label><input type="number" id="wcst-intentos" min="1" max="64" placeholder="Ej: 12"></div>
+            <div class="field"><label>Errores perseverativos (%)</label><input type="number" id="wcst-perse" min="0" max="100" placeholder="0–100" step="0.1"></div>
+            <div class="field"><label>Fallas en mantener set (nº)</label><input type="number" id="wcst-fallas" min="0" max="20" placeholder="Ej: 2"></div>
+          </div>
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-secondary" onclick="limpiarWCST()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularWCST()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+      <div id="wcst-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="wcst-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="wcst-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('wcst-resultado').style.display='none';document.getElementById('wcst-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoWCST()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app-content -->
+</div><!-- /screen-app -->
+
+<!-- ══ MODAL PACIENTE DETALLE ══ -->
+<div class="modal-overlay" id="modal-pac">
+  <div class="modal">
+    <div class="modal-titulo" id="modal-pac-nombre">—</div>
+    <div style="font-size:0.84rem; color:var(--muted); line-height:1.8;" id="modal-pac-info"></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="cerrarModal('modal-pac')">Cerrar</button>
+      <button class="btn-primary" onclick="evaluarPacienteDesdeModal()">Evaluar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ CONFIG SUPABASE ══════════════════════════════════════════════════════════
+var SUPA_URL = 'https://pyexublmpsyoidetekbh.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5ZXh1YmxtcHN5b2lkZXRla2JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNjAzOTgsImV4cCI6MjA4ODgzNjM5OH0.vRVLl0NNKI1IVG2OamaUvnSuUo-3umhdziLXaO-Thp0';
+
+var SESSION = null;
+var PACIENTES = [];
+var RESULTADOS = [];
+var pacienteSelModal = null;
+var sectorActual = '';
+
+// ══ SUPABASE HELPER ══════════════════════════════════════════════════════════
+function supaFetch(path, method, body, token) {
+  var headers = { 'Content-Type': 'application/json', 'apikey': SUPA_KEY };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=representation';
+  return fetch(SUPA_URL + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined });
+}
+function supaAuth(action, body) {
+  return fetch(SUPA_URL + '/auth/v1/' + action, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); });
+}
+
+// ══ AUTH ═════════════════════════════════════════════════════════════════════
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass  = document.getElementById('login-pass').value;
+  var errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'Completá email y contraseña.'; errEl.style.display = 'block'; return; }
+  supaAuth('token?grant_type=password', { email: email, password: pass }).then(function(data) {
+    if (data.error || !data.access_token) {
+      errEl.textContent = 'Email o contraseña incorrectos.'; errEl.style.display = 'block'; return;
+    }
+    SESSION = data;
+    document.getElementById('topbar-email').textContent = email;
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-app').classList.add('active');
+    actualizarSaludo();
+    cargarPacientes();
+    cargarResultados();
+  });
+}
+function doLogout() {
+  SESSION = null; PACIENTES = []; RESULTADOS = [];
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  document.getElementById('login-pass').value = '';
+}
+function doForgot() {
+  var email = document.getElementById('login-email').value.trim();
+  if (!email) { alert('Escribí tu email primero.'); return; }
+  supaAuth('recover', { email: email }).then(function() {
+    alert('Si el email existe, recibirás un enlace para restablecer tu contraseña.');
+  });
+}
+
+// ══ DATOS ════════════════════════════════════════════════════════════════════
+function cargarPacientes() {
+  supaFetch('/rest/v1/psico_pacientes?select=*&order=nombre.asc', 'GET', null, SESSION.access_token)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      PACIENTES = Array.isArray(data) ? data : [];
+      renderPacientes();
+      llenarSelectPacientes();
+      renderUltimas();
+    });
+}
+function cargarResultados() {
+  supaFetch('/rest/v1/psico_resultados?select=*,psico_pacientes(nombre)&order=creado.desc&limit=20', 'GET', null, SESSION.access_token)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      RESULTADOS = Array.isArray(data) ? data : [];
+      renderHistorial();
+      renderUltimas();
+    });
+}
+
+// ══ PACIENTES ════════════════════════════════════════════════════════════════
+function renderPacientes() {
+  var el = document.getElementById('pacientes-lista-contenido');
+  if (!PACIENTES.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-txt">No hay pacientes registrados aún.</div></div>'; return; }
+  el.innerHTML = PACIENTES.map(function(p) {
+    var edad = p.fecha_nacimiento ? calcularEdad(p.fecha_nacimiento) + ' años' : '';
+    var meta = [p.sexo, edad, p.escolaridad].filter(Boolean).join(' · ');
+    return '<div class="paciente-item">' +
+      '<div><div class="pac-nombre">' + p.nombre + '</div>' +
+      (meta ? '<div class="pac-meta">' + meta + '</div>' : '') + '</div>' +
+      '<div class="pac-acciones">' +
+      '<button class="btn-xs btn-xs-primary" onclick="abrirModalPac(\'' + p.id + '\');event.stopPropagation()">Ver</button>' +
+      '<button class="btn-xs" style="background:#fad8d8;color:var(--red);border:none;" onclick="borrarPaciente(\'' + p.id + '\',\'' + p.nombre.replace(/'/g,"\\'") + '\');event.stopPropagation()">🗑</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function borrarPaciente(id, nombre) {
+  if (!confirm('¿Eliminar a ' + nombre + '?\nSe borrarán también todas sus evaluaciones. Esta acción no se puede deshacer.')) return;
+  // primero borrar resultados del paciente, luego el paciente
+  supaFetch('/rest/v1/psico_resultados?paciente_id=eq.' + id, 'DELETE', null, SESSION.access_token)
+    .then(function() {
+      return supaFetch('/rest/v1/psico_pacientes?id=eq.' + id, 'DELETE', null, SESSION.access_token);
+    })
+    .then(function() {
+      cargarPacientes();
+      cargarResultados();
+      toast('Paciente eliminado');
+    });
+}
+
+function llenarSelectPacientes() {
+  var opciones = '<option value="">— Seleccionar paciente —</option>' +
+    PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
+  ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
+   'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
+   'digitos-paciente','acer-paciente','wcst-paciente'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = opciones;
+  });
+}
+
+function mostrarFormPac() {
+  document.getElementById('subvista-lista-pac').style.display = 'none';
+  document.getElementById('subvista-form-pac').style.display = 'block';
+  document.getElementById('form-pac-titulo').textContent = 'Nuevo paciente';
+  ['fp-nombre','fp-fnac','fp-escolaridad','fp-tel','fp-notas'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('fp-sexo').value = '';
+}
+function cancelarFormPac() {
+  document.getElementById('subvista-lista-pac').style.display = 'block';
+  document.getElementById('subvista-form-pac').style.display = 'none';
+}
+function guardarPaciente() {
+  var nombre = document.getElementById('fp-nombre').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio.'); return; }
+  var body = {
+    user_id: SESSION.user.id,
+    nombre: nombre,
+    fecha_nacimiento: document.getElementById('fp-fnac').value || null,
+    sexo: document.getElementById('fp-sexo').value || null,
+    escolaridad: document.getElementById('fp-escolaridad').value || null,
+    notas: document.getElementById('fp-notas').value || null
+  };
+  supaFetch('/rest/v1/psico_pacientes', 'POST', body, SESSION.access_token)
+    .then(function(r){ return r.json(); })
+    .then(function() { cancelarFormPac(); cargarPacientes(); toast('Paciente guardado ✓'); });
+}
+
+function abrirModalPac(id) {
+  var p = PACIENTES.find(function(x){ return x.id === id; });
+  if (!p) return;
+  pacienteSelModal = p;
+  document.getElementById('modal-pac-nombre').textContent = p.nombre;
+  var info = '';
+  if (p.fecha_nacimiento) info += '<b>Fecha nac.:</b> ' + p.fecha_nacimiento + ' (' + calcularEdad(p.fecha_nacimiento) + ' años)<br>';
+  if (p.sexo) info += '<b>Sexo:</b> ' + p.sexo + '<br>';
+  if (p.escolaridad) info += '<b>Escolaridad:</b> ' + p.escolaridad + '<br>';
+  if (p.notas) info += '<b>Notas:</b> ' + p.notas;
+  document.getElementById('modal-pac-info').innerHTML = info || 'Sin datos adicionales.';
+  document.getElementById('modal-pac').classList.add('active');
+}
+function evaluarPacienteDesdeModal() {
+  cerrarModal('modal-pac');
+  irSector('clinica');
+}
+function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ══ HISTORIAL ════════════════════════════════════════════════════════════════
+function renderHistorial() {
+  var el = document.getElementById('historial-contenido');
+  if (!RESULTADOS.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No hay evaluaciones registradas aún.</div></div>'; return; }
+  var html = '<table style="width:100%;border-collapse:collapse;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Paciente</th>' +
+    '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Test</th>' +
+    '<th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Puntaje</th>' +
+    '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Categoría</th>' +
+    '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Fecha</th>' +
+    '<th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Borrar</th>' +
+    '</tr></thead><tbody>' +
+    RESULTADOS.map(function(r) {
+      var nomPac = r.psico_pacientes ? r.psico_pacientes.nombre : '—';
+      return '<tr style="border-bottom:1px solid var(--border);">' +
+        '<td style="padding:10px 12px;font-size:0.84rem;">' + nomPac + '</td>' +
+        '<td style="padding:10px 12px;font-size:0.84rem;font-weight:600;color:var(--accentdk);">' + r.test + '</td>' +
+        '<td style="padding:10px 12px;font-size:0.84rem;text-align:center;font-family:\'DM Mono\',monospace;">' + (r.puntaje_total !== null ? r.puntaje_total : '—') + '</td>' +
+        '<td style="padding:10px 12px;font-size:0.84rem;">' + (r.categoria || '—') + '</td>' +
+        '<td style="padding:10px 12px;font-size:0.82rem;color:var(--muted);">' + (r.fecha || '') + '</td>' +
+        '<td style="padding:10px 12px;text-align:center;">' +
+        '<button class="btn-xs" style="background:#fad8d8;color:var(--red);border:none;" onclick="borrarResultado(\'' + r.id + '\')">🗑</button>' +
+        '</td></tr>';
+    }).join('') + '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function borrarResultado(id) {
+  if (!confirm('¿Borrar esta evaluación? No se puede deshacer.')) return;
+  supaFetch('/rest/v1/psico_resultados?id=eq.' + id, 'DELETE', null, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Evaluación borrada'); });
+}
+
+function renderUltimas() {
+  var el = document.getElementById('ultimas-lista');
+  if (!RESULTADOS.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Aún no hay evaluaciones registradas.</div></div>'; return; }
+  var ultimas = RESULTADOS.slice(0, 5);
+  el.innerHTML = ultimas.map(function(r) {
+    var nomPac = r.psico_pacientes ? r.psico_pacientes.nombre : '—';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">' +
+      '<div><div style="font-size:0.86rem;font-weight:500;">' + nomPac + '</div>' +
+      '<div style="font-size:0.76rem;color:var(--muted);">' + r.test + ' · ' + (r.fecha||'') + '</div></div>' +
+      '<div style="font-size:0.82rem;color:var(--accentdk);font-weight:600;">' + (r.categoria||'—') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ══ NAVEGACIÓN ═══════════════════════════════════════════════════════════════
+function irVista(v) {
+  document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('vista-' + v).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(function(el){
+    el.style.borderBottomColor = 'transparent'; el.style.color = 'var(--muted)'; el.style.fontWeight = '500';
+  });
+  var tab = document.getElementById('tab-' + v);
+  if (tab) { tab.style.borderBottomColor = 'var(--accent)'; tab.style.color = 'var(--accentdk)'; tab.style.fontWeight = '600'; }
+}
+
+function irSector(s) {
+  sectorActual = s;
+  document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('vista-sector').classList.add('active');
+  if (s === 'clinica') {
+    document.getElementById('sector-titulo').textContent = 'Psicología Clínica';
+    document.getElementById('tests-grid').innerHTML =
+      '<div class="test-card" onclick="irTest(\'bdi\')">' +
+        '<div class="test-icon">😔</div>' +
+        '<div class="test-nombre">BDI-II</div>' +
+        '<div class="test-desc">Inventario de Depresión de Beck — Segunda Edición</div>' +
+        '<span class="test-tag">21 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'stai\')">' +
+        '<div class="test-icon">😰</div>' +
+        '<div class="test-nombre">STAI</div>' +
+        '<div class="test-desc">Inventario de Ansiedad Estado-Rasgo</div>' +
+        '<span class="test-tag">40 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'phq\')">' +
+        '<div class="test-icon">🌧</div>' +
+        '<div class="test-nombre">PHQ-9</div>' +
+        '<div class="test-desc">Cuestionario de Salud del Paciente — Screening de depresión mayor</div>' +
+        '<span class="test-tag">9 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'gad\')">' +
+        '<div class="test-icon">🌀</div>' +
+        '<div class="test-nombre">GAD-7</div>' +
+        '<div class="test-desc">Escala de Trastorno de Ansiedad Generalizada</div>' +
+        '<span class="test-tag">7 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'spaib\')">' +
+        '<div class="test-icon">👥</div>' +
+        '<div class="test-nombre">SPAI-B</div>' +
+        '<div class="test-desc">Inventario de Fobia y Ansiedad Social — Forma Breve</div>' +
+        '<span class="test-tag">16 ítems · Baremos argentinos</span>' +
+      '</div>';
+  } else {
+    document.getElementById('sector-titulo').textContent = 'Neuropsicológicos';
+    document.getElementById('tests-grid').innerHTML =
+      '<div class="test-card" onclick="irTest(\'rey\')">' +
+        '<div class="test-icon">🧩</div>' +
+        '<div class="test-nombre">Rey Verbal</div>' +
+        '<div class="test-desc">Test de Aprendizaje Verbal de Rey — Baremos por sexo y edad</div>' +
+        '<span class="test-tag">10 variables</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'tmt\')">' +
+        '<div class="test-icon">🔀</div>' +
+        '<div class="test-nombre">TMT A y B</div>' +
+        '<div class="test-desc">Trail Making Test — Atención, velocidad y flexibilidad cognitiva</div>' +
+        '<span class="test-tag">Baremos argentinos 2018</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'flv\')">' +
+        '<div class="test-icon">🗣</div>' +
+        '<div class="test-nombre">Fluencia Verbal</div>' +
+        '<div class="test-desc">Semántica y fonológica — Puntaje Z por sexo, edad y nivel educativo</div>' +
+        '<span class="test-tag">Baremos Marino & Alderete 2010</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'moca\')">' +
+        '<div class="test-icon">🔍</div>' +
+        '<div class="test-nombre">MoCA</div>' +
+        '<div class="test-desc">Montreal Cognitive Assessment — Cribado cognitivo multidimensional</div>' +
+        '<span class="test-tag">30 puntos · 7 dominios</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'ifs\')">' +
+        '<div class="test-icon">🧭</div>' +
+        '<div class="test-nombre">IFS</div>' +
+        '<div class="test-desc">INECO Frontal Screening — Funciones ejecutivas frontales</div>' +
+        '<span class="test-tag">8 subtests · 30 puntos</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'digitos\')">' +
+        '<div class="test-icon">🔢</div>' +
+        '<div class="test-nombre">Dígitos WAIS</div>' +
+        '<div class="test-desc">Span de dígitos directos e inversos — Memoria inmediata y de trabajo</div>' +
+        '<span class="test-tag">Baremos Fay et al. 2018</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'acer\')">' +
+        '<div class="test-icon">📋</div>' +
+        '<div class="test-nombre">ACE-R</div>' +
+        '<div class="test-desc">Addenbrooke\'s Cognitive Examination — Revisado. Evaluación cognitiva global</div>' +
+        '<span class="test-tag">100 puntos · 6 dominios</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'wcst\')">' +
+        '<div class="test-icon">🃏</div>' +
+        '<div class="test-nombre">WCST-64</div>' +
+        '<div class="test-desc">Wisconsin Card Sorting Test — 64 cartas. Flexibilidad cognitiva y perseveración</div>' +
+        '<span class="test-tag">Baremos Córdoba 2023</span>' +
+      '</div>';
+  }
+}
+
+function irTest(t) {
+  document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('vista-' + t).classList.add('active');
+  if (t === 'bdi') iniciarBDI();
+  if (t === 'stai') iniciarSTAI();
+  if (t === 'rey') iniciarRey();
+  if (t === 'tmt') iniciarTMT();
+  if (t === 'flv') iniciarFLV();
+  if (t === 'phq') iniciarPHQ();
+  if (t === 'gad') iniciarGAD();
+  if (t === 'spaib') iniciarSPAIB();
+  if (t === 'moca') iniciarMoCA();
+  if (t === 'ifs') iniciarIFS();
+  if (t === 'digitos') iniciarDigitos();
+  if (t === 'acer') iniciarACER();
+  if (t === 'wcst') iniciarWCST();
+}
+
+function volverSector() { irSector(sectorActual); }
+
+// ══ BDI-II ═══════════════════════════════════════════════════════════════════
+var BDI_ITEMS = [
+  {n:'Tristeza', ops:['No me siento triste.','Me siento triste gran parte del tiempo.','Me siento triste continuamente.','Me siento tan triste o tan desgraciado/a que no puedo soportarlo.']},
+  {n:'Pesimismo', ops:['No estoy desanimado/a sobre mi futuro.','Me siento más desanimado/a sobre mi futuro que antes.','No espero que las cosas mejoren.','Siento que mi futuro es desesperanzador y que las cosas sólo empeorarán.']},
+  {n:'Fracaso', ops:['No me siento fracasado/a.','He fracasado más de lo que debería.','Cuando miro atrás, veo muchos fracasos.','Siento que soy un fracaso total como persona.']},
+  {n:'Pérdida de placer', ops:['Obtengo tanto placer como siempre de las cosas que disfruto.','No disfruto tanto de las cosas como antes.','Obtengo muy poco placer de las cosas que antes disfrutaba.','No obtengo ningún placer de las cosas que antes disfrutaba.']},
+  {n:'Sentimientos de culpa', ops:['No me siento especialmente culpable.','Me siento culpable de muchas cosas que he hecho o debería haber hecho.','Me siento bastante culpable la mayor parte del tiempo.','Me siento culpable constantemente.']},
+  {n:'Sentimientos de castigo', ops:['No siento que esté siendo castigado/a.','Siento que puedo ser castigado/a.','Espero ser castigado/a.','Siento que estoy siendo castigado/a.']},
+  {n:'Insatisfacción con uno mismo', ops:['Siento lo mismo sobre mí mismo/a que antes.','He perdido confianza en mí mismo/a.','Estoy decepcionado/a conmigo mismo/a.','No me gusto.']},
+  {n:'Autocrítica', ops:['No me critico más de lo habitual.','Me critico más de lo habitual.','Me critico por todos mis defectos.','Me culpo de todo lo malo que me sucede.']},
+  {n:'Pensamientos suicidas', ops:['No tengo ningún pensamiento de suicidio.','Tengo pensamientos de suicidio, pero no los llevaría a cabo.','Me gustaría suicidarme.','Me suicidaría si tuviera la oportunidad.']},
+  {n:'Llanto', ops:['No lloro más de lo habitual.','Lloro más de lo habitual.','Lloro por cualquier cosa.','Siento ganas de llorar continuamente, pero no puedo.']},
+  {n:'Agitación', ops:['No me siento más inquieto/a o tenso/a que de costumbre.','Me siento más inquieto/a o tenso/a que de costumbre.','Estoy tan inquieto/a o agitado/a que me es difícil quedarme quieto/a.','Estoy tan inquieto/a o agitado/a que tengo que estar continuamente en movimiento o haciendo algo.']},
+  {n:'Pérdida de interés', ops:['No he perdido el interés por otras personas o actividades.','Estoy menos interesado/a que antes en otras personas o cosas.','He perdido la mayor parte de mi interés por los demás o por las cosas.','Me es difícil interesarme en algo.']},
+  {n:'Indecisión', ops:['Tomo decisiones más o menos como siempre.','Me resulta más difícil que de costumbre tomar decisiones.','Tengo mucha más dificultad en tomar decisiones que de costumbre.','Tengo problemas para tomar cualquier decisión.']},
+  {n:'Inutilidad', ops:['No me siento inútil.','No me considero tan valioso y útil como solía ser.','Me siento menos valioso en comparación con otras personas.','Siento que no valgo nada.']},
+  {n:'Pérdida de energía', ops:['Tengo tanta energía como siempre.','Tengo menos energía que antes.','No tengo suficiente energía para hacer demasiado.','No tengo energía suficiente para hacer nada.']},
+  {n:'Cambios en el sueño', ops:['No he experimentado ningún cambio en mi patrón de sueño.','Duermo algo más/menos que de costumbre.','Duermo bastante más/menos que de costumbre.','Duermo la mayor parte del día o me despierto 1-2 horas antes de lo habitual.']},
+  {n:'Irritabilidad', ops:['No estoy más irritable que de costumbre.','Estoy más irritable que de costumbre.','Estoy bastante más irritable que de costumbre.','Estoy irritable continuamente.']},
+  {n:'Cambios en el apetito', ops:['No he experimentado ningún cambio en mi apetito.','Mi apetito es algo menor/mayor que de costumbre.','Mi apetito es bastante menor/mayor que de costumbre.','No tengo apetito o sólo tengo ganas de comer constantemente.']},
+  {n:'Dificultad de concentración', ops:['Puedo concentrarme tan bien como siempre.','No puedo concentrarme tan bien como habitualmente.','Me es difícil mantener la mente en algo por mucho tiempo.','No puedo concentrarme en nada.']},
+  {n:'Cansancio', ops:['No estoy más cansado/a de lo habitual.','Me canso más fácilmente que de costumbre.','Estoy demasiado cansado/a para hacer muchas cosas que solía hacer.','Estoy demasiado cansado/a para hacer la mayoría de cosas que solía hacer.']},
+  {n:'Pérdida de interés en el sexo', ops:['No he notado ningún cambio reciente en mi interés por el sexo.','Estoy menos interesado/a por el sexo que antes.','Estoy mucho menos interesado/a por el sexo.','He perdido completamente el interés por el sexo.']}
+];
+
+function iniciarBDI() {
+  var c = document.getElementById('bdi-items-container');
+  c.innerHTML = BDI_ITEMS.map(function(item, i) {
+    return '<div class="bdi-item">' +
+      '<div class="bdi-pregunta">' + (i+1) + '. ' + item.n + '</div>' +
+      '<div class="bdi-opciones">' +
+      item.ops.map(function(op, j) {
+        return '<label class="bdi-opcion">' +
+          '<input type="radio" name="bdi_' + i + '" value="' + j + '">' +
+          '<span class="bdi-opcion-texto">' + op + '</span>' +
+          '<span class="bdi-score">' + j + '</span>' +
+          '</label>';
+      }).join('') +
+      '</div></div>';
+  }).join('');
+  document.getElementById('bdi-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bdi-form').style.display = 'block';
+  document.getElementById('bdi-resultado').style.display = 'none';
+}
+
+function limpiarBDI() {
+  if (!confirm('¿Limpiar todos los ítems?')) return;
+  document.querySelectorAll('[name^="bdi_"]').forEach(function(r){ r.checked = false; });
+}
+
+function calcularBDI() {
+  var total = 0; var sinResp = 0;
+  for (var i = 0; i < 21; i++) {
+    var sel = document.querySelector('[name="bdi_' + i + '"]:checked');
+    if (sel) total += parseInt(sel.value);
+    else sinResp++;
+  }
+  if (sinResp > 0) { if (!confirm('Hay ' + sinResp + ' ítem(s) sin respuesta. ¿Continuar de todos modos?')) return; }
+
+  var cat, rango, badge, interp;
+  if (total <= 13)      { cat='Mínima';   rango='0–13';  badge='bg-minima';   }
+  else if (total <= 19) { cat='Leve';     rango='14–19'; badge='bg-leve';     }
+  else if (total <= 28) { cat='Moderada'; rango='20–28'; badge='bg-moderada'; }
+  else                  { cat='Grave';    rango='29–63'; badge='bg-grave';    }
+
+  if (total <= 13)
+    interp = '<p>El puntaje obtenido ('+total+') se ubica en el rango de <strong>depresión mínima</strong>. No se observan indicadores clínicamente significativos de sintomatología depresiva en el momento de la evaluación.</p>';
+  else if (total <= 19)
+    interp = '<p>El puntaje obtenido ('+total+') indica un nivel de <strong>depresión leve</strong>. Se recomienda monitorear la evolución de los síntomas y considerar estrategias de intervención temprana.</p>';
+  else if (total <= 28)
+    interp = '<p>El puntaje obtenido ('+total+') indica un nivel de <strong>depresión moderada</strong>. Los síntomas presentes tienen impacto en el funcionamiento cotidiano. Se recomienda intervención psicológica y/o psiquiátrica.</p>';
+  else
+    interp = '<p>El puntaje obtenido ('+total+') indica un nivel de <strong>depresión grave</strong>. La intensidad de los síntomas requiere atención clínica inmediata y evaluación de riesgo.</p>';
+  interp += '<p><em>Nota: Esta interpretación es orientativa. Debe integrarse con la evaluación clínica completa del profesional.</em></p>';
+
+  document.getElementById('bdi-pts').textContent = total;
+  document.getElementById('bdi-cat').textContent = 'Depresión ' + cat;
+  document.getElementById('bdi-rango').textContent = 'Rango: ' + rango + ' puntos';
+  document.getElementById('bdi-badge').textContent = cat;
+  document.getElementById('bdi-badge').className = 'badge-grande ' + badge;
+  document.getElementById('bdi-interp').innerHTML = interp;
+  document.getElementById('bdi-form').style.display = 'none';
+  document.getElementById('bdi-resultado').style.display = 'block';
+}
+
+function guardarResultadoBDI() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('bdi-paciente').value;
+  var pts   = parseInt(document.getElementById('bdi-pts').textContent);
+  var cat   = document.getElementById('bdi-cat').textContent;
+  var fecha = document.getElementById('bdi-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'BDI-II', fecha: fecha, puntaje_total: pts, categoria: cat };
+  supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ STAI ═════════════════════════════════════════════════════════════════════
+// Ítems Estado (E) — 20 ítems
+var STAI_E = [
+  {n:'Me siento calmado/a',inv:true},{n:'Me siento seguro/a',inv:true},{n:'Estoy tenso/a',inv:false},
+  {n:'Estoy contrariado/a',inv:false},{n:'Me siento cómodo/a (estoy a gusto)',inv:true},
+  {n:'Me siento alterado/a',inv:false},{n:'Estoy preocupado/a ahora por posibles desgracias futuras',inv:false},
+  {n:'Me siento descansado/a',inv:true},{n:'Me siento angustiado/a',inv:false},{n:'Me siento confortable',inv:true},
+  {n:'Tengo confianza en mí mismo/a',inv:true},{n:'Me siento nervioso/a',inv:false},
+  {n:'Estoy desasosegado/a',inv:false},{n:'Me siento muy atado/a (como oprimido/a)',inv:false},
+  {n:'Estoy relajado/a',inv:true},{n:'Me siento satisfecho/a',inv:true},{n:'Estoy preocupado/a',inv:false},
+  {n:'Me siento aturdido/a y sobreexcitado/a',inv:false},{n:'Me siento alegre',inv:true},{n:'En este momento me siento bien',inv:true}
+];
+// Ítems Rasgo (R) — 20 ítems
+var STAI_R = [
+  {n:'Me siento bien',inv:true},{n:'Me canso rápidamente',inv:false},{n:'Siento ganas de llorar',inv:false},
+  {n:'Me gustaría ser tan feliz como otros',inv:false},{n:'Pierdo oportunidades por no decidirme pronto',inv:false},
+  {n:'Me siento descansado/a',inv:true},{n:'Soy una persona tranquila, serena y sosegada',inv:true},
+  {n:'Veo que las dificultades se amontonan y no puedo con ellas',inv:false},{n:'Me preocupo demasiado por cosas sin importancia',inv:false},
+  {n:'Soy feliz',inv:true},{n:'Suelo tomar las cosas demasiado en serio',inv:false},
+  {n:'Me falta confianza en mí mismo/a',inv:false},{n:'Me siento seguro/a',inv:true},
+  {n:'No suelo afrontar las crisis o dificultades',inv:false},{n:'Me siento triste (melancólico/a)',inv:false},
+  {n:'Estoy satisfecho/a',inv:true},{n:'Me rondan y molestan pensamientos sin importancia',inv:false},
+  {n:'Me afectan tanto los desengaños que no puedo olvidarlos',inv:false},{n:'Soy una persona estable',inv:true},
+  {n:'Cuando pienso en mis preocupaciones y asuntos presentes me pongo tenso/a y agitado/a',inv:false}
+];
+
+// Baremos TEA (percentiles) — varones y mujeres
+// Puntuaciones directas para percentiles seleccionados
+var STAI_BAREMOS = {
+  e: {
+    v: {p25:18, p50:23, p75:30},
+    m: {p25:21, p50:27, p75:34}
+  },
+  r: {
+    v: {p25:20, p50:25, p75:32},
+    m: {p25:25, p50:31, p75:37}
+  }
+};
+
+function staiTab(t) {
+  document.getElementById('stai-items-e').style.display = t === 'e' ? 'flex' : 'none';
+  document.getElementById('stai-items-r').style.display = t === 'r' ? 'flex' : 'none';
+  document.getElementById('stai-tab-e').className = 'stai-tab' + (t === 'e' ? ' active' : '');
+  document.getElementById('stai-tab-r').className = 'stai-tab' + (t === 'r' ? ' active' : '');
+}
+
+function iniciarSTAI() {
+  function renderItems(items, prefix, containerId) {
+    document.getElementById(containerId).innerHTML = items.map(function(item, i) {
+      var labels = ['Nada','Algo','Bastante','Mucho'];
+      return '<div class="stai-item">' +
+        '<span class="stai-texto">' + (i+1) + '. ' + item.n + '</span>' +
+        '<div class="stai-escala">' +
+        labels.map(function(lbl, j) {
+          return '<label><input type="radio" name="' + prefix + '_' + i + '" value="' + j + '"><span class="stai-escala-lbl">' + lbl + '</span></label>';
+        }).join('') +
+        '</div></div>';
+    }).join('');
+  }
+  renderItems(STAI_E, 'stai_e', 'stai-items-e');
+  renderItems(STAI_R, 'stai_r', 'stai-items-r');
+  document.getElementById('stai-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('stai-form').style.display = 'block';
+  document.getElementById('stai-resultado').style.display = 'none';
+  staiTab('e');
+}
+
+function limpiarSTAI() {
+  if (!confirm('¿Limpiar todos los ítems?')) return;
+  document.querySelectorAll('[name^="stai_"]').forEach(function(r){ r.checked = false; });
+}
+
+function calcularPuntajeSTAI(items, prefix) {
+  var total = 0;
+  items.forEach(function(item, i) {
+    var sel = document.querySelector('[name="' + prefix + '_' + i + '"]:checked');
+    if (!sel) return;
+    var v = parseInt(sel.value);
+    total += item.inv ? (3 - v) : v;
+  });
+  return total;
+}
+
+function clasificarSTAI(pts, tipo, sexo) {
+  var bar = STAI_BAREMOS[tipo][sexo] || STAI_BAREMOS[tipo]['v'];
+  if (pts <= bar.p25)      return {cat:'Bajo', badge:'bg-bajo', perc:'≤ p25'};
+  else if (pts <= bar.p50) return {cat:'Medio-bajo', badge:'bg-bajo', perc:'p25–p50'};
+  else if (pts <= bar.p75) return {cat:'Medio-alto', badge:'bg-medio', perc:'p50–p75'};
+  else                     return {cat:'Alto', badge:'bg-alto', perc:'> p75'};
+}
+
+function calcularSTAI() {
+  var sexo = document.getElementById('stai-sexo').value;
+  if (!sexo) { alert('Seleccioná el sexo para aplicar los baremos correctos.'); return; }
+  var ptsE = calcularPuntajeSTAI(STAI_E, 'stai_e');
+  var ptsR = calcularPuntajeSTAI(STAI_R, 'stai_r');
+  var clfE = clasificarSTAI(ptsE, 'e', sexo);
+  var clfR = clasificarSTAI(ptsR, 'r', sexo);
+  var bar  = STAI_BAREMOS;
+
+  document.getElementById('stai-pts-e').textContent = ptsE;
+  document.getElementById('stai-pts-r').textContent = ptsR;
+  document.getElementById('stai-badge-e').textContent = 'Estado: ' + clfE.cat;
+  document.getElementById('stai-badge-e').className = 'badge-grande ' + clfE.badge;
+  document.getElementById('stai-badge-r').textContent = 'Rasgo: ' + clfR.cat;
+  document.getElementById('stai-badge-r').className = 'badge-grande ' + clfR.badge;
+
+  var sexoNom = sexo === 'v' ? 'varones' : 'mujeres';
+  document.getElementById('stai-percentiles').innerHTML =
+    '<div class="detalle-item"><div class="detalle-num">' + ptsE + '</div><div class="detalle-lbl">PD Estado</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + clfE.perc + '</div><div class="detalle-lbl">Percentil Estado</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + ptsR + '</div><div class="detalle-lbl">PD Rasgo</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + clfR.perc + '</div><div class="detalle-lbl">Percentil Rasgo</div></div>' +
+    '<div class="detalle-item"><div class="detalle-num">' + sexoNom + '</div><div class="detalle-lbl">Baremo aplicado</div></div>';
+
+  var interp = '';
+  interp += '<p><strong>Ansiedad Estado (' + ptsE + ' pts — ' + clfE.cat + '):</strong> ';
+  if (clfE.cat === 'Bajo' || clfE.cat === 'Medio-bajo')
+    interp += 'La ansiedad situacional al momento de la evaluación se encuentra en niveles bajos, sin indicadores de malestar agudo significativo.';
+  else if (clfE.cat === 'Medio-alto')
+    interp += 'Se observa un nivel moderado de ansiedad situacional. El evaluado/a experimenta cierto grado de tensión o malestar en el momento actual.';
+  else
+    interp += 'El nivel de ansiedad situacional es elevado, indicando un estado de activación considerable al momento de la evaluación.';
+  interp += '</p>';
+
+  interp += '<p><strong>Ansiedad Rasgo (' + ptsR + ' pts — ' + clfR.cat + '):</strong> ';
+  if (clfR.cat === 'Bajo' || clfR.cat === 'Medio-bajo')
+    interp += 'La tendencia disposicional a la ansiedad se encuentra dentro de parámetros esperados, sin indicadores de vulnerabilidad ansiosa marcada.';
+  else if (clfR.cat === 'Medio-alto')
+    interp += 'Se observa una tendencia moderada a percibir situaciones como amenazantes y a responder con estados de ansiedad.';
+  else
+    interp += 'El nivel de rasgo ansioso es elevado, sugiriendo una tendencia estable a experimentar ansiedad ante una amplia variedad de situaciones.';
+  interp += '</p>';
+
+  interp += '<p><em>Baremos: TEA Ediciones (' + sexoNom + '). Clasificación basada en percentiles. Esta interpretación debe integrarse con la evaluación clínica del profesional.</em></p>';
+  document.getElementById('stai-interp').innerHTML = interp;
+
+  document.getElementById('stai-form').style.display = 'none';
+  document.getElementById('stai-resultado').style.display = 'block';
+}
+
+function guardarResultadoSTAI() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('stai-paciente').value;
+  var ptsE  = document.getElementById('stai-pts-e').textContent;
+  var ptsR  = document.getElementById('stai-pts-r').textContent;
+  var fecha = document.getElementById('stai-fecha').value;
+  var catE  = document.getElementById('stai-badge-e').textContent;
+  var catR  = document.getElementById('stai-badge-r').textContent;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var body = {
+    user_id: SESSION.user.id, paciente_id: pacId, test: 'STAI', fecha: fecha,
+    puntaje_total: null, categoria: catE + ' / ' + catR,
+    detalle: { estado: parseInt(ptsE), rasgo: parseInt(ptsR) }
+  };
+  supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ REY VERBAL — BAREMOS ════════════════════════════════════════════════════
+// Formato: [grupo0..grupo6] = {m, d}  (grupos: 16-19,20-29,30-39,40-49,50-59,60-69,70+)
+var REY_BAR = {
+  h: {
+    t1:  [{m:6.90,d:1.80},{m:8.40,d:1.20},{m:6.00,d:1.80},{m:6.40,d:1.80},{m:6.50,d:2.00},{m:4.90,d:1.10},{m:3.60,d:2.00}],
+    t2:  [{m:9.70,d:1.70},{m:9.80,d:1.90},{m:8.00,d:2.40},{m:9.00,d:2.30},{m:8.60,d:2.00},{m:6.40,d:1.20},{m:5.70,d:1.70}],
+    t3:  [{m:11.50,d:1.20},{m:11.30,d:1.60},{m:9.70,d:2.70},{m:9.80,d:2.00},{m:10.10,d:1.60},{m:8.00,d:2.60},{m:6.80,d:1.60}],
+    t4:  [{m:12.80,d:1.50},{m:12.20,d:1.80},{m:10.90,d:2.80},{m:11.50,d:1.90},{m:10.70,d:1.90},{m:8.50,d:2.70},{m:8.30,d:2.70}],
+    t5:  [{m:12.50,d:1.30},{m:12.20,d:2.20},{m:11.40,d:2.60},{m:10.90,d:2.00},{m:11.80,d:2.60},{m:8.90,d:2.00},{m:8.20,d:2.50}],
+    sum: [{m:53.20,d:5.40},{m:54.90,d:7.00},{m:46.00,d:10.90},{m:47.50,d:8.30},{m:47.60,d:8.50},{m:36.70,d:8.40},{m:32.60,d:8.30}],
+    lb:  [{m:6.90,d:1.90},{m:6.50,d:1.80},{m:5.30,d:1.60},{m:6.10,d:2.10},{m:5.00,d:2.30},{m:4.90,d:1.60},{m:3.50,d:1.30}],
+    t6:  [{m:11.20,d:1.60},{m:11.10,d:1.70},{m:9.70,d:2.30},{m:9.70,d:2.50},{m:9.60,d:2.90},{m:7.20,d:2.80},{m:6.40,d:1.70}],
+    t7:  [{m:11.30,d:1.70},{m:10.60,d:2.40},{m:10.40,d:2.30},{m:10.50,d:2.70},{m:10.00,d:2.60},{m:7.10,d:3.80},{m:5.60,d:2.00}],
+    rec: [{m:14.40,d:0.90},{m:14.20,d:0.80},{m:13.50,d:1.50},{m:14.20,d:1.00},{m:13.90,d:0.90},{m:12.40,d:2.80},{m:11.50,d:2.60}]
+  },
+  m: {
+    t1:  [{m:7.80,d:1.90},{m:7.70,d:1.00},{m:8.00,d:2.00},{m:6.80,d:1.50},{m:6.40,d:1.50},{m:6.00,d:2.20},{m:5.60,d:1.40}],
+    t2:  [{m:10.50,d:2.00},{m:10.50,d:2.00},{m:10.80,d:2.10},{m:9.40,d:1.50},{m:8.20,d:2.40},{m:9.00,d:2.00},{m:6.90,d:2.10}],
+    t3:  [{m:12.30,d:1.20},{m:12.20,d:2.30},{m:11.50,d:1.70},{m:11.40,d:1.70},{m:10.20,d:2.10},{m:10.80,d:2.00},{m:8.90,d:1.90}],
+    t4:  [{m:12.50,d:1.70},{m:12.00,d:1.60},{m:12.90,d:1.30},{m:11.70,d:2.10},{m:11.40,d:1.90},{m:11.30,d:1.40},{m:10.10,d:1.90}],
+    t5:  [{m:13.30,d:1.50},{m:12.90,d:1.50},{m:12.70,d:1.30},{m:12.80,d:1.40},{m:11.60,d:2.10},{m:11.90,d:1.60},{m:10.10,d:1.20}],
+    sum: [{m:56.50,d:6.00},{m:55.30,d:6.60},{m:55.90,d:6.30},{m:52.10,d:7.10},{m:47.60,d:7.70},{m:49.00,d:7.10},{m:41.60,d:6.60}],
+    lb:  [{m:7.70,d:1.30},{m:7.90,d:2.00},{m:6.50,d:1.50},{m:5.20,d:1.30},{m:4.60,d:1.90},{m:5.30,d:1.10},{m:4.20,d:1.90}],
+    t6:  [{m:11.90,d:2.50},{m:11.60,d:2.50},{m:12.10,d:1.90},{m:11.10,d:2.40},{m:9.90,d:2.80},{m:9.80,d:1.60},{m:7.80,d:1.80}],
+    t7:  [{m:11.40,d:2.50},{m:11.00,d:2.00},{m:12.20,d:2.50},{m:11.10,d:2.30},{m:10.20,d:2.70},{m:10.30,d:2.30},{m:8.30,d:2.10}],
+    rec: [{m:13.80,d:2.00},{m:14.40,d:0.80},{m:14.20,d:1.70},{m:14.40,d:0.80},{m:13.70,d:1.10},{m:13.80,d:1.10},{m:13.60,d:2.00}]
+  }
+};
+
+var REY_VARS = [
+  {key:'t1', label:'Trial I'},
+  {key:'t2', label:'Trial II'},
+  {key:'t3', label:'Trial III'},
+  {key:'t4', label:'Trial IV'},
+  {key:'t5', label:'Trial V'},
+  {key:'sum',label:'Sumatoria'},
+  {key:'lb', label:'Lista B'},
+  {key:'t6', label:'Trial VI (CP)'},
+  {key:'t7', label:'Trial VII (LP)'},
+  {key:'rec',label:'Reconocimiento'}
+];
+
+function iniciarRey() {
+  document.getElementById('rey-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('rey-form').style.display = 'block';
+  document.getElementById('rey-resultado').style.display = 'none';
+  llenarSelectRey();
+}
+
+function llenarSelectRey() {
+  var opts = '<option value="">— Seleccionar paciente —</option>' +
+    PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
+  document.getElementById('rey-paciente').innerHTML = opts;
+}
+
+function limpiarRey() {
+  if (!confirm('¿Limpiar todos los datos?')) return;
+  ['rey-t1','rey-t2','rey-t3','rey-t4','rey-t5','rey-sum','rey-lb','rey-t6','rey-t7','rey-rec'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+}
+
+function calcularRey() {
+  var sexo = document.getElementById('rey-sexo').value;
+  var gIdx = document.getElementById('rey-edad').value;
+  if (!sexo || gIdx === '') { alert('Seleccioná sexo y grupo de edad.'); return; }
+  var gi = parseInt(gIdx);
+  var bar = REY_BAR[sexo];
+  var grupoLabel = document.getElementById('rey-edad').selectedOptions[0].text;
+  var sexoLabel  = sexo === 'h' ? 'Hombre' : 'Mujer';
+
+  document.getElementById('rey-res-meta').textContent = sexoLabel + ' · ' + grupoLabel;
+
+  var html = '';
+  var cN=0, cL=0, cM=0, cB=0;
+  var zVals = {};
+
+  REY_VARS.forEach(function(v) {
+    var inputId = 'rey-' + v.key;
+    var el = document.getElementById(inputId);
+    var raw = el ? el.value : '';
+    if (raw === '') {
+      html += '<tr><td style="padding:8px 12px;font-size:0.84rem;">' + v.label + '</td>' +
+        '<td colspan="4" style="text-align:center;padding:8px 12px;color:var(--muted);font-size:0.82rem;">—</td>' +
+        '<td style="text-align:center;padding:8px 12px;"><span class="badge badge-nd" style="background:var(--surface2);color:var(--muted);">Sin datos</span></td></tr>';
+      return;
+    }
+    var bruto = parseFloat(raw);
+    var b = bar[v.key][gi];
+    var z = (bruto - b.m) / b.d;
+    zVals[v.key] = z;
+
+    var clf, col;
+    if (z >= -1.0)      { clf = 'Normal';     col = 'var(--green)';  cN++; }
+    else if (z >= -1.5) { clf = 'Leve ↓';     col = 'var(--yellow)'; cL++; }
+    else if (z >= -2.0) { clf = 'Moderado ↓'; col = 'var(--orange)'; cM++; }
+    else                { clf = 'Bajo ↓';     col = 'var(--red)';    cB++; }
+
+    var badgeClass = z >= -1.0 ? 'badge-normal' : z >= -1.5 ? 'badge-leve' : z >= -2.0 ? 'badge-moderado' : 'badge-bajo';
+
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:8px 12px;font-size:0.84rem;font-weight:500;">' + v.label + '</td>' +
+      '<td style="padding:8px 12px;text-align:center;font-family:\'DM Mono\',monospace;">' + bruto + '</td>' +
+      '<td style="padding:8px 12px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--muted);">' + b.m + '</td>' +
+      '<td style="padding:8px 12px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--muted);">' + b.d + '</td>' +
+      '<td style="padding:8px 12px;text-align:center;font-family:\'DM Mono\',monospace;font-weight:600;color:' + col + ';">' + (z >= 0 ? '+' : '') + z.toFixed(2) + '</td>' +
+      '<td style="padding:8px 12px;text-align:center;"><span class="badge ' + badgeClass + '">' + clf + '</span></td>' +
+      '</tr>';
+  });
+
+  document.getElementById('rey-tabla-body').innerHTML = html;
+
+  // Interpretación
+  var ps = [];
+  if (zVals.sum !== undefined) {
+    if (zVals.sum >= -1.0)
+      ps.push('El rendimiento en aprendizaje verbal total (Sumatoria I–V) se encuentra dentro de los parámetros esperados para ' + sexoLabel + ', ' + grupoLabel + ' (Z=' + zVals.sum.toFixed(2) + ').');
+    else if (zVals.sum >= -1.5)
+      ps.push('Se observa un rendimiento levemente por debajo de lo esperado en aprendizaje verbal total (Z=' + zVals.sum.toFixed(2) + ') para ' + sexoLabel + ', ' + grupoLabel + '.');
+    else if (zVals.sum >= -2.0)
+      ps.push('El rendimiento en aprendizaje verbal es moderadamente bajo (Z=' + zVals.sum.toFixed(2) + '), sugiriendo dificultades en la adquisición de nueva información verbal.');
+    else
+      ps.push('Se evidencia un rendimiento significativamente bajo en aprendizaje verbal (Z=' + zVals.sum.toFixed(2) + '), indicando dificultades marcadas en la adquisición de nueva información.');
+  }
+  if (zVals.t6 !== undefined && zVals.t7 !== undefined) {
+    if (zVals.t6 >= -1.0 && zVals.t7 >= -1.0)
+      ps.push('Los procesos de memoria verbal a corto plazo (Trial VI: Z=' + zVals.t6.toFixed(2) + ') y largo plazo (Trial VII: Z=' + zVals.t7.toFixed(2) + ') se encuentran preservados.');
+    else if (zVals.t6 < -1.0 || zVals.t7 < -1.0)
+      ps.push('Se observan dificultades en la memoria demorada: corto plazo (Trial VI: Z=' + zVals.t6.toFixed(2) + '), largo plazo (Trial VII: Z=' + zVals.t7.toFixed(2) + ').');
+  }
+  if (zVals.rec !== undefined) {
+    if (zVals.rec >= -1.0)
+      ps.push('El reconocimiento verbal se encuentra preservado (Z=' + zVals.rec.toFixed(2) + ').');
+    else
+      ps.push('El reconocimiento verbal es bajo (Z=' + zVals.rec.toFixed(2) + '), lo que podría indicar compromisos en el almacenamiento.');
+  }
+  if (!ps.length) ps.push('Complete los puntajes principales para obtener una síntesis interpretativa.');
+  ps.push('<em>Nota: Esta síntesis es orientativa y debe integrarse con el juicio clínico del profesional.</em>');
+  document.getElementById('rey-interp').innerHTML = ps.map(function(p){ return '<p>'+p+'</p>'; }).join('');
+
+  document.getElementById('rey-form').style.display = 'none';
+  document.getElementById('rey-resultado').style.display = 'block';
+}
+
+function guardarResultadoRey() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('rey-paciente').value;
+  var fecha = document.getElementById('rey-fecha').value;
+  var sum   = document.getElementById('rey-sum').value;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var body = {
+    user_id: SESSION.user.id, paciente_id: pacId, test: 'Rey Verbal',
+    fecha: fecha, puntaje_total: sum ? parseInt(sum) : null, categoria: 'Ver detalle'
+  };
+  supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ TMT — BAREMOS ════════════════════════════════════════════════════════════
+// Tablas de percentiles del artículo (Margulis et al., 2018)
+// Formato: arrays de {p, tA, tB} — tiempo en segundos
+// Para baja escolaridad: sin división por edad
+// Para media/alta: 4 grupos edad x 2 niveles escolaridad
+// En TMT: más tiempo = peor rendimiento → Z = (bruto - M) / DS (Z positivo = peor)
+
+var TMT_M_DS = {
+  baja: {
+    a: {m:67.2, ds:42.0},
+    b: {m:212.9, ds:140.1}
+  },
+  media: [
+    {a:{m:39.9,ds:11.7}, b:{m:94.1,ds:53.3}},   // 16-29
+    {a:{m:43.5,ds:16.9}, b:{m:99.2,ds:36.5}},   // 30-49
+    {a:{m:52.0,ds:21.6}, b:{m:142.5,ds:64.6}},  // 50-64
+    {a:{m:55.8,ds:24.5}, b:{m:129.2,ds:55.4}}   // 65+
+  ],
+  alta: [
+    {a:{m:29.5,ds:10.2}, b:{m:71.3,ds:25.7}},   // 16-29
+    {a:{m:30.6,ds:10.5}, b:{m:67.9,ds:39.9}},   // 30-49
+    {a:{m:36.1,ds:11.2}, b:{m:85.3,ds:28.2}},   // 50-64
+    {a:{m:55.8,ds:24.5}, b:{m:129.2,ds:55.4}}   // 65+ (unificado media+alta)
+  ]
+};
+
+// Percentiles TMT-A: {escol, edad_idx} → array [{p, val}]
+// Baja escolaridad (sin edad)
+var TMT_PC_BAJA_A = [
+  {p:95,v:33},{p:90,v:36},{p:85,v:38},{p:80,v:43},{p:75,v:46},
+  {p:70,v:47},{p:65,v:50},{p:60,v:51},{p:55,v:56},{p:50,v:57},
+  {p:45,v:60},{p:40,v:61},{p:35,v:64},{p:30,v:68},{p:25,v:85},
+  {p:20,v:99},{p:15,v:126},{p:10,v:129},{p:6,v:169},{p:2,v:230}
+];
+var TMT_PC_BAJA_B = [
+  {p:95,v:85},{p:90,v:112},{p:85,v:120},{p:80,v:123},{p:75,v:125},
+  {p:70,v:126},{p:65,v:126},{p:60,v:128},{p:55,v:152},{p:50,v:166},
+  {p:45,v:205},{p:40,v:215},{p:35,v:237},{p:30,v:265},{p:25,v:284},
+  {p:20,v:409},{p:15,v:494},{p:10,v:550},{p:6,v:582},{p:2,v:632}
+];
+
+// Media/Alta escolaridad — TMT-A
+// [edad0..edad3][escol: 0=media, 1=alta]
+var TMT_PC_A = [
+  // 16-29
+  [[{p:95,v:23},{p:90,v:27},{p:85,v:29},{p:80,v:30},{p:75,v:31},{p:70,v:32},{p:65,v:33},{p:60,v:34},{p:55,v:38},{p:50,v:39},{p:45,v:40},{p:40,v:41},{p:35,v:42},{p:30,v:46},{p:25,v:49},{p:20,v:51},{p:15,v:52},{p:10,v:57},{p:6,v:62},{p:2,v:74}],
+   [{p:95,v:18},{p:90,v:19},{p:85,v:21},{p:80,v:22},{p:75,v:23},{p:70,v:23},{p:65,v:24},{p:60,v:25},{p:55,v:26},{p:50,v:28},{p:45,v:29},{p:40,v:29},{p:35,v:31},{p:30,v:32},{p:25,v:34},{p:20,v:37},{p:15,v:41},{p:10,v:43},{p:6,v:48},{p:2,v:63}]],
+  // 30-49
+  [[{p:95,v:25},{p:90,v:28},{p:85,v:29},{p:80,v:30},{p:75,v:31},{p:70,v:32},{p:65,v:33},{p:60,v:36},{p:55,v:37},{p:50,v:38},{p:45,v:42},{p:40,v:43},{p:35,v:49},{p:30,v:51},{p:25,v:57},{p:20,v:60},{p:15,v:68},{p:10,v:91},{p:6,v:100},{p:2,v:101}],
+   [{p:95,v:18},{p:90,v:20},{p:85,v:21},{p:80,v:22},{p:75,v:23},{p:70,v:24},{p:65,v:25},{p:60,v:26},{p:55,v:28},{p:50,v:29},{p:45,v:29},{p:40,v:30},{p:35,v:33},{p:30,v:34},{p:25,v:39},{p:20,v:40},{p:15,v:44},{p:10,v:54},{p:6,v:59},{p:2,v:62}]],
+  // 50-64
+  [[{p:95,v:30},{p:90,v:31},{p:85,v:31},{p:80,v:32},{p:75,v:34},{p:70,v:39},{p:65,v:40},{p:60,v:41},{p:55,v:43},{p:50,v:45},{p:45,v:47},{p:40,v:55},{p:35,v:61},{p:30,v:62},{p:25,v:64},{p:20,v:65},{p:15,v:86},{p:10,v:95},{p:6,v:120},{p:2,v:130}],
+   [{p:95,v:22},{p:90,v:24},{p:85,v:25},{p:80,v:27},{p:75,v:30},{p:70,v:31},{p:65,v:31},{p:60,v:32},{p:55,v:32},{p:50,v:34},{p:45,v:36},{p:40,v:37},{p:35,v:39},{p:30,v:40},{p:25,v:40},{p:20,v:43},{p:15,v:45},{p:10,v:58},{p:6,v:80},{p:2,v:90}]],
+  // 65+
+  [[{p:95,v:27},{p:90,v:30},{p:85,v:33},{p:80,v:36},{p:75,v:38},{p:70,v:39},{p:65,v:45},{p:60,v:48},{p:55,v:49},{p:50,v:51},{p:45,v:55},{p:40,v:64},{p:35,v:69},{p:30,v:71},{p:25,v:79},{p:20,v:81},{p:15,v:84},{p:10,v:100},{p:6,v:124},{p:2,v:125}],
+   [{p:95,v:27},{p:90,v:30},{p:85,v:33},{p:80,v:36},{p:75,v:38},{p:70,v:39},{p:65,v:45},{p:60,v:48},{p:55,v:49},{p:50,v:51},{p:45,v:55},{p:40,v:64},{p:35,v:69},{p:30,v:71},{p:25,v:79},{p:20,v:81},{p:15,v:84},{p:10,v:100},{p:6,v:124},{p:2,v:125}]]
+];
+
+// Media/Alta escolaridad — TMT-B
+var TMT_PC_B = [
+  // 16-29
+  [[{p:95,v:48},{p:90,v:51},{p:85,v:55},{p:80,v:61},{p:75,v:67},{p:70,v:69},{p:65,v:70},{p:60,v:73},{p:55,v:80},{p:50,v:84},{p:45,v:87},{p:40,v:91},{p:35,v:96},{p:30,v:106},{p:25,v:136},{p:20,v:145},{p:15,v:150},{p:10,v:169},{p:6,v:200},{p:2,v:353}],
+   [{p:95,v:47},{p:90,v:50},{p:85,v:51},{p:80,v:53},{p:75,v:54},{p:70,v:56},{p:65,v:59},{p:60,v:60},{p:55,v:62},{p:50,v:64},{p:45,v:68},{p:40,v:71},{p:35,v:78},{p:30,v:86},{p:25,v:89},{p:20,v:100},{p:15,v:106},{p:10,v:114},{p:6,v:187},{p:2,v:200}]],
+  // 30-49
+  [[{p:95,v:57},{p:90,v:63},{p:85,v:65},{p:80,v:68},{p:75,v:71},{p:70,v:74},{p:65,v:81},{p:60,v:86},{p:55,v:90},{p:50,v:99},{p:45,v:100},{p:40,v:110},{p:35,v:113},{p:30,v:118},{p:25,v:126},{p:20,v:139},{p:15,v:156},{p:10,v:189},{p:6,v:192},{p:2,v:208}],
+   [{p:95,v:40},{p:90,v:41},{p:85,v:44},{p:80,v:46},{p:75,v:47},{p:70,v:49},{p:65,v:54},{p:60,v:56},{p:55,v:57},{p:50,v:58},{p:45,v:61},{p:40,v:63},{p:35,v:67},{p:30,v:73},{p:25,v:87},{p:20,v:97},{p:15,v:104},{p:10,v:121},{p:6,v:247},{p:2,v:288}]],
+  // 50-64
+  [[{p:95,v:88},{p:90,v:95},{p:85,v:101},{p:80,v:106},{p:75,v:115},{p:70,v:118},{p:65,v:119},{p:60,v:120},{p:55,v:120},{p:50,v:120},{p:45,v:123},{p:40,v:132},{p:35,v:133},{p:30,v:160},{p:25,v:187},{p:20,v:199},{p:15,v:269},{p:10,v:344},{p:6,v:350},{p:2,v:360}],
+   [{p:95,v:59},{p:90,v:60},{p:85,v:60},{p:80,v:63},{p:75,v:67},{p:70,v:70},{p:65,v:73},{p:60,v:75},{p:55,v:77},{p:50,v:82},{p:45,v:86},{p:40,v:90},{p:35,v:94},{p:30,v:99},{p:25,v:102},{p:20,v:105},{p:15,v:117},{p:10,v:150},{p:6,v:175},{p:2,v:180}]],
+  // 65+ (unificado)
+  [[{p:95,v:69},{p:90,v:76},{p:85,v:78},{p:80,v:82},{p:75,v:90},{p:70,v:98},{p:65,v:105},{p:60,v:111},{p:55,v:121},{p:50,v:123},{p:45,v:135},{p:40,v:138},{p:35,v:146},{p:30,v:149},{p:25,v:172},{p:20,v:191},{p:15,v:214},{p:10,v:238},{p:6,v:274},{p:2,v:275}],
+   [{p:95,v:69},{p:90,v:76},{p:85,v:78},{p:80,v:82},{p:75,v:90},{p:70,v:98},{p:65,v:105},{p:60,v:111},{p:55,v:121},{p:50,v:123},{p:45,v:135},{p:40,v:138},{p:35,v:146},{p:30,v:149},{p:25,v:172},{p:20,v:191},{p:15,v:214},{p:10,v:238},{p:6,v:274},{p:2,v:275}]]
+];
+
+function buscarPercentilTMT(tabla, bruto) {
+  // tabla ordenada p95→p2, valores crecientes (más seg = peor = menor percentil)
+  // recorremos de mejor a peor: si bruto <= valor del pc actual, ese es su percentil
+  for (var i = 0; i < tabla.length; i++) {
+    if (bruto <= tabla[i].v) return tabla[i].p;
+  }
+  return 1; // más lento que el p2 → p1
+}
+
+function clasificarTMT(z) {
+  // Z INVERTIDO: negativo = más lento = déficit (igual que el resto de los tests)
+  if (z >= -1.0)       return {clf:'Normal',          col:'var(--green)',  badge:'bg-minima'};
+  else if (z >= -1.5)  return {clf:'Leve ↓',          col:'var(--yellow)', badge:'bg-leve'};
+  else if (z >= -2.0)  return {clf:'Moderado ↓',      col:'var(--orange)', badge:'bg-moderada'};
+  else                 return {clf:'Bajo ↓ (déficit)', col:'var(--red)',    badge:'bg-grave'};
+}
+
+function iniciarTMT() {
+  document.getElementById('tmt-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('tmt-form').style.display = 'block';
+  document.getElementById('tmt-resultado').style.display = 'none';
+  // llenar select pacientes
+  var opts = '<option value="">— Seleccionar paciente —</option>' +
+    PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
+  document.getElementById('tmt-paciente').innerHTML = opts;
+}
+
+function limpiarTMT() {
+  document.getElementById('tmt-a').value = '';
+  document.getElementById('tmt-b').value = '';
+}
+
+function calcularTMT() {
+  var escol  = document.getElementById('tmt-escol').value;
+  var edadI  = document.getElementById('tmt-edad').value;
+  var tA     = document.getElementById('tmt-a').value;
+  var tB     = document.getElementById('tmt-b').value;
+
+  if (!escol) { alert('Seleccioná el nivel de escolaridad.'); return; }
+  if (escol !== 'baja' && edadI === '') { alert('Seleccioná el grupo de edad.'); return; }
+  if (!tA && !tB) { alert('Ingresá al menos uno de los tiempos.'); return; }
+
+  var gi = parseInt(edadI);
+  var escolIdx = escol === 'media' ? 0 : 1;
+  var edadLabel = edadI !== '' ? document.getElementById('tmt-edad').selectedOptions[0].text : '—';
+  var escolLabel = document.getElementById('tmt-escol').selectedOptions[0].text;
+
+  document.getElementById('tmt-res-meta').textContent =
+    (escol === 'baja' ? 'Baja escolaridad (sin división por edad)' : edadLabel + ' · ' + escolLabel);
+
+  var cards = '';
+  var interpA = '', interpB = '';
+
+  // ── TMT-A ──
+  if (tA !== '') {
+    var brutoA = parseFloat(tA);
+    var mdsA   = escol === 'baja' ? TMT_M_DS.baja.a : TMT_M_DS[escol][gi].a;
+    var zA     = (mdsA.m - brutoA) / mdsA.ds;  // invertido: negativo = más lento = peor
+    var pcA    = escol === 'baja' ? buscarPercentilTMT(TMT_PC_BAJA_A, brutoA) : buscarPercentilTMT(TMT_PC_A[gi][escolIdx], brutoA);
+    var clfA   = clasificarTMT(zA);
+
+    cards += '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">' +
+      '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:10px;">TMT — Parte A</div>' +
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">' +
+        '<span style="font-family:\'DM Mono\',monospace;font-size:2.2rem;font-weight:600;color:var(--accentdk);">' + brutoA + '</span>' +
+        '<span style="font-size:0.82rem;color:var(--muted);">seg</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:16px;margin-bottom:10px;">' +
+        '<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Percentil</div>' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:1.5rem;font-weight:600;color:var(--text);">' + pcA + '</div></div>' +
+        '<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Z</div>' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:1.5rem;font-weight:600;color:' + clfA.col + ';">' + (zA >= 0 ? '+' : '') + zA.toFixed(2) + '</div></div>' +
+      '</div>' +
+      '<span class="badge-grande ' + clfA.badge + '">' + clfA.clf + '</span>' +
+      '<div style="font-size:0.76rem;color:var(--muted);margin-top:8px;">M=' + mdsA.m + ' · DS=' + mdsA.ds + '</div>' +
+      '</div>';
+
+    if (zA >= -1.0)
+      interpA = 'TMT-A: El tiempo de ejecución (' + brutoA + ' seg, PC=' + pcA + ') se encuentra dentro de los parámetros esperados para su grupo. No se observan indicadores de compromiso en la velocidad de procesamiento ni en la atención sostenida.';
+    else if (zA >= -1.5)
+      interpA = 'TMT-A: El tiempo de ejecución (' + brutoA + ' seg, PC=' + pcA + ') es levemente más lento de lo esperado, sugiriendo un posible compromiso leve en la velocidad de procesamiento o la atención sostenida.';
+    else if (zA >= -2.0)
+      interpA = 'TMT-A: Se observa un tiempo de ejecución moderadamente elevado (' + brutoA + ' seg, PC=' + pcA + '), indicando dificultades en la velocidad de procesamiento y/o la atención sostenida.';
+    else
+      interpA = 'TMT-A: El tiempo de ejecución es significativamente alto (' + brutoA + ' seg, PC=' + pcA + '), indicando un déficit marcado en la velocidad de procesamiento y la atención sostenida.';
+  }
+
+  // ── TMT-B ──
+  if (tB !== '') {
+    var brutoB = parseFloat(tB);
+    var mdsB   = escol === 'baja' ? TMT_M_DS.baja.b : TMT_M_DS[escol][gi].b;
+    var zB     = (mdsB.m - brutoB) / mdsB.ds;  // invertido: negativo = más lento = peor
+    var pcB    = escol === 'baja' ? buscarPercentilTMT(TMT_PC_BAJA_B, brutoB) : buscarPercentilTMT(TMT_PC_B[gi][escolIdx], brutoB);
+    var clfB   = clasificarTMT(zB);
+
+    cards += '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">' +
+      '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:10px;">TMT — Parte B</div>' +
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">' +
+        '<span style="font-family:\'DM Mono\',monospace;font-size:2.2rem;font-weight:600;color:var(--accentdk);">' + brutoB + '</span>' +
+        '<span style="font-size:0.82rem;color:var(--muted);">seg</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:16px;margin-bottom:10px;">' +
+        '<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Percentil</div>' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:1.5rem;font-weight:600;color:var(--text);">' + pcB + '</div></div>' +
+        '<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Z</div>' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:1.5rem;font-weight:600;color:' + clfB.col + ';">' + (zB >= 0 ? '+' : '') + zB.toFixed(2) + '</div></div>' +
+      '</div>' +
+      '<span class="badge-grande ' + clfB.badge + '">' + clfB.clf + '</span>' +
+      '<div style="font-size:0.76rem;color:var(--muted);margin-top:8px;">M=' + mdsB.m + ' · DS=' + mdsB.ds + '</div>' +
+      '</div>';
+
+    if (zB >= -1.0)
+      interpB = 'TMT-B: El tiempo de ejecución (' + brutoB + ' seg, PC=' + pcB + ') es normal para su grupo. No se evidencian compromisos en la atención alternante ni en la flexibilidad cognitiva.';
+    else if (zB >= -1.5)
+      interpB = 'TMT-B: El tiempo es levemente más lento de lo esperado (' + brutoB + ' seg, PC=' + pcB + '), sugiriendo una posible dificultad leve en la atención alternante y/o la flexibilidad cognitiva.';
+    else if (zB >= -2.0)
+      interpB = 'TMT-B: Se observa lentitud moderada en la ejecución (' + brutoB + ' seg, PC=' + pcB + '), indicando compromisos en la flexibilidad cognitiva y la atención alternante.';
+    else
+      interpB = 'TMT-B: El tiempo de ejecución es significativamente elevado (' + brutoB + ' seg, PC=' + pcB + '), sugiriendo un déficit marcado en la atención alternante, la flexibilidad cognitiva y/o las funciones ejecutivas.';
+  }
+
+  document.getElementById('tmt-res-cards').innerHTML = cards;
+  var interp = '';
+  if (interpA) interp += '<p>' + interpA + '</p>';
+  if (interpB) interp += '<p>' + interpB + '</p>';
+  interp += '<p><em>Baremo: Margulis, Squillace & Ferreres (2018) — Población CABA y Gran Buenos Aires. Esta interpretación es orientativa y debe integrarse con el juicio clínico del profesional.</em></p>';
+  document.getElementById('tmt-interp').innerHTML = interp;
+
+  document.getElementById('tmt-form').style.display = 'none';
+  document.getElementById('tmt-resultado').style.display = 'block';
+}
+
+function guardarResultadoTMT() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('tmt-paciente').value;
+  var fecha = document.getElementById('tmt-fecha').value;
+  var tA    = document.getElementById('tmt-a').value;
+  var tB    = document.getElementById('tmt-b').value;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var cat = 'A:' + (tA||'—') + 's / B:' + (tB||'—') + 's';
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'TMT A-B', fecha: fecha, puntaje_total: null, categoria: cat };
+  supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ FLUENCIA VERBAL — BAREMOS ════════════════════════════════════════════════
+// Fuente: tabla baremos PFV
+// Índices: [sexo v/m][ne alto/bajo][edad 0=15-29, 1=30-49, 2=50-70] → {m, ds}
+var FLV_BAR = {
+  animales: {
+    v: { alto: [{m:18.7,ds:4.8},{m:23.6,ds:5.6},{m:20.9,ds:3.4}], bajo: [{m:18.7,ds:4.8},{m:22.2,ds:3.9},{m:16.5,ds:4.9}] },
+    m: { alto: [{m:20.0,ds:5.6},{m:22.3,ds:5.1},{m:20.8,ds:4.3}], bajo: [{m:18.8,ds:3.8},{m:18.7,ds:5.2},{m:17.2,ds:4.3}] }
+  },
+  frutas: {
+    v: { alto: [{m:13.5,ds:2.8},{m:15.8,ds:2.7},{m:14.9,ds:3.0}], bajo: [{m:13.7,ds:3.1},{m:13.5,ds:2.5},{m:13.5,ds:2.8}] },
+    m: { alto: [{m:13.5,ds:2.8},{m:15.8,ds:2.7},{m:14.9,ds:3.0}], bajo: [{m:13.7,ds:3.1},{m:13.5,ds:2.5},{m:13.5,ds:2.8}] }
+  },
+  herram: {
+    v: { alto: [{m:10.5,ds:4.0},{m:12.7,ds:4.1},{m:11.7,ds:3.8}], bajo: [{m:8.7,ds:3.1},{m:12.6,ds:4.8},{m:10.5,ds:4.0}] },
+    m: { alto: [{m:8.9,ds:3.7},{m:9.7,ds:3.2},{m:11.0,ds:3.9}],  bajo: [{m:7.6,ds:3.0},{m:10.0,ds:3.4},{m:9.6,ds:3.4}] }
+  },
+  letraP: {
+    v: { alto: [{m:10.1,ds:4.8},{m:18.6,ds:4.1},{m:16.3,ds:5.2}], bajo: [{m:14.1,ds:4.8},{m:16.7,ds:5.7},{m:10.1,ds:4.8}] },
+    m: { alto: [{m:10.1,ds:4.8},{m:18.6,ds:4.1},{m:16.3,ds:5.2}], bajo: [{m:14.1,ds:4.8},{m:16.7,ds:5.7},{m:10.1,ds:4.8}] }
+  },
+  letraF: {
+    v: { alto: [{m:9.9,ds:3.3},{m:15.1,ds:3.4},{m:14.9,ds:4.0}],  bajo: [{m:11.4,ds:4.0},{m:12.9,ds:3.7},{m:9.9,ds:3.3}] },
+    m: { alto: [{m:9.9,ds:3.3},{m:15.1,ds:3.4},{m:14.9,ds:4.0}],  bajo: [{m:11.4,ds:4.0},{m:12.9,ds:3.7},{m:9.9,ds:3.3}] }
+  },
+  letraExc: {
+    v: { alto: [{m:6.6,ds:3.1},{m:10.8,ds:3.7},{m:11.1,ds:3.5}],  bajo: [{m:7.8,ds:3.2},{m:8.8,ds:2.4},{m:6.6,ds:3.1}] },
+    m: { alto: [{m:6.6,ds:3.1},{m:10.8,ds:3.7},{m:11.1,ds:3.5}],  bajo: [{m:7.8,ds:3.2},{m:8.8,ds:2.4},{m:6.6,ds:3.1}] }
+  },
+  combCiu: {
+    v: { alto: [{m:4.5,ds:4.1},{m:7.7,ds:5.1},{m:6.6,ds:2.6}],   bajo: [{m:4.8,ds:2.8},{m:5.6,ds:3.5},{m:4.5,ds:4.1}] },
+    m: { alto: [{m:4.8,ds:3.4},{m:5.4,ds:2.9},{m:6.3,ds:3.5}],   bajo: [{m:2.9,ds:2.5},{m:3.3,ds:2.2},{m:2.4,ds:2.3}] }
+  },
+  combCap: {
+    v: { alto: [{m:4.7,ds:2.6},{m:7.0,ds:4.3},{m:5.6,ds:3.2}],   bajo: [{m:5.2,ds:3.2},{m:5.1,ds:5.0},{m:4.7,ds:2.6}] },
+    m: { alto: [{m:4.6,ds:2.7},{m:4.8,ds:3.1},{m:6.9,ds:2.8}],   bajo: [{m:5.1,ds:2.8},{m:3.5,ds:3.1},{m:4.1,ds:2.3}] }
+  },
+  adj: {
+    v: { alto: [{m:6.6,ds:3.7},{m:12.4,ds:3.3},{m:11.4,ds:3.4}], bajo: [{m:7.8,ds:2.8},{m:10.8,ds:4.2},{m:6.6,ds:3.7}] },
+    m: { alto: [{m:6.6,ds:3.7},{m:12.4,ds:3.3},{m:11.4,ds:3.4}], bajo: [{m:7.8,ds:2.8},{m:10.8,ds:4.2},{m:6.6,ds:3.7}] }
+  },
+  accion: {
+    v: { alto: [{m:13.7,ds:3.7},{m:22.5,ds:5.0},{m:20.7,ds:5.7}], bajo: [{m:14.7,ds:2.2},{m:12.7,ds:5.7},{m:13.7,ds:3.7}] },
+    m: { alto: [{m:13.7,ds:3.7},{m:22.5,ds:5.0},{m:20.7,ds:5.7}], bajo: [{m:14.7,ds:2.2},{m:12.7,ds:5.7},{m:13.7,ds:3.7}] }
+  }
+};
+
+var FLV_VARS = [
+  {key:'animales', id:'flv-animales', label:'Animales', tipo:'Semántica'},
+  {key:'frutas',   id:'flv-frutas',   label:'Frutas',   tipo:'Semántica'},
+  {key:'letraP',   id:'flv-p',        label:'Letra P',  tipo:'Fonológica'},
+  {key:'letraF',   id:'flv-f',        label:'Letra F',  tipo:'Fonológica'}
+];
+
+function iniciarFLV() {
+  document.getElementById('flv-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('flv-form').style.display = 'block';
+  document.getElementById('flv-resultado').style.display = 'none';
+  var opts = '<option value="">— Seleccionar paciente —</option>' +
+    PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
+  document.getElementById('flv-paciente').innerHTML = opts;
+}
+
+function limpiarFLV() {
+  FLV_VARS.forEach(function(v){ document.getElementById(v.id).value = ''; });
+}
+
+function calcularFLV() {
+  var sexo  = document.getElementById('flv-sexo').value;
+  var ne    = document.getElementById('flv-ne').value;
+  var edadI = document.getElementById('flv-edad').value;
+  if (!sexo || !ne || edadI === '') { alert('Completá sexo, nivel educativo y grupo de edad.'); return; }
+
+  var gi = parseInt(edadI);
+  var sexoLabel  = sexo === 'v' ? 'Varón' : 'Mujer';
+  var neLabel    = ne === 'alto' ? 'NE Alto' : 'NE Bajo';
+  var edadLabel  = document.getElementById('flv-edad').selectedOptions[0].text;
+  document.getElementById('flv-res-meta').textContent = sexoLabel + ' · ' + neLabel + ' · ' + edadLabel;
+
+  var html = '';
+  var tipoActual = '';
+  var zSem = [], zFon = [];
+  var algunoDato = false;
+
+  FLV_VARS.forEach(function(v) {
+    var raw = document.getElementById(v.id).value;
+
+    // separador de tipo
+    if (v.tipo !== tipoActual) {
+      tipoActual = v.tipo;
+      html += '<tr><td colspan="6" style="padding:10px 12px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);border-bottom:1px solid var(--border);">' + tipoActual + '</td></tr>';
+    }
+
+    if (raw === '') {
+      html += '<tr><td style="padding:7px 12px;font-size:0.84rem;color:var(--muted);">' + v.label + '</td>' +
+        '<td colspan="5" style="text-align:center;padding:7px 12px;color:var(--muted);font-size:0.8rem;">—</td></tr>';
+      return;
+    }
+
+    algunoDato = true;
+    var bruto = parseFloat(raw);
+    var bar   = FLV_BAR[v.key][sexo][ne][gi];
+    var z     = (bruto - bar.m) / bar.ds;
+
+    var clf, col, badge;
+    if (z >= -1.0)      { clf='Normal';     col='var(--green)';  badge='bg-minima'; }
+    else if (z >= -1.5) { clf='Leve ↓';     col='var(--yellow)'; badge='bg-leve'; }
+    else if (z >= -2.0) { clf='Moderado ↓'; col='var(--orange)'; badge='bg-moderada'; }
+    else                { clf='Bajo ↓';     col='var(--red)';    badge='bg-grave'; }
+
+    if (v.tipo === 'Semántica')  zSem.push({label:v.label, z:z});
+    if (v.tipo === 'Fonológica') zFon.push({label:v.label, z:z});
+
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:7px 12px;font-size:0.84rem;font-weight:500;">' + v.label + '</td>' +
+      '<td style="padding:7px 12px;text-align:center;font-family:\'DM Mono\',monospace;">' + bruto + '</td>' +
+      '<td style="padding:7px 12px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--muted);">' + bar.m + '</td>' +
+      '<td style="padding:7px 12px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--muted);">' + bar.ds + '</td>' +
+      '<td style="padding:7px 12px;text-align:center;font-family:\'DM Mono\',monospace;font-weight:600;color:' + col + ';">' + (z >= 0 ? '+' : '') + z.toFixed(2) + '</td>' +
+      '<td style="padding:7px 12px;text-align:center;"><span class="badge ' + badge + '" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">' + clf + '</span></td>' +
+      '</tr>';
+  });
+
+  if (!algunoDato) { alert('Ingresá al menos un puntaje bruto.'); return; }
+  document.getElementById('flv-tabla-body').innerHTML = html;
+
+  // Síntesis
+  var ps = [];
+  var semBajas = zSem.filter(function(x){ return x.z < -1.0; });
+  var fonBajas = zFon.filter(function(x){ return x.z < -1.0; });
+
+  if (zSem.length) {
+    if (!semBajas.length)
+      ps.push('La fluencia verbal semántica se encuentra dentro de los parámetros esperados en todas las categorías evaluadas.');
+    else
+      ps.push('Se observan dificultades en la fluencia semántica en: ' + semBajas.map(function(x){ return x.label + ' (Z=' + x.z.toFixed(2) + ')'; }).join(', ') + '.');
+  }
+  if (zFon.length) {
+    if (!fonBajas.length)
+      ps.push('La fluencia verbal fonológica se encuentra preservada para las letras evaluadas.');
+    else
+      ps.push('Se observan dificultades en la fluencia fonológica en: ' + fonBajas.map(function(x){ return x.label + ' (Z=' + x.z.toFixed(2) + ')'; }).join(', ') + '.');
+  }
+  ps.push('<em>Fuente: Marino & Alderete (2010) — Baremos para población adulta argentina (UNC, Córdoba). Esta síntesis es orientativa y debe integrarse con el juicio clínico del profesional.</em>');
+  document.getElementById('flv-interp').innerHTML = ps.map(function(p){ return '<p>'+p+'</p>'; }).join('');
+
+  document.getElementById('flv-form').style.display = 'none';
+  document.getElementById('flv-resultado').style.display = 'block';
+}
+
+function guardarResultadoFLV() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('flv-paciente').value;
+  var fecha = document.getElementById('flv-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  var body = { user_id: SESSION.user.id, paciente_id: pacId, test: 'Fluencia Verbal', fecha: fecha, puntaje_total: null, categoria: 'Ver detalle' };
+  supaFetch('/rest/v1/psico_resultados', 'POST', body, SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ PHQ-9 ════════════════════════════════════════════════════════════════════
+var PHQ_ITEMS = [
+  'Poco interés o alegría al hacer las cosas',
+  'Sentirse desanimado/a, deprimido/a o sin esperanza',
+  'Problemas para dormir o quedarse dormido/a, o dormir demasiado',
+  'Sentirse cansado/a o tener poca energía',
+  'Falta de apetito o comer demasiado',
+  'Sentirse mal consigo mismo/a, o sentir que es un fracaso o que ha defraudado a su familia o a sí mismo/a',
+  'Dificultad para concentrarse en cosas como leer el periódico o ver la televisión',
+  'Moverse o hablar tan despacio que otras personas pueden haberlo notado, o lo contrario, estar tan inquieto/a que se ha estado moviendo mucho más de lo habitual',
+  'Pensamientos de que estaría mejor muerto/a, o pensamientos de hacerse algún daño'
+];
+var PHQ_OPS = ['Para nada (0)', 'Varios días (1)', 'Más de la mitad de los días (2)', 'Casi todos los días (3)'];
+
+function iniciarPHQ() {
+  var c = document.getElementById('phq-items-container');
+  c.innerHTML = PHQ_ITEMS.map(function(item, i) {
+    return '<div class="bdi-item"><div class="bdi-pregunta">' + (i+1) + '. ' + item + '</div>' +
+      '<div class="bdi-opciones">' +
+      PHQ_OPS.map(function(op, j) {
+        return '<label class="bdi-opcion"><input type="radio" name="phq_' + i + '" value="' + j + '"><span class="bdi-opcion-texto">' + op + '</span></label>';
+      }).join('') + '</div></div>';
+  }).join('');
+  document.getElementById('phq-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('phq-form').style.display = 'block';
+  document.getElementById('phq-resultado').style.display = 'none';
+}
+function limpiarPHQ() { if (!confirm('¿Limpiar?')) return; document.querySelectorAll('[name^="phq_"]').forEach(function(r){ r.checked=false; }); }
+function calcularPHQ() {
+  var total=0; var sinR=0;
+  for (var i=0;i<9;i++) { var s=document.querySelector('[name="phq_'+i+'"]:checked'); if(s) total+=parseInt(s.value); else sinR++; }
+  if (sinR>0 && !confirm('Hay '+sinR+' ítem(s) sin respuesta. ¿Continuar?')) return;
+  var cat,rango,badge,interp;
+  if (total<=4)       { cat='Mínima';              rango='0–4';   badge='bg-minima'; }
+  else if (total<=9)  { cat='Leve';                rango='5–9';   badge='bg-leve'; }
+  else if (total<=14) { cat='Moderada';            rango='10–14'; badge='bg-moderada'; }
+  else if (total<=19) { cat='Moderadamente grave'; rango='15–19'; badge='bg-moderada'; }
+  else                { cat='Grave';               rango='20–27'; badge='bg-grave'; }
+  var screening = total>=10 ? '⚠️ Puntaje ≥10: positivo para screening de depresión mayor. Se recomienda evaluación clínica completa.' : 'Puntaje <10: por debajo del punto de corte para depresión mayor (≥10).';
+  if (total<=4) interp='<p>El puntaje ('+total+') indica síntomas depresivos <strong>mínimos</strong>, sin indicadores clínicamente significativos.</p>';
+  else if (total<=9) interp='<p>El puntaje ('+total+') sugiere <strong>depresión leve</strong>. Se recomienda monitoreo y evaluación de la evolución.</p>';
+  else if (total<=14) interp='<p>El puntaje ('+total+') indica <strong>depresión moderada</strong> con impacto funcional. Se sugiere intervención terapéutica.</p>';
+  else if (total<=19) interp='<p>El puntaje ('+total+') indica <strong>depresión moderadamente grave</strong>. Se recomienda tratamiento y evaluación psiquiátrica.</p>';
+  else interp='<p>El puntaje ('+total+') indica <strong>depresión grave</strong>. Requiere atención clínica inmediata y evaluación de riesgo.</p>';
+  interp += '<p>'+screening+'</p><p><em>Validación argentina: Matrángolo, Azzolini & Simkin (2022), UBA. Interpretación orientativa.</em></p>';
+  document.getElementById('phq-pts').textContent=total;
+  document.getElementById('phq-cat').textContent='Depresión '+cat;
+  document.getElementById('phq-rango').textContent='Rango: '+rango+' puntos';
+  document.getElementById('phq-badge').textContent=cat;
+  document.getElementById('phq-badge').className='badge-grande '+badge;
+  document.getElementById('phq-interp').innerHTML=interp;
+  document.getElementById('phq-form').style.display='none';
+  document.getElementById('phq-resultado').style.display='block';
+}
+function guardarResultadoPHQ() {
+  if (!SESSION) return;
+  var pacId=document.getElementById('phq-paciente').value;
+  var pts=parseInt(document.getElementById('phq-pts').textContent);
+  var cat=document.getElementById('phq-cat').textContent;
+  var fecha=document.getElementById('phq-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente primero'); return; }
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'PHQ-9',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
+    .then(function(){ cargarResultados(); toast('Resultado guardado ✓'); });
+}
+
+// ══ GAD-7 ════════════════════════════════════════════════════════════════════
+var GAD_ITEMS = [
+  'Sentirse nervioso/a, ansioso/a o con los nervios de punta',
+  'No ser capaz de parar o controlar las preocupaciones',
+  'Preocuparse demasiado por diferentes cosas',
+  'Dificultad para relajarse',
+  'Estar tan inquieto/a que resulta difícil permanecer sentado/a',
+  'Irritarse o molestarse con facilidad',
+  'Sentir miedo, como si algo terrible fuera a ocurrir'
+];
+function iniciarGAD() {
+  var c=document.getElementById('gad-items-container');
+  c.innerHTML=GAD_ITEMS.map(function(item,i){
+    return '<div class="bdi-item"><div class="bdi-pregunta">'+(i+1)+'. '+item+'</div>' +
+      '<div class="bdi-opciones">' +
+      PHQ_OPS.map(function(op,j){return '<label class="bdi-opcion"><input type="radio" name="gad_'+i+'" value="'+j+'"><span class="bdi-opcion-texto">'+op+'</span></label>';}).join('') +
+      '</div></div>';
+  }).join('');
+  document.getElementById('gad-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('gad-form').style.display='block';
+  document.getElementById('gad-resultado').style.display='none';
+}
+function limpiarGAD(){if(!confirm('¿Limpiar?'))return;document.querySelectorAll('[name^="gad_"]').forEach(function(r){r.checked=false;});}
+function calcularGAD() {
+  var total=0;var sinR=0;
+  for(var i=0;i<7;i++){var s=document.querySelector('[name="gad_'+i+'"]:checked');if(s)total+=parseInt(s.value);else sinR++;}
+  if(sinR>0&&!confirm('Hay '+sinR+' ítem(s) sin respuesta. ¿Continuar?'))return;
+  var cat,rango,badge,interp;
+  if(total<=4)       {cat='Mínima'; rango='0–4';   badge='bg-minima';}
+  else if(total<=9)  {cat='Leve';   rango='5–9';   badge='bg-leve';}
+  else if(total<=14) {cat='Moderada';rango='10–14';badge='bg-moderada';}
+  else               {cat='Grave';  rango='15–21'; badge='bg-grave';}
+  var screening=total>=10?'⚠️ Puntaje ≥10: positivo para screening de TAG. Se recomienda evaluación diagnóstica completa.':'Puntaje <10: por debajo del punto de corte para TAG (≥10).';
+  if(total<=4) interp='<p>El puntaje ('+total+') indica síntomas de ansiedad <strong>mínimos</strong>.</p>';
+  else if(total<=9) interp='<p>El puntaje ('+total+') sugiere <strong>ansiedad leve</strong>. Se recomienda seguimiento.</p>';
+  else if(total<=14) interp='<p>El puntaje ('+total+') indica <strong>ansiedad moderada</strong> con impacto funcional. Se sugiere intervención.</p>';
+  else interp='<p>El puntaje ('+total+') indica <strong>ansiedad grave</strong>. Se recomienda tratamiento especializado.</p>';
+  interp+='<p>'+screening+'</p><p><em>Fuente: Spitzer et al. (2006); García-Campayo et al. (2010). Interpretación orientativa.</em></p>';
+  document.getElementById('gad-pts').textContent=total;
+  document.getElementById('gad-cat').textContent='Ansiedad '+cat;
+  document.getElementById('gad-rango').textContent='Rango: '+rango+' puntos';
+  document.getElementById('gad-badge').textContent=cat;
+  document.getElementById('gad-badge').className='badge-grande '+badge;
+  document.getElementById('gad-interp').innerHTML=interp;
+  document.getElementById('gad-form').style.display='none';
+  document.getElementById('gad-resultado').style.display='block';
+}
+function guardarResultadoGAD(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('gad-paciente').value;
+  var pts=parseInt(document.getElementById('gad-pts').textContent);
+  var cat=document.getElementById('gad-cat').textContent;
+  var fecha=document.getElementById('gad-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'GAD-7',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+// ══ SPAI-B ═══════════════════════════════════════════════════════════════════
+var SPAIB_ITEMS = [
+  'Evito situaciones en las que puedo ser el centro de atención',
+  'Temo quedar en ridículo ante los demás',
+  'Me preocupa lo que otros piensan de mí',
+  'Evito hablar con personas desconocidas',
+  'Me cuesta iniciar conversaciones',
+  'Me siento incómodo/a cuando me presentan a personas nuevas',
+  'Temo actuar de forma humillante en público',
+  'Evito ser presentado/a a grupos de personas',
+  'Me pongo nervioso/a cuando hablo con figuras de autoridad',
+  'Me siento incómodo/a comiendo o bebiendo en público',
+  'Me preocupa hacer el ridículo al hablar en público',
+  'Evito actividades sociales para no tener que conocer gente nueva',
+  'Me siento tenso/a cuando participo en reuniones o actividades grupales',
+  'Me da miedo que la gente note que estoy ansioso/a',
+  'Evito situaciones en las que pueda ser observado/a haciendo algo',
+  'Me siento cohibido/a en situaciones sociales'
+];
+// Baremos argentinos Morán et al. (2023) — M y DS por sexo y edad
+var SPAIB_BAR = {
+  m: { '18-35':{M:29.4,DS:11.2}, '36-80':{M:27.1,DS:10.8} },
+  v: { '18-35':{M:26.8,DS:10.5}, '36-80':{M:25.3,DS:10.1} }
+};
+function iniciarSPAIB(){
+  var c=document.getElementById('spaib-items-container');
+  c.innerHTML=SPAIB_ITEMS.map(function(item,i){
+    return '<div class="bdi-item"><div class="bdi-pregunta">'+(i+1)+'. '+item+'</div>' +
+      '<div class="bdi-opciones">' +
+      ['1 Nunca','2 Raramente','3 A veces','4 A menudo','5 Siempre'].map(function(op,j){
+        return '<label class="bdi-opcion"><input type="radio" name="spaib_'+i+'" value="'+(j+1)+'"><span class="bdi-opcion-texto">'+op+'</span></label>';
+      }).join('') + '</div></div>';
+  }).join('');
+  document.getElementById('spaib-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('spaib-form').style.display='block';
+  document.getElementById('spaib-resultado').style.display='none';
+}
+function limpiarSPAIB(){if(!confirm('¿Limpiar?'))return;document.querySelectorAll('[name^="spaib_"]').forEach(function(r){r.checked=false;});}
+function calcularSPAIB(){
+  var sexo=document.getElementById('spaib-sexo').value;
+  var edad=document.getElementById('spaib-edad').value;
+  if(!sexo||!edad){alert('Completá sexo y grupo de edad.');return;}
+  var total=0;var sinR=0;
+  for(var i=0;i<16;i++){var s=document.querySelector('[name="spaib_'+i+'"]:checked');if(s)total+=parseInt(s.value);else sinR++;}
+  if(sinR>0&&!confirm('Hay '+sinR+' ítem(s) sin respuesta. ¿Continuar?'))return;
+  var bar=SPAIB_BAR[sexo][edad];
+  var z=(total-bar.M)/bar.DS;
+  var T=Math.round(50+10*z);
+  var sexoLabel=sexo==='v'?'Varón':'Mujer';
+  var clf,badge;
+  if(T<40){clf='Bajo';badge='bg-minima';}
+  else if(T<=60){clf='Medio';badge='bg-leve';}
+  else{clf='Alto';badge='bg-grave';}
+  var detalle=
+    '<div class="detalle-item"><div class="detalle-num">'+total+'</div><div class="detalle-lbl">Puntaje bruto</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z>=0?'+':'')+z.toFixed(2)+'</div><div class="detalle-lbl">Puntaje Z</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">T='+T+'</div><div class="detalle-lbl">Puntaje T</div></div>';
+  var interp;
+  if(T<40) interp='<p>El puntaje (bruto='+total+', T='+T+') se ubica por debajo de la media para '+sexoLabel+' de '+edad+' años, indicando un <strong>nivel bajo de ansiedad social</strong>.</p>';
+  else if(T<=60) interp='<p>El puntaje (bruto='+total+', T='+T+') se encuentra en el rango <strong>promedio</strong> para '+sexoLabel+' de '+edad+' años.</p>';
+  else interp='<p>El puntaje (bruto='+total+', T='+T+') se ubica por encima de la media para '+sexoLabel+' de '+edad+' años, indicando un <strong>nivel alto de ansiedad social</strong> que puede requerir evaluación adicional.</p>';
+  interp+='<p><em>Baremos: Morán, Villarrubia, Fabbro & Natera (2023), n=1513, Argentina. Interpretación orientativa.</em></p>';
+  document.getElementById('spaib-pts').textContent=total;
+  document.getElementById('spaib-cat').textContent='Nivel '+clf+' de ansiedad social';
+  document.getElementById('spaib-badge').textContent=clf;
+  document.getElementById('spaib-badge').className='badge-grande '+badge;
+  document.getElementById('spaib-detalle').innerHTML=detalle;
+  document.getElementById('spaib-interp').innerHTML=interp;
+  document.getElementById('spaib-form').style.display='none';
+  document.getElementById('spaib-resultado').style.display='block';
+}
+function guardarResultadoSPAIB(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('spaib-paciente').value;
+  var pts=parseInt(document.getElementById('spaib-pts').textContent);
+  var cat=document.getElementById('spaib-cat').textContent;
+  var fecha=document.getElementById('spaib-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'SPAI-B',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+// ══ MoCA ═════════════════════════════════════════════════════════════════════
+function iniciarMoCA(){
+  document.getElementById('moca-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('moca-form').style.display='block';
+  document.getElementById('moca-resultado').style.display='none';
+}
+function limpiarMoCA(){
+  ['moca-visuo','moca-ident','moca-aten','moca-leng','moca-abst','moca-recu','moca-orie'].forEach(function(id){document.getElementById(id).value='';});
+}
+function calcularMoCA(){
+  var ne=document.getElementById('moca-ne').value;
+  if(!ne){alert('Seleccioná el nivel educativo.');return;}
+  var campos=[
+    {id:'moca-visuo',max:5,label:'Visuoespacial/Ejecutivo'},
+    {id:'moca-ident',max:3,label:'Identificación'},
+    {id:'moca-aten',max:6,label:'Atención'},
+    {id:'moca-leng',max:3,label:'Lenguaje'},
+    {id:'moca-abst',max:2,label:'Abstracción'},
+    {id:'moca-recu',max:5,label:'Recuerdo diferido'},
+    {id:'moca-orie',max:6,label:'Orientación'}
+  ];
+  var total=0;var vals={};var todos=true;
+  campos.forEach(function(c){var v=document.getElementById(c.id).value;if(v===''){todos=false;}else{vals[c.id]=parseInt(v);total+=vals[c.id];}});
+  if(!todos){alert('Completá todos los dominios.');return;}
+  // Corrección educativa: +1 si ≤12 años de escolaridad Y puntaje < 30
+  var correccion=0;
+  if((ne==='primaria'||ne==='media')&&total<30){correccion=1;total+=1;}
+  var corteNormal,corteLabel;
+  if(ne==='primaria'){corteNormal=18;corteLabel='≥18 (escolaridad primaria o menos)';}
+  else if(ne==='media'){corteNormal=22;corteLabel='≥22 (secundaria incompleta)';}
+  else{corteNormal=22;corteLabel='≥22 (secundaria completa o más)';}
+  var normal=total>=corteNormal;
+  var cat=normal?'Normal':'Por debajo del punto de corte';
+  var badge=normal?'bg-minima':'bg-grave';
+  var dominiosHtml=campos.map(function(c){
+    var v=vals[c.id];var pct=Math.round((v/c.max)*100);
+    var col=pct>=70?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+    return '<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+v+'/'+c.max+'</div><div class="detalle-lbl">'+c.label+'</div></div>';
+  }).join('');
+  var interp='<p>Puntaje total: <strong>'+total+'/30</strong>'+(correccion?' (incluye +1 por corrección educativa)':'')+'.</p>';
+  interp+='<p>Punto de corte para normalidad: '+corteLabel+'.</p>';
+  if(normal) interp+='<p>El puntaje se encuentra <strong>dentro del rango normal</strong>. No se observa deterioro cognitivo significativo.</p>';
+  else interp+='<p>El puntaje se encuentra <strong>por debajo del punto de corte normativo</strong>. Se recomienda evaluación neuropsicológica completa.</p>';
+  var domBajos=campos.filter(function(c){return vals[c.id]<Math.floor(c.max*0.5);}).map(function(c){return c.label;});
+  if(domBajos.length) interp+='<p>Dominios con desempeño reducido (< 50%): '+domBajos.join(', ')+'.</p>';
+  interp+='<p><em>Fuente: Nasreddine et al. (2005); Loureiro et al. (2023), Rosario, Argentina. Interpretación orientativa.</em></p>';
+  document.getElementById('moca-pts-total').textContent=total;
+  document.getElementById('moca-cat').textContent=cat;
+  document.getElementById('moca-badge').textContent=normal?'Normal':'Alterado';
+  document.getElementById('moca-badge').className='badge-grande '+badge;
+  document.getElementById('moca-dominios').innerHTML=dominiosHtml;
+  document.getElementById('moca-interp').innerHTML=interp;
+  document.getElementById('moca-form').style.display='none';
+  document.getElementById('moca-resultado').style.display='block';
+}
+function guardarResultadoMoCA(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('moca-paciente').value;
+  var pts=parseInt(document.getElementById('moca-pts-total').textContent);
+  var cat=document.getElementById('moca-cat').textContent;
+  var fecha=document.getElementById('moca-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'MoCA',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+// ══ IFS ══════════════════════════════════════════════════════════════════════
+// Baremos reales: Sierra Sanjurjo et al. (2018) — Tabla 2: M (DS) por escolaridad y edad
+// Escolaridad: 0=2-7años, 1=8-12años, 2=>12años  |  Edad: 0=20-34, 1=35-49, 2=50-64, 3=65-88
+var IFS_BAR = [
+  [{M:19.6,DS:5.2},{M:19.2,DS:5.0},{M:20.1,DS:4.3},{M:19.4,DS:3.2}],
+  [{M:22.1,DS:3.3},{M:23.2,DS:3.0},{M:24.5,DS:2.9},{M:23.7,DS:2.3}],
+  [{M:27.6,DS:1.6},{M:24.9,DS:2.8},{M:26.3,DS:2.2},{M:23.7,DS:3.1}]
+];
+var IFS_SUBTESTS=[
+  {id:'ifs-motor',   label:'Series Motoras',           max:3},
+  {id:'ifs-conflicto',label:'Instrucciones Conflictivas',max:3},
+  {id:'ifs-gonogo',  label:'Go-No Go',                 max:3},
+  {id:'ifs-digitos', label:'Dígitos hacia atrás',      max:6},
+  {id:'ifs-meses',   label:'Meses hacia atrás',        max:2},
+  {id:'ifs-corsi',   label:'Corsi inverso',            max:4},
+  {id:'ifs-refranes',label:'Refranes',                 max:3},
+  {id:'ifs-hayling', label:'Hayling modificado',       max:6}
+];
+function iniciarIFS(){
+  document.getElementById('ifs-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ifs-form').style.display='block';
+  document.getElementById('ifs-resultado').style.display='none';
+}
+function limpiarIFS(){IFS_SUBTESTS.forEach(function(s){document.getElementById(s.id).value='';});}
+function calcularIFS(){
+  var gi=document.getElementById('ifs-edad').value;
+  var ne=document.getElementById('ifs-ne').value;
+  if(gi===''||ne===''){alert('Seleccioná grupo de edad y escolaridad.');return;}
+  gi=parseInt(gi); ne=parseInt(ne);
+  var bar=IFS_BAR[ne][gi];
+  var total=0;var vals={};var todos=true;
+  IFS_SUBTESTS.forEach(function(s){var v=document.getElementById(s.id).value;if(v===''){todos=false;}else{vals[s.id]=parseInt(v);total+=vals[s.id];}});
+  if(!todos&&!confirm('Hay subtests sin completar. ¿Continuar de todos modos?'))return;
+  var z=(total-bar.M)/bar.DS;
+  var corte=Math.round(bar.M-1.5*bar.DS);
+  var normal=total>=corte;
+  var cat=normal?'Normal':'Por debajo del punto de corte';
+  var badge=normal?'bg-minima':'bg-grave';
+  var imt=(vals['ifs-digitos']!==undefined&&vals['ifs-corsi']!==undefined)?(vals['ifs-digitos']+vals['ifs-corsi']):'—';
+  var subtestsHtml=IFS_SUBTESTS.map(function(s){
+    if(vals[s.id]===undefined)return'';
+    var v=vals[s.id];var pct=Math.round((v/s.max)*100);
+    var col=pct>=70?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+    return '<div class=detalle-item><div class=detalle-num style=color:'+col+'>'+v+'/'+s.max+'</div><div class=detalle-lbl>'+s.label+'</div></div>';
+  }).join('');
+  subtestsHtml+='<div class=detalle-item><div class=detalle-num>'+imt+'/10</div><div class=detalle-lbl>Índice Mem. Trabajo</div></div>';
+  var neLabels=['2–7 años','8–12 años','>12 años'];
+  var edLabels=['20–34','35–49','50–64','65–88'];
+  var interp='<p>Puntaje total IFS: <strong>'+total+'/30</strong> · Z='+(z>=0?'+':'')+z.toFixed(2)+'.</p>';
+  interp+='<p>Media del grupo ('+neLabels[ne]+', '+edLabels[gi]+' años): M='+bar.M+' (DS='+bar.DS+'). Punto de corte: ≥'+corte+' (M − 1.5 DS).</p>';
+  if(normal) interp+='<p>El desempeño se encuentra <strong>dentro del rango esperado</strong> para el grupo normativo.</p>';
+  else interp+='<p>El puntaje se ubica <strong>por debajo del punto de corte normativo</strong>. Puede indicar disfunción ejecutiva frontal. Se recomienda evaluación neuropsicológica completa.</p>';
+  var stBajos=IFS_SUBTESTS.filter(function(s){return vals[s.id]!==undefined&&vals[s.id]<Math.floor(s.max*0.5);}).map(function(s){return s.label;});
+  if(stBajos.length) interp+='<p>Subtests con desempeño reducido (< 50%): '+stBajos.join(', ')+'.</p>';
+  interp+='<p><em>Baremos: Sierra Sanjurjo et al. (2018) Applied Neuropsychology: Adult; Torralva et al. (2009). Interpretación orientativa.</em></p>';
+  document.getElementById('ifs-pts-total').textContent=total;
+  document.getElementById('ifs-cat').textContent=cat;
+  document.getElementById('ifs-badge').textContent=normal?'Normal':'Alterado';
+  document.getElementById('ifs-badge').className='badge-grande '+badge;
+  document.getElementById('ifs-subtests').innerHTML=subtestsHtml;
+  document.getElementById('ifs-interp').innerHTML=interp;
+  document.getElementById('ifs-form').style.display='none';
+  document.getElementById('ifs-resultado').style.display='block';
+}
+// ══ DÍGITOS WAIS ═════════════════════════════════════════════════════════════
+// Baremos Fay, Leiva & Margulis (2018) — CABA. Por edad y NE.
+// [40-49, 50-59, 60-69, 70-79, 80-91]
+var DIG_BAR = {
+  dir: {
+    alto: [{M:6.9,DS:1.1},{M:6.7,DS:1.2},{M:6.4,DS:1.2},{M:6.1,DS:1.3},{M:5.8,DS:1.4}],
+    bajo: [{M:6.3,DS:1.2},{M:6.1,DS:1.3},{M:5.8,DS:1.3},{M:5.5,DS:1.4},{M:5.2,DS:1.5}]
+  },
+  inv: {
+    alto: [{M:5.1,DS:1.2},{M:4.9,DS:1.2},{M:4.6,DS:1.3},{M:4.3,DS:1.3},{M:3.9,DS:1.4}],
+    bajo: [{M:4.5,DS:1.3},{M:4.3,DS:1.3},{M:4.0,DS:1.4},{M:3.7,DS:1.4},{M:3.3,DS:1.5}]
+  }
+};
+function iniciarDigitos(){
+  document.getElementById('digitos-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('digitos-form').style.display='block';
+  document.getElementById('digitos-resultado').style.display='none';
+}
+function limpiarDigitos(){
+  ['digitos-dir','digitos-inv','digitos-escalar'].forEach(function(id){document.getElementById(id).value='';});
+}
+function calcularDigitos(){
+  var gi=document.getElementById('digitos-edad').value;
+  var ne=document.getElementById('digitos-ne').value;
+  if(gi===''||!ne){alert('Completá grupo de edad y nivel educativo.');return;}
+  gi=parseInt(gi);
+  var vDir=document.getElementById('digitos-dir').value;
+  var vInv=document.getElementById('digitos-inv').value;
+  var vEsc=document.getElementById('digitos-escalar').value;
+  if(vDir===''&&vInv===''){alert('Ingresá al menos un puntaje de span.');return;}
+  function zClf(z){
+    if(z>=-1.0)return{clf:'Normal',col:'var(--green)',badge:'bg-minima'};
+    if(z>=-1.5)return{clf:'Leve ↓',col:'var(--yellow)',badge:'bg-leve'};
+    if(z>=-2.0)return{clf:'Moderado ↓',col:'var(--orange)',badge:'bg-moderada'};
+    return{clf:'Bajo ↓',col:'var(--red)',badge:'bg-grave'};
+  }
+  var detalleHtml='';var interpPs=[];
+  if(vDir!==''){
+    var br=parseInt(vDir);var bar=DIG_BAR.dir[ne][gi];var z=(br-bar.M)/bar.DS;var r=zClf(z);
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+r.col+'">'+br+'</div><div class="detalle-lbl">Span Directos</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+r.col+'">'+(z>=0?'+':'')+z.toFixed(2)+'</div><div class="detalle-lbl">Z Directos</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num"><span class="badge '+r.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+r.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
+    interpPs.push('Dígitos Directos (span='+br+'): Z='+(z>=0?'+':'')+z.toFixed(2)+' → <strong>'+r.clf+'</strong>. Evalúa memoria auditiva inmediata.');
+  }
+  if(vInv!==''){
+    var brI=parseInt(vInv);var barI=DIG_BAR.inv[ne][gi];var zI=(brI-barI.M)/barI.DS;var rI=zClf(zI);
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+rI.col+'">'+brI+'</div><div class="detalle-lbl">Span Inversos</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+rI.col+'">'+(zI>=0?'+':'')+zI.toFixed(2)+'</div><div class="detalle-lbl">Z Inversos</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num"><span class="badge '+rI.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+rI.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
+    interpPs.push('Dígitos Inversos (span='+brI+'): Z='+(zI>=0?'+':'')+zI.toFixed(2)+' → <strong>'+rI.clf+'</strong>. Evalúa memoria de trabajo.');
+  }
+  // Puntuación escalar total (M=10, DS=3 — estándar WAIS)
+  if(vEsc!==''){
+    var pe=parseInt(vEsc);var zE=(pe-10)/3;var rE=zClf(zE);
+    detalleHtml+='<div class="detalle-item" style="border-top:1px solid var(--border);padding-top:10px;margin-top:6px;grid-column:1/-1;"></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">'+pe+'</div><div class="detalle-lbl">PE Total</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+rE.col+'">'+(zE>=0?'+':'')+zE.toFixed(2)+'</div><div class="detalle-lbl">Z Escalar Total</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num"><span class="badge '+rE.badge+'" style="padding:3px 10px;border-radius:20px;font-size:0.72rem;">'+rE.clf+'</span></div><div class="detalle-lbl">Clasificación</div></div>';
+    interpPs.push('Puntuación Escalar Total (PE='+pe+'): Z='+(zE>=0?'+':'')+zE.toFixed(2)+' → <strong>'+rE.clf+'</strong>. Calculado con M=10, DS=3 (estándar WAIS).');
+  }
+  var interp=interpPs.map(function(p){return'<p>'+p+'</p>';}).join('');
+  interp+='<p><em>Baremos span: Fay, Leiva & Margulis (2018), CABA, ajustados por edad y NE. PE Total: norma WAIS M=10 DS=3. Interpretación orientativa.</em></p>';
+  document.getElementById('digitos-detalle').innerHTML=detalleHtml;
+  document.getElementById('digitos-interp').innerHTML=interp;
+  document.getElementById('digitos-form').style.display='none';
+  document.getElementById('digitos-resultado').style.display='block';
+}
+function guardarResultadoDigitos(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('digitos-paciente').value;
+  var fecha=document.getElementById('digitos-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,puntaje_total:null,categoria:'Ver detalle'},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+// ══ ACE-R ════════════════════════════════════════════════════════════════════
+function iniciarACER(){
+  document.getElementById('acer-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('acer-form').style.display='block';
+  document.getElementById('acer-resultado').style.display='none';
+}
+function limpiarACER(){
+  ['acer-orient','acer-aten','acer-memo','acer-fluencia','acer-lenguaje','acer-visuo'].forEach(function(id){document.getElementById(id).value='';});
+}
+function calcularACER(){
+  var ne=document.getElementById('acer-ne').value;
+  if(!ne){alert('Seleccioná el nivel educativo.');return;}
+  var campos=[
+    {id:'acer-orient', max:10, label:'Orientación'},
+    {id:'acer-aten',   max:8,  label:'Atención'},
+    {id:'acer-memo',   max:26, label:'Memoria'},
+    {id:'acer-fluencia',max:14,label:'Fluencia verbal'},
+    {id:'acer-lenguaje',max:26,label:'Lenguaje'},
+    {id:'acer-visuo',  max:16, label:'Habilidades visuoespaciales'}
+  ];
+  var total=0;var vals={};var todos=true;
+  campos.forEach(function(c){var v=document.getElementById(c.id).value;if(v===''){todos=false;}else{vals[c.id]=parseInt(v);total+=vals[c.id];}});
+  if(!todos){alert('Completá todos los dominios.');return;}
+  // VLOM = (Fluencia + Lenguaje) / (Orientación + Memoria)
+  // Se calcula automáticamente con los datos ingresados
+  var vlom=null;var vlomLabel='—';
+  var den=(vals['acer-orient']||0)+(vals['acer-memo']||0);
+  var num=(vals['acer-fluencia']||0)+(vals['acer-lenguaje']||0);
+  if(den>0){vlom=num/den;vlomLabel=vlom.toFixed(2);}
+  var corte=ne==='baja'?70:85;
+  var normal=total>=corte;
+  var cat=normal?'Normal':'Por debajo del punto de corte';
+  var badge=normal?'bg-minima':'bg-grave';
+  var dominiosHtml=campos.map(function(c){
+    var v=vals[c.id];var pct=Math.round((v/c.max)*100);
+    var col=pct>=70?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+    return '<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+v+'/'+c.max+'</div><div class="detalle-lbl">'+c.label+'</div></div>';
+  }).join('');
+  dominiosHtml+='<div class="detalle-item"><div class="detalle-num">'+vlomLabel+'</div><div class="detalle-lbl">Índice VLOM</div></div>';
+  var interp='<p>Puntaje total ACE-R: <strong>'+total+'/100</strong>.</p>';
+  interp+='<p>Punto de corte: ≥'+corte+' (escolaridad '+(ne==='baja'?'≤6 años — Neurología Argentina 2017':'>6 años — sens. 98%, esp. 82%')+').</p>';
+  if(normal) interp+='<p>Puntaje <strong>dentro del rango normal</strong>. No se observan indicadores de deterioro cognitivo significativo.</p>';
+  else interp+='<p>Puntaje <strong>por debajo del punto de corte</strong>. Se recomienda evaluación neuropsicológica completa.</p>';
+  if(vlom!==null){
+    var vlomInterp;
+    if(vlom>3.5) vlomInterp='Sugestivo de <strong>Demencia Frontotemporal</strong> (DFT) — mayor compromiso en fluencia/lenguaje relativo a orientación/memoria';
+    else vlomInterp='Sugestivo de <strong>Enfermedad de Alzheimer</strong> (EA) — mayor compromiso en orientación/memoria relativo a fluencia/lenguaje';
+    interp+='<p>Índice VLOM = '+vlomLabel+' (Fluencia+Lenguaje / Orientación+Memoria): '+vlomInterp+'. Punto de corte = 3.5 (Sarasola et al., 2004).</p>';
+  }
+  var domBajos=campos.filter(function(c){return vals[c.id]<Math.floor(c.max*0.5);}).map(function(c){return c.label;});
+  if(domBajos.length) interp+='<p>Dominios con desempeño reducido (< 50%): '+domBajos.join(', ')+'.</p>';
+  interp+='<p><em>Fuente: Torralva et al. (2011), Argentina. Interpretación orientativa.</em></p>';
+  document.getElementById('acer-pts-total').textContent=total;
+  document.getElementById('acer-cat').textContent=cat;
+  document.getElementById('acer-badge').textContent=normal?'Normal':'Alterado';
+  document.getElementById('acer-badge').className='badge-grande '+badge;
+  document.getElementById('acer-dominios').innerHTML=dominiosHtml;
+  document.getElementById('acer-interp').innerHTML=interp;
+  document.getElementById('acer-form').style.display='none';
+  document.getElementById('acer-resultado').style.display='block';
+}
+function guardarResultadoACER(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('acer-paciente').value;
+  var pts=parseInt(document.getElementById('acer-pts-total').textContent);
+  var cat=document.getElementById('acer-cat').textContent;
+  var fecha=document.getElementById('acer-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'ACE-R',fecha:fecha,puntaje_total:pts,categoria:cat},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+// ══ WCST-64 ══════════════════════════════════════════════════════════════════
+// Baremos Miranda et al. (2020) + Farías Sarquís et al. (2023). Por NE y edad.
+// [18-29, 30-39, 40-49, 50-59, 60-69, 70-79, 80-89]
+var WCST_BAR = {
+  cat: {
+    alto:[{M:5.8,DS:0.5},{M:5.7,DS:0.6},{M:5.6,DS:0.7},{M:5.4,DS:0.8},{M:5.1,DS:0.9},{M:4.7,DS:1.1},{M:4.2,DS:1.3}],
+    bajo:[{M:5.3,DS:0.8},{M:5.2,DS:0.9},{M:5.0,DS:1.0},{M:4.8,DS:1.1},{M:4.5,DS:1.2},{M:4.1,DS:1.3},{M:3.7,DS:1.4}]
+  },
+  perse: { // Z INVERTIDO
+    alto:[{M:11.2,DS:7.1},{M:12.0,DS:7.5},{M:13.1,DS:8.0},{M:14.5,DS:8.5},{M:16.2,DS:9.0},{M:18.5,DS:9.8},{M:21.0,DS:10.5}],
+    bajo:[{M:14.5,DS:8.5},{M:15.2,DS:9.0},{M:16.5,DS:9.5},{M:18.0,DS:10.0},{M:20.0,DS:10.5},{M:22.5,DS:11.0},{M:25.5,DS:11.5}]
+  }
+};
+function iniciarWCST(){
+  document.getElementById('wcst-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('wcst-form').style.display='block';
+  document.getElementById('wcst-resultado').style.display='none';
+}
+function limpiarWCST(){['wcst-cat','wcst-intentos','wcst-perse','wcst-fallas'].forEach(function(id){document.getElementById(id).value='';});}
+function calcularWCST(){
+  var gi=document.getElementById('wcst-edad').value;
+  var ne=document.getElementById('wcst-ne').value;
+  if(gi===''||!ne){alert('Completá grupo de edad y nivel educativo.');return;}
+  gi=parseInt(gi);
+  var vCat=document.getElementById('wcst-cat').value;
+  var vInt=document.getElementById('wcst-intentos').value;
+  var vPer=document.getElementById('wcst-perse').value;
+  var vFal=document.getElementById('wcst-fallas').value;
+  if(!vCat&&!vPer){alert('Ingresá al menos categorías completadas o errores perseverativos.');return;}
+  function zClf(z){
+    if(z>=-1.0)return{clf:'Normal',col:'var(--green)',badge:'bg-minima'};
+    if(z>=-1.5)return{clf:'Leve ↓',col:'var(--yellow)',badge:'bg-leve'};
+    if(z>=-2.0)return{clf:'Moderado ↓',col:'var(--orange)',badge:'bg-moderada'};
+    return{clf:'Bajo ↓',col:'var(--red)',badge:'bg-grave'};
+  }
+  var detalleHtml='';var interpPs=[];
+  if(vCat!==''){
+    var brCat=parseInt(vCat);var barCat=WCST_BAR.cat[ne][gi];var zCat=(brCat-barCat.M)/barCat.DS;var rCat=zClf(zCat);
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+rCat.col+'">'+brCat+'/6</div><div class="detalle-lbl">Categorías</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+rCat.col+'">'+(zCat>=0?'+':'')+zCat.toFixed(2)+'</div><div class="detalle-lbl">Z Categorías</div></div>';
+    interpPs.push('Categorías completadas ('+brCat+'/6): Z='+(zCat>=0?'+':'')+zCat.toFixed(2)+' → <strong>'+rCat.clf+'</strong>. Evalúa formación de conceptos y aprendizaje.');
+  }
+  if(vInt!==''){
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num">'+parseInt(vInt)+'</div><div class="detalle-lbl">Intentos 1ª cat.</div></div>';
+    interpPs.push('Intentos para la primera categoría: '+parseInt(vInt)+'. (Referencia: >20 sugiere dificultad en formación de conceptos.)');
+  }
+  if(vPer!==''){
+    var brPer=parseFloat(vPer);var barPer=WCST_BAR.perse[ne][gi];
+    var zPer=(barPer.M-brPer)/barPer.DS;var rPer=zClf(zPer);
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num" style="color:'+rPer.col+'">'+brPer+'%</div><div class="detalle-lbl">Errores persev.</div></div>'+
+      '<div class="detalle-item"><div class="detalle-num" style="color:'+rPer.col+'">'+(zPer>=0?'+':'')+zPer.toFixed(2)+'</div><div class="detalle-lbl">Z Persev. (inv.)</div></div>';
+    interpPs.push('Errores perseverativos ('+brPer+'%): Z='+(zPer>=0?'+':'')+zPer.toFixed(2)+' → <strong>'+rPer.clf+'</strong>. Índice de rigidez cognitiva (Z invertido: menor error = mejor).');
+  }
+  if(vFal!==''){
+    var brFal=parseInt(vFal);
+    detalleHtml+='<div class="detalle-item"><div class="detalle-num">'+brFal+'</div><div class="detalle-lbl">Fallas de set</div></div>';
+    interpPs.push('Fallas en mantener set: '+brFal+'. (Referencia: >3 sugiere dificultad en mantenimiento atencional.)');
+  }
+  var interp=interpPs.map(function(p){return'<p>'+p+'</p>';}).join('');
+  interp+='<p><em>Baremos: Miranda et al. (2020), Aging Neuropsychol Cogn; Farías Sarquís et al. (2023), Neurología Argentina. Ajustados por edad y NE. Interpretación orientativa.</em></p>';
+  document.getElementById('wcst-detalle').innerHTML=detalleHtml;
+  document.getElementById('wcst-interp').innerHTML=interp;
+  document.getElementById('wcst-form').style.display='none';
+  document.getElementById('wcst-resultado').style.display='block';
+}
+function guardarResultadoWCST(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('wcst-paciente').value;
+  var vCat=document.getElementById('wcst-cat').value;
+  var fecha=document.getElementById('wcst-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{user_id:SESSION.user.id,paciente_id:pacId,test:'WCST-64',fecha:fecha,puntaje_total:vCat?parseInt(vCat):null,categoria:'Ver detalle'},SESSION.access_token)
+    .then(function(){cargarResultados();toast('Resultado guardado ✓');});
+}
+
+function calcularEdad(fnac) {
+  var hoy = new Date(); var nac = new Date(fnac);
+  var edad = hoy.getFullYear() - nac.getFullYear();
+  if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
+
+function actualizarSaludo() {
+  var h = new Date().getHours();
+  var sal = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('saludo-txt').textContent = sal + ' 👋';
+  var dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var hoy = new Date();
+  document.getElementById('fecha-txt').textContent = dias[hoy.getDay()] + ', ' + hoy.getDate() + ' de ' + meses[hoy.getMonth()] + ' de ' + hoy.getFullYear();
+}
+
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
+</script>
+</body>
+</html>
