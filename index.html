@@ -1,4 +1,20 @@
-<!DOCTYPE html>
+<!DOC
+      case 'reloj':
+        titulo = 'Test del Reloj — Versión Cacho a la orden (11:10)';
+        instruccion = 'Se le entrega al paciente una hoja en blanco. Se lee la siguiente consigna:<br><br>' +
+          '<strong>"Quiero que dibuje un reloj con todos los números y que las agujas marquen las 11 y 10."</strong><br><br>' +
+          'No se da tiempo límite. No se permite referencia a relojes reales.';
+        cuerpo = '<table style="width:100%;border-collapse:collapse;margin-top:12px;">' +
+          '<tr style="background:#8b2e2e;color:#fff;"><th style="padding:8px;text-align:left;">Componente</th><th style="padding:8px;text-align:center;">Criterios</th><th style="padding:8px;text-align:center;">Puntaje</th></tr>' +
+          '<tr><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Esfera (0–2)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">2 = circular/ovalada normal · 1 = deformación moderada · 0 = ausente o no circular</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2</td></tr>' +
+          '<tr style="background:#fdf6ee;"><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Números (0–4)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">4 = todos correctos · 3 = error menor · 2 = error significativo · 1 = &gt;2 incorrectos · 0 = ausentes</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2 &nbsp; ☐ 3 &nbsp; ☐ 4</td></tr>' +
+          '<tr><td style="padding:8px;border-bottom:1px solid #ddd;font-weight:600;">Agujas (0–4)</td><td style="padding:8px;border-bottom:1px solid #ddd;font-size:0.82rem;">4 = hora correcta, dos agujas con diferencia tamaño · 3 = error menor · 2 = una correcta · 1 = sin hora · 0 = ausentes</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:center;">☐ 0 &nbsp; ☐ 1 &nbsp; ☐ 2 &nbsp; ☐ 3 &nbsp; ☐ 4</td></tr>' +
+          '<tr style="background:#fdf6ee;font-weight:700;"><td style="padding:10px;">TOTAL</td><td style="padding:10px;font-size:0.82rem;color:#666;">Punto de corte: ≥ 6 sin deterioro · &lt; 6 positivo para deterioro<br>(Cacho et al. 1999 · Latini et al. 2011)</td><td style="padding:10px;text-align:center;font-size:1.1rem;">___ / 10</td></tr>' +
+          '</table>' +
+          '<div style="margin-top:24px;padding:12px;background:#fff8f0;border:1px solid #f0c090;border-radius:6px;font-size:0.8rem;color:#7a4a10;">' +
+          '<strong>Nota:</strong> No existen baremos normativos argentinos por edad para este test. La interpretación se basa en el punto de corte validado (sensibilidad 92.8%, especificidad 93.4%).' +
+          '</div>';
+        break;TYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -471,6 +487,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <span class="sector-tag">ACE-R</span>
             <span class="sector-tag">WCST-64</span>
             <span class="sector-tag">BEM Signoret</span>
+            <span class="sector-tag">Test del Reloj</span>
           </div>
         </div>
       </div>
@@ -478,6 +495,107 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="card">
         <div class="card-title">Últimas evaluaciones</div>
         <div id="ultimas-lista"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Aún no hay evaluaciones registradas.</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── TEST DEL RELOJ ── -->
+    <div class="vista" id="vista-reloj">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header">
+        <div class="vista-titulo">Test del Reloj · Versión Cacho a la orden</div>
+        <div style="margin-bottom:16px;">
+          <button onclick="generarPDF('reloj')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        </div>
+      </div>
+
+      <div id="reloj-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label>
+              <select id="reloj-paciente"><option value="">— Seleccionar paciente —</option></select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="reloj-fecha"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Instrucción para el paciente</div>
+          <div style="background:var(--surface-2);border-radius:8px;padding:14px 16px;font-size:0.9rem;color:var(--text);line-height:1.6;margin-bottom:12px;">
+            <strong>A la orden:</strong> "Quiero que dibuje un reloj con todos los números y que las agujas marquen las 11 y 10 (11:10)."<br>
+            <em style="font-size:0.82rem;color:var(--muted);">Se entrega hoja en blanco sin círculo preimpreso. No se da tiempo límite.</em>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Puntuación · Método Cacho et al. (1999)</div>
+          <div style="background:#fff8f0;border:1px solid #f0c090;border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:0.82rem;color:#7a4a10;">
+            <strong>⚠ Ausencia de baremos normativos argentinos por edad.</strong> La puntuación se interpreta con el punto de corte validado (≥6 = sin deterioro). No se calculan puntajes Z.<br>
+            <em>Fuente: Cacho J et al. Rev Neurol 1999;28:648–655 · Latini MF et al. Neurología Argentina 2011;3(2):83–87 (validación argentina, n=985)</em>
+          </div>
+
+          <!-- ESFERA -->
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:8px;">① Esfera (0–2 pts)</div>
+            <div class="reloj-opciones">
+              <label class="reloj-opt"><input type="radio" name="rel-esfera" value="2"> <span><strong>2 pts</strong> — Círculo u óvalo normal (pequeñas deformaciones aceptables)</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-esfera" value="1"> <span><strong>1 pt</strong> — Círculo/óvalo con deformación moderada</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-esfera" value="0"> <span><strong>0 pts</strong> — Ausente, cuadrado u otra forma no circular</span></label>
+            </div>
+          </div>
+
+          <!-- NÚMEROS -->
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:8px;">② Números (0–4 pts)</div>
+            <div class="reloj-opciones">
+              <label class="reloj-opt"><input type="radio" name="rel-numeros" value="4"> <span><strong>4 pts</strong> — 12 números presentes, correctamente ubicados dentro de la esfera</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-numeros" value="3"> <span><strong>3 pts</strong> — Todos los números pero con algún error menor de ubicación</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-numeros" value="2"> <span><strong>2 pts</strong> — Error significativo en ubicación o falta algún número (≤2 faltantes)</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-numeros" value="1"> <span><strong>1 pt</strong> — Más de 2 números incorrectos o fuera de la esfera</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-numeros" value="0"> <span><strong>0 pts</strong> — Ausentes o completamente incorrectos</span></label>
+            </div>
+          </div>
+
+          <!-- AGUJAS -->
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:8px;">③ Agujas (0–4 pts)</div>
+            <div class="reloj-opciones">
+              <label class="reloj-opt"><input type="radio" name="rel-agujas" value="4"> <span><strong>4 pts</strong> — Dos agujas indicando hora correcta (11:10), con diferencia de tamaño, unidas en el centro</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-agujas" value="3"> <span><strong>3 pts</strong> — Hora correcta pero error menor (tamaño, centro o longitud levemente incorrectos)</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-agujas" value="2"> <span><strong>2 pts</strong> — Una aguja correcta o ambas presentes con error significativo de hora</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-agujas" value="1"> <span><strong>1 pt</strong> — Una sola aguja o ambas sin indicar hora alguna</span></label>
+              <label class="reloj-opt"><input type="radio" name="rel-agujas" value="0"> <span><strong>0 pts</strong> — Ausentes o irreconocibles</span></label>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="limpiarReloj()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularReloj()">Calcular resultado →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="reloj-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-puntaje">
+            <div class="puntaje-grande" id="reloj-pts">0</div>
+            <div class="puntaje-info">
+              <div class="puntaje-label">Puntaje total · 0–10</div>
+              <div class="puntaje-categoria" id="reloj-cat">—</div>
+              <span class="badge-grande" id="reloj-badge">—</span>
+            </div>
+          </div>
+          <div id="reloj-perfil" style="margin-top:16px;"></div>
+          <div class="interp-box">
+            <div class="interp-titulo">📋 Interpretación clínica</div>
+            <div class="interp-texto" id="reloj-interp"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('reloj-resultado').style.display='none';document.getElementById('reloj-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-primary" onclick="guardarResultadoReloj()">💾 Guardar resultado</button>
+        </div>
       </div>
     </div>
 
@@ -2906,7 +3024,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente'].forEach(function(id){
+   'digitos-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3116,6 +3234,12 @@ function irSector(s) {
         '<div class="test-nombre">BEM 144 · Signoret</div>'+
         '<div class="test-desc">Batería de Eficacia Mnésica — Memoria lógica y episódica verbal</div>'+
         '<span class="test-tag">7 subpruebas · Leis et al. 2018</span>'+
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\\'reloj\\')">'+
+        '<div class="test-icon">🕐</div>'+
+        '<div class="test-nombre">Test del Reloj</div>'+
+        '<div class="test-desc">Screening de deterioro cognitivo — Esfera, números y agujas. Versión Cacho a la orden</div>'+
+        '<span class="test-tag">Cacho et al. 1999 · 0–10 pts</span>'+
       '</div>';
   }
   if (s === 'tdah') {
@@ -3152,6 +3276,7 @@ function irTest(t) {
   if (t === 'digitos') iniciarDigitos();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
+  if (t === 'reloj') iniciarReloj();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
   if (t === 'acer') iniciarACER();
@@ -5761,6 +5886,95 @@ function generarPDF(testId) {
   win.document.write(html);
   win.document.write('</body></html>');
   win.document.close();
+}
+
+function iniciarReloj(){
+  document.getElementById('reloj-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reloj-form').style.display = 'block';
+  document.getElementById('reloj-resultado').style.display = 'none';
+}
+function limpiarReloj(){
+  ['rel-esfera','rel-numeros','rel-agujas'].forEach(function(name){
+    document.querySelectorAll('input[name="'+name+'"]').forEach(function(r){ r.checked=false; });
+  });
+}
+function calcularReloj(){
+  var esfera  = document.querySelector('input[name="rel-esfera"]:checked');
+  var numeros = document.querySelector('input[name="rel-numeros"]:checked');
+  var agujas  = document.querySelector('input[name="rel-agujas"]:checked');
+  if(!esfera||!numeros||!agujas){ alert('Completá los tres componentes antes de calcular.'); return; }
+
+  var pe = parseInt(esfera.value);
+  var pn = parseInt(numeros.value);
+  var pa = parseInt(agujas.value);
+  var total = pe + pn + pa;
+
+  var cat, badge, color, interp;
+  if(total >= 9){
+    cat='Sin alteración'; badge='SIN DETERIORO'; color='#2e7d32';
+    interp='Puntuación dentro del rango normal. Los tres componentes del reloj muestran adecuada organización visuoespacial, planificación y conocimiento numérico. No se observan indicadores de deterioro cognitivo en esta prueba de screening.';
+  } else if(total >= 7){
+    cat='Alteración leve'; badge='LEVE'; color='#f57c00';
+    interp='Puntuación levemente por debajo del óptimo. Pueden observarse errores menores en la ubicación de números o en la precisión de las agujas. Se recomienda correlacionar con otras pruebas de screening (MoCA, ACE-R) y contexto clínico antes de concluir deterioro.';
+  } else if(total >= 5){
+    cat='Alteración moderada'; badge='MODERADA'; color='#d84315';
+    interp='Puntuación en rango de alteración moderada (≤6 = positivo para deterioro, corte Cacho et al. 1999). Se observan dificultades visuoespaciales y/o ejecutivas significativas. Se recomienda evaluación neuropsicológica completa.';
+  } else {
+    cat='Alteración severa'; badge='SEVERA'; color='#b71c1c';
+    interp='Puntuación muy baja. Indicativa de deterioro cognitivo significativo en las funciones visuoespaciales, ejecutivas y de memoria semántica. Requiere evaluación neuropsicológica y neurológica completa.';
+  }
+
+  document.getElementById('reloj-pts').textContent = total;
+  document.getElementById('reloj-cat').textContent = cat;
+  var b = document.getElementById('reloj-badge');
+  b.textContent = badge; b.style.background = color;
+
+  // Perfil de componentes
+  var perfilHtml =
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;">' +
+    '<div style="text-align:center;background:var(--surface-2);border-radius:8px;padding:10px;">' +
+      '<div style="font-size:1.4rem;font-weight:700;color:var(--accent);">' + pe + '/2</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Esfera</div></div>' +
+    '<div style="text-align:center;background:var(--surface-2);border-radius:8px;padding:10px;">' +
+      '<div style="font-size:1.4rem;font-weight:700;color:var(--accent);">' + pn + '/4</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Números</div></div>' +
+    '<div style="text-align:center;background:var(--surface-2);border-radius:8px;padding:10px;">' +
+      '<div style="font-size:1.4rem;font-weight:700;color:var(--accent);">' + pa + '/4</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);">Agujas</div></div>' +
+    '</div>' +
+    '<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">Punto de corte validado: ≥ 6 sin deterioro (sens. 92.8%, espec. 93.4% · Cacho et al. 1999). Sin baremos normativos argentinos por edad disponibles.</div>';
+  document.getElementById('reloj-perfil').innerHTML = perfilHtml;
+  document.getElementById('reloj-interp').innerHTML = interp;
+
+  document.getElementById('reloj-form').style.display = 'none';
+  document.getElementById('reloj-resultado').style.display = 'block';
+}
+function guardarResultadoReloj(){
+  if(!SESSION) return;
+  var pacId = document.getElementById('reloj-paciente').value;
+  var fecha = document.getElementById('reloj-fecha').value;
+  if(!pacId){ alert('Seleccioná un paciente.'); return; }
+  var esfera  = document.querySelector('input[name="rel-esfera"]:checked');
+  var numeros = document.querySelector('input[name="rel-numeros"]:checked');
+  var agujas  = document.querySelector('input[name="rel-agujas"]:checked');
+  var total = parseInt(esfera.value) + parseInt(numeros.value) + parseInt(agujas.value);
+  var cat = document.getElementById('reloj-cat').textContent;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'Test del Reloj (Cacho)',
+    fecha: fecha,
+    resultado: JSON.stringify({
+      total: total,
+      esfera: parseInt(esfera.value),
+      numeros: parseInt(numeros.value),
+      agujas: parseInt(agujas.value),
+      categoria: cat
+    }),
+    notas: 'Versión a la orden · Cacho et al. 1999'
+  }).then(function(r){
+    if(r && !r.error){ alert('Resultado guardado correctamente.'); }
+    else { alert('Error al guardar. Verificá la conexión.'); }
+  });
 }
 
 </script>
