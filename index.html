@@ -1371,7 +1371,9 @@ function verificarGate(){
   var input=document.getElementById('gate-input').value;
   if(input==='Sigrid1109'){
     document.getElementById('screen-gate').style.display='none';
-    document.getElementById('screen-login').style.display='flex';
+    var login=document.getElementById('screen-login');
+    login.style.display='';
+    login.classList.add('active');
   } else {
     document.getElementById('gate-error').style.display='block';
     document.getElementById('gate-input').value='';
