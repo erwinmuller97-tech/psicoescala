@@ -342,6 +342,34 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .asrs-item-opts { display:flex; flex-wrap:wrap; gap:6px 16px; }
 .radio-lbl { font-size:0.8rem; color:var(--text); display:flex; align-items:center; gap:5px; cursor:pointer; white-space:nowrap; }
 .radio-lbl input { accent-color:var(--accent); }
+
+/* ── PDF PRINT ─────────────────────────────────────────────────────────── */
+@media print {
+  body * { visibility: hidden !important; }
+  #pdf-print-area, #pdf-print-area * { visibility: visible !important; }
+  #pdf-print-area {
+    position: fixed; top: 0; left: 0; width: 100%;
+    background: white; padding: 20px; box-sizing: border-box;
+  }
+}
+.pdf-wrap { font-family: 'DM Sans', sans-serif; max-width: 720px; margin: 0 auto; padding: 32px; background: white; color: #1a1a1a; }
+.pdf-titulo { font-size: 1.3rem; font-weight: 700; color: #8B3A00; margin-bottom: 4px; }
+.pdf-subtitulo { font-size: 0.82rem; color: #666; margin-bottom: 6px; }
+.pdf-instruccion { font-size: 0.82rem; background: #f9f3eb; border-left: 3px solid #e07b3a; padding: 8px 12px; margin-bottom: 18px; border-radius: 4px; }
+.pdf-tabla { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 0.8rem; }
+.pdf-tabla th { background: #8B3A00; color: white; padding: 6px 8px; text-align: center; font-weight: 600; font-size: 0.75rem; }
+.pdf-tabla td { border: 1px solid #ddd; padding: 7px 8px; vertical-align: middle; }
+.pdf-tabla td.item-num { text-align: center; font-weight: 600; color: #8B3A00; width: 36px; background: #fdf6ee; }
+.pdf-tabla td.item-txt { width: 55%; }
+.pdf-tabla td.item-opt { text-align: center; width: 45px; }
+.pdf-tabla tr:nth-child(even) td { background: #fdf9f5; }
+.pdf-tabla tr:nth-child(even) td.item-num { background: #f5ede0; }
+.pdf-firma { margin-top: 28px; display: flex; gap: 40px; font-size: 0.78rem; color: #444; }
+.pdf-firma-campo { flex: 1; border-top: 1px solid #999; padding-top: 4px; }
+.pdf-footer { margin-top: 20px; font-size: 0.7rem; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 8px; }
+.pdf-seccion-titulo { font-size: 0.9rem; font-weight: 700; color: #8B3A00; margin: 16px 0 8px; }
+.pdf-corte-box { background: #fff8f0; border: 1.5px solid #e07b3a; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.8rem; }
+.pdf-corte-box strong { color: #8B3A00; }
 </style>
 </head>
 <body>
@@ -559,6 +587,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('bdi-resultado').style.display='none'; document.getElementById('bdi-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('bdi')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoBDI()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -628,6 +657,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('stai-resultado').style.display='none'; document.getElementById('stai-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('stai')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoSTAI()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -954,6 +984,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('phq-resultado').style.display='none';document.getElementById('phq-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('phq')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoPHQ()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -997,6 +1028,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('gad-resultado').style.display='none';document.getElementById('gad-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('gad')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoGAD()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -1054,6 +1086,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('spaib-resultado').style.display='none';document.getElementById('spaib-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('spaib')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoSPAIB()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -2448,6 +2481,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('scl90-resultado').style.display='none';document.getElementById('scl90-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('scl90')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarResultadoScl90()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -2526,6 +2560,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           </div>
         </div>
         <div class="card">
+          <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
+            <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
+            <p style="margin:0 0 4px;"><strong>Sección A (Screener):</strong> ítem positivo si ítems 1–3 ≥ "A veces" (≥2) o ítems 4–6 ≥ "Frecuentemente" (≥3). <strong>Screening positivo: ≥ 4 ítems positivos.</strong> Sensibilidad 68,7% · Especificidad 99,5% (Kessler et al., 2005).</p>
+            <p style="margin:0;"><strong>Sección B:</strong> sumatoria orientativa 0–48. Sin baremos oficiales.</p>
+          </div>
           <p style="font-size:0.85rem;color:var(--muted);margin-bottom:18px;">Marque con qué frecuencia se ha sentido y comportado de cada manera en los <strong>últimos 6 meses</strong>.</p>
           <div class="card-title" style="margin-bottom:16px;">Sección A — Ítems 1 a 6 <span style="font-size:0.75rem;font-weight:400;color:var(--muted)">(Screener diagnóstico)</span></div>
           <div id="asrs-items-a"></div>
@@ -2545,6 +2584,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('asrs-resultado').style.display='none';document.getElementById('asrs-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('asrs')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarAsrs()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -2564,6 +2604,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           </div>
         </div>
         <div class="card">
+          <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
+            <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
+            <p style="margin:0;"><strong>0–25:</strong> sin historia infantil compatible · <strong>26–35:</strong> rasgos leves · <strong>36–45:</strong> probable TDAH infantil · <strong>≥46:</strong> altamente compatible con TDAH infantil. Rango total: 0–75. Fuentes: Rodríguez-Jiménez et al. (2001) · Scandar MG (2021, Rev Neurol, población argentina).</p>
+          </div>
           <p style="font-size:0.85rem;color:var(--muted);margin-bottom:18px;">
             Contestá las siguientes preguntas teniendo en cuenta lo que recordás de cuando eras niño/a <strong>(antes de los 12 años)</strong>.<br>
             <span style="font-size:0.8rem;">0 = Nada o casi nada &nbsp;·&nbsp; 1 = Un poco &nbsp;·&nbsp; 2 = Moderadamente &nbsp;·&nbsp; 3 = Mucho</span>
@@ -2584,6 +2628,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('wurs-resultado').style.display='none';document.getElementById('wurs-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn-secondary" onclick="generarPDF('wurs')">📄 Formulario en blanco</button>
           <button class="btn-primary" onclick="guardarWurs()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -5216,6 +5261,378 @@ function guardarWurs() {
   }, SESSION.access_token)
   .then(function(){ alert('Resultado guardado.'); })
   .catch(function(){ alert('Error al guardar.'); });
+}
+
+// ══ SISTEMA PDF IMPRIMIBLE ════════════════════════════════════════════════
+var PDF_TESTS = {
+
+  'bdi': {
+    titulo: 'BDI-II · Inventario de Depresión de Beck',
+    referencia: 'Beck AT et al. (1996). The BDI-II.',
+    instruccion: 'Este cuestionario contiene grupos de afirmaciones. Lea cada grupo y elija la afirmación que mejor describe cómo se ha sentido durante las ÚLTIMAS DOS SEMANAS, incluyendo el día de hoy. Marque con una X el número correspondiente.',
+    escala: null,
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1,  txt:'Tristeza', opciones:['0 No me siento triste','1 Me siento triste gran parte del tiempo','2 Me siento triste continuamente','3 Me siento tan triste que no puedo soportarlo']},
+        {n:2,  txt:'Pesimismo', opciones:['0 No estoy desanimado sobre mi futuro','1 Me siento más desanimado sobre mi futuro que antes','2 No espero que las cosas mejoren','3 Siento que mi futuro es desesperanzador']},
+        {n:3,  txt:'Fracaso', opciones:['0 No me siento fracasado','1 He fracasado más de lo que debería','2 Cuando repaso mi vida veo muchos fracasos','3 Siento que soy un fracaso total']},
+        {n:4,  txt:'Pérdida de placer', opciones:['0 Obtengo tanto placer como siempre de las cosas','1 No disfruto tanto de las cosas como antes','2 Obtengo muy poco placer de las cosas','3 No puedo obtener ningún placer de las cosas']},
+        {n:5,  txt:'Sentimientos de culpa', opciones:['0 No me siento particularmente culpable','1 Me siento culpable de muchas cosas','2 Me siento bastante culpable la mayor parte del tiempo','3 Me siento culpable todo el tiempo']},
+        {n:6,  txt:'Sentimientos de castigo', opciones:['0 No siento que esté siendo castigado','1 Siento que podría ser castigado','2 Espero ser castigado','3 Siento que estoy siendo castigado']},
+        {n:7,  txt:'Disconformidad con uno mismo', opciones:['0 Siento lo mismo que antes sobre mí mismo','1 He perdido confianza en mí mismo','2 Estoy decepcionado conmigo mismo','3 Me odio a mí mismo']},
+        {n:8,  txt:'Autocrítica', opciones:['0 No me critico ni me culpo más que antes','1 Me critico más que antes','2 Me critico por todos mis errores','3 Me culpo por todo lo malo que sucede']},
+        {n:9,  txt:'Pensamientos suicidas', opciones:['0 No tengo pensamientos de matarme','1 Tengo pensamientos de matarme, pero no los llevaría a cabo','2 Me gustaría matarme','3 Me mataría si tuviese oportunidad']},
+        {n:10, txt:'Llanto', opciones:['0 No lloro más de lo habitual','1 Lloro más de lo que solía','2 Lloro por cualquier cosa','3 Siento ganas de llorar continuamente']},
+        {n:11, txt:'Agitación', opciones:['0 No estoy más inquieto que de costumbre','1 Me siento más inquieto que de costumbre','2 Estoy tan inquieto que me cuesta permanecer quieto','3 Estoy tan inquieto que tengo que estar en movimiento']},
+        {n:12, txt:'Pérdida de interés', opciones:['0 No he perdido el interés por otras personas o actividades','1 Estoy menos interesado que antes en otras personas o cosas','2 He perdido la mayor parte del interés en los demás','3 Me resulta difícil interesarme en algo']},
+        {n:13, txt:'Indecisión', opciones:['0 Tomo mis propias decisiones igual que siempre','1 Me resulta más difícil tomar decisiones que de costumbre','2 Tengo mucha más dificultad para tomar decisiones','3 Tengo problemas para tomar cualquier decisión']},
+        {n:14, txt:'Inutilidad', opciones:['0 No me siento inútil','1 No me considero tan valioso como solía ser','2 Me siento inútil comparado con otras personas','3 Me siento completamente inútil']},
+        {n:15, txt:'Pérdida de energía', opciones:['0 Tengo tanta energía como siempre','1 Tengo menos energía que de costumbre','2 No tengo suficiente energía para hacer muchas cosas','3 No tengo suficiente energía para hacer nada']},
+        {n:16, txt:'Cambios en el sueño', opciones:['0 No he experimentado cambios en el sueño','1a Duermo algo más que de costumbre / 1b Duermo algo menos','2a Duermo mucho más que de costumbre / 2b Duermo mucho menos','3a Duermo la mayor parte del día / 3b Me despierto 1-2 hs antes']},
+        {n:17, txt:'Irritabilidad', opciones:['0 No estoy más irritable que de costumbre','1 Estoy más irritable que de costumbre','2 Estoy mucho más irritable que de costumbre','3 Estoy irritable todo el tiempo']},
+        {n:18, txt:'Cambios en el apetito', opciones:['0 No he experimentado cambios en el apetito','1a Como algo más que de costumbre / 1b Como algo menos','2a Como mucho más que de costumbre / 2b Como mucho menos','3a Tengo muchas más ganas de comer / 3b No tengo ganas de comer']},
+        {n:19, txt:'Dificultad de concentración', opciones:['0 Puedo concentrarme igual que siempre','1 No puedo concentrarme igual que siempre','2 Me resulta difícil mantener la mente en algo','3 Encuentro que no puedo concentrarme en nada']},
+        {n:20, txt:'Cansancio o fatiga', opciones:['0 No me canso más que de costumbre','1 Me canso más fácilmente que de costumbre','2 Estoy demasiado cansado para hacer muchas cosas','3 Estoy demasiado cansado para hacer la mayoría de las cosas']},
+        {n:21, txt:'Pérdida de interés en el sexo', opciones:['0 No he notado cambios en mi interés por el sexo','1 El sexo me interesa menos que antes','2 Estoy mucho menos interesado en el sexo','3 He perdido todo el interés por el sexo']}
+      ]
+    }],
+    corte: null,
+    footer: 'Beck AT, Steer RA, Brown GK (1996). BDI-II. Psychological Corporation. Adaptación argentina: Brenlla ME, Rodríguez CM (2006).'
+  },
+
+  'phq': {
+    titulo: 'PHQ-9 · Cuestionario sobre la Salud del Paciente',
+    referencia: 'Kroenke K, Spitzer RL, Williams JBW (2001). J Gen Intern Med.',
+    instruccion: 'Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas? Marque con una X la opción correspondiente.',
+    escala: ['0 Nunca', '1 Varios días', '2 Más de la mitad de los días', '3 Casi todos los días'],
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1, txt:'Poco interés o placer en hacer cosas'},
+        {n:2, txt:'Sentirse desanimado, deprimido, o sin esperanzas'},
+        {n:3, txt:'Con problemas para dormir, permanecer dormido, o dormir demasiado'},
+        {n:4, txt:'Sentirse cansado o con poca energía'},
+        {n:5, txt:'Con poco apetito o comer en exceso'},
+        {n:6, txt:'Sintiéndose mal consigo mismo, o que es un fracaso, o que ha fallado a sí mismo o a su familia'},
+        {n:7, txt:'Con dificultad para concentrarse en cosas tales como leer el periódico o ver televisión'},
+        {n:8, txt:'¿Se ha movido o hablado tan lento que otras personas lo han notado? ¿O lo contrario, ha estado tan inquieto que se ha movido mucho más de lo normal?'},
+        {n:9, txt:'Pensamientos de que estaría mejor muerto, o de hacerse daño de alguna manera'}
+      ]
+    }],
+    footer: 'Kroenke K, Spitzer RL, Williams JBW (2001). J Gen Intern Med 16:606-13. Puntos de corte: 5 leve · 10 moderado · 15 moderadamente grave · 20 grave.'
+  },
+
+  'gad': {
+    titulo: 'GAD-7 · Escala de Ansiedad Generalizada',
+    referencia: 'Spitzer RL et al. (2006). Arch Intern Med.',
+    instruccion: 'Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas? Marque con una X la opción correspondiente.',
+    escala: ['0 Nunca', '1 Varios días', '2 Más de la mitad de los días', '3 Casi todos los días'],
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1, txt:'Sentirse nervioso, ansioso o muy alterado'},
+        {n:2, txt:'No poder dejar de preocuparse o no poder controlar la preocupación'},
+        {n:3, txt:'Preocuparse demasiado por diferentes cosas'},
+        {n:4, txt:'Dificultad para relajarse'},
+        {n:5, txt:'Estar tan inquieto que es difícil permanecer sentado tranquilo'},
+        {n:6, txt:'Molestarse o ponerse irritable fácilmente'},
+        {n:7, txt:'Sentir miedo, como si algo terrible fuera a pasar'}
+      ]
+    }],
+    footer: 'Spitzer RL et al. (2006). Arch Intern Med 166:1092-97. Puntos de corte: 5 leve · 10 moderado · 15 grave.'
+  },
+
+  'stai': {
+    titulo: 'STAI · Inventario de Ansiedad Estado-Rasgo',
+    referencia: 'Spielberger CD et al. (1970). STAI Manual.',
+    instruccion: 'ESTADO: Lea cada oración y marque la respuesta que indique cómo se siente AHORA MISMO. RASGO: Lea cada oración y marque cómo se siente GENERALMENTE.',
+    escala: ['1 Nada', '2 Algo', '3 Bastante', '4 Mucho'],
+    secciones: [
+      {
+        titulo: 'Parte 1 — Estado (cómo se siente ahora mismo)',
+        items: [
+          {n:1,txt:'Me siento calmado/a'},{n:2,txt:'Me siento seguro/a'},{n:3,txt:'Estoy tenso/a'},{n:4,txt:'Estoy contrariado/a'},
+          {n:5,txt:'Me siento cómodo/a'},{n:6,txt:'Me siento alterado/a'},{n:7,txt:'Estoy preocupado/a por posibles desgracias'},
+          {n:8,txt:'Me siento descansado/a'},{n:9,txt:'Me siento angustiado/a'},{n:10,txt:'Me siento confortable'},
+          {n:11,txt:'Me siento con confianza en mí mismo/a'},{n:12,txt:'Me siento nervioso/a'},{n:13,txt:'Estoy desasosegado/a'},
+          {n:14,txt:'Me siento muy "atado/a"'},{n:15,txt:'Estoy relajado/a'},{n:16,txt:'Me siento satisfecho/a'},
+          {n:17,txt:'Estoy preocupado/a'},{n:18,txt:'Me siento muy excitado/a y aturdido/a'},{n:19,txt:'Me siento alegre'},
+          {n:20,txt:'Me siento bien'}
+        ]
+      },
+      {
+        titulo: 'Parte 2 — Rasgo (cómo se siente generalmente)',
+        items: [
+          {n:21,txt:'Me siento bien'},{n:22,txt:'Me canso rápidamente'},{n:23,txt:'Siento ganas de llorar'},
+          {n:24,txt:'Me gustaría ser tan feliz como otros'},{n:25,txt:'Pierdo oportunidades por no decidirme'},
+          {n:26,txt:'Me siento descansado/a'},{n:27,txt:'Soy una persona tranquila y serena'},
+          {n:28,txt:'Veo que las dificultades se acumulan y no puedo superarlas'},{n:29,txt:'Me preocupo demasiado'},
+          {n:30,txt:'Soy feliz'},{n:31,txt:'Inclino a tomar las cosas demasiado seriamente'},
+          {n:32,txt:'Me falta confianza en mí mismo/a'},{n:33,txt:'Me siento seguro/a'},
+          {n:34,txt:'Evito enfrentarme a las crisis y dificultades'},{n:35,txt:'Me siento melancólico/a'},
+          {n:36,txt:'Me siento satisfecho/a'},{n:37,txt:'Algunas ideas poco importantes me rondan y me molestan'},
+          {n:38,txt:'Me afectan tanto los desengaños que no me los puedo quitar de la cabeza'},
+          {n:39,txt:'Soy una persona estable'},{n:40,txt:'Cuando pienso sobre asuntos me pongo tenso/a'}
+        ]
+      }
+    ],
+    footer: 'Spielberger CD, Gorsuch RL, Lushene RE (1970). STAI Manual. Adaptación española: TEA Ediciones.'
+  },
+
+  'asrs': {
+    titulo: 'ASRS-V1.1 · Escala de Autodetección de TDAH en Adultos',
+    referencia: 'Kessler RC et al. (2005). Psychological Medicine. OMS.',
+    instruccion: 'Marque con qué frecuencia se ha sentido y comportado de cada manera en los ÚLTIMOS 6 MESES.',
+    escala: ['0 Nunca', '1 Raramente', '2 A veces', '3 Frecuentemente', '4 Muy frecuentemente'],
+    corte: 'Sección A (ítems 1–6): positivo si ítems 1–3 ≥ "A veces" O ítems 4–6 ≥ "Frecuentemente". Screening positivo: ≥ 4 ítems positivos (Sens. 68,7% · Esp. 99,5%). Sección B (ítems 7–18): sumatoria orientativa 0–48.',
+    secciones: [
+      {
+        titulo: 'Sección A — Screener (ítems 1–6)',
+        items: [
+          {n:1,txt:'¿Con qué frecuencia tiene dificultad para acabar con los detalles finales de un proyecto después de haber hecho las partes difíciles?'},
+          {n:2,txt:'¿Con qué frecuencia tiene dificultad para ordenar las cosas cuando está realizando una tarea que requiere organización?'},
+          {n:3,txt:'¿Con qué frecuencia tiene dificultad para recordar sus citas u obligaciones?'},
+          {n:4,txt:'Cuando tiene una actividad que requiere que usted piense mucho, ¿con qué frecuencia la evita o la deja para después?'},
+          {n:5,txt:'¿Con qué frecuencia mueve o agita sus manos o sus pies cuando tiene que permanecer sentado(a) por mucho tiempo?'},
+          {n:6,txt:'¿Con qué frecuencia se siente usted demasiado activo(a) y como que tiene que hacer cosas, como si tuviera un motor?'}
+        ]
+      },
+      {
+        titulo: 'Sección B — Evaluación clínica adicional (ítems 7–18)',
+        items: [
+          {n:7,txt:'¿Con qué frecuencia comete errores por falta de cuidado cuando está trabajando en un proyecto aburrido o difícil?'},
+          {n:8,txt:'¿Con qué frecuencia tiene dificultad para mantener la atención cuando está haciendo trabajos aburridos o repetitivos?'},
+          {n:9,txt:'¿Con qué frecuencia tiene dificultad para concentrarse en lo que la gente le dice, aún cuando estén hablando con usted directamente?'},
+          {n:10,txt:'¿Con qué frecuencia pierde o tiene dificultad para encontrar cosas en la casa o en el trabajo?'},
+          {n:11,txt:'¿Con qué frecuencia se distrae por ruidos o actividades a su alrededor?'},
+          {n:12,txt:'¿Con qué frecuencia se levanta de su asiento en reuniones o en otras situaciones en las que se supone debe permanecer sentado?'},
+          {n:13,txt:'¿Con qué frecuencia se siente inquieto o nervioso?'},
+          {n:14,txt:'¿Con qué frecuencia tiene dificultades para relajarse cuando tiene tiempo para usted mismo?'},
+          {n:15,txt:'¿Con qué frecuencia siente que habla demasiado cuando está en reuniones sociales?'},
+          {n:16,txt:'Cuando está en una conversación, ¿con qué frecuencia se descubre a sí mismo terminando las frases de la gente que está hablando, antes de que ellos terminen?'},
+          {n:17,txt:'¿Con qué frecuencia tiene dificultad para esperar su turno en situaciones en que debe hacerlo?'},
+          {n:18,txt:'¿Con qué frecuencia interrumpe a otros cuando están ocupados?'}
+        ]
+      }
+    ],
+    footer: 'Kessler RC et al. (2005). The World Health Organization Adult ADHD Self-Report Scale (ASRS-V1.1). Psychological Medicine.'
+  },
+
+  'wurs': {
+    titulo: 'WURS-25 · Escala de Wender-Utah',
+    referencia: 'Ward MF, Wender PH, Reimherr FW (1993). Am J Psychiatry.',
+    instruccion: 'Contestá las siguientes preguntas teniendo en cuenta lo que recordás de cuando eras niño/a (ANTES DE LOS 12 AÑOS). Marcá con una X la opción que mejor describe tu experiencia.',
+    escala: ['0 Nada o casi nada', '1 Un poco', '2 Moderadamente', '3 Mucho'],
+    corte: 'Puntos de corte (Rodríguez-Jiménez et al. 2001 · Scandar 2021 Argentina): 0–25 sin historia compatible · 26–35 rasgos leves · 36–45 probable TDAH infantil · ≥46 altamente compatible con TDAH infantil. Rango total: 0–75.',
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1,txt:'Activo, no paraba nunca'},{n:2,txt:'Problemas de concentración, me distraía con facilidad'},
+        {n:3,txt:'Ansioso, preocupado'},{n:4,txt:'Nervioso, inquieto'},{n:5,txt:'Poco atento, "en las nubes"'},
+        {n:6,txt:'Mucho temperamento, me enojaba con facilidad'},{n:7,txt:'Explosiones de genio, rabietas'},
+        {n:8,txt:'Problemas para terminar las cosas que empezaba'},{n:9,txt:'Testarudo, cabezota'},
+        {n:10,txt:'Imprudente, temerario, hacía travesuras'},{n:11,txt:'Desobediente con mis padres, rebelde, contestador'},
+        {n:12,txt:'Irritable'},{n:13,txt:'Descuidado, me organizaba mal'},
+        {n:14,txt:'Cambios de humor frecuentes: alegre, triste...'},{n:15,txt:'Enojado'},
+        {n:16,txt:'Impulsivo, hacía las cosas sin pensar'},{n:17,txt:'Tendencia a ser inmaduro'},
+        {n:18,txt:'Sentimientos de culpa, remordimientos'},{n:19,txt:'Perdía el control de mí mismo'},
+        {n:20,txt:'Tendencia a ser o a actuar irracionalmente'},{n:21,txt:'Me metía en peleas'},
+        {n:22,txt:'Molestaba a otros niños'},{n:23,txt:'Me dejaba llevar demasiado por los demás'},
+        {n:24,txt:'Dificultad para ponerme en el lugar de otros'},{n:25,txt:'Problemas con las autoridades en la escuela'}
+      ]
+    }],
+    footer: 'Ward MF, Wender PH, Reimherr FW (1993). Am J Psychiatry 150:885-90. Rodríguez-Jiménez R et al. (2001). Actas Esp Psiquiatr. Scandar MG (2021). Rev Neurol 72(3):77-84. Versión rioplatense (FNC).'
+  }
+,
+
+  'spaib': {
+    titulo: 'SPAI-B · Inventario de Fobia Social (versión breve)',
+    referencia: 'García-López LJ et al. (2006). Psicothema.',
+    instruccion: 'Marque el número que mejor describe cuánto miedo o ansiedad siente usted en cada situación. Si normalmente evita la situación, marque el miedo que sentiría si tuviera que enfrentarla.',
+    escala: ['0 Nada', '1 Un poco', '2 Bastante', '3 Mucho', '4 Muchísimo'],
+    secciones: [{
+      titulo: '',
+      items: [
+        {n:1,txt:'Hablar con figuras de autoridad (jefes, profesores, figuras de autoridad)'},{n:2,txt:'Hablar ante un grupo de personas'},
+        {n:3,txt:'Ir a una fiesta o reunión social'},{n:4,txt:'Ser observado mientras hago algo'},
+        {n:5,txt:'Hablar con personas del sexo opuesto o parejas potenciales'},{n:6,txt:'Hablar con personas que no conozco'},
+        {n:7,txt:'Hacer una queja a alguien'},{n:8,txt:'Expresar desacuerdo o desaprobación a alguien'},
+        {n:9,txt:'Comer o beber en lugares públicos'},{n:10,txt:'Ser el centro de atención'}
+      ]
+    }],
+    footer: 'García-López LJ et al. (2006). Psicothema 18(3):529-36. Punto de corte: ≥20 probable fobia social.'
+  },
+
+  'scl90': {
+    titulo: 'SCL-90-R · Lista de Comprobación de Síntomas',
+    referencia: 'Casullo MM & Pérez M (2008). Adaptación argentina. UBA/CONICET.',
+    instruccion: 'A continuación se presenta una lista de problemas y molestias que la gente tiene a veces. Marque con una X el número que mejor describe CUÁNTO LE MOLESTÓ o ANGUSTIÓ cada problema durante la ÚLTIMA SEMANA incluyendo el día de hoy.',
+    escala: ['0 Nada', '1 Un poco', '2 Bastante', '3 Mucho', '4 Demasiado'],
+    secciones: [
+      { titulo: 'Ítems 1–10', items: [
+        {n:1,txt:'Dolores de cabeza'},{n:2,txt:'Nerviosismo o agitación interior'},{n:3,txt:'Pensamientos desagradables que no se van de su mente'},
+        {n:4,txt:'Sensación de desmayo o mareo'},{n:5,txt:'Falta de interés o placer sexual'},{n:6,txt:'Criticar a los demás'},
+        {n:7,txt:'La idea de que otra persona puede controlar sus pensamientos'},{n:8,txt:'Sentir que otros son culpables de la mayoría de sus problemas'},
+        {n:9,txt:'Dificultad para recordar las cosas'},{n:10,txt:'Preocupación por el desaseo o el descuido'}
+      ]},
+      { titulo: 'Ítems 11–20', items: [
+        {n:11,txt:'Sentirse fácilmente molesto o irritado'},{n:12,txt:'Dolores en el corazón o en el pecho'},
+        {n:13,txt:'Sentir miedo en los espacios abiertos o en la calle'},{n:14,txt:'Sentirse con poca energía o decaído'},
+        {n:15,txt:'Pensamientos de quitarse la vida'},{n:16,txt:'Escuchar voces que otras personas no oyen'},
+        {n:17,txt:'Temblores'},{n:18,txt:'Sentir que no se puede confiar en la mayoría de las personas'},
+        {n:19,txt:'Falta de apetito'},{n:20,txt:'Llorar fácilmente'}
+      ]},
+      { titulo: 'Ítems 21–30', items: [
+        {n:21,txt:'Timidez o incomodidad con el sexo opuesto'},{n:22,txt:'Sensación de estar atrapado o encerrado'},
+        {n:23,txt:'Tener miedo repentino sin razón'},{n:24,txt:'Arrebatos de cólera que no pudo controlar'},
+        {n:25,txt:'Miedo a salir solo de casa'},{n:26,txt:'Culparse a sí mismo de las cosas'},
+        {n:27,txt:'Dolores en la parte baja de la espalda'},{n:28,txt:'Sentirse incapaz de hacer las cosas'},
+        {n:29,txt:'Sentirse solo'},{n:30,txt:'Sentirse triste'}
+      ]},
+      { titulo: 'Ítems 31–40', items: [
+        {n:31,txt:'Preocuparse demasiado por las cosas'},{n:32,txt:'No sentir interés por las cosas'},
+        {n:33,txt:'Sentirse temeroso'},{n:34,txt:'Sentirse herido en sus sentimientos con facilidad'},
+        {n:35,txt:'La idea de que otras personas pueden saber lo que está pensando'},{n:36,txt:'Sentir que los demás no lo comprenden'},
+        {n:37,txt:'Sentir que las otras personas son poco amigables o que no le quieren'},
+        {n:38,txt:'Tener que hacer las cosas muy despacio para asegurarse de que están bien hechas'},
+        {n:39,txt:'Que el corazón le latiera muy deprisa'},{n:40,txt:'Náuseas o malestar estomacal'}
+      ]},
+      { titulo: 'Ítems 41–50', items: [
+        {n:41,txt:'Sentirse inferior a los demás'},{n:42,txt:'Dolores musculares'},
+        {n:43,txt:'Sentir que otras personas le observan o hablan de usted'},{n:44,txt:'Dificultad para conciliar el sueño'},
+        {n:45,txt:'Tener que comprobar una y otra vez lo que hace'},{n:46,txt:'Dificultad para tomar decisiones'},
+        {n:47,txt:'Miedo a viajar en autobús, metro o tren'},{n:48,txt:'Dificultad para respirar'},
+        {n:49,txt:'Oleadas de calor o frío'},{n:50,txt:'Tener que evitar ciertas cosas, lugares o actividades porque le dan miedo'}
+      ]},
+      { titulo: 'Ítems 51–60', items: [
+        {n:51,txt:'Que su mente se quedaba en blanco'},{n:52,txt:'Entumecimiento u hormigueo en alguna parte del cuerpo'},
+        {n:53,txt:'Tener un nudo en la garganta'},{n:54,txt:'Sentirse sin esperanza ante el futuro'},
+        {n:55,txt:'Dificultad para concentrarse'},{n:56,txt:'Debilidad en alguna parte del cuerpo'},
+        {n:57,txt:'Sentirse tenso o con los nervios de punta'},{n:58,txt:'Pesadez en los brazos o en las piernas'},
+        {n:59,txt:'Pensamientos sobre la muerte o el hecho de morir'},{n:60,txt:'Comer en exceso'}
+      ]},
+      { titulo: 'Ítems 61–70', items: [
+        {n:61,txt:'Sentirse incómodo cuando la gente le mira o habla de usted'},{n:62,txt:'Tener pensamientos que no son suyos'},
+        {n:63,txt:'Impulsos de golpear, hacer daño o herir a alguien'},{n:64,txt:'Despertarse muy temprano por la mañana'},
+        {n:65,txt:'Tener que repetir las mismas acciones (tocar, contar, lavarse)'},{n:66,txt:'Sueño intranquilo o perturbado'},
+        {n:67,txt:'Impulsos de romper o destrozar cosas'},{n:68,txt:'Tener ideas o creencias que los demás no comparten'},
+        {n:69,txt:'Sentirse muy cohibido entre otras personas'},{n:70,txt:'Sentirse incómodo en lugares con mucha gente'}
+      ]},
+      { titulo: 'Ítems 71–80', items: [
+        {n:71,txt:'Sentirse de que todo requiere un gran esfuerzo'},{n:72,txt:'Ataques de terror o pánico'},
+        {n:73,txt:'Sentirse incómodo comiendo o bebiendo en público'},{n:74,txt:'Meterse frecuentemente en discusiones'},
+        {n:75,txt:'Sentirse nervioso cuando está solo'},{n:76,txt:'Que los demás no reconocen sus méritos adecuadamente'},
+        {n:77,txt:'Sentirse solo aunque esté con gente'},{n:78,txt:'Sentirse tan inquieto que no puede permanecer sentado'},
+        {n:79,txt:'Sentimientos de inutilidad'},{n:80,txt:'La sensación de que algo malo le va a pasar'}
+      ]},
+      { titulo: 'Ítems 81–90', items: [
+        {n:81,txt:'Gritar o tirar cosas'},{n:82,txt:'Miedo a desmayarse en público'},
+        {n:83,txt:'La sensación de que la gente se aprovecha de usted si lo permite'},{n:84,txt:'Pensamientos sobre el sexo que le perturbaban bastante'},
+        {n:85,txt:'La idea de que debería ser castigado por sus pecados'},{n:86,txt:'Pensamientos e imágenes de naturaleza aterradora'},
+        {n:87,txt:'La idea de que algo serio anda mal en su cuerpo'},{n:88,txt:'Nunca sentirse cercano a otra persona'},
+        {n:89,txt:'Sentimientos de culpa'},{n:90,txt:'La idea de que algo anda mal en su mente'}
+      ]}
+    ],
+    footer: 'Derogatis LR (1994). SCL-90-R. NCS Pearson. Adaptación argentina: Casullo MM & Pérez M (2008). UBA/CONICET. T ≥ 63 = en riesgo clínico.'
+  }
+};
+
+function generarPDF(testId) {
+  var def = PDF_TESTS[testId];
+  if (!def) { alert('PDF no disponible para este test.'); return; }
+
+  var html = '<div class="pdf-wrap">';
+  html += '<div class="pdf-titulo">' + def.titulo + '</div>';
+  html += '<div class="pdf-subtitulo">' + def.referencia + '</div>';
+
+  // Datos del paciente
+  html += '<div style="display:flex;gap:24px;margin:12px 0 10px;font-size:0.8rem;">' +
+    '<div style="flex:2;border-bottom:1px solid #999;padding-bottom:2px;">Apellido y nombre: ___________________________</div>' +
+    '<div style="flex:1;border-bottom:1px solid #999;padding-bottom:2px;">Fecha: _______________</div>' +
+    '<div style="flex:1;border-bottom:1px solid #999;padding-bottom:2px;">Edad: ________</div>' +
+    '</div>';
+
+  // Punto de corte (solo TDAH)
+  if (def.corte) {
+    html += '<div class="pdf-corte-box"><strong>⚠ Punto de corte utilizado:</strong> ' + def.corte + '</div>';
+  }
+
+  // Instrucción
+  html += '<div class="pdf-instruccion">' + def.instruccion + '</div>';
+
+  // Escala global si la hay
+  if (def.escala) {
+    html += '<div style="font-size:0.78rem;margin-bottom:10px;color:#555;"><strong>Escala de respuesta:</strong> ' + def.escala.join(' &nbsp;|&nbsp; ') + '</div>';
+  }
+
+  // Secciones e ítems
+  def.secciones.forEach(function(sec) {
+    if (sec.titulo) html += '<div class="pdf-seccion-titulo">' + sec.titulo + '</div>';
+
+    // Cabecera de tabla
+    var encabezados = '';
+    if (def.escala) {
+      // columnas por opción de escala
+      def.escala.forEach(function(op) {
+        encabezados += '<th class="item-opt">' + op + '</th>';
+      });
+    } else {
+      encabezados = '<th style="width:45%">Opciones</th>';
+    }
+
+    html += '<table class="pdf-tabla"><thead><tr><th style="width:32px">#</th><th>Ítem</th>' + encabezados + '</tr></thead><tbody>';
+
+    sec.items.forEach(function(item) {
+      html += '<tr><td class="item-num">' + item.n + '</td><td class="item-txt">' + item.txt + '</td>';
+      if (def.escala) {
+        def.escala.forEach(function() { html += '<td class="item-opt">☐</td>'; });
+      } else if (item.opciones) {
+        html += '<td style="font-size:0.75rem;line-height:1.6;">' + item.opciones.map(function(o){ return '☐ ' + o; }).join('<br>') + '</td>';
+      }
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+  });
+
+  // Firma y footer
+  html += '<div class="pdf-firma">' +
+    '<div class="pdf-firma-campo">Profesional evaluador</div>' +
+    '<div class="pdf-firma-campo">Firma y sello</div>' +
+    '<div class="pdf-firma-campo">Institución</div>' +
+    '</div>';
+  html += '<div class="pdf-footer">' + def.footer + '</div>';
+  html += '</div>';
+
+  // Abrir ventana de impresión
+  var win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + def.titulo + '</title>');
+  win.document.write('<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">');
+  win.document.write('<style>');
+  win.document.write('body{font-family:"DM Sans",sans-serif;background:white;margin:0;padding:0;}');
+  win.document.write('.pdf-wrap{max-width:720px;margin:0 auto;padding:32px;color:#1a1a1a;}');
+  win.document.write('.pdf-titulo{font-size:1.3rem;font-weight:700;color:#8B3A00;margin-bottom:4px;}');
+  win.document.write('.pdf-subtitulo{font-size:0.82rem;color:#666;margin-bottom:6px;}');
+  win.document.write('.pdf-instruccion{font-size:0.82rem;background:#f9f3eb;border-left:3px solid #e07b3a;padding:8px 12px;margin-bottom:18px;border-radius:4px;}');
+  win.document.write('.pdf-corte-box{background:#fff8f0;border:1.5px solid #e07b3a;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;}');
+  win.document.write('.pdf-corte-box strong{color:#8B3A00;}');
+  win.document.write('.pdf-tabla{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:0.78rem;}');
+  win.document.write('.pdf-tabla th{background:#8B3A00;color:white;padding:6px 8px;text-align:center;font-weight:600;font-size:0.73rem;}');
+  win.document.write('.pdf-tabla td{border:1px solid #ddd;padding:6px 8px;vertical-align:middle;}');
+  win.document.write('.item-num{text-align:center;font-weight:600;color:#8B3A00;width:36px;background:#fdf6ee;}');
+  win.document.write('.item-txt{width:55%;}');
+  win.document.write('.item-opt{text-align:center;width:45px;font-size:0.72rem;}');
+  win.document.write('tr:nth-child(even) td{background:#fdf9f5;} tr:nth-child(even) .item-num{background:#f5ede0;}');
+  win.document.write('.pdf-seccion-titulo{font-size:0.9rem;font-weight:700;color:#8B3A00;margin:16px 0 8px;}');
+  win.document.write('.pdf-firma{margin-top:28px;display:flex;gap:40px;font-size:0.78rem;color:#444;}');
+  win.document.write('.pdf-firma-campo{flex:1;border-top:1px solid #999;padding-top:4px;}');
+  win.document.write('.pdf-footer{margin-top:20px;font-size:0.7rem;color:#999;text-align:center;border-top:1px solid #eee;padding-top:8px;}');
+  win.document.write('@media print{@page{margin:15mm;} button{display:none;}}');
+  win.document.write('</style></head><body>');
+  win.document.write('<div style="text-align:right;padding:12px 32px 0;"><button onclick="window.print()" style="background:#8B3A00;color:white;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:0.85rem;">🖨 Imprimir / Guardar PDF</button></div>');
+  win.document.write(html);
+  win.document.write('</body></html>');
+  win.document.close();
 }
 
 </script>
