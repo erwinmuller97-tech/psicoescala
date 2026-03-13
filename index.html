@@ -3416,6 +3416,7 @@ function renderHistorial() {
 }
 
 function filtrarHistorial() {
+  renderFiltroHistorial();
   renderHistorial();
 }
 
@@ -3552,7 +3553,7 @@ function generarPDFHistorial() {
       var bg = v===0?'#e8d9c6': v<0?'#fdf0ee':'#f0f7ec';
       return '<td style="width:16px;height:16px;text-align:center;font-size:9px;font-weight:900;'+
         'background:'+(isX?col+'33':bg)+';'+
-        'border:0.5px solid #ddd;padding:0;color:'+col+';">'+
+        'border:0.5px solid #ddd;padding:0;color:'+col+';font-size:13px;font-weight:900;line-height:16px;">'+
         (isX?'X':'')+'</td>';
     }).join('');
     return '<table style="border-collapse:collapse;table-layout:fixed;"><tr>'+hds+'</tr><tr>'+cells+'</tr></table>';
@@ -3682,12 +3683,9 @@ function generarPDFHistorial() {
           if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
 
         } else if (testNombre === 'Dígitos WAIS') {
-          // Directos e inversos: sin Z (baremos requieren edad+escolaridad no guardados)
-          if (d.dir != null) rows += filaTabla('Dígitos — Directos', d.dir, null, null, null, r.fecha);
-          if (d.inv != null) rows += filaTabla('Dígitos — Inversos', d.inv, null, null, null, r.fecha);
-          // Total: Z desde puntaje_z guardado (calculado con WAIS-III PE→Z)
+          // Solo mostrar Span Total con M=10 DS=3 (WAIS-III Puntaje Escalar)
           var totalPB = d.total != null ? d.total : r.puntaje_total;
-          if (totalPB != null) rows += filaTabla('Dígitos — Total (WAIS-III)', totalPB, 10, 3, r.puntaje_z, r.fecha);
+          if (totalPB != null) rows += filaTabla('Span Total — Dígitos WAIS-III', totalPB, 10, 3, r.puntaje_z, r.fecha);
 
         } else if (testNombre === 'Fluencia Verbal') {
           if (d.variables && d.variables.length) {
@@ -3868,7 +3866,6 @@ function generarPDFHistorial() {
     // ── Nota y pie ──
     '<div style="margin-top:12px;font-family:sans-serif;font-size:8px;color:#9a7a60;font-style:italic;padding:6px 10px;background:#faf6f0;border-left:2px solid #d8c8b0;line-height:1.5;">'+
     'Los puntajes Z se calculan respecto de baremos normativos argentinos por edad y escolaridad. '+
-    'BEM 144: Leis A et al. Neurología Argentina 2018;10(3):119-182 — https://www.elsevier.es/es-revista-neurologia-argentina-301-articulo-datos-normativos-version-argentina-bateria-S1853002818300259. '+
     'Los tests clínicos utilizan puntos de corte validados. Este resumen no reemplaza el informe clínico completo.</div>'+
     '<div style="margin-top:8px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:sans-serif;font-size:8px;color:#b09070;">'+
     '<div>PsicoEscala · ActivaMente · Plataforma de evaluación psicológica</div>'+
@@ -3911,6 +3908,7 @@ function irVista(v) {
   document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
   var map = {inicio:'snav-inicio', pacientes:'snav-pacientes', historial:'snav-historial'};
   if(map[v]) { var s=document.getElementById(map[v]); if(s) s.classList.add('active'); }
+  if(v === 'historial') { renderFiltroHistorial(); renderHistorial(); }
 }
 
 function irSector(s) {
