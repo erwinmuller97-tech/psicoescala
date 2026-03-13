@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.4</div>
     </div>
   </aside>
 
@@ -3545,7 +3545,8 @@ function generarPDFHistorial() {
     if (z !== null && z !== undefined) z = Math.max(-3, Math.min(3, z));
     var col = zColor(z);
     var hds = COLS.map(function(v){
-      return '<td style="width:16px;font-size:7px;text-align:center;color:#888;padding:1px 0;border:none;font-family:monospace;">'+(Number.isInteger(v)?v:'')+'</td>';
+      var lbl = Number.isInteger(v) ? (v>0?'+'+v:v) : '';
+      return '<td style="width:16px;font-size:7px;text-align:center;color:#555;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
     }).join('');
     var cells = COLS.map(function(v){
       var isX = z!==null && Math.abs(z-v)<0.26;
@@ -3646,7 +3647,7 @@ function generarPDFHistorial() {
 
         } else if (testNombre === 'BEM 144 Signoret') {
           // Calcular Z desde baremos + grupo edad del paciente
-          var gi = bemGrupo;
+          var gi = d.grupo_edad != null ? d.grupo_edad : bemGrupo;
           var SIG_N = {
             rli:  { M:[9.19,9.07,8.91,9.12,7.91,7.58], DS:[2.12,1.83,1.54,1.33,1.31,0.74], label:'Recuerdo Lógico Inmediato' },
             rld:  { M:[9.22,8.97,8.83,8.75,7.70,7.25], DS:[2.07,1.90,1.63,1.50,1.22,0.61], label:'Recuerdo Lógico Diferido' },
@@ -3784,42 +3785,83 @@ function generarPDFHistorial() {
         return staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR);
       }
 
-      // ── SCL-90-R: tabla de dimensiones ──
+      // ── SCL-90-R: tabla estilo imagen de referencia ──
       if (r.test === 'SCL-90-R') {
         var subs = d.subescalas || {};
-        var dimOrder = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
-        var dimLabels = {som:'Somatización',obs:'Obs-Comp',sen:'Sens. Interp.',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ans. Fóbica',par:'Ideac. Paranoide',psi:'Psicoticismo'};
-        var dimsHtml = '<table style="border-collapse:collapse;font-size:9px;width:100%;">';
-        dimsHtml += '<tr>';
-        dimOrder.forEach(function(k){
-          var label = (subs[k]&&subs[k].nombre) || dimLabels[k] || k;
-          dimsHtml += '<th style="padding:2px 4px;text-align:center;color:#7a4e38;font-size:7.5px;font-weight:700;text-transform:uppercase;border-bottom:0.5px solid #ddd;">'+label+'</th>';
-        });
-        dimsHtml += '<th style="padding:2px 4px;text-align:center;color:#7a4e38;font-size:7.5px;font-weight:700;text-transform:uppercase;border-bottom:0.5px solid #ddd;">IGT</th>';
-        dimsHtml += '</tr><tr>';
-        dimOrder.forEach(function(k){
-          var t = subs[k] ? subs[k].t : null;
-          var col = t!=null ? (t>=70?'#c0392b': t>=60?'#c0602b': t>=55?'#b8760a':'#3a7a3a') : '#888';
-          dimsHtml += '<td style="padding:2px 4px;text-align:center;font-family:monospace;font-weight:700;color:'+col+';">'+(t!=null?t:'—')+'</td>';
-        });
-        var igt = d.igt != null ? parseFloat(d.igt).toFixed(0) : (r.puntaje_total!=null?r.puntaje_total:'—');
-        var igtCol = igt>=70?'#c0392b': igt>=60?'#c0602b':'#3d2410';
-        dimsHtml += '<td style="padding:2px 4px;text-align:center;font-family:monospace;font-weight:700;color:'+igtCol+';">'+igt+'</td>';
-        dimsHtml += '</tr></table>';
-        dimsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Puntajes T ≥63: riesgo clínico significativo (p90) · Fecha: '+(r.fecha||'')+'</div>';
-        // Descripción dimensiones en riesgo
-        var SCL_DESC = {som:'Malestares físicos percibidos',obs:'Pensamientos/impulsos no deseados',sen:'Sentimientos de inferioridad',dep:'Estado de ánimo disfórico, desesperanza',ans:'Nerviosismo, tensión, ataques de pánico',hos:'Enojo, irritabilidad, afectos negativos',fob:'Miedo irracional a estímulos específicos',par:'Suspicacia, proyección, pérdida de autonomía',psi:'Soledad, experiencias esquizoides'};
-        var enRiesgoPDF = dimOrder.filter(function(k){ return subs[k] && subs[k].t >= 63; });
-        if (enRiesgoPDF.length) {
-          dimsHtml += '<div style="margin-top:5px;font-size:8.5px;line-height:1.5;color:#3d2410;padding:4px 8px;background:#fdf6ee;border-left:2px solid #d8c0a0;">';
-          dimsHtml += '<strong style="font-size:8px;text-transform:uppercase;letter-spacing:0.5px;color:#7a4e38;">Dimensiones en riesgo: </strong>';
-          dimsHtml += enRiesgoPDF.map(function(k){ return (subs[k].nombre||k)+(SCL_DESC[k]?' — '+SCL_DESC[k]:''); }).join(' · ');
-          dimsHtml += '</div>';
+        var SCL_DESC = {
+          som:'Malestares físicos percibidos (cardiovasculares, gastrointestinales)',
+          obs:'Pensamientos, impulsos o acciones vivenciados como no deseados',
+          sen:'Sentimientos de inferioridad e inadecuación respecto a otros',
+          dep:'Ánimo disfórico, falta de motivación, desesperanza',
+          ans:'Nerviosismo, tensión, ataques de pánico, miedos',
+          hos:'Enojo, irritabilidad y afectos negativos de hostilidad',
+          fob:'Miedo irracional y desproporcionado a estímulos específicos',
+          par:'Suspicacia, desconfianza y temor a pérdida de autonomía',
+          psi:'Soledad, estilo esquizoide, posibles experiencias de desrealización'
+        };
+        var dimFull = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
+        var dimNombres = {som:'Somatizaciones',obs:'Obsesiones y Compulsiones',sen:'Sensitividad Interpersonal',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad Fóbica',par:'Ideación Paranoide',psi:'Psicoticismo'};
+        function sclCelBg(t) {
+          if (t==null) return '#f5f5f5';
+          if (t>=80) return '#e74c3c';
+          if (t>=65) return '#f39c12';
+          return '#f5f5f5';
         }
-        return '<tr>'+
-          '<td style="'+tdS+'font-weight:500;">SCL-90-R</td>'+
-          '<td style="'+tdS+'" colspan="4">'+dimsHtml+'</td>'+
-          '</tr>';
+        function sclCelColor(t) {
+          if (t==null) return '#aaa';
+          if (t>=65) return '#fff';
+          return '#3d2410';
+        }
+        var thStyle = 'padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;';
+        var thLStyle = 'padding:4px 10px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:left;';
+        var html = '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
+        // Header dimensiones primarias
+        html += '<tr><td colspan="3" style="background:#5a3520;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #c09070;">Dimensiones primarias</td>'+
+          '<th style="'+thStyle+'">Ptos brutos</th>'+
+          '<th style="'+thStyle+'">T</th>'+
+          '<th style="'+thStyle+'">Estado</th></tr>';
+        dimFull.forEach(function(k) {
+          var t = subs[k] ? subs[k].t : null;
+          var bg = sclCelBg(t);
+          var fc = sclCelColor(t);
+          var avg = subs[k] && subs[k].avg != null ? parseFloat(subs[k].avg).toFixed(2) : '—';
+          var estado = t==null?'—': t>=80?'Muy elevado': t>=65?'Elevado': t>=55?'Moderado':'Normal';
+          html += '<tr>'+
+            '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">'+dimNombres[k]+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+avg+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td>'+
+            '</tr>';
+        });
+        // Escalas globales
+        html += '<tr><td colspan="6" style="background:#5a3520;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #c09070;">Escalas globales</td></tr>';
+        var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
+        var tsp = d.tsp != null ? d.tsp : null;
+        var imsp = d.imsp != null ? parseFloat(d.imsp).toFixed(2) : null;
+        [['IGS — Índice de Severidad Global', d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—', igt],
+         ['TSP — Total Síntomas Positivos', tsp!=null?tsp:'—', d.tsp_t!=null?d.tsp_t:null],
+         ['IMSP — Índice Malestar Positivo', imsp!=null?imsp:'—', d.imsp_t!=null?d.imsp_t:null]
+        ].forEach(function(row){
+          var t = row[2];
+          var bg = sclCelBg(t);
+          var fc = sclCelColor(t);
+          var estado = t==null?'—': t>=80?'Muy elevado': t>=65?'Elevado': t>=55?'Moderado':'Normal';
+          html += '<tr>'+
+            '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;font-weight:600;">'+row[0]+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+row[1]+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t!=null&&t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td>'+
+            '</tr>';
+        });
+        html += '</table>';
+        // Leyenda colores
+        html += '<div style="display:flex;gap:10px;font-size:8px;color:#7a4e38;margin-bottom:4px;">'+
+          '<span><span style="display:inline-block;width:10px;height:10px;background:#e74c3c;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>T≥80 Muy elevado</span>'+
+          '<span><span style="display:inline-block;width:10px;height:10px;background:#f39c12;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>T≥65 Elevado</span>'+
+          '<span style="color:#9a7a60;">Punto de riesgo clínico: T≥63 (p90) · Baremos: Casullo & Pérez (2008) · Fecha: '+(r.fecha||'')+'</span>'+
+          '</div>';
+        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">SCL-90-R</td>'+
+          '<td style="'+tdS+'" colspan="4">'+html+'</td></tr>';
       }
 
       // ── Resto de tests clínicos ──
@@ -3890,7 +3932,7 @@ function generarPDFHistorial() {
     'body{font-family:Georgia,serif;background:#fff;color:#2c1a0e;margin:0;padding:20px;}'+
     '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
-    '@media print{body{padding:0;}@page{margin:12mm;size:A4 landscape;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
+    '@media print{body{padding:0;}@page{margin:10mm;size:A4 portrait;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
     '</style></head><body><div class="pg">'+
 
     // ── Header ──
@@ -5974,6 +6016,7 @@ function calcularScl90() {
   var IGS = totalResp > 0 ? totalSum / totalResp : 0;
   var TSP = totalPositivos;
   var IMSP = TSP > 0 ? totalSum / TSP : 0;
+  window._sclIGS = IGS; window._sclTSP = TSP; window._sclIMSP = IMSP;
 
   // Convertir a T e interpretar
   var rows = '';
@@ -6000,6 +6043,7 @@ function calcularScl90() {
   var tIGS = brutoAT_SCL(IGS, grupo, sexo, 'IGS');
   var tTSP = brutoAT_SCL(TSP, grupo, sexo, 'TSP');
   var tIMSP = brutoAT_SCL(IMSP, grupo, sexo, 'IMSP');
+  window._sclTSP_T = tTSP; window._sclIMSP_T = tIMSP;
   var zIGS = ((tIGS-50)/10).toFixed(2);
 
   [['IGS (Índice de Severidad Global)', IGS.toFixed(2), tIGS],
@@ -6125,7 +6169,9 @@ function guardarResultadoScl90() {
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'SCL-90-R', fecha: fecha,
     puntaje_total: igtVal ? Math.round(igtVal) : null, categoria: 'Ver detalle',
-    datos: { subescalas: subescalas, igt: igtVal, gsi: igtVal }
+    datos: { subescalas: subescalas, igt: igtVal, gsi: igtVal,
+      tsp: window._sclTSP||null, imsp: window._sclIMSP||null,
+      igs_avg: window._sclIGS||null, tsp_t: window._sclTSP_T||null, imsp_t: window._sclIMSP_T||null }
   }, SESSION.access_token)
   .then(function(){
     cargarResultados();
@@ -6252,14 +6298,18 @@ function guardarResultadoSignoret(){
   var pacId=document.getElementById('signoret-paciente').value;
   var fecha=document.getElementById('signoret-fecha').value;
   if(!pacId){alert('Seleccioná un paciente.');return;}
-  var sigKeys=['sig-rl','sig-rvl','sig-iml','sig-rl2','sig-rvl2','sig-p','sig-f','sig-i','sig-r','sig-total'];
   var sigDatos={};
-  sigKeys.forEach(function(k){ var el=document.getElementById(k); if(el&&el.value!=='') sigDatos[k]=parseFloat(el.value)||parseInt(el.value)||el.value; });
-  var sigTotal=document.getElementById('sig-total'); var totalPts=sigTotal?parseInt(sigTotal.textContent)||null:null;
+  ['sig-rli','sig-rld','sig-as','sig-rs','sig-rc','sig-reco'].forEach(function(k){
+    var el=document.getElementById(k); var key=k.replace('sig-','');
+    if(el&&el.value!=='') sigDatos[key]=parseFloat(el.value);
+  });
+  var giEl=document.getElementById('signoret-edad');
+  if(giEl&&giEl.value!=='') sigDatos.grupo_edad=parseInt(giEl.value);
+  if(sigDatos.rc!=null&&sigDatos.reco!=null) sigDatos.recce=(sigDatos.rc+sigDatos.reco)/2;
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,
     test:'BEM 144 Signoret',fecha:fecha,
-    puntaje_total:totalPts,categoria:'Ver detalle',
+    puntaje_total:null,categoria:'Ver detalle',
     datos:sigDatos
   },SESSION.access_token)
   .then(function(){cargarResultados();
