@@ -3588,7 +3588,7 @@ function generarPDFHistorial() {
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'">'+(nota&&!z&&z!==0?'<span style="font-size:8px;color:#9a7a60;font-style:italic;">'+nota+'</span>':'<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span>')+'</td>'+
+      '<td style="'+tdBase+'">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<span style="font-size:8px;color:#9a7a60;font-style:italic;">'+nota+'</span>':'<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span>')+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+( fecha||'')+'</td>'+
       '</tr>';
   }
@@ -3708,9 +3708,9 @@ function generarPDFHistorial() {
           if (d.perse_pct != null)
             rows += filaTabla('Errores perseverativos (%)', d.perse_pct+'%', d.perse_m||null, d.perse_ds||null, d.perse_z!=null?d.perse_z:null, r.fecha);
           if (d.intentos != null)
-            rows += filaTabla('Intentos 1ª categoría', d.intentos, null, null, null, r.fecha);
+            rows += filaTabla('Intentos 1ª categoría <span style="font-size:8px;color:#9a7a60;font-style:italic;">(ref: >20)</span>', d.intentos, null, null, null, r.fecha);
           if (d.fallas != null)
-            rows += filaTabla('Fallas en mantener set', d.fallas, null, null, null, r.fecha);
+            rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#9a7a60;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
 
         } else {
           rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
