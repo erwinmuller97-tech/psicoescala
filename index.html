@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.2</div>
     </div>
   </aside>
 
@@ -3549,9 +3549,9 @@ function generarPDFHistorial() {
     }).join('');
     var cells = COLS.map(function(v){
       var isX = z!==null && Math.abs(z-v)<0.26;
-      var bg = v===0 ? '#c8c8c8' : '#ebebeb';
+      var bg = v===0 ? '#b0b0b0' : '#d8d8d8';
       var inner = isX
-        ? '<div style="width:10px;height:10px;border-radius:50%;background:'+col+';margin:auto;"></div>'
+        ? '<div style="width:11px;height:11px;border-radius:50%;background:'+col+';margin:auto;box-shadow:0 0 0 1px '+col+'44;"></div>'
         : '';
       return '<td style="width:16px;height:16px;text-align:center;vertical-align:middle;'+
         'background:'+bg+';border:0.5px solid #d0d0d0;padding:0;">'+
@@ -3722,7 +3722,9 @@ function generarPDFHistorial() {
     'PHQ-9':   {max:27, cut:10},
     'GAD-7':   {max:21, cut:10},
     'SPAI-B':  {max:90, cut:40},
-    'MBI-HSS': {max:66, cut:27}
+    'MBI-HSS': {max:66, cut:27},
+    'ASRS-V1.1': {max:18, cut:14},
+    'WURS-25':   {max:100, cut:46}
   };
 
   function clBar(val, max, cutoff) {
@@ -3766,21 +3768,20 @@ function generarPDFHistorial() {
           var pct = Math.min(100,(val/MAX_S)*100);
           var cut = (25/MAX_S)*100;
           var col = val>=45?'#c0392b': val>=35?'#c0602b': val>=25?'#b8760a':'#3a7a3a';
-          return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">'+
-            '<span style="font-size:9px;color:#7a6050;min-width:42px;">'+label+'</span>'+
-            '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:90px;display:inline-block;">'+
+          return '<tr style="border-bottom:0.5px solid #f0e8de;">'+
+            '<td style="padding:3px 7px;font-size:10px;color:#5a3520;font-style:italic;">'+label+'</td>'+
+            '<td style="padding:3px 7px;text-align:center;font-family:monospace;font-weight:700;font-size:11px;">'+val+'</td>'+
+            '<td style="padding:3px 7px;text-align:center;">'+
+            '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:110px;display:inline-block;">'+
             '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
             '<div style="position:absolute;left:'+cut.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
-            '</div>'+
-            '<span style="font-family:monospace;font-weight:700;font-size:10px;">'+val+'</span>'+
-            (cat?'<span style="font-size:8px;color:'+catColor(cat)+';">'+cat+'</span>':'')+
-            '</div>';
+            '</div></td>'+
+            '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥25</td>'+
+            '<td style="padding:3px 7px;color:'+catColor(cat)+';font-weight:600;font-size:10px;">'+cat+'</td>'+
+            '<td style="padding:3px 7px;"></td>'+
+            '</tr>';
         }
-        return '<tr>'+
-          '<td style="'+tdS+'font-weight:500;">STAI</td>'+
-          '<td style="'+tdS+'" colspan="3">'+staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR)+'</td>'+
-          '<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
-          '</tr>';
+        return staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR);
       }
 
       // ── SCL-90-R: tabla de dimensiones ──
@@ -3805,7 +3806,16 @@ function generarPDFHistorial() {
         var igtCol = igt>=70?'#c0392b': igt>=60?'#c0602b':'#3d2410';
         dimsHtml += '<td style="padding:2px 4px;text-align:center;font-family:monospace;font-weight:700;color:'+igtCol+';">'+igt+'</td>';
         dimsHtml += '</tr></table>';
-        dimsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Puntajes T &gt;65: elevación clínica significativa · Fecha: '+(r.fecha||'')+'</div>';
+        dimsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Puntajes T ≥63: riesgo clínico significativo (p90) · Fecha: '+(r.fecha||'')+'</div>';
+        // Descripción dimensiones en riesgo
+        var SCL_DESC = {som:'Malestares físicos percibidos',obs:'Pensamientos/impulsos no deseados',sen:'Sentimientos de inferioridad',dep:'Estado de ánimo disfórico, desesperanza',ans:'Nerviosismo, tensión, ataques de pánico',hos:'Enojo, irritabilidad, afectos negativos',fob:'Miedo irracional a estímulos específicos',par:'Suspicacia, proyección, pérdida de autonomía',psi:'Soledad, experiencias esquizoides'};
+        var enRiesgoPDF = dimOrder.filter(function(k){ return subs[k] && subs[k].t >= 63; });
+        if (enRiesgoPDF.length) {
+          dimsHtml += '<div style="margin-top:5px;font-size:8.5px;line-height:1.5;color:#3d2410;padding:4px 8px;background:#fdf6ee;border-left:2px solid #d8c0a0;">';
+          dimsHtml += '<strong style="font-size:8px;text-transform:uppercase;letter-spacing:0.5px;color:#7a4e38;">Dimensiones en riesgo: </strong>';
+          dimsHtml += enRiesgoPDF.map(function(k){ return (subs[k].nombre||k)+(SCL_DESC[k]?' — '+SCL_DESC[k]:''); }).join(' · ');
+          dimsHtml += '</div>';
+        }
         return '<tr>'+
           '<td style="'+tdS+'font-weight:500;">SCL-90-R</td>'+
           '<td style="'+tdS+'" colspan="4">'+dimsHtml+'</td>'+
@@ -3819,10 +3829,13 @@ function generarPDFHistorial() {
           var mps=[]; if(d.CE!=null) mps.push('CE:'+d.CE); if(d.D!=null) mps.push('D:'+d.D); if(d.RP!=null) mps.push('RP:'+d.RP);
           pb = mps.length ? mps.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
         case 'ASRS-V1.1':
-          pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
+          pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—');
+          // Para la barra usar total_18 si existe
+          if (d.total_18!=null) r._barVal = d.total_18; break;
         default: pb = r.puntaje_total!==null?r.puntaje_total:'—';
       }
-      var barHtml = (corte && r.puntaje_total!==null) ? clBar(r.puntaje_total, corte.max, corte.cut) : '';
+      var barVal = r._barVal != null ? r._barVal : r.puntaje_total;
+      var barHtml = (corte && barVal!==null) ? clBar(barVal, corte.max, corte.cut) : '';
       var cat = r.categoria || '—';
       return '<tr>'+
         '<td style="'+tdS+'font-weight:500;">'+r.test+'</td>'+
@@ -6083,21 +6096,36 @@ function guardarResultadoScl90() {
   var pacId = document.getElementById('scl90-paciente').value;
   var fecha = document.getElementById('scl90-fecha').value;
   if (!pacId) { alert('Seleccioná un paciente.'); return; }
-  // Recopilar puntajes T de subescalas desde los elementos de resultado
-  var sclDims = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
+  // Leer T desde la tabla renderizada scl90-tabla-t
+  var sclNombresMap = {
+    'Somatizaciones':'som','Obsesiones/Compulsiones':'obs','Sensitividad Interpersonal':'sen',
+    'Depresión':'dep','Ansiedad':'ans','Hostilidad':'hos',
+    'Ansiedad Fóbica':'fob','Ideación Paranoide':'par','Psicoticismo':'psi'
+  };
   var sclNombres = {som:'Somatización',obs:'Obsesión-Compulsión',sen:'Sensitividad',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad fóbica',par:'Ideación paranoide',psi:'Psicoticismo'};
   var subescalas = {};
-  sclDims.forEach(function(d){
-    var el = document.getElementById('scl-t-'+d);
-    if(el) subescalas[d] = { nombre: sclNombres[d], t: parseFloat(el.textContent)||null };
-  });
-  var igt = document.getElementById('scl-t-igt');
-  var gsi = document.getElementById('scl-t-gsi');
+  var igtVal = null;
+  var tablaEl = document.getElementById('scl90-tabla-t');
+  if (tablaEl) {
+    var filas = tablaEl.querySelectorAll('tbody tr');
+    filas.forEach(function(fila) {
+      var celdas = fila.querySelectorAll('td');
+      if (celdas.length >= 3) {
+        var dimNombre = celdas[0].textContent.trim();
+        var tVal = parseFloat(celdas[2].textContent);
+        var key = sclNombresMap[dimNombre];
+        if (key && !isNaN(tVal)) {
+          subescalas[key] = { nombre: sclNombres[key], t: tVal };
+        }
+        if (dimNombre.includes('IGS') && !isNaN(tVal)) igtVal = tVal;
+      }
+    });
+  }
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'SCL-90-R', fecha: fecha,
-    puntaje_total: igt ? Math.round(parseFloat(igt.textContent)) : null, categoria: 'Ver detalle',
-    datos: { subescalas: subescalas, igt: igt?parseFloat(igt.textContent):null, gsi: gsi?parseFloat(gsi.textContent):null }
+    puntaje_total: igtVal ? Math.round(igtVal) : null, categoria: 'Ver detalle',
+    datos: { subescalas: subescalas, igt: igtVal, gsi: igtVal }
   }, SESSION.access_token)
   .then(function(){
     cargarResultados();
