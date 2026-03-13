@@ -4,29 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PsicoEscala</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:        #fdf6ee;
-  --surface:   #fffbf5;
-  --surface2:  #f5ede0;
-  --border:    #e8d9c4;
-  --border2:   #d9c8ae;
-  --accent:    #e07b3a;
-  --accentdk:  #b85e1f;
-  --accentlt:  #f5a66a;
-  --text:      #2a1f14;
-  --muted:     #8a7060;
+  --bg:        #faf6f1;
+  --surface:   #ffffff;
+  --surface2:  #f5ede2;
+  --sidebar:   #f0e8dc;
+  --border:    #e4d5c0;
+  --border2:   #d4c0a6;
+  --accent:    #9B6A50;
+  --accentdk:  #7a4e38;
+  --accentlt:  #c4977a;
+  --text:      #2c2018;
+  --muted:     #7a6555;
   --green:     #2e7a4f;
   --yellow:    #9a6e00;
   --orange:    #c25000;
   --red:       #a82828;
-  --radius:    12px;
-  --shadow:    0 2px 12px rgba(180,120,60,0.10);
+  --radius:    10px;
+  --shadow:    0 2px 12px rgba(155,106,80,0.10);
 }
 html { scroll-behavior: smooth; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
 
 /* ══ PANTALLAS ══ */
 .screen { display: none; }
@@ -64,7 +65,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   margin-bottom: 14px;
   box-shadow: 0 4px 16px rgba(224,123,58,0.35);
 }
-.login-titulo { font-family: 'Lora', serif; font-size: 1.9rem; font-weight: 600; color: var(--accentdk); }
+.login-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--accentdk); }
 .login-sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
 
 .login-field { margin-bottom: 16px; }
@@ -72,14 +73,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .login-field input {
   width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
   border-radius: 8px; padding: 11px 14px; color: var(--text);
-  font-family: 'DM Sans', sans-serif; font-size: 0.92rem; transition: border-color 0.15s;
+  font-family: 'Outfit', sans-serif; font-size: 0.92rem; transition: border-color 0.15s;
 }
 .login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.12); }
 .login-field input::placeholder { color: #c4b09a; }
 
 .btn-login {
   width: 100%; padding: 13px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
-  border: none; border-radius: 8px; color: white; font-family: 'DM Sans', sans-serif;
+  border: none; border-radius: 8px; color: white; font-family: 'Outfit', sans-serif;
   font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 8px;
   box-shadow: 0 3px 12px rgba(224,123,58,0.35); transition: opacity 0.2s, transform 0.1s;
 }
@@ -93,40 +94,51 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 #screen-app { display: none; flex-direction: column; min-height: 100vh; }
 #screen-app.active { display: flex; }
 
-.topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 40px;
-  height: 60px;
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: var(--shadow);
-  position: sticky; top: 0; z-index: 100;
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width:220px; min-width:220px;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:32px 0 24px;
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
 }
-.topbar-logo { display: flex; align-items: center; gap: 10px; }
-.topbar-logo-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--accent), var(--accentlt));
-  border-radius: 9px; display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
-}
-.topbar-nombre { font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 600; color: var(--accentdk); }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-user { font-size: 0.82rem; color: var(--muted); }
-.btn-salir {
-  padding: 7px 14px; background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: 6px; color: var(--muted); font-family: 'DM Sans', sans-serif;
-  font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
-}
-.btn-salir:hover { border-color: var(--accent); color: var(--accentdk); }
+.sidebar-logo { display:flex; flex-direction:column; align-items:center; padding:0 24px 28px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+.sidebar-logo svg { width:52px; height:52px; margin-bottom:10px; }
+.sidebar-nombre { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; color:var(--accentdk); letter-spacing:2.5px; text-transform:uppercase; }
+.sidebar-nav { flex:1; padding:0 12px; }
+.sidebar-section { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:400; letter-spacing:0.2px; transition:background 0.15s, color 0.15s; margin-bottom:2px; user-select:none; }
+.sidebar-section:hover { background:rgba(155,106,80,0.1); color:var(--accentdk); }
+.sidebar-section.active { background:rgba(155,106,80,0.15); color:var(--accentdk); font-weight:500; }
+.sidebar-icon { font-size:15px; opacity:0.7; width:18px; text-align:center; }
+.sidebar-divider { height:1px; background:var(--border); margin:12px 14px; }
+.sidebar-bottom { padding:0 12px; }
+.sidebar-user { padding:10px 14px; font-size:0.75rem; color:var(--muted); }
+.sidebar-btn-salir { width:100%; padding:9px 14px; background:none; border:1px solid var(--border); border-radius:8px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.8rem; cursor:pointer; transition:all 0.15s; }
+.sidebar-btn-salir:hover { border-color:var(--accent); color:var(--accent); }
 
-.app-content { flex: 1; padding: 36px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
+/* ══ MAIN CONTENT ══ */
+.app-main { margin-left:220px; flex:1; min-height:100vh; display:flex; flex-direction:column; }
+.app-content { flex:1; padding:40px 48px; max-width:980px; }
+
 
 /* ══ VISTAS ══ */
 .vista { display: none; }
 .vista.active { display: block; }
 
+/* ══ HOME HERO ══ */
+.home-hero { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:72vh; text-align:center; }
+.home-logo-svg { width:96px; height:96px; margin-bottom:28px; }
+.home-titulo { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:400; color:var(--accentdk); letter-spacing:5px; text-transform:uppercase; margin-bottom:14px; }
+.home-desc { font-size:0.87rem; color:var(--muted); max-width:400px; line-height:1.75; letter-spacing:0.2px; }
+.home-stats { display:flex; gap:32px; margin-top:40px; }
+.home-stat { text-align:center; }
+.home-stat-n { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--accentdk); }
+.home-stat-l { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+
 /* ══ INICIO ══ */
-.inicio-saludo { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--accentdk); margin-bottom: 6px; }
+.inicio-saludo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--accentdk); margin-bottom: 6px; }
 .inicio-fecha { font-size: 0.84rem; color: var(--muted); margin-bottom: 32px; }
 
 .sectores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 36px; }
@@ -141,7 +153,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 }
 .sector-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(180,100,40,0.15); border-color: var(--accentlt); }
 .sector-icon { font-size: 2rem; margin-bottom: 12px; }
-.sector-titulo { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 6px; }
+.sector-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 6px; }
 .sector-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 .sector-tests { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 .sector-tag {
@@ -151,23 +163,23 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 /* ══ PACIENTES ══ */
 .vista-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-.vista-titulo { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--accentdk); }
+.vista-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--accentdk); }
 .btn-primary {
   padding: 9px 18px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
-  border: none; border-radius: 7px; color: white; font-family: 'DM Sans', sans-serif;
+  border: none; border-radius: 7px; color: white; font-family: 'Outfit', sans-serif;
   font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(224,123,58,0.25);
   transition: opacity 0.2s, transform 0.1s;
 }
 .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-secondary {
   padding: 9px 18px; background: var(--surface2); border: 1.5px solid var(--border2);
-  border-radius: 7px; color: var(--muted); font-family: 'DM Sans', sans-serif;
+  border-radius: 7px; color: var(--muted); font-family: 'Outfit', sans-serif;
   font-size: 0.86rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
 }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accentdk); }
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; box-shadow: var(--shadow); }
-.card-title { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.card-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--accentdk); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
 .card-title::before { content: ''; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; }
 
 .pacientes-lista { display: flex; flex-direction: column; gap: 10px; }
@@ -182,7 +194,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .pac-acciones { display: flex; gap: 8px; }
 .btn-xs {
   padding: 5px 12px; border-radius: 5px; font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s;
+  cursor: pointer; border: none; font-family: 'Outfit', sans-serif; transition: opacity 0.15s;
 }
 .btn-xs-primary { background: var(--accent); color: white; }
 .btn-xs-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
@@ -199,7 +211,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .field input, .field select, .field textarea {
   width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
   border-radius: 7px; padding: 9px 12px; color: var(--text);
-  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; transition: border-color 0.15s;
+  font-family: 'Outfit', sans-serif; font-size: 0.88rem; transition: border-color 0.15s;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
   outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.1);
@@ -224,7 +236,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 }
 .test-card:hover { transform: translateY(-3px); border-color: var(--accentlt); box-shadow: 0 8px 24px rgba(180,100,40,0.15); }
 .test-icon { font-size: 2rem; margin-bottom: 10px; }
-.test-nombre { font-family: 'Lora', serif; font-size: 0.95rem; font-weight: 600; color: var(--accentdk); margin-bottom: 4px; }
+.test-nombre { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 600; color: var(--accentdk); margin-bottom: 4px; }
 .test-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
 .test-tag { display: inline-block; margin-top: 10px; padding: 2px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; font-size: 0.68rem; color: var(--muted); }
 
@@ -263,10 +275,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   display: flex; align-items: center; gap: 24px; margin-bottom: 24px;
   padding-bottom: 20px; border-bottom: 1px solid var(--border);
 }
-.puntaje-grande { font-family: 'Lora', serif; font-size: 4rem; font-weight: 600; line-height: 1; color: var(--accentdk); }
+.puntaje-grande { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 600; line-height: 1; color: var(--accentdk); }
 .puntaje-info { flex: 1; }
 .puntaje-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.puntaje-categoria { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 600; margin-top: 4px; }
+.puntaje-categoria { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; margin-top: 4px; }
 .puntaje-rango { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
 
 .badge-grande { display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-top: 8px; }
@@ -284,7 +296,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .detalle-lbl { font-size: 0.7rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
 
 .interp-box { background: #fef5ec; border: 1px solid #f0d4b0; border-radius: 9px; padding: 18px 22px; margin-top: 16px; }
-.interp-titulo { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--accentdk); margin-bottom: 10px; font-weight: 600; }
+.interp-titulo { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; color: var(--accentdk); margin-bottom: 10px; font-weight: 600; }
 .interp-texto { font-size: 0.86rem; color: var(--text); line-height: 1.8; }
 .interp-texto p { margin-bottom: 8px; }
 .interp-texto p:last-child { margin-bottom: 0; }
@@ -293,7 +305,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,31,20,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal { background: var(--surface); border-radius: 16px; padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
-.modal-titulo { font-family: 'Lora', serif; font-size: 1.2rem; color: var(--accentdk); margin-bottom: 20px; font-weight: 600; }
+.modal-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--accentdk); margin-bottom: 20px; font-weight: 600; }
 .modal-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
 
 /* ══ STAI PERCENTILES TABLE ══ */
@@ -354,7 +366,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 <!-- ══ PASSWORD GATE ══ -->
 <div id="screen-gate" class="screen active" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:48px 40px;max-width:360px;width:100%;text-align:center;box-shadow:var(--shadow);">
-    <div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:600;color:var(--accent);margin-bottom:8px;">PsicoEscala</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--accent);margin-bottom:8px;">PsicoEscala</div>
     <div style="font-size:0.85rem;color:var(--muted);margin-bottom:32px;">Acceso restringido</div>
     <div style="font-size:1.5rem;margin-bottom:24px;">🔒</div>
     <input type="password" id="gate-input" placeholder="Contraseña de acceso"
@@ -398,9 +410,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
     <!-- NAV TABS -->
     <div style="display:flex; gap:6px; margin-bottom:28px; border-bottom:2px solid var(--border); padding-bottom:0;">
-      <button class="nav-tab active" onclick="irVista('inicio')" id="tab-inicio" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid var(--accent); margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; color:var(--accentdk);">Inicio</button>
-      <button class="nav-tab" onclick="irVista('pacientes')" id="tab-pacientes" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Pacientes</button>
-      <button class="nav-tab" onclick="irVista('historial')" id="tab-historial" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Historial</button>
+      <button class="nav-tab active" onclick="irVista('inicio')" id="tab-inicio" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid var(--accent); margin-bottom:-2px; cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:600; color:var(--accentdk);">Inicio</button>
+      <button class="nav-tab" onclick="irVista('pacientes')" id="tab-pacientes" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Pacientes</button>
+      <button class="nav-tab" onclick="irVista('historial')" id="tab-historial" style="padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:500; color:var(--muted);">Historial</button>
     </div>
 
     <!-- ── INICIO ── -->
@@ -500,7 +512,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
     <!-- ── HISTORIAL ── -->
     <div class="vista" id="vista-historial">
-      <div class="vista-header"><div class="vista-titulo">Historial de evaluaciones</div></div>
+      <div class="vista-header">
+        <div class="vista-titulo">Historial de evaluaciones</div>
+        <button class="btn-primary" onclick="generarPDFHistorial()">📄 Generar informe PDF</button>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <label style="font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;">Filtrar por paciente</label>
+          <select id="historial-filtro-pac" onchange="filtrarHistorial()" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:0.88rem;color:var(--text);min-width:200px;">
+            <option value="">— Todos los pacientes —</option>
+          </select>
+        </div>
+      </div>
       <div class="card">
         <div id="historial-contenido"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No hay evaluaciones registradas aún.</div></div></div>
       </div>
@@ -6966,26 +6989,8 @@ function guardarResultadoMBI(){
 
 // ── Auto-iniciar si hay sesión ─────────────────
 window.addEventListener('DOMContentLoaded', function() {
-  if (SESSION && SESSION.access_token) {
-    // Hay sesión guardada — mostrar app directamente
-    var emailGuardado = '';
-    try {
-      var saved = JSON.parse(localStorage.getItem('psico_session') || '{}');
-      emailGuardado = saved.user && saved.user.email ? saved.user.email : '';
-    } catch(e) {}
-    document.getElementById('topbar-email').textContent = emailGuardado;
-    ['screen-gate','screen-login'].forEach(function(id){
-      var el = document.getElementById(id);
-      el.classList.remove('active');
-      el.style.display = 'none';
-    });
-    var app = document.getElementById('screen-app');
-    app.style.display = 'flex';
-    app.classList.add('active');
-    actualizarSaludo();
-    cargarPacientes();
-    cargarResultados();
-  }
+  // Siempre empezar por el gate. La sesión se restaura solo después del login manual.
+  actualizarSaludo();
 });
 
 </script>
