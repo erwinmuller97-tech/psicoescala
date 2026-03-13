@@ -318,6 +318,32 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   body { background: white; }
   .card, .resultado-box { box-shadow: none; border-color: #ddd; }
 }
+
+/* ══ ASRS / WURS items ══ */
+.asrs-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; margin-bottom: 10px; }
+.asrs-item-num { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.asrs-item-txt { font-size: 0.9rem; color: var(--text); margin-bottom: 10px; line-height: 1.45; }
+.asrs-item-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.asrs-opt { display: flex; align-items: center; gap: 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 0.82rem; color: var(--text); transition: all 0.15s; }
+.asrs-opt:hover { border-color: var(--accent); }
+.asrs-opt input[type=radio] { accent-color: var(--accent); width: 14px; height: 14px; }
+.asrs-item-body { display: flex; flex-direction: column; }
+
+/* ══ SCL-90 items ══ */
+.scl-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--border); gap: 12px; font-size: 0.87rem; }
+.scl-item:nth-child(even) { background: var(--surface2); }
+.scl-item-txt { flex: 1; color: var(--text); line-height: 1.4; }
+.scl-item-opts { display: flex; gap: 4px; flex-shrink: 0; }
+.scl-item-opts label { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.7rem; color: var(--muted); cursor: pointer; min-width: 34px; text-align: center; }
+.scl-item-opts input[type=radio] { accent-color: var(--accent); }
+
+/* ══ MBI items ══ */
+.mbi-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+.mbi-item-txt { font-size: 0.9rem; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.mbi-item-opts { display: flex; gap: 6px; flex-wrap: wrap; }
+.mbi-opt { display: flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 4px 9px; cursor: pointer; font-size: 0.78rem; color: var(--text); transition: all 0.15s; }
+.mbi-opt:hover { border-color: var(--accent); }
+.mbi-opt input[type=radio] { accent-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -2989,6 +3015,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 function verificarGate(){
   var input=document.getElementById('gate-input').value;
   if(input==='Sigrid1109'){
+    SESSION = null;
+    try { localStorage.removeItem('psico_session'); } catch(e) {}
     document.getElementById('screen-gate').style.display='none';
     var login = document.getElementById('screen-login');
     login.style.display = 'flex';
