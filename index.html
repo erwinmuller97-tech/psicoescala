@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.2.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.2.1</div>
     </div>
   </aside>
 
@@ -3701,6 +3701,23 @@ function generarPDFHistorial() {
             rows += filaTabla('Fluencia Verbal', r.puntaje_total, null, null, r.puntaje_z, r.fecha);
           }
 
+        } else if (testNombre === 'WCST-64') {
+          function wcstZClf(z) {
+            if (z == null) return '—';
+            if (z >= -1.0) return 'Normal';
+            if (z >= -1.5) return 'Leve ↓';
+            if (z >= -2.0) return 'Moderado ↓';
+            return 'Bajo ↓';
+          }
+          if (d.categorias != null)
+            rows += filaTabla('Categorías completadas', d.categorias+'/6', d.cat_m||null, d.cat_ds||null, d.cat_z!=null?d.cat_z:null, r.fecha);
+          if (d.perse_pct != null)
+            rows += filaTabla('Errores perseverativos (%)', d.perse_pct+'%', d.perse_m||null, d.perse_ds||null, d.perse_z!=null?d.perse_z:null, r.fecha);
+          if (d.intentos != null)
+            rows += filaTabla('Intentos 1ª categoría', d.intentos, null, null, null, r.fecha);
+          if (d.fallas != null)
+            rows += filaTabla('Fallas en mantener set', d.fallas, null, null, null, r.fecha);
+
         } else {
           rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
         }
@@ -3917,14 +3934,44 @@ function generarPDFHistorial() {
           '<td style="'+tdS+'" colspan="4">'+mbiHtml+'</td></tr>';
       }
 
+      // ── ASRS: secciones A y B con barras diferenciadas ──
+      if (r.test === 'ASRS-V1.1') {
+        var MAX_A = 6; var CUT_A = 4;
+        var MAX_B = 48; var CUT_B = 28;
+        var secA = d.parte_a_positivos != null ? d.parte_a_positivos : null;
+        var totB = d.total_18 != null ? d.total_18 : null;
+        var totA_raw = secA; // positivos de A (0-6)
+        function asrsBar(val, max, cut, label, note) {
+          if (val === null) return '';
+          var pct  = Math.min(100,(val/max)*100);
+          var cpct = Math.min(100,(cut/max)*100);
+          var col  = val>=cut?'#c0392b': val>=(cut*0.75)?'#D85A30':'#639922';
+          var positivo = (label === 'Sección A' && val >= 4);
+          return '<tr style="border-bottom:0.5px solid #f0e8de;">'+
+            '<td style="padding:3px 7px;font-size:10px;color:#5a3520;font-style:italic;">'+label+'</td>'+
+            '<td style="padding:3px 7px;text-align:center;font-family:monospace;font-weight:700;font-size:11px;">'+val+(note?' '+note:'')+'</td>'+
+            '<td style="padding:3px 7px;text-align:center;">'+
+              '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:110px;display:inline-block;">'+
+              '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
+              '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
+              '</div></td>'+
+            '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥'+cut+'</td>'+
+            '<td style="padding:3px 7px;font-weight:600;font-size:10px;color:'+(val>=cut?'#c0392b':'#3a7a3a')+';">'+
+              (label==='Sección A' ? (val>=cut?'Positivo TDAH':'Negativo') : (val>=cut?'Elevado':'Normal'))+'</td>'+
+            '<td style="padding:3px 7px;"></td>'+
+            '</tr>';
+        }
+        var asrsLabel = '<tr><td colspan="6" style="padding:2px 7px 0;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;border-bottom:0.5px solid #f0e8de;">ASRS-V1.1 · Escala de Autoreporte de TDAH</td></tr>';
+        return asrsLabel +
+          asrsBar(secA, MAX_A, CUT_A, 'Sección A (screening)', '/6') +
+          (totB!=null ? asrsBar(totB, MAX_B, CUT_B, 'Total 18 ítems', '/72') : '');
+      }
+
       // ── Resto de tests clínicos ──
       var pb = '';
       switch(r.test) {
         case 'MBI-HSS': pb = ''; break; // se maneja abajo
-        case 'ASRS-V1.1':
-          pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—');
-          // Para la barra usar total_18 si existe
-          if (d.total_18!=null) r._barVal = d.total_18; break;
+        case 'ASRS-V1.1': pb = ''; break; // se maneja abajo
         default: pb = r.puntaje_total!==null?r.puntaje_total:'—';
       }
       var barVal = r._barVal != null ? r._barVal : r.puntaje_total;
@@ -5411,7 +5458,7 @@ function calcularMoCA(){
   var corteNormal,corteLabel;
   if(ne==='primaria'){corteNormal=18;corteLabel='≥18 (escolaridad primaria o menos)';}
   else if(ne==='media'){corteNormal=22;corteLabel='≥22 (secundaria incompleta)';}
-  else{corteNormal=22;corteLabel='≥22 (secundaria completa o más)';}
+  else{corteNormal=26;corteLabel='≥26 (secundaria completa o más)';}
   var normal=total>=corteNormal;
   var cat=normal?'Normal':'Por debajo del punto de corte';
   var badge=normal?'bg-minima':'bg-grave';
@@ -5843,13 +5890,26 @@ function calcularWCST(){
 function guardarResultadoWCST(){
   if(!SESSION)return;
   var pacId=document.getElementById('wcst-paciente').value;
-  var vCat=document.getElementById('wcst-cat').value;
   var fecha=document.getElementById('wcst-fecha').value;
   if(!pacId){toast('Seleccioná un paciente primero');return;}
+  var giEl=document.getElementById('wcst-edad'); var neEl=document.getElementById('wcst-ne');
+  var gi=giEl?parseInt(giEl.value):-1; var ne=neEl?neEl.value:'';
+  var vCat=document.getElementById('wcst-cat').value;
+  var vInt=document.getElementById('wcst-intentos').value;
+  var vPer=document.getElementById('wcst-perse').value;
+  var vFal=document.getElementById('wcst-fallas').value;
+  var dat={};
+  if(vCat!==''){ var brCat=parseInt(vCat); dat.categorias=brCat;
+    if(ne&&gi>=0&&WCST_BAR&&WCST_BAR.cat[ne]&&WCST_BAR.cat[ne][gi]){
+      var b=WCST_BAR.cat[ne][gi]; dat.cat_z=parseFloat(((brCat-b.M)/b.DS).toFixed(2)); dat.cat_m=b.M; dat.cat_ds=b.DS; } }
+  if(vInt!=='') dat.intentos=parseInt(vInt);
+  if(vPer!==''){ var brPer=parseFloat(vPer); dat.perse_pct=brPer;
+    if(ne&&gi>=0&&WCST_BAR&&WCST_BAR.perse[ne]&&WCST_BAR.perse[ne][gi]){
+      var b=WCST_BAR.perse[ne][gi]; dat.perse_z=parseFloat(((b.M-brPer)/b.DS).toFixed(2)); dat.perse_m=b.M; dat.perse_ds=b.DS; } }
+  if(vFal!=='') dat.fallas=parseInt(vFal);
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'WCST-64',fecha:fecha,
-    puntaje_total:vCat?parseInt(vCat):null,categoria:'Ver detalle',
-    datos:{ categorias:vCat?parseInt(vCat):null }
+    puntaje_total:dat.categorias!=null?dat.categorias:null,categoria:'Ver detalle',datos:dat
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
