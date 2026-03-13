@@ -3478,10 +3478,22 @@ function generarPDFHistorial() {
   var fechas  = datos.map(function(r){ return r.fecha; }).filter(Boolean).sort();
   var periodo = fechas.length > 1 ? fechas[0] + ' — ' + fechas[fechas.length-1] : (fechas[0] || '');
 
-  // Clasificación
-  var NP  = ['Rey Verbal','TMT A-B','Fluencia Verbal','MoCA','IFS','Dígitos WAIS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
-  var CL  = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
-  var TD  = ['ASRS-V1.1','WURS-25'];
+  // ── Grupo edad para BEM (desde fecha_nacimiento del paciente) ──
+  var bemGrupo = null;
+  if (pacInfo && pacInfo.fecha_nacimiento) {
+    var edad = calcularEdad(pacInfo.fecha_nacimiento);
+    if      (edad <= 45) bemGrupo = 0;
+    else if (edad <= 55) bemGrupo = 1;
+    else if (edad <= 65) bemGrupo = 2;
+    else if (edad <= 75) bemGrupo = 3;
+    else if (edad <= 85) bemGrupo = 4;
+    else                 bemGrupo = 5;
+  }
+
+  // ── Clasificación de tests ──
+  var NP = ['Rey Verbal','TMT A-B','Fluencia Verbal','MoCA','IFS','Dígitos WAIS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
+  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
+  var TD = ['ASRS-V1.1','WURS-25'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td':'cl'; }
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
@@ -3492,7 +3504,7 @@ function generarPDFHistorial() {
   var conRiesgo = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z>=-1.5 && r.puntaje_z<-1.0; }).length;
   var conNormal = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z>=-1.0; }).length;
 
-  // ── Helpers visuales ──
+  // ── Helpers ──
   function zColor(z) {
     if (z===null||z===undefined) return '#888780';
     if (z>=1.0)   return '#1D9E75';
@@ -3504,277 +3516,367 @@ function generarPDFHistorial() {
   }
   function zLabel(z) {
     if (z===null||z===undefined) return '—';
+    if (z>=1.5)   return 'Muy superior';
     if (z>=1.0)   return 'Superior';
-    if (z>=0)     return 'Normal alto';
-    if (z>=-0.99) return 'Normal bajo';
+    if (z>=-0.99) return 'Esperado';
     if (z>=-1.49) return 'Dificultad leve';
     if (z>=-1.99) return 'Dificultad moderada';
     return 'Dificultad severa';
   }
-  function zBar(z) {
-    // Columnas estilo neuropsicológico: -3 -2.5 -2 -1.5 -1 -0.5 0 0.5 1 1.5 2 2.5 3
-    var cols = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
+  function zToT(z)  { return z!==null ? Math.round(50+10*z) : null; }
+  function zToPct(z){
+    if(z===null) return null;
+    var table=[-3.0,-2.5,-2.0,-1.5,-1.0,-0.5,0,0.5,1.0,1.5,2.0,2.5,3.0];
+    var pcts = [0.1,0.6,2.3,6.7,15.9,30.9,50.0,69.1,84.1,93.3,97.7,99.4,99.9];
+    for(var i=0;i<table.length-1;i++){
+      if(z>=table[i]&&z<table[i+1]){
+        var frac=(z-table[i])/(table[i+1]-table[i]);
+        return Math.round(pcts[i]+(pcts[i+1]-pcts[i])*frac);
+      }
+    }
+    return z<-3?1:99;
+  }
+
+  // ── Perfil Z tipo grilla neuropsicológica ──
+  var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
+  function zGrilla(z) {
     var col = zColor(z);
-    var cells = cols.map(function(v) {
-      var isX = (z !== null && z !== undefined && Math.abs(z - v) < 0.26);
-      var bg = (v === 0) ? '#e8d9c6' : (v < 0 ? '#fdf0ee' : '#f0f7ec');
-      return '<td style="width:18px;height:18px;text-align:center;font-size:10px;font-weight:900;' +
-        'background:' + (isX ? col+'22' : bg) + ';' +
-        'border:0.5px solid #e0cfc0;padding:0;color:' + col + ';">' +
-        (isX ? 'X' : '') + '</td>';
+    // Headers (solo números enteros)
+    var hds = COLS.map(function(v){
+      return '<td style="width:16px;font-size:7px;text-align:center;color:#b09070;padding:1px 0;border:none;font-family:monospace;">'+(Number.isInteger(v)?v:'')+'</td>';
     }).join('');
-    var headers = cols.map(function(v) {
-      return '<td style="width:18px;font-size:7px;text-align:center;color:#b09070;padding:1px 0;border:none;">'+(Number.isInteger(v)?v:'')+'</td>';
+    // Celdas
+    var cells = COLS.map(function(v){
+      var isX = z!==null && Math.abs(z-v)<0.26;
+      var bg = v===0?'#e8d9c6': v<0?'#fdf0ee':'#f0f7ec';
+      return '<td style="width:16px;height:16px;text-align:center;font-size:9px;font-weight:900;'+
+        'background:'+(isX?col+'33':bg)+';'+
+        'border:0.5px solid #ddd;padding:0;color:'+col+';">'+
+        (isX?'X':'')+'</td>';
     }).join('');
-    return '<table style="border-collapse:collapse;table-layout:fixed;">' +
-      '<tr>' + headers + '</tr>' +
-      '<tr>' + cells + '</tr>' +
-      '</table>';
-  }
-  function clBar(val, max, cutoff) {
-    if (val===null) return '<div style="height:8px;background:#ede4d6;border-radius:3px;width:110px;"></div>';
-    var pct = Math.min(100,(val/max)*100);
-    var cpct= Math.min(100,(cutoff/max)*100);
-    var col = val>=cutoff ? '#E24B4A' : val>=(cutoff*0.75) ? '#D85A30' : '#639922';
-    return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:110px;">' +
-      '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>' +
-      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#5a3520;"></div>' +
-      '</div>';
-  }
-  // Cortes clínicos
-  var CORTES = {'BDI-II':{max:63,cut:14},'PHQ-9':{max:27,cut:10},'GAD-7':{max:21,cut:10},'SPAI-B':{max:90,cut:40},'MBI-HSS':{max:66,cut:27}};
-
-  var logoSVG = '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" fill="none" width="36" height="36"><circle cx="40" cy="40" r="36" fill="#f5ede0" opacity="0.7"/><path d="M40 17 C23 17 13 28 13 40 C13 53 22 61 33 63 C37 64 39 62 39 59 L39 21 C39 18.8 39.5 17 40 17Z" fill="none" stroke="#6b3d24" stroke-width="1.5" stroke-linecap="round"/><path d="M40 17 C57 17 67 28 67 40 C67 53 58 61 47 63 C43 64 41 62 41 59 L41 21 C41 18.8 40.5 17 40 17Z" fill="none" stroke="#6b3d24" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="40" r="2.8" fill="#9B6A50"/></svg>';
-
-  var thL = 'style="text-align:left;padding:5px 8px;font-size:9px;text-transform:uppercase;letter-spacing:0.7px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;"';
-  var thC = 'style="text-align:center;padding:5px 8px;font-size:9px;text-transform:uppercase;letter-spacing:0.7px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;"';
-  var tdS = 'style="padding:5px 8px;font-size:11px;border-bottom:0.5px solid #ecdece;"';
-  var tdC = 'style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;"';
-
-  function secHeader(txt) {
-    return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;'+
-      'background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-top:14px;margin-bottom:0;">'+txt+'</div>';
+    return '<table style="border-collapse:collapse;table-layout:fixed;"><tr>'+hds+'</tr><tr>'+cells+'</tr></table>';
   }
 
-  // ── Sección neuropsicológicos ──
+  // ── Estilos de tabla ──
+  var thBase = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
+  var tdBase = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;';
+
+  function domHeader(txt) {
+    return '<tr><td colspan="9" style="background:#ede4d4;padding:4px 10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#5a3010;border-bottom:1px solid #d4c0a0;">'+txt+'</td></tr>';
+  }
+
+  // ── Fila de tabla neuropsicológica ──
+  // cols: Variable | PB | PT | M | DT | Z | -3..+3 grilla | Interpretación
+  function filaTabla(label, pb, m, ds, z, fecha) {
+    var t   = zToT(z);
+    var col = zColor(z);
+    var lbl = zLabel(z);
+    var pbStr = pb!==null&&pb!==undefined ? String(parseFloat(pb).toFixed ? parseFloat(pb)%1===0 ? parseInt(pb) : parseFloat(pb).toFixed(1) : pb) : '—';
+    var mStr  = m!==null&&m!==undefined   ? parseFloat(m).toFixed(2)  : '—';
+    var dsStr = ds!==null&&ds!==undefined ? parseFloat(ds).toFixed(2) : '—';
+    var zStr  = z!==null&&z!==undefined   ? (z>=0?'+':'')+parseFloat(z).toFixed(2) : '—';
+    var tStr  = t!==null ? t : '—';
+    return '<tr>'+
+      '<td style="'+tdBase+'font-weight:500;">'+label+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+pbStr+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;color:'+col+';">'+zStr+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;">'+tStr+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
+      '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
+      '<td style="'+tdBase+'"><span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span></td>'+
+      '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+( fecha||'')+'</td>'+
+      '</tr>';
+  }
+
+  function tablaHeader() {
+    return '<thead><tr>'+
+      '<th style="'+thBase+'min-width:120px;">Variable</th>'+
+      '<th style="'+thBase+'text-align:center;">PB</th>'+
+      '<th style="'+thBase+'text-align:center;">Z</th>'+
+      '<th style="'+thBase+'text-align:center;">T</th>'+
+      '<th style="'+thBase+'text-align:center;">M</th>'+
+      '<th style="'+thBase+'text-align:center;">DS</th>'+
+      '<th style="'+thBase+'text-align:center;min-width:220px;">Perfil</th>'+
+      '<th style="'+thBase+'">Interpretación</th>'+
+      '<th style="'+thBase+'text-align:center;">Fecha</th>'+
+      '</tr></thead>';
+  }
+
+  // ── Render sección Neuropsicológica (tabla con dominios) ──
   function renderNP(list) {
     if (!list.length) return '';
-    var rows = list.map(function(r) {
-      var pb = (function() {
+    var rows = '';
+
+    // Agrupar por dominio
+    var dominios = {
+      'MEMORIA':        ['Rey Verbal','BEM 144 Signoret'],
+      'ATENCIÓN':       ['Dígitos WAIS','TMT A-B'],
+      'LENGUAJE':       ['Fluencia Verbal','ACE-R'],
+      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
+      'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
+    };
+
+    // Construir mapa test → resultado
+    var byTest = {};
+    list.forEach(function(r){ byTest[r.test] = r; });
+
+    // Tests ya procesados
+    var procesados = {};
+
+    Object.keys(dominios).forEach(function(dominio) {
+      var testsDelDominio = dominios[dominio].filter(function(t){ return byTest[t] && !procesados[t]; });
+      if (!testsDelDominio.length) return;
+
+      rows += domHeader(dominio);
+
+      testsDelDominio.forEach(function(testNombre) {
+        procesados[testNombre] = true;
+        var r = byTest[testNombre];
         var d = r.datos || {};
-        switch(r.test) {
-          case 'Fluencia Verbal':
-            if (d.variables && d.variables.length) {
-              return d.variables.map(function(v){ return v.label + ': ' + v.bruto; }).join(' / ');
+
+        if (testNombre === 'Rey Verbal' && d.variables && d.variables.length) {
+          // Múltiples subvariables con sus propios M, DS, Z
+          d.variables.forEach(function(v) {
+            rows += filaTabla(v.label, v.bruto, v.m, v.ds, v.z, r.fecha);
+          });
+
+        } else if (testNombre === 'BEM 144 Signoret') {
+          // Calcular Z desde baremos + grupo edad del paciente
+          var gi = bemGrupo;
+          var SIG_N = {
+            rli:  { M:[9.19,9.07,8.91,9.12,7.91,7.58], DS:[2.12,1.83,1.54,1.33,1.31,0.74], label:'Recuerdo Lógico Inmediato' },
+            rld:  { M:[9.22,8.97,8.83,8.75,7.70,7.25], DS:[2.07,1.90,1.63,1.50,1.22,0.61], label:'Recuerdo Lógico Diferido' },
+            as:   { M:[9.92,9.88,9.27,8.96,7.82,6.80], DS:[1.69,1.04,1.79,1.54,1.62,1.09], label:'Aprendizaje Serial' },
+            rs:   { M:[8.97,9.16,8.23,7.89,6.86,5.80], DS:[1.87,1.67,1.83,1.70,1.45,1.09], label:'Recuerdo Serial' },
+            rc:   { M:[11.00,11.16,11.20,10.20,10.00,10.00], DS:[1.62,1.39,1.03,2.20,1.79,1.22], label:'Recuerdo con Claves Semánticas' },
+            reco: { M:[11.85,11.91,11.70,11.69,11.43,11.00], DS:[0.47,0.29,0.53,0.70,0.81,1.73], label:'Reconocimiento' }
+          };
+          var keys = ['rli','rld','as','rs','rc','reco'];
+          keys.forEach(function(k) {
+            var pb = d[k] !== undefined && d[k] !== null && d[k] !== '' ? parseFloat(d[k]) : null;
+            if (pb === null) return;
+            var m = null, ds = null, z = null;
+            if (gi !== null && SIG_N[k]) {
+              m  = SIG_N[k].M[gi];
+              ds = SIG_N[k].DS[gi];
+              z  = parseFloat(((pb - m) / ds).toFixed(2));
             }
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
-          case 'TMT A-B':
-            var parts = [];
-            if (d.tmt_a_seg != null) parts.push('A: ' + d.tmt_a_seg + 's');
-            if (d.tmt_b_seg != null) parts.push('B: ' + d.tmt_b_seg + 's');
-            return parts.length ? parts.join(' / ') : (r.puntaje_total !== null ? r.puntaje_total : '—');
-          case 'Dígitos WAIS':
-            var parts2 = [];
-            if (d.dir != null) parts2.push('Dir: ' + d.dir);
-            if (d.inv != null) parts2.push('Inv: ' + d.inv);
-            if (d.total != null) parts2.push('Tot: ' + d.total);
-            return parts2.length ? parts2.join(' / ') : (r.puntaje_total !== null ? r.puntaje_total : '—');
-          case 'Rey Verbal':
-            return r.puntaje_total !== null ? 'Suma I-V: ' + r.puntaje_total : '—';
-          case 'WCST-64':
-            if (d.cat != null || d.perse != null) {
-              var wParts = [];
-              if (d.cat != null) wParts.push('Cat: ' + d.cat);
-              if (d.perse != null) wParts.push('Perse: ' + d.perse + '%');
-              return wParts.join(' / ');
-            }
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
-          case 'BEM 144 Signoret':
-            if (d && (d['sig-rli'] != null || d['sig-as'] != null)) {
-              var sParts = [];
-              if (d['sig-rli'] != null) sParts.push('RLI: ' + d['sig-rli']);
-              if (d['sig-rld'] != null) sParts.push('RLD: ' + d['sig-rld']);
-              if (d['sig-as'] != null) sParts.push('AS: ' + d['sig-as']);
-              return sParts.join(' / ');
-            }
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
-          default:
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
+            rows += filaTabla(SIG_N[k].label, pb, m, ds, z, r.fecha);
+          });
+          // Rec-CE si hay rc y reco
+          if (d.rc !== undefined && d.reco !== undefined && d.rc !== '' && d.reco !== '') {
+            var recce = (parseFloat(d.rc) + parseFloat(d.reco)) / 2;
+            var SIG_RECCE = { M:[11.42,11.53,11.45,10.94,10.45,10.50], DS:[0.94,0.75,0.72,1.27,1.98,1.45] };
+            var mR = gi!==null ? SIG_RECCE.M[gi] : null;
+            var dR = gi!==null ? SIG_RECCE.DS[gi] : null;
+            var zR = (mR!==null) ? parseFloat(((recce-mR)/dR).toFixed(2)) : null;
+            rows += filaTabla('Rec-CE (Claves + Reconocimiento)', recce, mR, dR, zR, r.fecha);
+          }
+
+        } else if (testNombre === 'TMT A-B') {
+          var pb_a = d.tmt_a_seg != null ? d.tmt_a_seg : null;
+          var pb_b = d.tmt_b_seg != null ? d.tmt_b_seg : null;
+          rows += filaTabla('TMT A (segundos)', pb_a, null, null, r.puntaje_z, r.fecha);
+          if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
+
+        } else if (testNombre === 'Dígitos WAIS') {
+          if (d.dir != null) rows += filaTabla('Dígitos — Directos', d.dir, null, null, null, r.fecha);
+          if (d.inv != null) rows += filaTabla('Dígitos — Inversos', d.inv, null, null, null, r.fecha);
+          if (d.total != null) rows += filaTabla('Dígitos — Total', d.total, null, null, r.puntaje_z, r.fecha);
+
+        } else if (testNombre === 'Fluencia Verbal') {
+          if (d.variables && d.variables.length) {
+            d.variables.forEach(function(v) {
+              rows += filaTabla(v.label, v.bruto, v.m, v.ds, v.z, r.fecha);
+            });
+          } else {
+            rows += filaTabla('Fluencia Verbal', r.puntaje_total, null, null, r.puntaje_z, r.fecha);
+          }
+
+        } else {
+          rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
         }
-      })();
-      var z  = r.puntaje_z;
-      var t  = r.puntaje_t !== null ? r.puntaje_t : '—';
-      var pc = r.percentil !== null ? r.percentil : '—';
-      var col= zColor(z);
-      var badge = '<span style="display:inline-block;font-size:8px;padding:2px 7px;border-radius:10px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;">'+zLabel(z)+'</span>';
-      return '<tr>'+
-        '<td '+tdS+' style="padding:5px 8px;font-size:11px;border-bottom:0.5px solid #ecdece;font-weight:500;">'+r.test+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;font-family:monospace;font-weight:700;">'+pb+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;font-family:monospace;font-weight:700;color:'+col+';">'+(z!==null?z:'—')+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;font-family:monospace;">'+t+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;">'+pc+'</td>'+
-        '<td style="padding:5px 8px;border-bottom:0.5px solid #ecdece;">'+zBar(z)+'</td>'+
-        '<td style="padding:5px 8px;border-bottom:0.5px solid #ecdece;">'+badge+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:10px;text-align:center;border-bottom:0.5px solid #ecdece;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
-        '</tr>';
-    }).join('');
-    return '<table style="width:100%;border-collapse:collapse;">'+
-      '<thead><tr>'+
-      '<th '+thL+'>Test</th>'+
-      '<th '+thC+'>PB</th>'+
-      '<th '+thC+'>Z</th>'+
-      '<th '+thC+'>T</th>'+
-      '<th '+thC+'>%</th>'+
-      '<th '+thC+' style="text-align:center;padding:5px 8px;font-size:9px;text-transform:uppercase;letter-spacing:0.7px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;width:120px;">Perfil</th>'+
-      '<th '+thC+'>Interpretación</th>'+
-      '<th '+thC+'>Fecha</th>'+
-      '</tr></thead><tbody>'+rows+'</tbody></table>';
+      });
+    });
+
+    // Tests NP que no cayeron en ningún dominio
+    list.forEach(function(r) {
+      if (!procesados[r.test]) {
+        rows += domHeader(r.test.toUpperCase());
+        rows += filaTabla(r.test, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
+      }
+    });
+
+    return '<table style="width:100%;border-collapse:collapse;">' + tablaHeader() + '<tbody>' + rows + '</tbody></table>';
   }
 
-  // ── Sección clínicos / TDAH ──
-  function renderCL(list, titulo) {
+  // ── Render sección Clínica / TDAH (puntos de corte) ──
+  var CORTES = {
+    'BDI-II':  {max:63, cut:14},
+    'PHQ-9':   {max:27, cut:10},
+    'GAD-7':   {max:21, cut:10},
+    'SPAI-B':  {max:90, cut:40},
+    'MBI-HSS': {max:66, cut:27}
+  };
+
+  function clBar(val, max, cutoff) {
+    if (val===null) return '';
+    var pct  = Math.min(100,(val/max)*100);
+    var cpct = Math.min(100,(cutoff/max)*100);
+    var col  = val>=cutoff?'#E24B4A': val>=(cutoff*0.75)?'#D85A30':'#639922';
+    return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:100px;display:inline-block;">'+
+      '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
+      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#5a3520;"></div>'+
+      '</div>';
+  }
+
+  function renderCL(list) {
     if (!list.length) return '';
+    var thS = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
+    var tdS = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;';
     var rows = list.map(function(r) {
-      var pb = (function() {
-        var d = r.datos || {};
-        switch(r.test) {
-          case 'STAI':
-            var sParts = [];
-            if (d.puntaje_e != null) sParts.push('E: ' + d.puntaje_e);
-            if (d.puntaje_r != null) sParts.push('R: ' + d.puntaje_r);
-            return sParts.length ? sParts.join(' / ') : (r.puntaje_total !== null ? r.puntaje_total : '—');
-          case 'MBI-HSS':
-            var mParts = [];
-            if (d.CE != null) mParts.push('CE: ' + d.CE);
-            if (d.D != null) mParts.push('D: ' + d.D);
-            if (d.RP != null) mParts.push('RP: ' + d.RP);
-            return mParts.length ? mParts.join(' / ') : (r.puntaje_total !== null ? r.puntaje_total : '—');
-          case 'SCL-90-R':
-            return r.puntaje_total !== null ? 'IGT: ' + r.puntaje_total : '—';
-          case 'ASRS-V1.1':
-            if (d.parte_a_positivos != null) return 'Sec A: ' + d.parte_a_positivos + '/6' + (d.total_18 != null ? ' · Total: ' + d.total_18 : '');
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
-          default:
-            return r.puntaje_total !== null ? r.puntaje_total : '—';
-        }
-      })();
-      var cat = r.categoria || '—';
-      var corte = CORTES[r.test];
-      var barHtml = '';
-      if (corte && r.puntaje_total !== null) {
-        barHtml = clBar(r.puntaje_total, corte.max, corte.cut);
+      var d = r.datos || {};
+      var pb = '';
+      switch(r.test) {
+        case 'STAI':
+          var pts=[]; if(d.puntaje_e!=null) pts.push('E:'+d.puntaje_e); if(d.puntaje_r!=null) pts.push('R:'+d.puntaje_r);
+          pb = pts.length ? pts.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
+        case 'MBI-HSS':
+          var mps=[]; if(d.CE!=null) mps.push('CE:'+d.CE); if(d.D!=null) mps.push('D:'+d.D); if(d.RP!=null) mps.push('RP:'+d.RP);
+          pb = mps.length ? mps.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
+        case 'SCL-90-R': pb = r.puntaje_total!==null?'IGT:'+r.puntaje_total:'—'; break;
+        case 'ASRS-V1.1':
+          pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
+        default: pb = r.puntaje_total!==null?r.puntaje_total:'—';
       }
-      var catCol = cat.toLowerCase().match(/grave|severo|severa|alto|presente/) ? '#E24B4A' :
+      var corte = CORTES[r.test];
+      var barHtml = (corte && r.puntaje_total!==null) ? clBar(r.puntaje_total, corte.max, corte.cut) : '';
+      var cat = r.categoria || '—';
+      var catCol = cat.toLowerCase().match(/grave|severo|severa|alto|positivo/) ? '#E24B4A' :
                    cat.toLowerCase().match(/moderado|riesgo/) ? '#D85A30' :
                    cat.toLowerCase().match(/leve/) ? '#BA7517' : '#3d2410';
       return '<tr>'+
-        '<td '+tdS+' style="padding:5px 8px;font-size:11px;border-bottom:0.5px solid #ecdece;font-weight:500;">'+r.test+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:11px;text-align:center;border-bottom:0.5px solid #ecdece;font-family:monospace;font-weight:700;">'+pb+'</td>'+
-        '<td style="padding:5px 8px;border-bottom:0.5px solid #ecdece;">'+(barHtml||'')+'</td>'+
-        '<td '+tdS+' style="padding:5px 8px;font-size:11px;border-bottom:0.5px solid #ecdece;color:'+catCol+';font-weight:500;">'+cat+'</td>'+
-        '<td '+tdC+' style="padding:5px 8px;font-size:10px;text-align:center;border-bottom:0.5px solid #ecdece;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
+        '<td style="'+tdS+'font-weight:500;">'+r.test+'</td>'+
+        '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+pb+'</td>'+
+        '<td style="'+tdS+'text-align:center;">'+barHtml+'</td>'+
+        (corte?'<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">≥'+corte.cut+'</td>':'<td style="'+tdS+'">—</td>')+
+        '<td style="'+tdS+'color:'+catCol+';font-weight:600;">'+cat+'</td>'+
+        '<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
         '</tr>';
     }).join('');
     return '<table style="width:100%;border-collapse:collapse;">'+
       '<thead><tr>'+
-      '<th '+thL+'>Test</th>'+
-      '<th '+thC+'>Puntaje</th>'+
-      '<th '+thC+' style="text-align:center;padding:5px 8px;font-size:9px;text-transform:uppercase;letter-spacing:0.7px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;width:120px;">Perfil</th>'+
-      '<th '+thL+'>Resultado</th>'+
-      '<th '+thC+'>Fecha</th>'+
+      '<th style="'+thS+'min-width:120px;">Test</th>'+
+      '<th style="'+thS+'text-align:center;">Puntaje</th>'+
+      '<th style="'+thS+'text-align:center;min-width:110px;">Perfil</th>'+
+      '<th style="'+thS+'text-align:center;">Corte</th>'+
+      '<th style="'+thS+'">Resultado</th>'+
+      '<th style="'+thS+'text-align:center;">Fecha</th>'+
       '</tr></thead><tbody>'+rows+'</tbody></table>';
   }
 
-  // ── Tabla referencia Z ──
-  var refZ = '<div style="margin-top:12px;border:0.5px solid #e8d9c6;border-radius:6px;overflow:hidden;font-family:sans-serif;">'+
-    '<div style="background:#f5ede0;padding:4px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;">Escala de referencia</div>'+
-    '<table style="width:100%;font-size:9.5px;"><thead><tr>'+
-    '<th style="padding:3px 8px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">Z</th>'+
-    '<th style="padding:3px 8px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">T</th>'+
-    '<th style="padding:3px 8px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">%</th>'+
-    '<th style="padding:3px 8px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;">Interpretación</th>'+
-    '</tr></thead><tbody>'+
-    [['≥+1.0','≥60','≥84','Superior','#1D9E75'],
-     ['0 a +0.99','50–59','50–83','Normal alto','#639922'],
-     ['−0.99 a −0.01','40–49','16–49','Normal bajo','#888780'],
-     ['−1.0 a −1.49','35–39','7–15','Dificultad leve','#BA7517'],
-     ['−1.5 a −1.99','30–34','2–6','Dificultad moderada','#D85A30'],
-     ['≤−2.0','≤29','≤2','Dificultad severa','#E24B4A']].map(function(row,i){
-      return '<tr style="background:'+(i%2?'#faf9f7':'#fff')+';">'+
-        '<td style="padding:3px 8px;text-align:center;font-family:monospace;font-weight:700;color:'+row[4]+';">'+row[0]+'</td>'+
-        '<td style="padding:3px 8px;text-align:center;">'+row[1]+'</td>'+
-        '<td style="padding:3px 8px;text-align:center;">'+row[2]+'</td>'+
-        '<td style="padding:3px 8px;font-weight:700;color:'+row[4]+';">'+row[3]+'</td>'+
-        '</tr>';
-    }).join('') + '</tbody></table></div>';
+  // ── Logo SVG ──
+  var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#9B6A50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#9B6A50" opacity="0.65"/></svg>';
 
+  // ── Tabla escala de referencia Z ──
+  var refZ = '<div style="margin-top:14px;border:0.5px solid #e8d9c6;border-radius:6px;overflow:hidden;font-family:sans-serif;">'+
+    '<div style="background:#f5ede0;padding:4px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;">Escala de referencia</div>'+
+    '<table style="width:auto;font-size:9px;"><thead><tr>'+
+    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">Z</th>'+
+    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">T</th>'+
+    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">Percentil</th>'+
+    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;">Interpretación</th>'+
+    '</tr></thead><tbody>'+
+    [['≥ +1.5','≥65','≥93','Muy superior / Excepcional','#1D9E75'],
+     ['≥ +1.0','≥60','≥84','Superior','#2e7a4f'],
+     ['-1.0 a +0.99','40–59','16–83','Dentro de lo esperado','#888780'],
+     ['-1.5 a -1.0','35–39','7–15','Dificultad leve','#BA7517'],
+     ['-2.0 a -1.5','30–34','2–6','Dificultad moderada','#D85A30'],
+     ['≤ -2.0','≤29','≤2','Dificultad severa','#E24B4A']].map(function(row,i){
+      return '<tr style="background:'+(i%2?'#faf9f7':'#fff')+';">'+
+        '<td style="padding:3px 10px;text-align:center;font-family:monospace;font-weight:700;color:'+row[4]+';">'+row[0]+'</td>'+
+        '<td style="padding:3px 10px;text-align:center;">'+row[1]+'</td>'+
+        '<td style="padding:3px 10px;text-align:center;">'+row[2]+'</td>'+
+        '<td style="padding:3px 10px;font-weight:600;color:'+row[4]+';">'+row[3]+'</td>'+
+        '</tr>';
+    }).join('')+'</tbody></table></div>';
+
+  // ── HTML final ──
   var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'+
     '<title>Historial — '+pacNombre+'</title>'+
-    '<style>body{font-family:Georgia,serif;background:#fff;color:#2c1a0e;margin:0;padding:20px;}'+
-    '.pg{max-width:820px;margin:0 auto;}'+
+    '<style>'+
+    'body{font-family:Georgia,serif;background:#fff;color:#2c1a0e;margin:0;padding:20px;}'+
+    '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
-    '@media print{body{padding:0;}@page{margin:15mm;}}'+
+    '@media print{body{padding:0;}@page{margin:12mm;size:A4 landscape;}}'+
     '</style></head><body><div class="pg">'+
 
-    // Header
+    // ── Header ──
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #5a3520;padding-bottom:10px;margin-bottom:14px;">'+
     '<div style="display:flex;align-items:center;gap:10px;">'+logoSVG+
-    '<div><div style="font-size:17px;font-weight:700;color:#3d2410;letter-spacing:2px;text-transform:uppercase;">PsicoEscala</div>'+
-    '<div style="font-size:9px;color:#9a7a60;letter-spacing:1px;text-transform:uppercase;font-family:sans-serif;">Resumen de evaluación neuropsicológica</div></div></div>'+
+    '<div><div style="font-size:17px;font-weight:700;color:#3d2410;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;">PsicoEscala</div>'+
+    '<div style="font-size:9px;color:#9a7a60;letter-spacing:1px;text-transform:uppercase;font-family:sans-serif;">Perfil de evaluación neuropsicológica · ActivaMente</div></div></div>'+
     '<div style="text-align:right;font-family:sans-serif;font-size:9px;color:#9a7a60;">'+
-    '<div>Generado: '+new Date().toLocaleDateString('es-AR')+'</div><div style="margin-top:2px;">ActivaMente</div></div></div>'+
+    '<div>Generado: '+new Date().toLocaleDateString('es-AR')+'</div></div></div>'+
 
-    // Box paciente
-    '<div style="background:#f9f4ee;border:0.5px solid #d8c8b0;border-radius:6px;padding:8px 14px;font-family:sans-serif;font-size:11px;margin-bottom:10px;">'+
-    '<div style="display:flex;gap:24px;flex-wrap:wrap;">'+
-    '<div><div style="font-size:9px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Paciente</div><div style="font-weight:700;color:#2c1a0e;margin-top:1px;">'+pacNombre+'</div></div>'+
-    (pacEdad?'<div><div style="font-size:9px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Edad</div><div style="font-weight:700;color:#2c1a0e;margin-top:1px;">'+pacEdad+'</div></div>':'')+
-    (pacSexo?'<div><div style="font-size:9px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Sexo</div><div style="font-weight:700;color:#2c1a0e;margin-top:1px;">'+pacSexo+'</div></div>':'')+
-    (pacEscol?'<div><div style="font-size:9px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Escolaridad</div><div style="font-weight:700;color:#2c1a0e;margin-top:1px;">'+pacEscol+'</div></div>':'')+
-    (periodo?'<div><div style="font-size:9px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Período</div><div style="font-weight:700;color:#2c1a0e;margin-top:1px;">'+periodo+'</div></div>':'')+
+    // ── Datos del paciente ──
+    '<div style="background:#f9f4ee;border:0.5px solid #d8c8b0;border-radius:6px;padding:10px 16px;font-family:sans-serif;font-size:11px;margin-bottom:12px;">'+
+    '<div style="display:flex;gap:28px;flex-wrap:wrap;">'+
+    '<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Paciente</div><div style="font-weight:700;color:#2c1a0e;margin-top:2px;font-size:13px;">'+pacNombre+'</div></div>'+
+    (pacEdad?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Edad</div><div style="font-weight:600;margin-top:2px;">'+pacEdad+'</div></div>':'')+
+    (pacSexo?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Sexo</div><div style="font-weight:600;margin-top:2px;">'+pacSexo+'</div></div>':'')+
+    (pacEscol?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Escolaridad</div><div style="font-weight:600;margin-top:2px;">'+pacEscol+'</div></div>':'')+
+    (periodo?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Período</div><div style="font-weight:600;margin-top:2px;">'+periodo+'</div></div>':'')+
     '</div></div>'+
 
-    // Stats
-    '<div style="display:flex;gap:8px;margin-bottom:12px;">'+
-    '<div style="background:#f5ede0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;min-width:60px;">'+
+    // ── Stats ──
+    '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
+    '<div style="background:#f5ede0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
     '<div style="font-size:18px;font-weight:700;color:#7a4e38;">'+datos.length+'</div>'+
     '<div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.6px;">Tests</div></div>'+
-    (conAlter?'<div style="background:#fde8e8;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;min-width:60px;">'+
+    (conAlter?'<div style="background:#fde8e8;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
     '<div style="font-size:18px;font-weight:700;color:#a82828;">'+conAlter+'</div>'+
     '<div style="font-size:8px;color:#c05050;text-transform:uppercase;letter-spacing:0.6px;">Alteración</div></div>':'')+
-    (conRiesgo?'<div style="background:#fff0e0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;min-width:60px;">'+
+    (conRiesgo?'<div style="background:#fff0e0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
     '<div style="font-size:18px;font-weight:700;color:#c25000;">'+conRiesgo+'</div>'+
     '<div style="font-size:8px;color:#c25000;text-transform:uppercase;letter-spacing:0.6px;">Riesgo</div></div>':'')+
-    (conNormal?'<div style="background:#e8f5e9;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;min-width:60px;">'+
+    (conNormal?'<div style="background:#e8f5e9;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
     '<div style="font-size:18px;font-weight:700;color:#2e7a4f;">'+conNormal+'</div>'+
     '<div style="font-size:8px;color:#2e7a4f;text-transform:uppercase;letter-spacing:0.6px;">Normal</div></div>':'')+
     '</div>'+
 
-    // Neuropsicológicos
-    (testsNp.length ? secHeader('Neuropsicología') + renderNP(testsNp) : '')+
-    // Clínicos
-    (testsCl.length ? secHeader('Psicología Clínica') + renderCL(testsCl,'Psicología Clínica') : '')+
-    // TDAH
-    (testsTd.length ? secHeader('TDAH') + renderCL(testsTd,'TDAH') : '')+
+    // ── Secciones ──
+    (testsNp.length ?
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación Neuropsicológica</div>'+
+      renderNP(testsNp) : '')+
 
-    // Tabla referencia
+    (testsCl.length ?
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
+      renderCL(testsCl) : '')+
+
+    (testsTd.length ?
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">TDAH</div>'+
+      renderCL(testsTd) : '')+
+
     (testsNp.length ? refZ : '')+
 
-    // Nota
-    '<div style="margin-top:10px;font-family:sans-serif;font-size:8.5px;color:#9a7a60;font-style:italic;padding:6px 10px;background:#faf6f0;border-left:2px solid #d8c8b0;line-height:1.5;">'+
-    'Los puntajes Z se calculan respecto de baremos normativos argentinos por edad y escolaridad. Los tests clínicos utilizan puntos de corte validados. Este resumen no reemplaza el informe clínico completo.'+
-    '</div>'+
-    '<div style="margin-top:10px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:sans-serif;font-size:8px;color:#b09070;">'+
-    '<div>PsicoEscala · Plataforma de evaluación psicológica</div><div>1 / 1</div></div>'+
-
+    // ── Nota y pie ──
+    '<div style="margin-top:12px;font-family:sans-serif;font-size:8px;color:#9a7a60;font-style:italic;padding:6px 10px;background:#faf6f0;border-left:2px solid #d8c8b0;line-height:1.5;">'+
+    'Los puntajes Z se calculan respecto de baremos normativos argentinos por edad y escolaridad. '+
+    'BEM 144: Leis A et al. Neurología Argentina 2018;10(3):119-182 — https://www.elsevier.es/es-revista-neurologia-argentina-301-articulo-datos-normativos-version-argentina-bateria-S1853002818300259. '+
+    'Los tests clínicos utilizan puntos de corte validados. Este resumen no reemplaza el informe clínico completo.</div>'+
+    '<div style="margin-top:8px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:sans-serif;font-size:8px;color:#b09070;">'+
+    '<div>PsicoEscala · ActivaMente · Plataforma de evaluación psicológica</div>'+
+    '<div>'+new Date().toLocaleDateString('es-AR')+'</div></div>'+
     '</div></body></html>';
 
-  var win = window.open('','_blank','width=920,height=700');
+  var win = window.open('','_blank','width=1000,height=750');
+  if (!win) { toast('Bloqueador de popups activo. Permitir ventanas emergentes.','error'); return; }
   win.document.write(html);
   win.document.close();
-  setTimeout(function(){ win.print(); }, 700);
+  setTimeout(function(){ win.print(); }, 800);
 }
-
 
 function borrarResultado(id) {
   if (!confirm('¿Borrar esta evaluación? No se puede deshacer.')) return;
