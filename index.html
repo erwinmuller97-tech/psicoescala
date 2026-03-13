@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.5</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.2.0</div>
     </div>
   </aside>
 
@@ -3614,7 +3614,8 @@ function generarPDFHistorial() {
 
     // Agrupar por dominio
     var dominios = {
-      'MEMORIA':        ['Rey Verbal','BEM 144 Signoret'],
+      'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
+      'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'ATENCIÓN':       ['Dígitos WAIS','TMT A-B'],
       'LENGUAJE':       ['Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
@@ -3725,7 +3726,7 @@ function generarPDFHistorial() {
     'SPAI-B':  {max:90, cut:40},
     'MBI-HSS': {max:66, cut:27},
     'ASRS-V1.1': {max:18, cut:14},
-    'WURS-25':   {max:100, cut:46}
+    'WURS-25':   {max:75, cut:46}
   };
 
   function clBar(val, max, cutoff) {
@@ -3865,12 +3866,61 @@ function generarPDFHistorial() {
           '<td style="'+tdS+'" colspan="4">'+html+'</td></tr>';
       }
 
+      // ── MBI-HSS: tabla con 3 subescalas ──
+      if (r.test === 'MBI-HSS') {
+        var mbiSubescalas = [
+          { key:'CE', label:'Cansancio Emocional',  val:d.CE, cat:d.CE_cat, corte:'≥27', dir:'alto' },
+          { key:'DP', label:'Despersonalización',   val:d.DP, cat:d.DP_cat, corte:'≥10', dir:'alto' },
+          { key:'RP', label:'Realización Personal', val:d.RP, cat:d.RP_cat, corte:'≤33', dir:'bajo' }
+        ];
+        function mbiColor(cat, dir) {
+          if (!cat) return '#888';
+          var cl = cat.toLowerCase();
+          if (dir === 'bajo') return cl==='bajo'?'#c0392b': cl==='moderado'?'#c0602b':'#3a7a3a';
+          return cl==='alto'?'#c0392b': cl==='moderado'?'#c0602b':'#3a7a3a';
+        }
+        function mbiBg(cat, dir) {
+          if (!cat) return '#f5f5f5';
+          var cl = cat.toLowerCase();
+          if (dir === 'bajo') return cl==='bajo'?'#e74c3c': cl==='moderado'?'#f39c12':'#f5f5f5';
+          return cl==='alto'?'#e74c3c': cl==='moderado'?'#f39c12':'#f5f5f5';
+        }
+        function mbiFc(cat) {
+          if (!cat) return '#3d2410';
+          var cl = cat.toLowerCase();
+          return (cl==='alto'||cl==='bajo'||cl==='moderado') && cl!=='bajo'?'#fff':'#3d2410';
+        }
+        var mbiHtml = '<table style="border-collapse:collapse;width:100%;font-size:10px;">';
+        mbiHtml += '<tr>'+
+          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:left;">Subescala</th>'+
+          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Puntaje</th>'+
+          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Corte</th>'+
+          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Nivel</th>'+
+          '</tr>';
+        mbiSubescalas.forEach(function(sub) {
+          var bg = mbiBg(sub.cat, sub.dir);
+          var fc = bg!=='#f5f5f5'?'#fff':'#3d2410';
+          mbiHtml += '<tr>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">'+sub.label+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+(sub.val!=null?sub.val:'—')+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-size:9px;color:#9a7a60;">'+sub.corte+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-weight:700;background:'+bg+';color:'+fc+';font-size:9px;">'+(sub.cat||'—')+'</td>'+
+            '</tr>';
+        });
+        var catGlobal = r.categoria || '—';
+        var catCol = catGlobal.toLowerCase().includes('burnout')?'#c0392b': catGlobal.toLowerCase().includes('riesgo')?'#c0602b':'#3a7a3a';
+        mbiHtml += '<tr><td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:8.5px;font-weight:700;color:#7a4e38;">Conclusión global</td>'+
+          '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:'+catCol+';font-size:9px;">'+catGlobal+'</td></tr>';
+        mbiHtml += '</table>';
+        mbiHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:3px;">CE alto≥27 · DP alto≥10 · RP bajo≤33 · Fecha: '+(r.fecha||'')+'</div>';
+        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">MBI-HSS</td>'+
+          '<td style="'+tdS+'" colspan="4">'+mbiHtml+'</td></tr>';
+      }
+
       // ── Resto de tests clínicos ──
       var pb = '';
       switch(r.test) {
-        case 'MBI-HSS':
-          var mps=[]; if(d.CE!=null) mps.push('CE:'+d.CE); if(d.D!=null) mps.push('D:'+d.D); if(d.RP!=null) mps.push('RP:'+d.RP);
-          pb = mps.length ? mps.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
+        case 'MBI-HSS': pb = ''; break; // se maneja abajo
         case 'ASRS-V1.1':
           pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—');
           // Para la barra usar total_18 si existe
@@ -6634,7 +6684,7 @@ function calcularWurs() {
   // Clasificación por puntos de corte
   var clf, col, badge;
   if (total >= 46) {
-    clf = 'Altamente compatible con TDAH infantil'; col = 'var(--red)';    badge = 'bg-grave';
+    clf = 'Significativo para síntomas en la infancia'; col = 'var(--red)';    badge = 'bg-grave';
   } else if (total >= 36) {
     clf = 'Probable historia infantil de TDAH';     col = 'var(--orange)'; badge = 'bg-moderada';
   } else if (total >= 26) {
@@ -6673,7 +6723,7 @@ function calcularWurs() {
   } else if (total >= 26) {
     interp += 'El puntaje indica <strong>rasgos leves o subclínicos</strong>. No alcanza el umbral diagnóstico para historia infantil de TDAH, aunque pueden estar presentes algunos síntomas de manera parcial.';
   } else {
-    interp += 'El puntaje es bajo, <strong>sin historia infantil compatible con TDAH</strong>. Los síntomas reportados durante la infancia no alcanzan niveles clínicamente significativos.';
+    interp += 'El puntaje es bajo, <strong>sin síntomas significativos en la infancia</strong>. Los síntomas reportados durante la infancia no alcanzan niveles clínicamente significativos.';
   }
   interp += '</p>';
 
