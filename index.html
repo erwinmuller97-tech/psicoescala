@@ -410,6 +410,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
             <span class="sector-tag">WCST-64</span>
           </div>
         </div>
+        <div class="sector-card" onclick="irSector('tdah')">
+          <div class="sector-icon">⚡</div>
+          <div class="sector-titulo">TDAH</div>
+          <div class="sector-sub">Escalas de evaluación para TDAH en adultos.</div>
+          <div class="sector-tests">
+            <span class="sector-tag">ASRS-V1.1</span>
+            <span class="sector-tag">WURS-25</span>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -3664,11 +3673,9 @@ function renderUltimas() {
 
 // ══ NAVEGACIÓN ═══════════════════════════════════════════════════════════════
 function irVista(v) {
-  document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
-  var map2 = {inicio:'snav-inicio', pacientes:'snav-pacientes', historial:'snav-historial'};
-  if(map2[v]) document.getElementById(map2[v]).classList.add('active');
   document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
-  document.getElementById('vista-' + v).classList.add('active');
+  var el = document.getElementById('vista-' + v);
+  if(el) el.classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(function(el){
     el.style.borderBottomColor = 'transparent'; el.style.color = 'var(--muted)'; el.style.fontWeight = '500';
   });
@@ -3678,9 +3685,6 @@ function irVista(v) {
 
 function irSector(s) {
   sectorActual = s;
-  document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
-  var map = {clinica:'snav-clinica', tdah:'snav-tdah', neuro:'snav-neuro'};
-  if(map[s]) document.getElementById(map[s]).classList.add('active');
   document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
   document.getElementById('vista-sector').classList.add('active');
   if (s === 'clinica') {
@@ -3836,9 +3840,8 @@ function irTest(t) {
 }
 
 function volverSector() {
-  document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
-  var map3 = {clinica:'snav-clinica', tdah:'snav-tdah', neuro:'snav-neuro'};
-  if(sectorActual && map3[sectorActual]) document.getElementById(map3[sectorActual]).classList.add('active'); irSector(sectorActual); }
+  irSector(sectorActual);
+}
 
 // ══ BDI-II ═══════════════════════════════════════════════════════════════════
 var BDI_ITEMS = [
