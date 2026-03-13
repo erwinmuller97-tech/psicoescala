@@ -3588,7 +3588,7 @@ function generarPDFHistorial() {
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'">'+(nota&&(z==null||z===undefined)?'<span style="font-size:8px;color:#9a7a60;font-style:italic;">'+nota+'</span>':'<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span>')+'</td>'+
+      '<td style="'+tdBase+'">'+(nota&&!z&&z!==0?'<span style="font-size:8px;color:#9a7a60;font-style:italic;">'+nota+'</span>':'<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span>')+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+( fecha||'')+'</td>'+
       '</tr>';
   }
