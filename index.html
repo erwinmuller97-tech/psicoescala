@@ -450,6 +450,42 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   transition:background .3s !important;
 }
 
+
+/* ══ MODAL ══ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44,26,14,0.45);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(44,26,14,0.18);
+}
+.modal-titulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.modal-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
 </style>
 </head>
 <body>
@@ -3520,7 +3556,7 @@ function abrirModalPac(id) {
 }
 function evaluarPacienteDesdeModal() {
   cerrarModal('modal-pac');
-  irSector('clinica');
+  irVista('inicio');
 }
 function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
 
