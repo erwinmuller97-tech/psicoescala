@@ -414,6 +414,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="sidebar-section active" id="snav-inicio" onclick="irVista('inicio')">
         <span class="sidebar-icon">⬡</span> Inicio
       </div>
+      <div class="sidebar-section" id="snav-pacientes" onclick="irVista('pacientes')">
+        <span class="sidebar-icon">○</span> Pacientes
+      </div>
       <div class="sidebar-divider"></div>
       <div class="sidebar-section" id="snav-clinica" onclick="irSector('clinica')">
         <span class="sidebar-icon">◈</span> Psicología Clínica
@@ -425,9 +428,6 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <span class="sidebar-icon">◉</span> Neuropsicología
       </div>
       <div class="sidebar-divider"></div>
-      <div class="sidebar-section" id="snav-pacientes" onclick="irVista('pacientes')">
-        <span class="sidebar-icon">○</span> Pacientes
-      </div>
       <div class="sidebar-section" id="snav-historial" onclick="irVista('historial')">
         <span class="sidebar-icon">≡</span> Historial
       </div>
@@ -508,6 +508,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="card">
         <div class="card-title">Últimas evaluaciones</div>
         <div id="ultimas-lista"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Aún no hay evaluaciones registradas.</div></div></div>
+        <div style="text-align:right;margin-top:12px;"><button class="btn-secondary" onclick="irVista('historial')" style="font-size:0.8rem;">Ver historial completo →</button></div>
       </div>
     </div>
 
@@ -627,6 +628,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('bdi-resultado').style.display='none'; document.getElementById('bdi-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="generarPDF('bdi')">📄 Formulario en blanco</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoBDI()">💾 Guardar resultado</button>
         </div>
@@ -696,6 +698,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('stai-resultado').style.display='none'; document.getElementById('stai-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="generarPDF('stai')">📄 Formulario en blanco</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoSTAI()">💾 Guardar resultado</button>
         </div>
@@ -1022,6 +1025,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('phq-resultado').style.display='none';document.getElementById('phq-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="generarPDF('phq')">📄 Formulario en blanco</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoPHQ()">💾 Guardar resultado</button>
         </div>
@@ -1065,6 +1069,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('gad-resultado').style.display='none';document.getElementById('gad-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="generarPDF('gad')">📄 Formulario en blanco</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoGAD()">💾 Guardar resultado</button>
         </div>
@@ -1122,6 +1127,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('spaib-resultado').style.display='none';document.getElementById('spaib-form').style.display='block';">← Modificar</button>
+          <button class="btn-secondary" onclick="generarPDF('spai')">📄 Formulario en blanco</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoSPAIB()">💾 Guardar resultado</button>
         </div>
@@ -3768,7 +3774,7 @@ function renderUltimas() {
   var ultimas = RESULTADOS.slice(0, 5);
   el.innerHTML = ultimas.map(function(r) {
     var nomPac = r.psico_pacientes ? r.psico_pacientes.nombre : '—';
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">' +
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="irVista('historial')">' +
       '<div><div style="font-size:0.86rem;font-weight:500;">' + nomPac + '</div>' +
       '<div style="font-size:0.76rem;color:var(--muted);">' + r.test + ' · ' + (r.fecha||'') + '</div></div>' +
       '<div style="font-size:0.82rem;color:var(--accentdk);font-weight:600;">' + (r.categoria||'—') + '</div>' +
