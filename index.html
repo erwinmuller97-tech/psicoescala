@@ -435,6 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.1</div>
     </div>
   </aside>
 
@@ -3548,12 +3549,13 @@ function generarPDFHistorial() {
     }).join('');
     var cells = COLS.map(function(v){
       var isX = z!==null && Math.abs(z-v)<0.26;
-      var bg = v===0 ? '#ccc' : '#e8e8e8';
-      return '<td style="width:16px;height:16px;text-align:center;'+
-        'background:'+(isX ? col : bg)+';'+
-        'border:0.5px solid #bbb;padding:0;'+
-        'color:#fff;font-size:14px;font-weight:900;line-height:16px;">'+
-        (isX?'X':'')+'</td>';
+      var bg = v===0 ? '#c8c8c8' : '#ebebeb';
+      var inner = isX
+        ? '<div style="width:10px;height:10px;border-radius:50%;background:'+col+';margin:auto;"></div>'
+        : '';
+      return '<td style="width:16px;height:16px;text-align:center;vertical-align:middle;'+
+        'background:'+bg+';border:0.5px solid #d0d0d0;padding:0;">'+
+        inner+'</td>';
     }).join('');
     return '<table style="border-collapse:collapse;table-layout:fixed;"><tr>'+hds+'</tr><tr>'+cells+'</tr></table>';
   }
@@ -3682,8 +3684,8 @@ function generarPDFHistorial() {
           if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
 
         } else if (testNombre === 'Dígitos WAIS') {
-          if (d.dir != null) rows += filaTabla('Span Directos', d.dir, null, null, null, r.fecha);
-          if (d.inv != null) rows += filaTabla('Span Inversos', d.inv, null, null, null, r.fecha);
+          if (d.dir != null) rows += filaTabla('Span Directos', d.dir, null, null, d.z_dir!=null?d.z_dir:null, r.fecha);
+          if (d.inv != null) rows += filaTabla('Span Inversos', d.inv, null, null, d.z_inv!=null?d.z_inv:null, r.fecha);
           var totalPB = d.total != null ? d.total : r.puntaje_total;
           var totalZ  = r.puntaje_z != null ? r.puntaje_z : null;
           if (totalPB != null) rows += filaTabla('Span Total (WAIS-III)', totalPB, totalZ!=null?10:null, totalZ!=null?3:null, totalZ, r.fecha);
@@ -5567,11 +5569,17 @@ function guardarResultadoDigitos(){
   var dir=document.getElementById('digitos-dir').value;
   var inv=document.getElementById('digitos-inv').value;
   var total=document.getElementById('digitos-bruto-total').value;
-  var datosObj={dir:dir?parseInt(dir):null,inv:inv?parseInt(inv):null,total:total?parseInt(total):null};
-  // Calcular Z del total si hay puntaje escalar WAIS-III
+  var gi=parseInt(document.getElementById('digitos-edad').value||'0');
+  var ne=document.getElementById('digitos-ne').value||'alto';
+  // Calcular Z directos e inversos con DIG_BAR
+  var zDir=null, zInv=null;
+  if(dir!==''&&DIG_BAR.dir[ne]&&DIG_BAR.dir[ne][gi]){var bd=DIG_BAR.dir[ne][gi];zDir=parseFloat(((parseInt(dir)-bd.M)/bd.DS).toFixed(2));}
+  if(inv!==''&&DIG_BAR.inv[ne]&&DIG_BAR.inv[ne][gi]){var bi=DIG_BAR.inv[ne][gi];zInv=parseFloat(((parseInt(inv)-bi.M)/bi.DS).toFixed(2));}
+  // Calcular Z total desde puntaje escalar WAIS-III
   var escEl=document.getElementById('digitos-escalar');
   var zDigTotal=null;
   if(escEl&&escEl.value!==''){var pe=parseFloat(escEl.value);zDigTotal=parseFloat(((pe-10)/3).toFixed(2));}
+  var datosObj={dir:dir?parseInt(dir):null,inv:inv?parseInt(inv):null,total:total?parseInt(total):null,z_dir:zDir,z_inv:zInv};
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,
     puntaje_total:total?parseInt(total):null,puntaje_z:zDigTotal,categoria:'Ver detalle',datos:datosObj
