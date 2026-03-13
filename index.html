@@ -3774,7 +3774,7 @@ function renderUltimas() {
   var ultimas = RESULTADOS.slice(0, 5);
   el.innerHTML = ultimas.map(function(r) {
     var nomPac = r.psico_pacientes ? r.psico_pacientes.nombre : '—';
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="irVista('historial')">' +
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="irVista(\'historial\')">' +
       '<div><div style="font-size:0.86rem;font-weight:500;">' + nomPac + '</div>' +
       '<div style="font-size:0.76rem;color:var(--muted);">' + r.test + ' · ' + (r.fecha||'') + '</div></div>' +
       '<div style="font-size:0.82rem;color:var(--accentdk);font-weight:600;">' + (r.categoria||'—') + '</div>' +
