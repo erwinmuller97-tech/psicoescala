@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.1.5</div>
     </div>
   </aside>
 
@@ -3681,8 +3681,8 @@ function generarPDFHistorial() {
         } else if (testNombre === 'TMT A-B') {
           var pb_a = d.tmt_a_seg != null ? d.tmt_a_seg : null;
           var pb_b = d.tmt_b_seg != null ? d.tmt_b_seg : null;
-          rows += filaTabla('TMT A (segundos)', pb_a, null, null, r.puntaje_z, r.fecha);
-          if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
+          rows += filaTabla('TMT A (segundos)', pb_a, d.tmt_a_m||null, d.tmt_a_ds||null, d.tmt_a_z||r.puntaje_z, r.fecha);
+          if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, d.tmt_b_m||null, d.tmt_b_ds||null, d.tmt_b_z||null, r.fecha);
 
         } else if (testNombre === 'Dígitos WAIS') {
           if (d.dir != null) rows += filaTabla('Span Directos', d.dir, null, null, d.z_dir!=null?d.z_dir:null, r.fecha);
@@ -3782,7 +3782,8 @@ function generarPDFHistorial() {
             '<td style="padding:3px 7px;"></td>'+
             '</tr>';
         }
-        return staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR);
+        var staiLabel = '<tr><td colspan="6" style="padding:2px 7px 0;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;border-bottom:0.5px solid #f0e8de;">STAI · Inventario de Ansiedad Estado-Rasgo</td></tr>';
+        return staiLabel+staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR);
       }
 
       // ── SCL-90-R: tabla estilo imagen de referencia ──
@@ -6156,10 +6157,11 @@ function guardarResultadoScl90() {
       var celdas = fila.querySelectorAll('td');
       if (celdas.length >= 3) {
         var dimNombre = celdas[0].textContent.trim();
+        var avgVal = parseFloat(celdas[1].textContent);
         var tVal = parseFloat(celdas[2].textContent);
         var key = sclNombresMap[dimNombre];
         if (key && !isNaN(tVal)) {
-          subescalas[key] = { nombre: sclNombres[key], t: tVal };
+          subescalas[key] = { nombre: sclNombres[key], t: tVal, avg: !isNaN(avgVal)?avgVal:null };
         }
         if (dimNombre.includes('IGS') && !isNaN(tVal)) igtVal = tVal;
       }
