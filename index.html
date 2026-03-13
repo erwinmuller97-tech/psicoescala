@@ -3540,6 +3540,7 @@ function generarPDFHistorial() {
   // ── Perfil Z tipo grilla neuropsicológica ──
   var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
   function zGrilla(z) {
+    if (z !== null && z !== undefined) z = Math.max(-3, Math.min(3, z));
     var col = zColor(z);
     // Headers (solo números enteros)
     var hds = COLS.map(function(v){
@@ -3681,9 +3682,12 @@ function generarPDFHistorial() {
           if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
 
         } else if (testNombre === 'Dígitos WAIS') {
+          // Directos e inversos: sin Z (baremos requieren edad+escolaridad no guardados)
           if (d.dir != null) rows += filaTabla('Dígitos — Directos', d.dir, null, null, null, r.fecha);
           if (d.inv != null) rows += filaTabla('Dígitos — Inversos', d.inv, null, null, null, r.fecha);
-          if (d.total != null) rows += filaTabla('Dígitos — Total', d.total, null, null, r.puntaje_z, r.fecha);
+          // Total: Z desde puntaje_z guardado (calculado con WAIS-III PE→Z)
+          var totalPB = d.total != null ? d.total : r.puntaje_total;
+          if (totalPB != null) rows += filaTabla('Dígitos — Total (WAIS-III)', totalPB, 10, 3, r.puntaje_z, r.fecha);
 
         } else if (testNombre === 'Fluencia Verbal') {
           if (d.variables && d.variables.length) {
@@ -3809,7 +3813,7 @@ function generarPDFHistorial() {
     'body{font-family:Georgia,serif;background:#fff;color:#2c1a0e;margin:0;padding:20px;}'+
     '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
-    '@media print{body{padding:0;}@page{margin:12mm;size:A4 landscape;}}'+
+    '@media print{body{padding:0;}@page{margin:12mm;size:A4 landscape;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
     '</style></head><body><div class="pg">'+
 
     // ── Header ──
