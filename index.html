@@ -3543,17 +3543,16 @@ function generarPDFHistorial() {
   function zGrilla(z) {
     if (z !== null && z !== undefined) z = Math.max(-3, Math.min(3, z));
     var col = zColor(z);
-    // Headers (solo números enteros)
     var hds = COLS.map(function(v){
-      return '<td style="width:16px;font-size:7px;text-align:center;color:#b09070;padding:1px 0;border:none;font-family:monospace;">'+(Number.isInteger(v)?v:'')+'</td>';
+      return '<td style="width:16px;font-size:7px;text-align:center;color:#888;padding:1px 0;border:none;font-family:monospace;">'+(Number.isInteger(v)?v:'')+'</td>';
     }).join('');
-    // Celdas
     var cells = COLS.map(function(v){
       var isX = z!==null && Math.abs(z-v)<0.26;
-      var bg = v===0?'#e8d9c6': v<0?'#fdf0ee':'#f0f7ec';
-      return '<td style="width:16px;height:16px;text-align:center;font-size:9px;font-weight:900;'+
-        'background:'+(isX?col+'33':bg)+';'+
-        'border:0.5px solid #ddd;padding:0;color:'+col+';font-size:13px;font-weight:900;line-height:16px;">'+
+      var bg = v===0 ? '#ccc' : '#e8e8e8';
+      return '<td style="width:16px;height:16px;text-align:center;'+
+        'background:'+(isX ? col : bg)+';'+
+        'border:0.5px solid #bbb;padding:0;'+
+        'color:#fff;font-size:14px;font-weight:900;line-height:16px;">'+
         (isX?'X':'')+'</td>';
     }).join('');
     return '<table style="border-collapse:collapse;table-layout:fixed;"><tr>'+hds+'</tr><tr>'+cells+'</tr></table>';
@@ -3683,9 +3682,11 @@ function generarPDFHistorial() {
           if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, null, null, null, r.fecha);
 
         } else if (testNombre === 'Dígitos WAIS') {
-          // Solo mostrar Span Total con M=10 DS=3 (WAIS-III Puntaje Escalar)
+          if (d.dir != null) rows += filaTabla('Span Directos', d.dir, null, null, null, r.fecha);
+          if (d.inv != null) rows += filaTabla('Span Inversos', d.inv, null, null, null, r.fecha);
           var totalPB = d.total != null ? d.total : r.puntaje_total;
-          if (totalPB != null) rows += filaTabla('Span Total — Dígitos WAIS-III', totalPB, 10, 3, r.puntaje_z, r.fecha);
+          var totalZ  = r.puntaje_z != null ? r.puntaje_z : null;
+          if (totalPB != null) rows += filaTabla('Span Total (WAIS-III)', totalPB, totalZ!=null?10:null, totalZ!=null?3:null, totalZ, r.fecha);
 
         } else if (testNombre === 'Fluencia Verbal') {
           if (d.variables && d.variables.length) {
@@ -3736,34 +3737,97 @@ function generarPDFHistorial() {
   function renderCL(list) {
     if (!list.length) return '';
     var thS = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
-    var tdS = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;';
+    var tdS = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;vertical-align:top;';
+
+    function catColor(cat) {
+      var cl = (cat||'').toLowerCase();
+      if (cl.match(/grave|severo|severa/))   return '#c0392b';
+      if (cl.match(/moderado|moderada/))     return '#c0602b';
+      if (cl.match(/alto|positivo/))         return '#c0392b';
+      if (cl.match(/leve/))                  return '#b8760a';
+      return '#3d2410';
+    }
+
     var rows = list.map(function(r) {
       var d = r.datos || {};
+      var corte = CORTES[r.test];
+
+      // ── STAI: 2 renglones con barritas ──
+      if (r.test === 'STAI') {
+        var stE   = d.estado  != null ? d.estado  : null;
+        var stR   = d.rasgo   != null ? d.rasgo   : null;
+        var catE  = d.cat_estado || '';
+        var catR  = d.cat_rasgo  || '';
+        var MAX_S = 60;
+        function staiBar(val, label, cat) {
+          if (val === null) return '';
+          var pct = Math.min(100,(val/MAX_S)*100);
+          var cut = (25/MAX_S)*100;
+          var col = val>=45?'#c0392b': val>=35?'#c0602b': val>=25?'#b8760a':'#3a7a3a';
+          return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">'+
+            '<span style="font-size:9px;color:#7a6050;min-width:42px;">'+label+'</span>'+
+            '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:90px;display:inline-block;">'+
+            '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
+            '<div style="position:absolute;left:'+cut.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
+            '</div>'+
+            '<span style="font-family:monospace;font-weight:700;font-size:10px;">'+val+'</span>'+
+            (cat?'<span style="font-size:8px;color:'+catColor(cat)+';">'+cat+'</span>':'')+
+            '</div>';
+        }
+        return '<tr>'+
+          '<td style="'+tdS+'font-weight:500;">STAI</td>'+
+          '<td style="'+tdS+'" colspan="3">'+staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR)+'</td>'+
+          '<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
+          '</tr>';
+      }
+
+      // ── SCL-90-R: tabla de dimensiones ──
+      if (r.test === 'SCL-90-R') {
+        var subs = d.subescalas || {};
+        var dimOrder = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
+        var dimLabels = {som:'Somatización',obs:'Obs-Comp',sen:'Sens. Interp.',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ans. Fóbica',par:'Ideac. Paranoide',psi:'Psicoticismo'};
+        var dimsHtml = '<table style="border-collapse:collapse;font-size:9px;width:100%;">';
+        dimsHtml += '<tr>';
+        dimOrder.forEach(function(k){
+          var label = (subs[k]&&subs[k].nombre) || dimLabels[k] || k;
+          dimsHtml += '<th style="padding:2px 4px;text-align:center;color:#7a4e38;font-size:7.5px;font-weight:700;text-transform:uppercase;border-bottom:0.5px solid #ddd;">'+label+'</th>';
+        });
+        dimsHtml += '<th style="padding:2px 4px;text-align:center;color:#7a4e38;font-size:7.5px;font-weight:700;text-transform:uppercase;border-bottom:0.5px solid #ddd;">IGT</th>';
+        dimsHtml += '</tr><tr>';
+        dimOrder.forEach(function(k){
+          var t = subs[k] ? subs[k].t : null;
+          var col = t!=null ? (t>=70?'#c0392b': t>=60?'#c0602b': t>=55?'#b8760a':'#3a7a3a') : '#888';
+          dimsHtml += '<td style="padding:2px 4px;text-align:center;font-family:monospace;font-weight:700;color:'+col+';">'+(t!=null?t:'—')+'</td>';
+        });
+        var igt = d.igt != null ? parseFloat(d.igt).toFixed(0) : (r.puntaje_total!=null?r.puntaje_total:'—');
+        var igtCol = igt>=70?'#c0392b': igt>=60?'#c0602b':'#3d2410';
+        dimsHtml += '<td style="padding:2px 4px;text-align:center;font-family:monospace;font-weight:700;color:'+igtCol+';">'+igt+'</td>';
+        dimsHtml += '</tr></table>';
+        dimsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Puntajes T &gt;65: elevación clínica significativa · Fecha: '+(r.fecha||'')+'</div>';
+        return '<tr>'+
+          '<td style="'+tdS+'font-weight:500;">SCL-90-R</td>'+
+          '<td style="'+tdS+'" colspan="4">'+dimsHtml+'</td>'+
+          '</tr>';
+      }
+
+      // ── Resto de tests clínicos ──
       var pb = '';
       switch(r.test) {
-        case 'STAI':
-          var pts=[]; if(d.puntaje_e!=null) pts.push('E:'+d.puntaje_e); if(d.puntaje_r!=null) pts.push('R:'+d.puntaje_r);
-          pb = pts.length ? pts.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
         case 'MBI-HSS':
           var mps=[]; if(d.CE!=null) mps.push('CE:'+d.CE); if(d.D!=null) mps.push('D:'+d.D); if(d.RP!=null) mps.push('RP:'+d.RP);
           pb = mps.length ? mps.join(' / ') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
-        case 'SCL-90-R': pb = r.puntaje_total!==null?'IGT:'+r.puntaje_total:'—'; break;
         case 'ASRS-V1.1':
           pb = d.parte_a_positivos!=null ? 'SecA:'+d.parte_a_positivos+'/6'+(d.total_18!=null?' · Tot:'+d.total_18:'') : (r.puntaje_total!==null?r.puntaje_total:'—'); break;
         default: pb = r.puntaje_total!==null?r.puntaje_total:'—';
       }
-      var corte = CORTES[r.test];
       var barHtml = (corte && r.puntaje_total!==null) ? clBar(r.puntaje_total, corte.max, corte.cut) : '';
       var cat = r.categoria || '—';
-      var catCol = cat.toLowerCase().match(/grave|severo|severa|alto|positivo/) ? '#E24B4A' :
-                   cat.toLowerCase().match(/moderado|riesgo/) ? '#D85A30' :
-                   cat.toLowerCase().match(/leve/) ? '#BA7517' : '#3d2410';
       return '<tr>'+
         '<td style="'+tdS+'font-weight:500;">'+r.test+'</td>'+
         '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+pb+'</td>'+
         '<td style="'+tdS+'text-align:center;">'+barHtml+'</td>'+
         (corte?'<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">≥'+corte.cut+'</td>':'<td style="'+tdS+'">—</td>')+
-        '<td style="'+tdS+'color:'+catCol+';font-weight:600;">'+cat+'</td>'+
+        '<td style="'+tdS+'color:'+catColor(cat)+';font-weight:600;">'+cat+'</td>'+
         '<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
         '</tr>';
     }).join('');
@@ -5504,9 +5568,13 @@ function guardarResultadoDigitos(){
   var inv=document.getElementById('digitos-inv').value;
   var total=document.getElementById('digitos-bruto-total').value;
   var datosObj={dir:dir?parseInt(dir):null,inv:inv?parseInt(inv):null,total:total?parseInt(total):null};
+  // Calcular Z del total si hay puntaje escalar WAIS-III
+  var escEl=document.getElementById('digitos-escalar');
+  var zDigTotal=null;
+  if(escEl&&escEl.value!==''){var pe=parseFloat(escEl.value);zDigTotal=parseFloat(((pe-10)/3).toFixed(2));}
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'Dígitos WAIS',fecha:fecha,
-    puntaje_total:total?parseInt(total):null,categoria:'Ver detalle',datos:datosObj
+    puntaje_total:total?parseInt(total):null,puntaje_z:zDigTotal,categoria:'Ver detalle',datos:datosObj
   },SESSION.access_token).then(function(){cargarResultados();
     toast('✓ Resultado guardado', 'success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
