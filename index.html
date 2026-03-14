@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.1</div>
     </div>
   </aside>
 
@@ -2491,34 +2491,63 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div class="card">
           <div class="card-title">Datos de la evaluación</div>
           <div class="form-grid-3">
-            <div class="field"><label>Paciente *</label><select id="waisiv-paciente" onchange="waisivActualizar()"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Paciente *</label><select id="waisiv-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field">
+              <label>Grupo etario *</label>
+              <select id="waisiv-gi" onchange="waisivActualizar()">
+                <option value="">— Seleccionar grupo —</option>
+                <option value="0">16–17 años</option>
+                <option value="1">18–19 años</option>
+                <option value="2">20–24 años</option>
+                <option value="3">25–29 años</option>
+                <option value="4">30–34 años</option>
+                <option value="5">35–44 años</option>
+                <option value="6">45–54 años</option>
+                <option value="7">55–64 años</option>
+                <option value="8">65–69 años</option>
+                <option value="9">70–74 años</option>
+                <option value="10">75–79 años</option>
+                <option value="11">80–84 años</option>
+                <option value="12">85–90 años</option>
+              </select>
+            </div>
             <div class="field"><label>Fecha</label><input type="date" id="waisiv-fecha"></div>
           </div>
         </div>
         <div class="card">
           <div class="card-title">Puntajes Brutos</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Ingresá los puntajes brutos. El puntaje equivalente (PE) y Z se calculan automáticamente según la edad del paciente seleccionado.</p>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Ingresá los puntajes brutos. El PE y Z se calculan automáticamente según el grupo etario. SLN no disponible para 70+ años.</p>
           <div class="form-grid-3">
             <div class="field">
               <label>Retención de Dígitos (RD)</label>
               <input type="number" id="waisiv-rd" min="0" max="48" placeholder="0–48" oninput="waisivActualizar()">
-              <div id="waisiv-rd-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+              <div id="waisiv-rd-result" style="font-size:0.85rem;color:var(--accent);margin-top:4px;min-height:20px;font-weight:600;"></div>
             </div>
             <div class="field">
               <label>Claves (Cla)</label>
               <input type="number" id="waisiv-cla" min="0" max="135" placeholder="0–135" oninput="waisivActualizar()">
-              <div id="waisiv-cla-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+              <div id="waisiv-cla-result" style="font-size:0.85rem;color:var(--accent);margin-top:4px;min-height:20px;font-weight:600;"></div>
             </div>
             <div class="field">
               <label>Secuencia Número-Letra (SLN)</label>
               <input type="number" id="waisiv-sln" min="0" max="30" placeholder="0–30" oninput="waisivActualizar()">
-              <div id="waisiv-sln-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+              <div id="waisiv-sln-result" style="font-size:0.85rem;color:var(--accent);margin-top:4px;min-height:20px;font-weight:600;"></div>
             </div>
           </div>
-          <div id="waisiv-edad-info" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:8px;">
           <button class="btn-secondary" onclick="limpiarWaisiv()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="guardarWaisiv()">💾 Guardar resultado</button>
+        </div>
+      </div>
+      <div id="waisiv-resultado" style="display:none;">
+        <div class="card">
+          <div class="card-title">Resultados WAIS-IV</div>
+          <div class="resultado-detalle" id="waisiv-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="waisiv-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('waisiv-resultado').style.display='none';document.getElementById('waisiv-form').style.display='block';">← Modificar</button>
           <button class="btn-primary" onclick="guardarWaisiv()">💾 Guardar resultado</button>
         </div>
       </div>
@@ -5618,49 +5647,66 @@ function wais4PEtoZ(pe) {
 function iniciarWaisiv() {
   document.getElementById('waisiv-fecha').value = new Date().toISOString().split('T')[0];
   document.getElementById('waisiv-form').style.display = 'block';
-  waisivActualizar();
+  document.getElementById('waisiv-resultado').style.display = 'none';
 }
 function limpiarWaisiv() {
   ['waisiv-rd','waisiv-cla','waisiv-sln'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  ['waisiv-rd-result','waisiv-cla-result','waisiv-sln-result','waisiv-edad-info'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='';});
-}
-function waisivGetEdad() {
-  var pacId=document.getElementById('waisiv-paciente').value;
-  var pac=PACIENTES.find(function(p){return p.id===pacId;});
-  if(!pac||!pac.fecha_nacimiento)return null;
-  return calcularEdad(pac.fecha_nacimiento);
+  ['waisiv-rd-result','waisiv-cla-result','waisiv-sln-result'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
+  var gi=document.getElementById('waisiv-gi'); if(gi) gi.value='';
 }
 function waisivActualizar() {
-  var edad=waisivGetEdad(); var gi=edad!==null?wais4GetGrupo(edad):-1;
-  var infoEl=document.getElementById('waisiv-edad-info');
-  if(infoEl) infoEl.textContent=gi>=0?'Grupo etario: '+WAIS4_GRUPOS[gi]+' años (edad: '+edad+')':'Seleccioná un paciente con fecha de nacimiento para calcular PE y Z.';
+  var giEl=document.getElementById('waisiv-gi');
+  var gi=giEl&&giEl.value!==''?parseInt(giEl.value):-1;
   function calcShow(id,pb,tabla){
     var el=document.getElementById(id);if(!el)return;
-    if(pb===''||isNaN(parseFloat(pb))||gi<0){el.textContent='';return;}
+    if(pb===''||pb===null||isNaN(parseFloat(pb))||gi<0){el.innerHTML='';return;}
     var pe=wais4PBtoPE(parseFloat(pb),tabla,gi); var z=wais4PEtoZ(pe);
-    if(pe!==null){el.innerHTML='PE: <strong>'+pe+'</strong> · Z: <strong>'+(z>=0?'+':'')+z+'</strong>';}
-    else{el.textContent='PE: fuera de rango';}
+    if(pe!==null){el.innerHTML='PE: <strong>'+pe+'</strong> &nbsp; Z: <strong style="color:'+(z<=-2?'#c0392b':z<=-1?'#c0602b':z>=1?'#1D9E75':'#555')+'">'+(z>=0?'+':'')+z+'</strong>';}
+    else{el.innerHTML='<span style="color:#c0392b;">Puntaje fuera de rango</span>';}
   }
   var rdEl=document.getElementById('waisiv-rd'),claEl=document.getElementById('waisiv-cla'),slnEl=document.getElementById('waisiv-sln');
   calcShow('waisiv-rd-result',rdEl?rdEl.value:'',WAIS4_RD);
   calcShow('waisiv-cla-result',claEl?claEl.value:'',WAIS4_CLA);
-  calcShow('waisiv-sln-result',slnEl?slnEl.value:'',WAIS4_SLN);
+  if(gi>=9){var el=document.getElementById('waisiv-sln-result');if(el)el.innerHTML='<span style="color:#aaa;font-size:0.8rem;">No disponible para este grupo etario</span>';}
+  else calcShow('waisiv-sln-result',slnEl?slnEl.value:'',WAIS4_SLN);
 }
 function guardarWaisiv() {
   if(!SESSION)return;
   var pacId=document.getElementById('waisiv-paciente').value;
   var fecha=document.getElementById('waisiv-fecha').value;
-  if(!pacId){alert('Seleccioná un paciente.');return;}
-  var edad=waisivGetEdad(); var gi=edad!==null?wais4GetGrupo(edad):-1;
+  var giEl=document.getElementById('waisiv-gi');
+  var gi=giEl&&giEl.value!==''?parseInt(giEl.value):-1;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  if(gi<0){toast('Seleccioná un grupo etario.','error');return;}
   var rdVal=document.getElementById('waisiv-rd').value;
   var claVal=document.getElementById('waisiv-cla').value;
   var slnVal=document.getElementById('waisiv-sln').value;
-  if(!rdVal&&!claVal&&!slnVal){alert('Ingresá al menos un puntaje bruto.');return;}
-  var dat={edad:edad,grupo:gi>=0?WAIS4_GRUPOS[gi]:null};
-  if(rdVal!==''){var pe=wais4PBtoPE(parseFloat(rdVal),WAIS4_RD,gi);dat.rd_pb=parseFloat(rdVal);dat.rd_pe=pe;dat.rd_z=wais4PEtoZ(pe);}
-  if(claVal!==''){var pe=wais4PBtoPE(parseFloat(claVal),WAIS4_CLA,gi);dat.cla_pb=parseFloat(claVal);dat.cla_pe=pe;dat.cla_z=wais4PEtoZ(pe);}
-  if(slnVal!==''){var pe=wais4PBtoPE(parseFloat(slnVal),WAIS4_SLN,gi);dat.sln_pb=parseFloat(slnVal);dat.sln_pe=pe;dat.sln_z=wais4PEtoZ(pe);}
+  if(rdVal===''&&claVal===''&&slnVal===''){toast('Ingresá al menos un puntaje bruto.','error');return;}
+  var dat={grupo:WAIS4_GRUPOS[gi],gi:gi};
+  var interp=[];
+  if(rdVal!==''){
+    var pe=wais4PBtoPE(parseFloat(rdVal),WAIS4_RD,gi);var z=wais4PEtoZ(pe);
+    dat.rd_pb=parseFloat(rdVal);dat.rd_pe=pe;dat.rd_z=z;
+    if(z!==null)interp.push('RD: PB='+rdVal+' → PE='+pe+' → Z='+(z>=0?'+':'')+z);
+  }
+  if(claVal!==''){
+    var pe=wais4PBtoPE(parseFloat(claVal),WAIS4_CLA,gi);var z=wais4PEtoZ(pe);
+    dat.cla_pb=parseFloat(claVal);dat.cla_pe=pe;dat.cla_z=z;
+    if(z!==null)interp.push('Claves: PB='+claVal+' → PE='+pe+' → Z='+(z>=0?'+':'')+z);
+  }
+  if(slnVal!==''&&gi<9){
+    var pe=wais4PBtoPE(parseFloat(slnVal),WAIS4_SLN,gi);var z=wais4PEtoZ(pe);
+    dat.sln_pb=parseFloat(slnVal);dat.sln_pe=pe;dat.sln_z=z;
+    if(z!==null)interp.push('SLN: PB='+slnVal+' → PE='+pe+' → Z='+(z>=0?'+':'')+z);
+  }
   var zPpal=dat.rd_z!=null?dat.rd_z:(dat.cla_z!=null?dat.cla_z:(dat.sln_z!=null?dat.sln_z:null));
+  // Mostrar resultado antes de guardar
+  var detEl=document.getElementById('waisiv-detalle');
+  if(detEl) detEl.innerHTML=interp.map(function(s){return '<div class="detalle-item"><div class="detalle-lbl">'+s+'</div></div>';}).join('');
+  var interpEl=document.getElementById('waisiv-interp');
+  if(interpEl) interpEl.innerHTML='<p>Grupo etario: <strong>'+WAIS4_GRUPOS[gi]+' años</strong>. Z calculado con M=10, DS=3 (estándar WAIS-IV).</p><p><em>Baremos: Tabla A.1 — Adaptación argentina WAIS-IV.</em></p>';
+  document.getElementById('waisiv-form').style.display='none';
+  document.getElementById('waisiv-resultado').style.display='block';
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'WAIS-IV',fecha:fecha,
     puntaje_total:dat.rd_pb!=null?dat.rd_pb:null,categoria:'Ver detalle',
