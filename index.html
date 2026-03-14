@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.2.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.0</div>
     </div>
   </aside>
 
@@ -490,6 +490,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <span class="sector-tag">Fluencia</span>
             <span class="sector-tag">MoCA</span>
             <span class="sector-tag">IFS</span>
+            <span class="sector-tag">WAIS-IV</span>
             <span class="sector-tag">ACE-R</span>
             <span class="sector-tag">WCST-64</span>
           </div>
@@ -2482,6 +2483,46 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     </div>
 
     
+    <!-- ── TEST WAIS-IV ── -->
+    <div class="vista" id="vista-waisiv">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">WAIS-IV · Retención de Dígitos, Claves y Secuencia Número-Letra</div></div>
+      <div id="waisiv-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="waisiv-paciente" onchange="waisivActualizar()"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="waisiv-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes Brutos</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Ingresá los puntajes brutos. El puntaje equivalente (PE) y Z se calculan automáticamente según la edad del paciente seleccionado.</p>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Retención de Dígitos (RD)</label>
+              <input type="number" id="waisiv-rd" min="0" max="48" placeholder="0–48" oninput="waisivActualizar()">
+              <div id="waisiv-rd-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+            </div>
+            <div class="field">
+              <label>Claves (Cla)</label>
+              <input type="number" id="waisiv-cla" min="0" max="135" placeholder="0–135" oninput="waisivActualizar()">
+              <div id="waisiv-cla-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+            </div>
+            <div class="field">
+              <label>Secuencia Número-Letra (SLN)</label>
+              <input type="number" id="waisiv-sln" min="0" max="30" placeholder="0–30" oninput="waisivActualizar()">
+              <div id="waisiv-sln-result" style="font-size:0.8rem;color:var(--accent);margin-top:4px;min-height:18px;"></div>
+            </div>
+          </div>
+          <div id="waisiv-edad-info" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="limpiarWaisiv()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="guardarWaisiv()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
     <!-- ── TEST ASRS-V1.1 ── -->
 
 <div class="vista" id="vista-asrs">
@@ -3183,7 +3224,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
+   'waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3353,7 +3394,7 @@ function generarPDFHistorial() {
   }
 
   // ── Clasificación de tests ──
-  var NP = ['Rey Verbal','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
+  var NP = ['WAIS-IV','Rey Verbal','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
   var TD = ['ASRS-V1.1','WURS-25'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td':'cl'; }
@@ -3476,7 +3517,7 @@ function generarPDFHistorial() {
     var dominios = {
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
-      'ATENCIÓN':       ['TMT A-B'],
+      'ATENCIÓN':       ['WAIS-IV','TMT A-B'],
       'LENGUAJE':       ['Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
       'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
@@ -3553,6 +3594,12 @@ function generarPDFHistorial() {
           } else {
             rows += filaTabla('Fluencia Verbal', r.puntaje_total, null, null, r.puntaje_z, r.fecha);
           }
+
+        } else if (testNombre === 'WAIS-IV') {
+          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
+          if (d.rd_pb != null) rows += filaTabla('Retención de Dígitos', d.rd_pb, 10, 3, d.rd_z, r.fecha);
+          if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
+          if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'WCST-64') {
           rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
@@ -4062,6 +4109,12 @@ function irSector(s) {
         '<div class="test-desc">INECO Frontal Screening — Funciones ejecutivas frontales</div>' +
         '<span class="test-tag">8 subtests · 30 puntos</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'waisiv\')">' +
+        '<div class="test-icon">🔢</div>' +
+        '<div class="test-nombre">WAIS-IV · Dígitos / Claves / SLN</div>' +
+        '<div class="test-desc">Retención de Dígitos, Claves y Secuencia Número-Letra — Memoria de trabajo y velocidad de procesamiento</div>' +
+        '<span class="test-tag">PE → Z automático por edad</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'acer\')">' +
         '<div class="test-icon">📋</div>' +
         '<div class="test-nombre">ACE-R</div>' +
@@ -4125,6 +4178,7 @@ function irTest(t) {
   if (t === 'mbi') iniciarMBI();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
+  if (t === 'waisiv') iniciarWaisiv();
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
 }
@@ -5469,6 +5523,177 @@ function toast(msg, tipo) {
   el.classList.add('show');
   clearTimeout(el._t);
   el._t = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+
+// ══ WAIS-IV Subpruebas: RD, Cla, SLN ══════════════════════════════════════
+// Tabla A.1 — PB a PE por grupo etario. Adaptación argentina.
+// Grupos: 0=16-17, 1=18-19, 2=20-24, 3=25-29, 4=30-34, 5=35-44,
+//         6=45-54, 7=55-64, 8=65-69, 9=70-74, 10=75-79, 11=80-84, 12=85-90
+// Z = (PE - 10) / 3  (M=10, DS=3 estándar WAIS-IV)
+
+var WAIS4_GRUPOS = ['16-17','18-19','20-24','25-29','30-34','35-44','45-54','55-64','65-69','70-74','75-79','80-84','85-90'];
+
+// [PE1..PE19] = [min,max] o null
+var WAIS4_RD = [
+  [[0,10],[11,11],[12,12],[13,13],[14,15],[16,17],[18,18],[19,20],[21,22],[23,24],[25,26],[27,28],[29,30],[31,33],[34,35],[36,37],[38,39],[40,42],[43,48]],
+  [[0,11],[12,12],[13,14],[15,15],[16,17],[18,18],[19,19],[20,21],[22,23],[24,25],[26,27],[28,29],[30,31],[32,33],[34,36],[37,38],[39,40],[41,43],[44,48]],
+  [[0,11],[12,12],[13,14],[15,15],[16,17],[18,18],[19,20],[21,22],[23,24],[25,26],[27,28],[29,30],[31,32],[33,34],[35,36],[37,38],[39,40],[41,43],[44,48]],
+  [[0,10],[11,11],[12,12],[13,13],[14,15],[16,17],[18,18],[19,20],[21,22],[23,24],[25,26],[27,28],[29,30],[31,33],[34,35],[36,37],[38,39],[40,42],[43,48]],
+  [[0,9],[10,10],[11,11],[12,13],[14,14],[15,16],[17,18],[19,19],[20,21],[22,23],[24,25],[26,27],[28,30],[31,32],[33,34],[35,36],[37,38],[39,41],[42,48]],
+  [[0,9],[10,10],[11,11],[12,13],[14,14],[15,16],[17,17],[18,19],[20,21],[22,23],[24,25],[26,27],[28,30],[31,32],[33,34],[35,36],[37,38],[39,40],[41,48]],
+  [[0,7],[8,8],[9,9],[10,11],[12,12],[13,14],[15,16],[17,17],[18,19],[20,21],[22,23],[24,25],[26,27],[28,30],[31,32],[33,34],[35,36],[37,38],[39,48]],
+  [[0,6],[7,7],[8,9],[10,10],[11,12],[13,13],[14,15],[16,17],[18,19],[20,20],[21,22],[23,24],[25,26],[27,28],[29,30],[31,33],[34,35],[36,37],[38,48]],
+  [[0,5],[6,7],[8,8],[9,10],[11,11],[12,13],[14,14],[15,16],[17,18],[19,20],[21,21],[22,23],[24,26],[27,28],[29,30],[31,32],[33,34],[35,37],[38,48]],
+  [[0,5],[6,6],[7,7],[8,9],[10,10],[11,12],[13,13],[14,15],[16,17],[18,19],[20,20],[21,22],[23,24],[25,26],[27,29],[30,31],[32,33],[34,35],[36,48]],
+  [[0,5],[6,6],[7,7],[8,9],[10,10],[11,12],[13,13],[14,15],[16,17],[18,19],[20,20],[21,22],[23,24],[25,26],[27,28],[29,30],[31,32],[33,34],[35,48]],
+  [[0,4],[5,5],[6,6],[7,7],[8,9],[10,10],[11,12],[13,14],[15,15],[16,17],[18,19],[20,21],[22,22],[23,24],[25,26],[27,28],[29,30],[31,32],[33,48]],
+  [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,14],[15,17],[18,20],[21,23],[24,26],[27,29],[30,32],[33,35],[36,39],[40,42],[43,45],[46,50],[51,66]]
+];
+
+var WAIS4_CLA = [
+  [[0,19],[20,24],[25,30],[31,36],[37,42],[43,48],[49,53],[54,59],[60,64],[65,70],[71,75],[76,80],[81,85],[86,90],[91,95],[96,101],[102,105],[106,110],[111,135]],
+  [[0,20],[21,27],[28,33],[34,39],[40,45],[46,51],[52,56],[57,62],[63,67],[68,73],[74,78],[79,83],[84,88],[89,93],[94,98],[99,103],[104,108],[109,112],[113,135]],
+  [[0,23],[24,28],[29,34],[35,40],[41,45],[46,51],[52,56],[57,62],[63,67],[68,73],[74,78],[79,83],[84,88],[89,93],[94,97],[98,102],[103,107],[108,112],[113,135]],
+  [[0,18],[19,23],[24,29],[30,35],[36,41],[42,46],[47,52],[53,58],[59,63],[64,68],[69,73],[74,78],[79,83],[84,88],[89,93],[94,97],[98,102],[103,106],[107,135]],
+  [[0,17],[18,22],[23,27],[28,33],[34,39],[40,44],[45,50],[51,55],[56,60],[61,66],[67,71],[72,76],[77,81],[82,86],[87,91],[92,95],[96,100],[101,104],[105,135]],
+  [[0,14],[15,19],[20,25],[26,30],[31,36],[37,41],[42,47],[48,52],[53,57],[58,62],[63,67],[68,72],[73,77],[78,82],[83,87],[88,91],[92,96],[97,100],[101,135]],
+  [[0,11],[12,17],[18,21],[22,26],[27,30],[31,36],[37,41],[42,46],[47,51],[52,56],[57,61],[62,66],[67,71],[72,76],[77,81],[82,86],[87,91],[92,97],[98,135]],
+  [[0,5],[6,9],[10,12],[13,17],[18,22],[23,27],[28,31],[32,37],[38,41],[42,46],[47,51],[52,55],[56,60],[61,66],[67,71],[72,77],[74,84],[85,90],[91,135]],
+  [[0,2],[3,5],[6,8],[9,13],[14,17],[18,22],[23,26],[27,31],[32,36],[37,40],[41,45],[46,50],[51,55],[56,60],[61,65],[66,71],[72,79],[80,87],[88,135]],
+  [[0,1],[2,3],[4,7],[8,11],[12,15],[16,19],[20,24],[25,28],[29,33],[34,38],[39,42],[43,47],[48,52],[53,57],[58,63],[64,68],[69,75],[76,81],[82,135]],
+  [[0,0],[1,2],[3,5],[6,8],[9,12],[13,16],[17,20],[21,24],[25,29],[30,34],[35,38],[39,43],[44,48],[49,53],[54,59],[60,66],[67,74],[75,81],[82,135]],
+  [null,[0,1],[2,3],[4,5],[6,8],[9,12],[13,16],[17,20],[21,25],[26,29],[30,34],[35,39],[40,44],[45,50],[57,57],[58,65],[66,72],[73,76],[77,135]],
+  [null,[0,0],[1,1],[2,3],[4,6],[7,9],[10,13],[14,17],[18,21],[22,26],[27,30],[31,36],[37,41],[42,48],[49,56],[57,64],[65,70],[71,74],[75,135]]
+];
+
+var WAIS4_SLN = [
+  [[0,8],[9,9],[10,10],[11,11],[12,13],[14,14],[15,15],[16,16],[17,18],[19,19],[20,20],[21,21],[22,22],[23,23],[24,24],[25,25],[26,26],[27,27],[28,30]],
+  [[0,8],[9,9],[10,10],[11,11],[12,13],[14,14],[15,15],[16,16],[17,18],[19,19],[20,20],[21,21],[22,22],[23,23],[24,24],[25,25],[26,26],[27,27],[28,30]],
+  [[0,9],[10,10],[11,11],[12,12],[13,14],[15,15],[16,16],[17,17],[18,19],[20,20],[21,21],[22,22],[23,23],[24,24],[25,25],[26,26],[27,27],[28,28],[29,30]],
+  [[0,7],[8,9],[10,10],[11,11],[12,12],[13,14],[15,15],[16,16],[17,18],[19,19],[20,20],[21,21],[22,22],[23,23],[24,24],[25,25],[26,26],[27,27],[28,30]],
+  [[0,6],[7,7],[8,9],[10,10],[11,12],[13,13],[14,15],[16,16],[17,17],[18,18],[19,19],[20,20],[21,21],[22,22],[23,23],[24,24],[25,25],[26,26],[27,30]],
+  [[0,4],[5,6],[7,8],[9,10],[11,11],[12,12],[13,14],[15,15],[16,17],[18,18],[19,19],[20,20],[21,21],[null,null],[22,22],[23,23],[24,24],[25,25],[26,30]],
+  [[0,2],[3,4],[5,5],[6,7],[8,9],[10,10],[11,12],[13,14],[15,15],[16,17],[18,18],[19,19],[20,20],[21,21],[null,null],[22,22],[null,null],[null,null],[23,30]],
+  [[0,1],[2,3],[4,4],[5,6],[7,8],[9,10],[11,11],[12,13],[14,15],[16,17],[18,18],[19,19],[20,20],[null,null],[21,21],[null,null],[null,null],[null,null],[22,30]],
+  [[0,0],[1,2],[3,3],[4,5],[6,6],[7,8],[9,10],[11,13],[14,15],[16,16],[17,17],[18,18],[19,19],[null,null],[20,20],[null,null],[null,null],[null,null],[21,30]],
+  null, null, null, null
+];
+
+function wais4GetGrupo(edad) {
+  if (edad < 16) return -1;
+  if (edad <= 17) return 0;
+  if (edad <= 19) return 1;
+  if (edad <= 24) return 2;
+  if (edad <= 29) return 3;
+  if (edad <= 34) return 4;
+  if (edad <= 44) return 5;
+  if (edad <= 54) return 6;
+  if (edad <= 64) return 7;
+  if (edad <= 69) return 8;
+  if (edad <= 74) return 9;
+  if (edad <= 79) return 10;
+  if (edad <= 84) return 11;
+  return 12;
+}
+
+function wais4PBtoPE(pb, tabla, gi) {
+  if (gi < 0 || gi >= tabla.length) return null;
+  var grupo = tabla[gi];
+  if (!grupo) return null;
+  for (var pe = 0; pe < grupo.length; pe++) {
+    var rango = grupo[pe];
+    if (!rango) continue;
+    if (pb >= rango[0] && pb <= rango[1]) return pe + 1;
+  }
+  return null;
+}
+
+function wais4PEtoZ(pe) {
+  if (pe === null || pe === undefined) return null;
+  return parseFloat(((pe - 10) / 3).toFixed(2));
+}
+
+// ══ WAIS-IV funciones ══
+function iniciarWaisiv() {
+  document.getElementById('waisiv-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('waisiv-form').style.display = 'block';
+  waisivActualizar();
+}
+function limpiarWaisiv() {
+  ['waisiv-rd','waisiv-cla','waisiv-sln'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['waisiv-rd-result','waisiv-cla-result','waisiv-sln-result','waisiv-edad-info'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='';});
+}
+function waisivGetEdad() {
+  var pacId=document.getElementById('waisiv-paciente').value;
+  var pac=PACIENTES.find(function(p){return p.id===pacId;});
+  if(!pac||!pac.fecha_nacimiento)return null;
+  return calcularEdad(pac.fecha_nacimiento);
+}
+function waisivActualizar() {
+  var edad=waisivGetEdad(); var gi=edad!==null?wais4GetGrupo(edad):-1;
+  var infoEl=document.getElementById('waisiv-edad-info');
+  if(infoEl) infoEl.textContent=gi>=0?'Grupo etario: '+WAIS4_GRUPOS[gi]+' años (edad: '+edad+')':'Seleccioná un paciente con fecha de nacimiento para calcular PE y Z.';
+  function calcShow(id,pb,tabla){
+    var el=document.getElementById(id);if(!el)return;
+    if(pb===''||isNaN(parseFloat(pb))||gi<0){el.textContent='';return;}
+    var pe=wais4PBtoPE(parseFloat(pb),tabla,gi); var z=wais4PEtoZ(pe);
+    if(pe!==null){el.innerHTML='PE: <strong>'+pe+'</strong> · Z: <strong>'+(z>=0?'+':'')+z+'</strong>';}
+    else{el.textContent='PE: fuera de rango';}
+  }
+  var rdEl=document.getElementById('waisiv-rd'),claEl=document.getElementById('waisiv-cla'),slnEl=document.getElementById('waisiv-sln');
+  calcShow('waisiv-rd-result',rdEl?rdEl.value:'',WAIS4_RD);
+  calcShow('waisiv-cla-result',claEl?claEl.value:'',WAIS4_CLA);
+  calcShow('waisiv-sln-result',slnEl?slnEl.value:'',WAIS4_SLN);
+}
+function guardarWaisiv() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('waisiv-paciente').value;
+  var fecha=document.getElementById('waisiv-fecha').value;
+  if(!pacId){alert('Seleccioná un paciente.');return;}
+  var edad=waisivGetEdad(); var gi=edad!==null?wais4GetGrupo(edad):-1;
+  var rdVal=document.getElementById('waisiv-rd').value;
+  var claVal=document.getElementById('waisiv-cla').value;
+  var slnVal=document.getElementById('waisiv-sln').value;
+  if(!rdVal&&!claVal&&!slnVal){alert('Ingresá al menos un puntaje bruto.');return;}
+  var dat={edad:edad,grupo:gi>=0?WAIS4_GRUPOS[gi]:null};
+  if(rdVal!==''){var pe=wais4PBtoPE(parseFloat(rdVal),WAIS4_RD,gi);dat.rd_pb=parseFloat(rdVal);dat.rd_pe=pe;dat.rd_z=wais4PEtoZ(pe);}
+  if(claVal!==''){var pe=wais4PBtoPE(parseFloat(claVal),WAIS4_CLA,gi);dat.cla_pb=parseFloat(claVal);dat.cla_pe=pe;dat.cla_z=wais4PEtoZ(pe);}
+  if(slnVal!==''){var pe=wais4PBtoPE(parseFloat(slnVal),WAIS4_SLN,gi);dat.sln_pb=parseFloat(slnVal);dat.sln_pe=pe;dat.sln_z=wais4PEtoZ(pe);}
+  var zPpal=dat.rd_z!=null?dat.rd_z:(dat.cla_z!=null?dat.cla_z:(dat.sln_z!=null?dat.sln_z:null));
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'WAIS-IV',fecha:fecha,
+    puntaje_total:dat.rd_pb!=null?dat.rd_pb:null,categoria:'Ver detalle',
+    puntaje_z:zPpal,datos:dat
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+// guardarAsrs (TDAH)
+function guardarAsrs() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('asrs-paciente').value;
+  var fecha=document.getElementById('asrs-fecha').value;
+  if(!pacId){alert('Seleccioná un paciente.');return;}
+  var sel=document.querySelector('input[name="asrs_1"]:checked');
+  if(!sel){alert('Calculá el resultado antes de guardar.');return;}
+  var asrsParteA=0;
+  for(var i=1;i<=6;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s&&parseInt(s.value)>=2)asrsParteA++;}
+  var asrsTotal=0;
+  for(var i=1;i<=18;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s)asrsTotal+=parseInt(s.value);}
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'ASRS-V1.1',fecha:fecha,
+    puntaje_total:asrsTotal,categoria:asrsParteA>=4?'Positivo para TDAH':'Negativo para TDAH',
+    datos:{parte_a_positivos:asrsParteA,total_18:asrsTotal}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
 }
 
 // ── Auto-iniciar si hay sesión ─────────────────
