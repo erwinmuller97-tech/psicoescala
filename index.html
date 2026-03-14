@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.2</div>
     </div>
   </aside>
 
@@ -3641,6 +3641,22 @@ function generarPDFHistorial() {
           if (d.fallas != null)
             rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#9a7a60;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
 
+        } else if (testNombre === 'Test del Reloj (Cacho)') {
+          var d2 = r.datos || {};
+          var total2 = r.puntaje_total;
+          var normal2 = total2 >= 6;
+          var cat2 = r.categoria || (normal2 ? 'Sin deterioro' : 'Deterioro cognitivo');
+          rows += '<tr>'+
+            '<td style="'+tdBase+'font-weight:500;">Test del Reloj (Cacho)</td>'+
+            '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+(total2!=null?total2+'/10':'—')+'</td>'+
+            '<td colspan="4" style="'+tdBase+'font-size:9px;color:#9a7a60;">'+
+              (d2.esfera!=null?'Esfera:'+d2.esfera+'/2 · ':'')+(d2.numeros!=null?'Números:'+d2.numeros+'/4 · ':'')+(d2.agujas!=null?'Agujas:'+d2.agujas+'/4':'')+'</td>'+
+            '<td style="'+tdBase+'">'+
+              '<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+(normal2?'#1D9E7522':'#E24B4A22')+';color:'+(normal2?'#1D9E75':'#E24B4A')+';border:0.5px solid '+(normal2?'#1D9E7544':'#E24B4A44')+';white-space:nowrap;">'+cat2+'</span>'+
+            '</td>'+
+            '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
+            '</tr>';
+
         } else {
           rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
         }
@@ -4208,6 +4224,10 @@ function irTest(t) {
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
   if (t === 'waisiv') iniciarWaisiv();
+  if (t === 'asrs') iniciarAsrs();
+  if (t === 'wurs') iniciarWurs();
+  if (t === 'mbi') iniciarMBI();
+  if (t === 'reloj') iniciarReloj();
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
 }
@@ -5734,6 +5754,281 @@ function guardarAsrs() {
     user_id:SESSION.user.id,paciente_id:pacId,test:'ASRS-V1.1',fecha:fecha,
     puntaje_total:asrsTotal,categoria:asrsParteA>=4?'Positivo para TDAH':'Negativo para TDAH',
     datos:{parte_a_positivos:asrsParteA,total_18:asrsTotal}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+
+
+// ══ ASRS-V1.1 ════════════════════════════════════════════════════════════════
+var ASRS_ITEMS = [
+  {n:1,txt:'¿Con qué frecuencia tiene dificultad para acabar con los detalles finales de un proyecto?',sec:'A'},
+  {n:2,txt:'¿Con qué frecuencia tiene dificultad para ordenar las cosas cuando hace una tarea que requiere organización?',sec:'A'},
+  {n:3,txt:'¿Con qué frecuencia tiene dificultad para recordar sus citas u obligaciones?',sec:'A'},
+  {n:4,txt:'Cuando tiene una actividad que requiere pensar mucho, ¿con qué frecuencia la evita o la deja para después?',sec:'A'},
+  {n:5,txt:'¿Con qué frecuencia mueve o retuerce las manos o los pies cuando tiene que estar sentado/a mucho tiempo?',sec:'A'},
+  {n:6,txt:'¿Con qué frecuencia se siente demasiado activo/a y necesitado/a de hacer cosas, como si estuviera impulsado/a por un motor?',sec:'A'},
+  {n:7,txt:'¿Con qué frecuencia comete errores por descuido cuando tiene que trabajar en un proyecto aburrido o difícil?',sec:'B'},
+  {n:8,txt:'¿Con qué frecuencia tiene dificultad para mantener la atención cuando hace una tarea aburrida o repetitiva?',sec:'B'},
+  {n:9,txt:'¿Con qué frecuencia tiene dificultad para concentrarse en lo que le dicen, incluso cuando le hablan directamente?',sec:'B'},
+  {n:10,txt:'¿Con qué frecuencia deja proyectos a medio terminar una vez que ha pasado la parte más difícil?',sec:'B'},
+  {n:11,txt:'¿Con qué frecuencia tiene dificultad para hacer tareas que requieren organización?',sec:'B'},
+  {n:12,txt:'¿Con qué frecuencia tiene dificultad para recordar citas u obligaciones?',sec:'B'},
+  {n:13,txt:'¿Con qué frecuencia evita empezar tareas que requieren pensar mucho?',sec:'B'},
+  {n:14,txt:'¿Con qué frecuencia tiene dificultad para mantenerse alerta o despierto/a cuando hace algo aburrido?',sec:'B'},
+  {n:15,txt:'¿Con qué frecuencia dice cosas o actúa sin pensar?',sec:'B'},
+  {n:16,txt:'¿Con qué frecuencia no puede esperar su turno en situaciones donde hay que guardar fila?',sec:'B'},
+  {n:17,txt:'¿Con qué frecuencia interrumpe a otros cuando están ocupados?',sec:'B'},
+  {n:18,txt:'¿Con qué frecuencia come en exceso o siente impulsos de comer cuando no tiene hambre?',sec:'B'}
+];
+function iniciarAsrs() {
+  document.getElementById('asrs-fecha').value = new Date().toISOString().split('T')[0];
+  var divA = document.getElementById('asrs-items-a');
+  var divB = document.getElementById('asrs-items-b');
+  if (!divA || divA.innerHTML.trim()) return;
+  var labels = ['Nunca','Rara vez','A veces','Frecuentemente','Muy frecuente'];
+  function renderItems(items, div) {
+    div.innerHTML = items.map(function(it){
+      var radios = [0,1,2,3,4].map(function(v){
+        return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:60px;">'+
+          '<input type="radio" name="asrs_'+it.n+'" value="'+v+'" style="accent-color:var(--accent);">'+
+          '<span style="font-size:0.7rem;color:var(--muted);">'+labels[v]+'</span></label>';
+      }).join('');
+      return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">'+
+        '<span style="font-size:0.88rem;flex:1;">'+it.n+'. '+it.txt+'</span>'+
+        '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div></div>';
+    }).join('');
+  }
+  renderItems(ASRS_ITEMS.filter(function(i){return i.sec==='A';}), divA);
+  renderItems(ASRS_ITEMS.filter(function(i){return i.sec==='B';}), divB);
+  document.getElementById('asrs-form').style.display='block';
+  document.getElementById('asrs-resultado').style.display='none';
+}
+function limpiarAsrs() {
+  ASRS_ITEMS.forEach(function(it){ var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked'); if(s) s.checked=false; });
+}
+function calcularAsrs() {
+  var parteA=0, parteB=0, positivos=0;
+  for(var i=1;i<=6;i++){
+    var s=document.querySelector('input[name="asrs_'+i+'"]:checked');
+    if(!s){toast('Completá todos los ítems de la Sección A.','error');return;}
+    var v=parseInt(s.value);
+    parteA+=v;
+    var umbral=i<=3?2:3;
+    if(v>=umbral)positivos++;
+  }
+  for(var i=7;i<=18;i++){
+    var s=document.querySelector('input[name="asrs_'+i+'"]:checked');
+    if(s) parteB+=parseInt(s.value);
+  }
+  var positivo=positivos>=4;
+  var detalleHtml='<div class="detalle-item"><div class="detalle-num" style="color:'+(positivo?'#c0392b':'#3a7a3a')+'">'+positivos+'/6</div><div class="detalle-lbl">Ítems A positivos</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+parteA+'</div><div class="detalle-lbl">Suma Secc. A</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+parteB+'</div><div class="detalle-lbl">Suma Secc. B</div></div>';
+  var interp='<p><strong>Sección A:</strong> '+positivos+'/6 ítems positivos. '+
+    (positivo?'<strong style="color:#c0392b;">Screening positivo para TDAH</strong> (≥4 positivos).':'<strong style="color:#3a7a3a;">Screening negativo</strong> (< 4 positivos).')+'</p>'+
+    '<p><strong>Sección B (orientativa):</strong> Suma total 18 ítems = '+parteB+'/72.</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Kessler RC et al. (2005). Psychological Medicine. OMS-ASRS-V1.1.</p>';
+  document.getElementById('asrs-detalle').innerHTML=detalleHtml;
+  document.getElementById('asrs-interp').innerHTML=interp;
+  document.getElementById('asrs-form').style.display='none';
+  document.getElementById('asrs-resultado').style.display='block';
+}
+
+// ══ WURS-25 ════════════════════════════════════════════════════════════════
+var WURS_ITEMS_LIST = [
+  'Activo/a, no paraba nunca','Problemas de concentración, me distraía con facilidad',
+  'Ansioso/a, preocupado/a','Nervioso/a, inquieto/a','Poco atento/a, en las nubes',
+  'Dificultad para acabar las tareas ya empezadas','Irritable','Impulsivo/a',
+  'Pensamientos que no podía controlar','Dificultad para estar quieto/a',
+  'Explosivo/a, impredecible','Tenía rabietas','Me metía en peleas',
+  'Desobediente con mis padres','Bajo rendimiento escolar','Dificultad para leer',
+  'Dificultad con las matemáticas','Mal humor con facilidad','Deprimido/a, triste',
+  'Poco imaginativo/a, sin iniciativa','Con poca autoestima',
+  'Metido/a en problemas','Desobediente en la escuela','Notas bajas en conducta',
+  'Poco aceptado/a por mis compañeros'
+];
+var WURS_FACTORES = {
+  'Déficit atencional': [1,2,4,5,6,8,20],
+  'Hiperactividad/Impulsividad': [3,7,9,10,11,12,13],
+  'Problemas escolares': [14,15,16,17,21,23,24],
+  'Problemas conductuales': [18,19,22,25]
+};
+function iniciarWurs() {
+  document.getElementById('wurs-fecha').value = new Date().toISOString().split('T')[0];
+  var div=document.getElementById('wurs-items');
+  if(!div||div.innerHTML.trim())return;
+  var labels=['Nada o casi nada','Un poco','Moderadamente','Bastante','Muy frecuentemente'];
+  div.innerHTML=WURS_ITEMS_LIST.map(function(txt,i){
+    var n=i+1;
+    var radios=[0,1,2,3,4].map(function(v){
+      return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:60px;">'+
+        '<input type="radio" name="wurs_'+n+'" value="'+v+'" style="accent-color:var(--accent);">'+
+        '<span style="font-size:0.7rem;color:var(--muted);">'+labels[v]+'</span></label>';
+    }).join('');
+    return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">'+
+      '<span style="font-size:0.88rem;flex:1;">'+n+'. De niño/a era/estaba: <em>'+txt+'</em></span>'+
+      '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div></div>';
+  }).join('');
+  document.getElementById('wurs-form').style.display='block';
+  document.getElementById('wurs-resultado').style.display='none';
+}
+function limpiarWurs() {
+  for(var i=1;i<=25;i++){var s=document.querySelector('input[name="wurs_'+i+'"]:checked');if(s)s.checked=false;}
+}
+function calcularWurs() {
+  var total=0;
+  for(var i=1;i<=25;i++){
+    var s=document.querySelector('input[name="wurs_'+i+'"]:checked');
+    if(!s){toast('Completá todos los ítems.','error');return;}
+    total+=parseInt(s.value);
+  }
+  var clf,col,badge;
+  if(total>=46){clf='Significativo para síntomas en la infancia';col='var(--red)';badge='bg-grave';}
+  else if(total>=36){clf='Probable historia de síntomas infantiles';col='var(--orange)';badge='bg-moderada';}
+  else{clf='Sin síntomas significativos en la infancia';col='var(--green)';badge='bg-minima';}
+  var detalleHtml='<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+total+'</div><div class="detalle-lbl">Total /75</div></div>';
+  var interp='<p><strong>Puntaje total WURS-25: '+total+'/75.</strong> '+clf+'.</p>'+
+    '<p>Cortes: &lt;36 sin síntomas · 36–45 probable · ≥46 significativo.</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Scandar MG (2021). Rev Neurol. Versión rioplatense.</p>';
+  document.getElementById('wurs-detalle').innerHTML=detalleHtml;
+  document.getElementById('wurs-interp').innerHTML=interp;
+  document.getElementById('wurs-form').style.display='none';
+  document.getElementById('wurs-resultado').style.display='block';
+}
+function guardarWurs() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('wurs-paciente').value;
+  var fecha=document.getElementById('wurs-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  var total=0;
+  for(var i=1;i<=25;i++){var s=document.querySelector('input[name="wurs_'+i+'"]:checked');if(s)total+=parseInt(s.value);}
+  var cat=total>=46?'Significativo para síntomas en la infancia':total>=36?'Probable historia síntomas infantiles':'Sin síntomas significativos en la infancia';
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'WURS-25',fecha:fecha,
+    puntaje_total:total,categoria:cat,datos:{total:total}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+
+// ══ MBI-HSS ════════════════════════════════════════════════════════════════
+function iniciarMBI() {
+  document.getElementById('mbi-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mbi-form').style.display='block';
+  document.getElementById('mbi-resultado').style.display='none';
+}
+function limpiarMBI() {
+  for(var i=1;i<=22;i++){var s=document.querySelector('input[name="mbi-'+i+'"]:checked');if(s)s.checked=false;}
+}
+function calcularMBI() {
+  var subescalas={CE:[1,2,3,6,8,13,14,16,20],DP:[5,10,11,15,22],RP:[4,7,9,12,17,18,19,21]};
+  var vals={}, scores={CE:0,DP:0,RP:0};
+  for(var i=1;i<=22;i++){
+    var s=document.querySelector('input[name="mbi-'+i+'"]:checked');
+    if(!s){toast('Completá todos los ítems.','error');return;}
+    vals[i]=parseInt(s.value);
+  }
+  for(var sub in subescalas){subescalas[sub].forEach(function(n){scores[sub]+=(vals[n]||0);});}
+  var CE_cat=scores.CE>=27?'Alto':scores.CE>=19?'Moderado':'Bajo';
+  var DP_cat=scores.DP>=10?'Alto':scores.DP>=6?'Moderado':'Bajo';
+  var RP_cat=scores.RP<=33?'Bajo':scores.RP<=39?'Moderado':'Alto';
+  var catGlobal=(scores.CE>=27&&scores.DP>=10)?'Burnout presente':(scores.CE>=20||scores.DP>=8)?'Riesgo':'Sin indicadores';
+  var detalleHtml=
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+(scores.CE>=27?'#c0392b':scores.CE>=19?'#c0602b':'#3a7a3a')+'">'+scores.CE+'</div><div class="detalle-lbl">CE (≥27 alto)</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+(scores.DP>=10?'#c0392b':scores.DP>=6?'#c0602b':'#3a7a3a')+'">'+scores.DP+'</div><div class="detalle-lbl">D (≥10 alto)</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+(scores.RP<=33?'#c0392b':scores.RP<=39?'#c0602b':'#3a7a3a')+'">'+scores.RP+'</div><div class="detalle-lbl">RP (≤33 bajo)</div></div>';
+  var interp='<p><strong>Cansancio Emocional:</strong> '+scores.CE+' → '+CE_cat+' (corte ≥27).</p>'+
+    '<p><strong>Despersonalización:</strong> '+scores.DP+' → '+DP_cat+' (corte ≥10).</p>'+
+    '<p><strong>Realización Personal:</strong> '+scores.RP+' → '+RP_cat+' (corte ≤33 = bajo).</p>'+
+    '<p><strong>Conclusión: '+catGlobal+'.</strong></p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Maslach C, Jackson SE (1981). Adaptación española: Seisdedos N (1997).</p>';
+  document.getElementById('mbi-detalle').innerHTML=detalleHtml;
+  document.getElementById('mbi-interp').innerHTML=interp;
+  document.getElementById('mbi-form').style.display='none';
+  document.getElementById('mbi-resultado').style.display='block';
+}
+function guardarResultadoMBI() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('mbi-paciente').value;
+  var fecha=document.getElementById('mbi-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  var subescalas={CE:[1,2,3,6,8,13,14,16,20],DP:[5,10,11,15,22],RP:[4,7,9,12,17,18,19,21]};
+  var vals={}, scores={CE:0,DP:0,RP:0};
+  for(var i=1;i<=22;i++){var s=document.querySelector('input[name="mbi-'+i+'"]:checked');if(s)vals[i]=parseInt(s.value);}
+  for(var sub in subescalas){subescalas[sub].forEach(function(n){scores[sub]+=(vals[n]||0);});}
+  var cat=(scores.CE>=27&&scores.DP>=10)?'Burnout presente':(scores.CE>=20||scores.DP>=8)?'Riesgo':'Sin indicadores';
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'MBI-HSS',fecha:fecha,
+    puntaje_total:scores.CE,categoria:cat,
+    datos:{CE:scores.CE,DP:scores.DP,RP:scores.RP,
+           CE_cat:scores.CE>=27?'Alto':scores.CE>=19?'Moderado':'Bajo',
+           DP_cat:scores.DP>=10?'Alto':scores.DP>=6?'Moderado':'Bajo',
+           RP_cat:scores.RP<=33?'Bajo':scores.RP<=39?'Moderado':'Alto'}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+
+// ══ TEST DEL RELOJ (Cacho) ════════════════════════════════════════════════
+function iniciarReloj() {
+  document.getElementById('reloj-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reloj-form').style.display='block';
+  document.getElementById('reloj-resultado').style.display='none';
+}
+function limpiarReloj() {
+  ['rel-esfera','rel-numeros','rel-agujas'].forEach(function(n){
+    var s=document.querySelector('input[name="'+n+'"]:checked');if(s)s.checked=false;
+  });
+  var el=document.getElementById('reloj-pts');if(el)el.textContent='0';
+}
+function calcularReloj() {
+  var esfera=document.querySelector('input[name="rel-esfera"]:checked');
+  var numeros=document.querySelector('input[name="rel-numeros"]:checked');
+  var agujas=document.querySelector('input[name="rel-agujas"]:checked');
+  if(!esfera||!numeros||!agujas){toast('Completá todas las secciones.','error');return;}
+  var total=parseInt(esfera.value)+parseInt(numeros.value)+parseInt(agujas.value);
+  var normal=total>=6;
+  var cat=total>=8?'Sin deterioro (rendimiento óptimo)':total>=6?'Sin deterioro (rendimiento adecuado)':total>=4?'Deterioro leve':total>=2?'Deterioro moderado':'Deterioro severo';
+  var badge=normal?'bg-minima':'bg-grave';
+  document.getElementById('reloj-pts').textContent=total;
+  document.getElementById('reloj-cat').textContent=cat;
+  var catBadge=document.getElementById('reloj-badge');
+  if(catBadge){catBadge.textContent=normal?'Normal':'Alterado';catBadge.className='badge-grande '+(normal?'bg-minima':'bg-grave');}
+  var interp='<p>Puntaje total: <strong>'+total+'/10</strong>. '+cat+'.</p>'+
+    '<p>Subpuntajes: Esfera '+esfera.value+'/2 · Números '+numeros.value+'/4 · Agujas '+agujas.value+'/4.</p>'+
+    (normal?'<p>El desempeño se encuentra <strong>dentro del rango normal</strong>. No se observa deterioro visuoconstructivo significativo.</p>':
+    '<p>El desempeño se encuentra <strong>por debajo del punto de corte</strong> (corte: 6/10). Se recomienda evaluación neuropsicológica completa.</p>')+
+    '<p style="font-size:0.8rem;color:var(--muted);">Cacho J et al. Rev Neurol 1999;28:648–655 · Latini MF et al. Neurología Argentina 2011.</p>';
+  document.getElementById('reloj-interp').innerHTML=interp;
+  document.getElementById('reloj-form').style.display='none';
+  document.getElementById('reloj-resultado').style.display='block';
+}
+function guardarResultadoReloj() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('reloj-paciente').value;
+  var fecha=document.getElementById('reloj-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  var esfera=document.querySelector('input[name="rel-esfera"]:checked');
+  var numeros=document.querySelector('input[name="rel-numeros"]:checked');
+  var agujas=document.querySelector('input[name="rel-agujas"]:checked');
+  if(!esfera||!numeros||!agujas){toast('Calculá el resultado antes de guardar.','error');return;}
+  var total=parseInt(esfera.value)+parseInt(numeros.value)+parseInt(agujas.value);
+  var normal=total>=6;
+  var cat=normal?'Sin deterioro':'Deterioro cognitivo';
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'Test del Reloj (Cacho)',fecha:fecha,
+    puntaje_total:total,categoria:cat,
+    datos:{esfera:parseInt(esfera.value),numeros:parseInt(numeros.value),agujas:parseInt(agujas.value),total:total}
   },SESSION.access_token).then(function(){
     cargarResultados();toast('✓ Resultado guardado','success');
     var btnAll=document.querySelectorAll('.vista.active .btn-primary');
