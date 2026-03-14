@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.3</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.5</div>
     </div>
   </aside>
 
@@ -3149,7 +3149,7 @@ function cargarPacientes() {
     });
 }
 function cargarResultados() {
-  supaFetch('/rest/v1/psico_resultados?select=*,psico_pacientes(nombre)&order=creado.desc&limit=20', 'GET', null, SESSION.access_token)
+  supaFetch('/rest/v1/psico_resultados?select=*,psico_pacientes(nombre)&order=creado.desc&limit=200', 'GET', null, SESSION.access_token)
     .then(function(r){ return r.json(); })
     .then(function(data) {
       RESULTADOS = Array.isArray(data) ? data : [];
@@ -3311,7 +3311,7 @@ function renderHistorial() {
   var filtro = document.getElementById('historial-filtro-pac');
   var pacSel = filtro ? filtro.value : '';
   var el = document.getElementById('historial-contenido');
-  var datos = pacSel ? RESULTADOS.filter(function(r){ return r.paciente_id === pacSel; }) : RESULTADOS;
+  var datos = pacSel ? RESULTADOS.filter(function(r){ return String(r.paciente_id) === String(pacSel); }) : RESULTADOS;
   if (!datos.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No hay evaluaciones registradas.</div></div>'; return; }
   var html = '<table style="width:100%;border-collapse:collapse;">' +
     '<thead><tr>' +
@@ -3347,7 +3347,6 @@ function renderHistorial() {
 }
 
 function filtrarHistorial() {
-  renderFiltroHistorial();
   renderHistorial();
 }
 
@@ -3398,8 +3397,13 @@ function cutoffBarHTML(val, max, cutoff) {
 function generarPDFHistorial() {
   var filtro = document.getElementById('historial-filtro-pac');
   var pacId = filtro ? filtro.value : '';
-  var datos = pacId ? RESULTADOS.filter(function(r){ return r.paciente_id === pacId; }) : RESULTADOS;
-  if (!datos.length) { toast('No hay evaluaciones para exportar'); return; }
+  var datos = pacId ? RESULTADOS.filter(function(r){ return String(r.paciente_id) === String(pacId); }) : RESULTADOS;
+  // Si hay filtro pero no hay datos, puede ser que RESULTADOS no tenga todos — intentar con todos
+  if (!datos.length && pacId) {
+    // Buscar en todos los resultados sin filtro de paciente
+    datos = RESULTADOS.filter(function(r){ return String(r.paciente_id) === String(pacId); });
+  }
+  if (!datos.length) { toast('No hay evaluaciones para este paciente. Verificá que tenga resultados cargados.','error'); return; }
 
   var pacInfo = pacId ? PACIENTES.find(function(p){ return p.id === pacId; }) : null;
   var pacNombre = pacInfo ? pacInfo.nombre : 'Todos los pacientes';
