@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.6</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.7</div>
     </div>
   </aside>
 
@@ -6156,7 +6156,7 @@ function iniciarScl90(){
   document.getElementById('scl90-resultado').style.display='none';
 }
 function limpiarScl90(){
-  document.querySelectorAll('[name^="scl90"]').forEach(function(r){r.checked=false;});
+  document.querySelectorAll('[name^="scl"]').forEach(function(r){r.checked=false;});
 }
 function calcularScl90(){
   var pacId=document.getElementById('scl90-paciente').value;
@@ -6164,7 +6164,7 @@ function calcularScl90(){
   var grupo=document.getElementById('scl90-grupo')?document.getElementById('scl90-grupo').value:'adulto';
   var vals={};
   for(var i=1;i<=90;i++){
-    var s=document.querySelector('input[name="scl90_'+i+'"]:checked');
+    var s=document.querySelector('input[name="scl'+i+'"]:checked');
     vals[i]=s?parseInt(s.value):null;
   }
   var dimKeys=['SOM','OBS','SI','DEP','ANS','HOS','FOB','PAR','PSI'];
