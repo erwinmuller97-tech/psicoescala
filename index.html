@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.5</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.6</div>
     </div>
   </aside>
 
@@ -4225,6 +4225,8 @@ function irTest(t) {
   if (t === 'signoret') iniciarSignoret();
   if (t === 'reloj') iniciarReloj();
   if (t === 'mbi') iniciarMBI();
+  if (t === 'scl90') iniciarScl90();
+  if (t === 'acer') iniciarACER();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
   if (t === 'waisiv') iniciarWaisiv();
@@ -6041,6 +6043,227 @@ function guardarResultadoReloj() {
   }).catch(function(){toast('Error al guardar','error');});
 }
 
+
+// ══ calcularEdad ══════════════════════════════════════════════════════════════
+function calcularEdad(fnac) {
+  var hoy = new Date(); var nac = new Date(fnac);
+  var edad = hoy.getFullYear() - nac.getFullYear();
+  if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
+
+// ══ ACE-R ════════════════════════════════════════════════════════════════════
+function iniciarACER(){
+  document.getElementById('acer-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('acer-form').style.display='block';
+  document.getElementById('acer-resultado').style.display='none';
+}
+function limpiarACER(){
+  ['acer-orient','acer-aten','acer-memo','acer-fluencia','acer-lenguaje','acer-visuo'].forEach(function(id){document.getElementById(id).value='';});
+}
+function calcularACER(){
+  var ne=document.getElementById('acer-ne').value;
+  if(!ne){alert('Seleccioná el nivel educativo.');return;}
+  var campos=[
+    {id:'acer-orient', max:10, label:'Orientación'},
+    {id:'acer-aten',   max:8,  label:'Atención'},
+    {id:'acer-memo',   max:26, label:'Memoria'},
+    {id:'acer-fluencia',max:14,label:'Fluencia verbal'},
+    {id:'acer-lenguaje',max:26,label:'Lenguaje'},
+    {id:'acer-visuo',  max:16, label:'Habilidades visuoespaciales'}
+  ];
+  var total=0;var vals={};var todos=true;
+  campos.forEach(function(c){var v=document.getElementById(c.id).value;if(v===''){todos=false;}else{vals[c.id]=parseInt(v);total+=vals[c.id];}});
+  if(!todos){alert('Completá todos los dominios.');return;}
+  var vlom=null;var vlomLabel='—';
+  var den=(vals['acer-orient']||0)+(vals['acer-memo']||0);
+  var num=(vals['acer-fluencia']||0)+(vals['acer-lenguaje']||0);
+  if(den>0){vlom=num/den;vlomLabel=vlom.toFixed(2);}
+  var corte=ne==='baja'?70:85;
+  var normal=total>=corte;
+  var cat=normal?'Normal':'Por debajo del punto de corte';
+  var badge=normal?'bg-minima':'bg-grave';
+  var dominiosHtml=campos.map(function(c){
+    var v=vals[c.id];var pct=Math.round((v/c.max)*100);
+    var col=pct>=70?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+    return '<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+v+'/'+c.max+'</div><div class="detalle-lbl">'+c.label+'</div></div>';
+  }).join('');
+  dominiosHtml+='<div class="detalle-item"><div class="detalle-num">'+vlomLabel+'</div><div class="detalle-lbl">Índice VLOM</div></div>';
+  var interp='<p>Puntaje total ACE-R: <strong>'+total+'/100</strong>.</p>';
+  interp+='<p>Punto de corte: ≥'+corte+' (escolaridad '+(ne==='baja'?'≤6 años — Neurología Argentina 2017':'>6 años — sens. 98%, esp. 82%')+').</p>';
+  if(normal) interp+='<p>Puntaje <strong>dentro del rango normal</strong>.</p>';
+  else interp+='<p>Puntaje <strong>por debajo del punto de corte</strong>. Se recomienda evaluación neuropsicológica completa.</p>';
+  if(vlom!==null){
+    var vlomInterp=vlom>3.5?'Sugestivo de <strong>Demencia Frontotemporal</strong>':'Sugestivo de <strong>Enfermedad de Alzheimer</strong>';
+    interp+='<p>Índice VLOM = '+vlomLabel+': '+vlomInterp+'. Punto de corte = 3.5 (Sarasola et al., 2004).</p>';
+  }
+  document.getElementById('acer-pts-total').textContent=total;
+  document.getElementById('acer-cat').textContent=cat;
+  document.getElementById('acer-badge').textContent=normal?'Normal':'Alterado';
+  document.getElementById('acer-badge').className='badge-grande '+badge;
+  document.getElementById('acer-dominios').innerHTML=dominiosHtml;
+  document.getElementById('acer-interp').innerHTML=interp;
+  document.getElementById('acer-form').style.display='none';
+  document.getElementById('acer-resultado').style.display='block';
+}
+function guardarResultadoACER(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('acer-paciente').value;
+  var pts=parseInt(document.getElementById('acer-pts-total').textContent);
+  var cat=document.getElementById('acer-cat').textContent;
+  var fecha=document.getElementById('acer-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente primero');return;}
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'ACE-R',fecha:fecha,
+    puntaje_total:pts,categoria:cat,datos:{total:pts}
+  },SESSION.access_token).then(function(){cargarResultados();
+    toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+
+// ══ SCL-90-R ═════════════════════════════════════════════════════════════════
+var SCL_DIMS = {
+  SOM:[1,4,12,27,40,42,48,49,52,53,56,58],
+  OBS:[3,9,10,28,38,45,46,51,55,65],
+  SI: [6,21,34,36,37,41,61,69,73],
+  DEP:[5,14,15,20,22,26,29,30,31,32,54,71,79],
+  ANS:[2,17,23,33,39,57,72,78,80,86],
+  HOS:[11,24,63,67,74,81],
+  FOB:[13,25,47,50,70,75,82],
+  PAR:[8,18,43,68,76,83],
+  PSI:[7,16,35,62,77,84,85,87,88,90]
+};
+var SCL_DIM_LABELS = {SOM:'Somatizaciones',OBS:'Obsesiones/Compulsiones',SI:'Sensitividad Interpersonal',DEP:'Depresión',ANS:'Ansiedad',HOS:'Hostilidad',FOB:'Ansiedad Fóbica',PAR:'Ideación Paranoide',PSI:'Psicoticismo'};
+var SCL_NORMS = {
+  adulto_M:{SOM:{M:0.40,DS:0.50},OBS:{M:0.72,DS:0.65},SI:{M:0.46,DS:0.52},DEP:{M:0.55,DS:0.57},ANS:{M:0.37,DS:0.47},HOS:{M:0.30,DS:0.42},FOB:{M:0.14,DS:0.32},PAR:{M:0.40,DS:0.49},PSI:{M:0.24,DS:0.38},IGS:{M:0.41,DS:0.44},TSP:{M:24.8,DS:19.2},IMSP:{M:1.32,DS:0.65}},
+  adulto_F:{SOM:{M:0.54,DS:0.58},OBS:{M:0.74,DS:0.65},SI:{M:0.54,DS:0.58},DEP:{M:0.65,DS:0.63},ANS:{M:0.45,DS:0.51},HOS:{M:0.28,DS:0.41},FOB:{M:0.24,DS:0.44},PAR:{M:0.38,DS:0.47},PSI:{M:0.24,DS:0.38},IGS:{M:0.48,DS:0.47},TSP:{M:28.2,DS:19.9},IMSP:{M:1.30,DS:0.57}},
+  adol_M:{SOM:{M:0.42,DS:0.47},OBS:{M:0.79,DS:0.65},SI:{M:0.58,DS:0.61},DEP:{M:0.54,DS:0.56},ANS:{M:0.41,DS:0.48},HOS:{M:0.47,DS:0.54},FOB:{M:0.21,DS:0.39},PAR:{M:0.60,DS:0.60},PSI:{M:0.32,DS:0.43},IGS:{M:0.49,DS:0.46},TSP:{M:28.9,DS:19.2},IMSP:{M:1.40,DS:0.66}},
+  adol_F:{SOM:{M:0.60,DS:0.59},OBS:{M:0.86,DS:0.68},SI:{M:0.77,DS:0.69},DEP:{M:0.73,DS:0.66},ANS:{M:0.53,DS:0.55},HOS:{M:0.37,DS:0.46},FOB:{M:0.38,DS:0.55},PAR:{M:0.59,DS:0.59},PSI:{M:0.34,DS:0.44},IGS:{M:0.61,DS:0.53},TSP:{M:35.6,DS:21.6},IMSP:{M:1.41,DS:0.58}}
+};
+function brutoAT_SCL(avg, grupo, sexo, dim) {
+  var key = grupo+'_'+(sexo==='F'?'F':'M');
+  var norms = SCL_NORMS[key];
+  if(!norms||!norms[dim]) return 50;
+  var z = (avg - norms[dim].M) / norms[dim].DS;
+  return Math.round(50 + 10 * z);
+}
+function iniciarScl90(){
+  document.getElementById('scl90-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('scl90-form').style.display='block';
+  document.getElementById('scl90-resultado').style.display='none';
+}
+function limpiarScl90(){
+  document.querySelectorAll('[name^="scl90"]').forEach(function(r){r.checked=false;});
+}
+function calcularScl90(){
+  var pacId=document.getElementById('scl90-paciente').value;
+  var sexo=document.getElementById('scl90-sexo')?document.getElementById('scl90-sexo').value:'M';
+  var grupo=document.getElementById('scl90-grupo')?document.getElementById('scl90-grupo').value:'adulto';
+  var vals={};
+  for(var i=1;i<=90;i++){
+    var s=document.querySelector('input[name="scl90_'+i+'"]:checked');
+    vals[i]=s?parseInt(s.value):null;
+  }
+  var dimKeys=['SOM','OBS','SI','DEP','ANS','HOS','FOB','PAR','PSI'];
+  var dimResults={};
+  var totalSum=0,totalResp=0,totalPositivos=0;
+  dimKeys.forEach(function(dim){
+    var items=SCL_DIMS[dim];var sum=0;var n=0;
+    items.forEach(function(i){if(vals[i]!==null){sum+=vals[i];n++;if(vals[i]>0)totalPositivos++;}});
+    var avg=n>0?sum/n:0;
+    dimResults[dim]={sum:sum,n:n,avg:avg};
+    totalSum+=sum;totalResp+=n;
+  });
+  var IGS=totalResp>0?totalSum/totalResp:0;
+  var TSP=totalPositivos;
+  var IMSP=TSP>0?totalSum/TSP:0;
+  window._sclIGS=IGS;window._sclTSP=TSP;window._sclIMSP=IMSP;
+  var tIGS=brutoAT_SCL(IGS,grupo,sexo,'IGS');
+  var tTSP=brutoAT_SCL(TSP,grupo,sexo,'TSP');
+  var tIMSP=brutoAT_SCL(IMSP,grupo,sexo,'IMSP');
+  window._sclTSP_T=tTSP;window._sclIMSP_T=tIMSP;
+  var rows='';var enRiesgo=[];
+  dimKeys.forEach(function(dim){
+    var avg=dimResults[dim].avg;
+    var tScore=brutoAT_SCL(avg,grupo,sexo,dim);
+    var riesgo=tScore>=63;
+    if(riesgo)enRiesgo.push(SCL_DIM_LABELS[dim]);
+    var cls=riesgo?'class="scl-riesgo"':'';
+    var z=((tScore-50)/10).toFixed(2);
+    rows+='<tr '+cls+'><td>'+SCL_DIM_LABELS[dim]+'</td>'+
+      '<td style="text-align:center">'+avg.toFixed(2)+'</td>'+
+      '<td style="text-align:center">'+tScore+'</td>'+
+      '<td style="text-align:center">'+(z>=0?'+':'')+z+'</td>'+
+      '<td style="text-align:center">'+(riesgo?'⚠️ Riesgo':'Normal')+'</td></tr>';
+  });
+  [['IGS (Índice de Severidad Global)',IGS.toFixed(2),tIGS],
+   ['TSP (Total Síntomas Positivos)',TSP,tTSP],
+   ['IMSP (Índice Malestar Positivo)',IMSP.toFixed(2),tIMSP]].forEach(function(row){
+    var riesgo=row[2]>=63;var z=((row[2]-50)/10).toFixed(2);
+    rows+='<tr '+(riesgo?'class="scl-riesgo"':'')+'><td><strong>'+row[0]+'</strong></td>'+
+      '<td style="text-align:center">'+row[1]+'</td>'+
+      '<td style="text-align:center">'+row[2]+'</td>'+
+      '<td style="text-align:center">'+(z>=0?'+':'')+z+'</td>'+
+      '<td style="text-align:center">'+(riesgo?'⚠️ Riesgo':'Normal')+'</td></tr>';
+  });
+  var tabla='<table class="scl-t-table"><thead><tr><th>Dimensión</th><th>Bruto promedio</th><th>T</th><th>Z</th><th>Estado</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var interp=enRiesgo.length?'<p>Dimensiones en riesgo (T≥63): <strong>'+enRiesgo.join(', ')+'</strong>.</p>':'<p>El perfil no evidencia dimensiones en zona de riesgo.</p>';
+  interp+='<p><em>Baremos: Casullo & Pérez (2008). UBA/CONICET. Población general Buenos Aires.</em></p>';
+  var detHtml='';
+  dimKeys.forEach(function(dim){
+    var r=dimResults[dim];
+    detHtml+='<div class="detalle-item"><div class="detalle-num">'+r.avg.toFixed(2)+'</div><div class="detalle-lbl">'+SCL_DIM_LABELS[dim]+'</div></div>';
+  });
+  detHtml+='<div class="detalle-item"><div class="detalle-num">'+IGS.toFixed(2)+'</div><div class="detalle-lbl">IGS</div></div>';
+  detHtml+='<div class="detalle-item"><div class="detalle-num">'+TSP+'</div><div class="detalle-lbl">TSP</div></div>';
+  detHtml+='<div class="detalle-item"><div class="detalle-num">'+IMSP.toFixed(2)+'</div><div class="detalle-lbl">IMSP</div></div>';
+  document.getElementById('scl90-detalle').innerHTML=detHtml;
+  document.getElementById('scl90-tabla-t').innerHTML=tabla;
+  document.getElementById('scl90-interp').innerHTML=interp;
+  document.getElementById('scl90-form').style.display='none';
+  document.getElementById('scl90-resultado').style.display='block';
+}
+function guardarResultadoScl90(){
+  if(!SESSION)return;
+  var pacId=document.getElementById('scl90-paciente').value;
+  var fecha=document.getElementById('scl90-fecha').value;
+  if(!pacId){alert('Seleccioná un paciente.');return;}
+  var sclNombresMap={'Somatizaciones':'som','Obsesiones/Compulsiones':'obs','Sensitividad Interpersonal':'sen','Depresión':'dep','Ansiedad':'ans','Hostilidad':'hos','Ansiedad Fóbica':'fob','Ideación Paranoide':'par','Psicoticismo':'psi'};
+  var sclNombres={som:'Somatización',obs:'Obsesión-Compulsión',sen:'Sensitividad',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad fóbica',par:'Ideación paranoide',psi:'Psicoticismo'};
+  var subescalas={};var igtVal=null;
+  var tablaEl=document.getElementById('scl90-tabla-t');
+  if(tablaEl){
+    var filas=tablaEl.querySelectorAll('tbody tr');
+    filas.forEach(function(fila){
+      var celdas=fila.querySelectorAll('td');
+      if(celdas.length>=3){
+        var dimNombre=celdas[0].textContent.trim();
+        var avgVal=parseFloat(celdas[1].textContent);
+        var tVal=parseFloat(celdas[2].textContent);
+        var key=sclNombresMap[dimNombre];
+        if(key&&!isNaN(tVal)){subescalas[key]={nombre:sclNombres[key],t:tVal,avg:!isNaN(avgVal)?avgVal:null};}
+        if(dimNombre.includes('IGS')&&!isNaN(tVal))igtVal=tVal;
+      }
+    });
+  }
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'SCL-90-R',fecha:fecha,
+    puntaje_total:igtVal?Math.round(igtVal):null,categoria:'Ver detalle',
+    datos:{subescalas:subescalas,igt:igtVal,gsi:igtVal,
+           tsp:window._sclTSP||null,imsp:window._sclIMSP||null,
+           igs_avg:window._sclIGS||null,tsp_t:window._sclTSP_T||null,imsp_t:window._sclIMSP_T||null}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+
+// irTest SCL90 y ACER
 // ── Auto-iniciar si hay sesión ─────────────────
 window.addEventListener('DOMContentLoaded', function() {
   // Siempre empezar por el gate. La sesión se restaura solo después del login manual.
