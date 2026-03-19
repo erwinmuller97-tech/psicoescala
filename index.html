@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.3.7</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.4.0</div>
     </div>
   </aside>
 
@@ -492,6 +492,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <span class="sector-tag">IFS</span>
             <span class="sector-tag">WAIS-IV</span>
             <span class="sector-tag">ACE-R</span>
+            <span class="sector-tag">BNT</span>
             <span class="sector-tag">WCST-64</span>
           </div>
         </div>
@@ -2552,6 +2553,88 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
     </div>
+    <!-- ── TEST BNT ── -->
+    <div class="vista" id="vista-bnt">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Test de Denominación de Boston · BNT-60 / BNT-12</div></div>
+      <div id="bnt-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="bnt-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="bnt-fecha"></div>
+            <div class="field">
+              <label>Versión *</label>
+              <select id="bnt-version" onchange="bntActualizar()">
+                <option value="">— Seleccionar versión —</option>
+                <option value="60">BNT-60 · Versión completa (Olabarrieta-Landa 2015)</option>
+                <option value="12">BNT-12 · Versión abreviada (Serrano/Allegri 2001)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="bnt-panel-60" style="display:none;">
+          <div class="card">
+            <div class="card-title">BNT-60 · Versión completa</div>
+            <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
+              <strong>Baremo:</strong> Olabarrieta-Landa et al. (2015) — muestra argentina (n=320). Ajuste por educación únicamente.<br>
+              <em>Sin corrección por edad ni sexo. Interpretar con cautela en mayores de 65 años.</em>
+            </div>
+            <div class="form-grid-3">
+              <div class="field">
+                <label>Puntaje bruto (0–60)</label>
+                <input type="number" id="bnt60-pb" min="0" max="60" placeholder="0–60" oninput="bntActualizar()">
+                <div id="bnt60-result" style="font-size:0.85rem;color:var(--accent);margin-top:4px;min-height:20px;font-weight:600;"></div>
+              </div>
+              <div class="field">
+                <label>Nivel educativo *</label>
+                <select id="bnt60-educ" onchange="bntActualizar()">
+                  <option value="">— Seleccionar —</option>
+                  <option value="0">≤12 años de educación</option>
+                  <option value="1">&gt;12 años de educación</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="bnt-panel-12" style="display:none;">
+          <div class="card">
+            <div class="card-title">BNT-12 · Versión abreviada</div>
+            <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
+              <strong>Baremo:</strong> Serrano, Allegri et al. (2001) — muestra Buenos Aires (50–82 años, n=143). Sin corrección por edad ni educación.<br>
+              <strong>Láminas:</strong> helicóptero, pulpo, máscara, volcán, armónica, zancos, dominó, cactus, cerradura, pirámide, bozal y paleta.<br>
+              <strong>Corte diagnóstico EA:</strong> ≥9 (sens. 85%, esp. 94%).
+            </div>
+            <div class="form-grid-3">
+              <div class="field">
+                <label>Puntaje bruto (0–12)</label>
+                <input type="number" id="bnt12-pb" min="0" max="12" placeholder="0–12" oninput="bntActualizar()">
+                <div id="bnt12-result" style="font-size:0.85rem;color:var(--accent);margin-top:4px;min-height:20px;font-weight:600;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="limpiarBNT()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="guardarBNT()">💾 Guardar resultado</button>
+        </div>
+      </div>
+
+      <div id="bnt-resultado" style="display:none;">
+        <div class="card">
+          <div class="card-title">Resultado</div>
+          <div class="resultado-detalle" id="bnt-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="bnt-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('bnt-resultado').style.display='none';document.getElementById('bnt-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarBNT()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
     <!-- ── TEST ASRS-V1.1 ── -->
 
 <div class="vista" id="vista-asrs">
@@ -3253,7 +3336,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
+   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3427,7 +3510,7 @@ function generarPDFHistorial() {
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
   var TD = ['ASRS-V1.1','WURS-25'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td':'cl'; }
@@ -3551,7 +3634,7 @@ function generarPDFHistorial() {
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'ATENCIÓN':       ['WAIS-IV','TMT A-B'],
-      'LENGUAJE':       ['Fluencia Verbal','ACE-R'],
+      'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
       'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
     };
@@ -3618,6 +3701,15 @@ function generarPDFHistorial() {
           var pb_b = d.tmt_b_seg != null ? d.tmt_b_seg : null;
           rows += filaTabla('TMT A (segundos)', pb_a, d.tmt_a_m||null, d.tmt_a_ds||null, d.tmt_a_z||r.puntaje_z, r.fecha);
           if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, d.tmt_b_m||null, d.tmt_b_ds||null, d.tmt_b_z||null, r.fecha);
+
+        } else if (testNombre === 'BNT-60' || testNombre === 'BNT-12') {
+          var bntMax = testNombre==='BNT-60' ? 60 : 12;
+          var bntCorte = testNombre==='BNT-60' ? null : 9;
+          var bntBaremo = testNombre==='BNT-60' ?
+            'Olabarrieta-Landa et al. 2015 · Ajuste por educación' :
+            'Serrano/Allegri 2001 · Corte ≥9/12';
+          var bntLabel = testNombre + (d.educ_label?' ('+d.educ_label+')':'');
+          rows += filaTabla(bntLabel, d.pb||r.puntaje_total, null, null, r.puntaje_z, r.fecha);
 
         } else if (testNombre === 'Fluencia Verbal') {
           if (d.variables && d.variables.length) {
@@ -4164,6 +4256,12 @@ function irSector(s) {
         '<div class="test-desc">Retención de Dígitos, Claves y Secuencia Número-Letra — Memoria de trabajo y velocidad de procesamiento</div>' +
         '<span class="test-tag">PE → Z automático por edad</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'bnt\')">' +
+        '<div class="test-icon">🖼</div>' +
+        '<div class="test-nombre">BNT · Denominación de Boston</div>' +
+        '<div class="test-desc">Test de Denominación de Boston — BNT-60 o BNT-12 a elección. Evaluación de denominación por confrontación visual</div>' +
+        '<span class="test-tag">BNT-60 Olabarrieta 2015 · BNT-12 Serrano 2001</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'acer\')">' +
         '<div class="test-icon">📋</div>' +
         '<div class="test-nombre">ACE-R</div>' +
@@ -4221,6 +4319,7 @@ function irTest(t) {
   if (t === 'spaib') iniciarSPAIB();
   if (t === 'moca') iniciarMoCA();
   if (t === 'ifs') iniciarIFS();
+  if (t === 'bnt') iniciarBNT();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
   if (t === 'reloj') iniciarReloj();
@@ -6264,6 +6363,111 @@ function guardarResultadoScl90(){
 }
 
 // irTest SCL90 y ACER
+
+// ══ BNT · Test de Denominación de Boston ════════════════════════════════════
+// BNT-60: Olabarrieta-Landa et al. (2015) — Argentina
+//   ŷ = 49.122 + (4.780 × educ) donde educ: 0=≤12años, 1=>12años
+//   SDe = 5.184 — solo ajuste por educación
+// BNT-12: Serrano, Allegri et al. (2001) — Buenos Aires
+//   M=11, DS=1.16, corte ≥9. Sin correcciones demográficas.
+
+function iniciarBNT() {
+  document.getElementById('bnt-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bnt-form').style.display = 'block';
+  document.getElementById('bnt-resultado').style.display = 'none';
+}
+function limpiarBNT() {
+  ['bnt60-pb','bnt12-pb'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['bnt60-result','bnt12-result'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
+  var v=document.getElementById('bnt-version');if(v)v.value='';
+  var e=document.getElementById('bnt60-educ');if(e)e.value='';
+  document.getElementById('bnt-panel-60').style.display='none';
+  document.getElementById('bnt-panel-12').style.display='none';
+}
+function bntActualizar() {
+  var ver = document.getElementById('bnt-version').value;
+  document.getElementById('bnt-panel-60').style.display = ver==='60'?'block':'none';
+  document.getElementById('bnt-panel-12').style.display = ver==='12'?'block':'none';
+
+  if (ver==='60') {
+    var pbEl=document.getElementById('bnt60-pb');
+    var edEl=document.getElementById('bnt60-educ');
+    var resEl=document.getElementById('bnt60-result');
+    if(!pbEl||!edEl||!resEl) return;
+    var pb=parseFloat(pbEl.value);
+    var educ=edEl.value;
+    if(isNaN(pb)||educ===''){resEl.innerHTML='';return;}
+    var yhat = 49.122 + (4.780 * parseInt(educ));
+    var z = parseFloat(((pb - yhat) / 5.184).toFixed(2));
+    var col = z<=-2?'#c0392b':z<=-1?'#c0602b':z>=1?'#1D9E75':'#555';
+    resEl.innerHTML = 'ŷ='+yhat.toFixed(1)+' · Z: <strong style="color:'+col+'">'+(z>=0?'+':'')+z+'</strong>';
+  }
+  if (ver==='12') {
+    var pbEl=document.getElementById('bnt12-pb');
+    var resEl=document.getElementById('bnt12-result');
+    if(!pbEl||!resEl) return;
+    var pb=parseFloat(pbEl.value);
+    if(isNaN(pb)){resEl.innerHTML='';return;}
+    var z = parseFloat(((pb - 11) / 1.16).toFixed(2));
+    var normal = pb >= 9;
+    var col = normal?'#1D9E75':'#c0392b';
+    resEl.innerHTML = 'Z: <strong style="color:'+col+'">'+(z>=0?'+':'')+z+'</strong> · '+(normal?'Normal (≥9)':'<strong style="color:#c0392b;">Por debajo del corte (&lt;9)</strong>');
+  }
+}
+function guardarBNT() {
+  if(!SESSION) return;
+  var pacId=document.getElementById('bnt-paciente').value;
+  var fecha=document.getElementById('bnt-fecha').value;
+  var ver=document.getElementById('bnt-version').value;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  if(!ver){toast('Seleccioná una versión.','error');return;}
+
+  var pb, z, cat, dat, testNombre;
+
+  if(ver==='60') {
+    var pbVal=document.getElementById('bnt60-pb').value;
+    var educ=document.getElementById('bnt60-educ').value;
+    if(pbVal===''||educ===''){toast('Completá puntaje y nivel educativo.','error');return;}
+    pb=parseFloat(pbVal);
+    var yhat=49.122+(4.780*parseInt(educ));
+    z=parseFloat(((pb-yhat)/5.184).toFixed(2));
+    cat=z>=-1.0?'Normal':z>=-1.5?'Leve ↓':z>=-2.0?'Moderado ↓':'Bajo ↓';
+    testNombre='BNT-60';
+    dat={pb:pb,educ:parseInt(educ),educ_label:parseInt(educ)?'>12 años':'≤12 años',yhat:parseFloat(yhat.toFixed(2)),z:z,baremo:'Olabarrieta-Landa et al. 2015 — Argentina'};
+  } else {
+    var pbVal=document.getElementById('bnt12-pb').value;
+    if(pbVal===''){toast('Ingresá el puntaje bruto.','error');return;}
+    pb=parseFloat(pbVal);
+    z=parseFloat(((pb-11)/1.16).toFixed(2));
+    cat=pb>=9?'Normal (≥9)':'Por debajo del corte';
+    testNombre='BNT-12';
+    dat={pb:pb,z:z,m:11,ds:1.16,corte:9,baremo:'Serrano, Allegri et al. 2001 — Buenos Aires'};
+  }
+
+  // Mostrar resultado
+  var detalle='<div class="detalle-item"><div class="detalle-num">'+pb+(ver==='60'?'/60':'/12')+'</div><div class="detalle-lbl">Puntaje bruto</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+(z<=-1?'#c0392b':z>=1?'#1D9E75':'#555')+'">'+(z>=0?'+':'')+z+'</div><div class="detalle-lbl">Z</div></div>';
+  var interp='<p><strong>'+testNombre+'</strong> · PB='+pb+(ver==='60'?' ('+dat.educ_label+')':'')+' · Z='+(z>=0?'+':'')+z+' · '+cat+'.</p>';
+  if(ver==='60') interp+='<p>Puntaje esperado para este nivel educativo: '+dat.yhat+'/60.</p><p><em>Sin corrección por edad. Interpretar con cautela en mayores de 65 años.</em></p>';
+  if(ver==='12') interp+='<p>Corte ≥9/12 (sensibilidad 85%, especificidad 94% para EA). M=11, DS=1.16.</p>';
+  interp+='<p style="font-size:0.8rem;color:var(--muted);">'+dat.baremo+'.</p>';
+  document.getElementById('bnt-detalle').innerHTML=detalle;
+  document.getElementById('bnt-interp').innerHTML=interp;
+  document.getElementById('bnt-form').style.display='none';
+  document.getElementById('bnt-resultado').style.display='block';
+
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId,
+    test:testNombre, fecha:fecha,
+    puntaje_total:pb, categoria:cat,
+    puntaje_z:z, datos:dat
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
 // ── Auto-iniciar si hay sesión ─────────────────
 window.addEventListener('DOMContentLoaded', function() {
   // Siempre empezar por el gate. La sesión se restaura solo después del login manual.
