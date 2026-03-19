@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.4.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.0</div>
     </div>
   </aside>
 
@@ -566,15 +566,89 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <button class="btn-primary" onclick="generarPDFHistorial()">📄 Generar informe PDF</button>
       </div>
       <div class="card" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-          <label style="font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;">Filtrar por paciente</label>
-          <select id="historial-filtro-pac" onchange="filtrarHistorial()" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:0.88rem;color:var(--text);min-width:200px;">
-            <option value="">— Todos los pacientes —</option>
-          </select>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label style="font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;">Filtrar por paciente</label>
+            <select id="historial-filtro-pac" onchange="filtrarHistorial()" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:0.88rem;color:var(--text);min-width:200px;">
+              <option value="">— Todos los pacientes —</option>
+            </select>
+          </div>
+          <button id="btn-redactar-informe" onclick="abrirInforme()" class="btn-secondary" style="display:none;">✏️ Redactar informe</button>
         </div>
       </div>
       <div class="card">
         <div id="historial-contenido"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No hay evaluaciones registradas aún.</div></div></div>
+      </div>
+    </div>
+
+
+    <!-- ── VISTA INFORME ── -->
+    <div class="vista" id="vista-informe">
+      <div class="back-btn" onclick="irVista('historial')">← Volver al historial</div>
+      <div class="vista-header">
+        <div class="vista-titulo">Informe Neuropsicológico · <span id="informe-pac-nombre">—</span></div>
+        <button class="btn-primary" onclick="guardarInforme()">💾 Guardar informe</button>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Datos de la evaluación</div>
+        <div class="form-grid-3">
+          <div class="field"><label>Fecha de evaluación</label><input type="date" id="inf-fecha-eval"></div>
+          <div class="field"><label>Evaluado por</label><input type="text" id="inf-evaluado-por" placeholder="Nombre del evaluador"></div>
+          <div class="field"><label>Derivado por</label><input type="text" id="inf-derivado-por" placeholder="Dr./Lic. ..."></div>
+          <div class="field"><label>DNI</label><input type="text" id="inf-dni" placeholder="XX.XXX.XXX"></div>
+          <div class="field"><label>Ocupación</label><input type="text" id="inf-ocupacion" placeholder="Ej: Jubilado"></div>
+          <div class="field"><label>Procedencia</label><input type="text" id="inf-procedencia" placeholder="Ciudad"></div>
+          <div class="field"><label>Dominancia manual</label>
+            <select id="inf-dominancia">
+              <option value="">— Seleccionar —</option>
+              <option value="Diestro">Diestro</option>
+              <option value="Zurdo">Zurdo</option>
+              <option value="Ambidiestro">Ambidiestro</option>
+            </select>
+          </div>
+          <div class="field"><label>Datos de contacto</label><input type="text" id="inf-contacto" placeholder="Email / teléfono"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Antecedentes</div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label>Antecedentes clínicos</label><textarea id="inf-ant-clinicos" rows="3" placeholder="Ej: HTA, DBT, ACV previo..."></textarea></div>
+          <div class="field"><label>Antecedentes psiquiátricos / psicológicos</label><textarea id="inf-ant-psiq" rows="3" placeholder="Ej: Realizó tratamiento psicológico..."></textarea></div>
+          <div class="field"><label>Antecedentes familiares</label><textarea id="inf-ant-fam" rows="2" placeholder="Ej: Padre con EA..."></textarea></div>
+          <div class="field"><label>Hábitos tóxicos</label><textarea id="inf-habitos" rows="2" placeholder="Ej: Tabaquismo, OH..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Motivo de consulta</div>
+        <div class="field"><textarea id="inf-motivo" rows="4" placeholder="Describa el motivo de consulta..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Descripción de la conducta durante la evaluación</div>
+        <div class="field"><textarea id="inf-conducta" rows="4" placeholder="Actitud, colaboración, nivel de esfuerzo, observaciones conductuales..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Perfil cognitivo</div>
+        <div class="field"><textarea id="inf-perfil-cog" rows="6" placeholder="Descripción integrativa del perfil neuropsicológico..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Conclusiones</div>
+        <div class="field"><textarea id="inf-conclusiones" rows="5" placeholder="Síntesis diagnóstica y conclusiones clínicas..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Recomendaciones</div>
+        <div class="field"><textarea id="inf-recomendaciones" rows="5" placeholder="Intervenciones sugeridas, derivaciones, seguimiento..."></textarea></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:32px;">
+        <button class="btn-primary" onclick="guardarInforme()">💾 Guardar informe</button>
+        <button class="btn-secondary" onclick="irVista('historial')">← Volver</button>
       </div>
     </div>
 
@@ -3158,10 +3232,11 @@ var pacienteSelModal = null;
 var sectorActual = '';
 
 // ══ SUPABASE HELPER ══════════════════════════════════════════════════════════
-function supaFetch(path, method, body, token) {
+function supaFetch(path, method, body, token, extraHeaders) {
   var headers = { 'Content-Type': 'application/json', 'apikey': SUPA_KEY };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=representation';
+  if (extraHeaders) Object.keys(extraHeaders).forEach(function(k){ headers[k]=extraHeaders[k]; });
   return fetch(SUPA_URL + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined });
 }
 function supaAuth(action, body) {
@@ -3431,6 +3506,9 @@ function renderHistorial() {
 
 function filtrarHistorial() {
   renderHistorial();
+  var filtro = document.getElementById('historial-filtro-pac');
+  var btn = document.getElementById('btn-redactar-informe');
+  if (btn) btn.style.display = (filtro && filtro.value) ? 'inline-flex' : 'none';
 }
 
 function renderFiltroHistorial() {
@@ -3481,9 +3559,7 @@ function generarPDFHistorial() {
   var filtro = document.getElementById('historial-filtro-pac');
   var pacId = filtro ? filtro.value : '';
   var datos = pacId ? RESULTADOS.filter(function(r){ return String(r.paciente_id) === String(pacId); }) : RESULTADOS;
-  // Si hay filtro pero no hay datos, puede ser que RESULTADOS no tenga todos — intentar con todos
   if (!datos.length && pacId) {
-    // Buscar en todos los resultados sin filtro de paciente
     datos = RESULTADOS.filter(function(r){ return String(r.paciente_id) === String(pacId); });
   }
   if (!datos.length) { toast('No hay evaluaciones para este paciente. Verificá que tenga resultados cargados.','error'); return; }
@@ -3491,8 +3567,23 @@ function generarPDFHistorial() {
   var pacInfo = pacId ? PACIENTES.find(function(p){ return p.id === pacId; }) : null;
   var pacNombre = pacInfo ? pacInfo.nombre : 'Todos los pacientes';
   var pacEdad   = pacInfo && pacInfo.fecha_nacimiento ? calcularEdad(pacInfo.fecha_nacimiento) + ' años' : '';
+  var pacFnac   = pacInfo && pacInfo.fecha_nacimiento ? pacInfo.fecha_nacimiento : '';
   var pacSexo   = pacInfo ? (pacInfo.sexo || '') : '';
   var pacEscol  = pacInfo ? (pacInfo.escolaridad || '') : '';
+
+  // Cargar informe narrativo si hay paciente seleccionado
+  var infPromise = (pacId && SESSION) ?
+    supaFetch('/rest/v1/psico_informes?paciente_id=eq.'+pacId+'&user_id=eq.'+SESSION.user.id+'&select=*','GET',null,SESSION.access_token)
+      .then(function(r){return r.json();}).then(function(d){return (d&&d.length)?d[0]:null;}) :
+    Promise.resolve(null);
+
+  infPromise.then(function(inf) {
+    _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacSexo, pacEscol, inf);
+  });
+}
+
+function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacSexo, pacEscol, inf) {
+  inf = inf || {};
 
   var fechas  = datos.map(function(r){ return r.fecha; }).filter(Boolean).sort();
   var periodo = fechas.length > 1 ? fechas[0] + ' — ' + fechas[fechas.length-1] : (fechas[0] || '');
@@ -4065,7 +4156,12 @@ function generarPDFHistorial() {
     'body{font-family:Georgia,serif;background:#fff;color:#2c1a0e;margin:0;padding:20px;}'+
     '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
-    '@media print{body{padding:0;}@page{margin:10mm;size:A4 portrait;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
+    '.narrativa{font-family:Arial,sans-serif;font-size:12pt;line-height:1.5;text-align:justify;color:#1a1a1a;margin:0 0 8px 0;}'+
+    '.sec-titulo{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#5a3520;border-bottom:1.5px solid #c4977a;margin:16px 0 6px;padding-bottom:3px;}'+
+    '.ficha-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;font-family:Arial,sans-serif;font-size:11pt;}'+
+    '.ficha-item{display:flex;gap:6px;padding:2px 0;}'+
+    '.ficha-lbl{font-weight:700;white-space:nowrap;color:#5a3520;}'+
+    '@media print{body{padding:0;}@page{margin:15mm 15mm 15mm 20mm;size:A4 portrait;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
     '</style></head><body><div class="pg">'+
 
     // ── Header ──
@@ -4076,15 +4172,40 @@ function generarPDFHistorial() {
     '<div style="text-align:right;font-family:sans-serif;font-size:9px;color:#9a7a60;">'+
     '<div>Generado: '+new Date().toLocaleDateString('es-AR')+'</div></div></div>'+
 
-    // ── Datos del paciente ──
-    '<div style="background:#f9f4ee;border:0.5px solid #d8c8b0;border-radius:6px;padding:10px 16px;font-family:sans-serif;font-size:11px;margin-bottom:12px;">'+
-    '<div style="display:flex;gap:28px;flex-wrap:wrap;">'+
-    '<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Paciente</div><div style="font-weight:700;color:#2c1a0e;margin-top:2px;font-size:13px;">'+pacNombre+'</div></div>'+
-    (pacEdad?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Edad</div><div style="font-weight:600;margin-top:2px;">'+pacEdad+'</div></div>':'')+
-    (pacSexo?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Sexo</div><div style="font-weight:600;margin-top:2px;">'+pacSexo+'</div></div>':'')+
-    (pacEscol?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Escolaridad</div><div style="font-weight:600;margin-top:2px;">'+pacEscol+'</div></div>':'')+
-    (periodo?'<div><div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.8px;">Período</div><div style="font-weight:600;margin-top:2px;">'+periodo+'</div></div>':'')+
-    '</div></div>'+
+    // ── Ficha del paciente (con datos del informe) ──
+    '<div class="sec-titulo">Datos del Paciente</div>'+
+    '<div class="ficha-grid">'+
+    '<div class="ficha-item"><span class="ficha-lbl">Apellido y Nombre:</span><span>'+pacNombre+'</span></div>'+
+    (pacEdad?'<div class="ficha-item"><span class="ficha-lbl">Edad:</span><span>'+pacEdad+'</span></div>':'')+
+    (pacFnac?'<div class="ficha-item"><span class="ficha-lbl">Fecha de Nacimiento:</span><span>'+pacFnac+'</span></div>':'')+
+    (inf.fecha_evaluacion?'<div class="ficha-item"><span class="ficha-lbl">Fecha de Evaluación:</span><span>'+inf.fecha_evaluacion+'</span></div>':'')+
+    (inf.dni?'<div class="ficha-item"><span class="ficha-lbl">DNI:</span><span>'+inf.dni+'</span></div>':'')+
+    (pacEscol?'<div class="ficha-item"><span class="ficha-lbl">Educación:</span><span>'+pacEscol+'</span></div>':'')+
+    (inf.ocupacion?'<div class="ficha-item"><span class="ficha-lbl">Ocupación:</span><span>'+inf.ocupacion+'</span></div>':'')+
+    (inf.procedencia?'<div class="ficha-item"><span class="ficha-lbl">Procedencia:</span><span>'+inf.procedencia+'</span></div>':'')+
+    (pacSexo?'<div class="ficha-item"><span class="ficha-lbl">Sexo:</span><span>'+pacSexo+'</span></div>':'')+
+    (inf.dominancia?'<div class="ficha-item"><span class="ficha-lbl">Dominancia Manual:</span><span>'+inf.dominancia+'</span></div>':'')+
+    (inf.contacto?'<div class="ficha-item"><span class="ficha-lbl">Datos de Contacto:</span><span>'+inf.contacto+'</span></div>':'')+
+    (inf.derivado_por?'<div class="ficha-item"><span class="ficha-lbl">Derivado por:</span><span>'+inf.derivado_por+'</span></div>':'')+
+    (inf.evaluado_por?'<div class="ficha-item"><span class="ficha-lbl">Evaluado por:</span><span>'+inf.evaluado_por+'</span></div>':'')+
+    (inf.ant_clinicos?'<div class="ficha-item" style="grid-column:1/-1"><span class="ficha-lbl">Ant. Clínicos:</span><span>'+inf.ant_clinicos+'</span></div>':'')+
+    (inf.ant_psiquiatricos?'<div class="ficha-item" style="grid-column:1/-1"><span class="ficha-lbl">Ant. Psiquiátricos/Psicológicos:</span><span>'+inf.ant_psiquiatricos+'</span></div>':'')+
+    (inf.ant_familiares?'<div class="ficha-item" style="grid-column:1/-1"><span class="ficha-lbl">Ant. Familiares:</span><span>'+inf.ant_familiares+'</span></div>':'')+
+    (inf.habitos_toxicos?'<div class="ficha-item" style="grid-column:1/-1"><span class="ficha-lbl">Hábitos Tóxicos:</span><span>'+inf.habitos_toxicos+'</span></div>':'')+
+    '</div>'+
+
+    // ── Motivo de consulta ──
+    (inf.motivo_consulta?'<div class="sec-titulo">Motivo de Consulta</div><p class="narrativa">'+inf.motivo_consulta.replace(/
+/g,'<br>')+'</p>':'')+
+
+    // ── Descripción de la conducta ──
+    (inf.descripcion_conducta?'<div class="sec-titulo">Descripción de la Conducta Durante la Evaluación</div><p class="narrativa">'+inf.descripcion_conducta.replace(/
+/g,'<br>')+'</p>':'')+
+
+    // ── Perfil cognitivo ──
+    (inf.perfil_cognitivo?'<div class="sec-titulo">Perfil Cognitivo</div><p class="narrativa">'+inf.perfil_cognitivo.replace(/
+/g,'<br>')+'</p>':'')+
+
 
     // ── Stats ──
     '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
@@ -4117,12 +4238,23 @@ function generarPDFHistorial() {
 
     (testsNp.length ? refZ : '')+
 
+    // ── Conclusiones ──
+    (inf.conclusiones?'<div class="sec-titulo">Conclusiones</div><p class="narrativa">'+inf.conclusiones.replace(/\n/g,'<br>')+'</p>':'')+
+
+    // ── Recomendaciones ──
+    (inf.recomendaciones?'<div class="sec-titulo">Recomendaciones</div><p class="narrativa">'+inf.recomendaciones.replace(/\n/g,'<br>')+'</p>':'')+
+
+    // ── Firma ──
+    (inf.evaluado_por?'<div style="margin-top:40px;font-family:Arial,sans-serif;font-size:11pt;">'+
+    '<div style="border-top:1px solid #333;width:220px;padding-top:4px;">'+inf.evaluado_por+'</div>'+
+    '<div style="font-size:10pt;color:#666;">Equipo de Neuropsicología · ActivaMente</div></div>':'')+
+
     // ── Nota y pie ──
-    '<div style="margin-top:12px;font-family:sans-serif;font-size:8px;color:#9a7a60;font-style:italic;padding:6px 10px;background:#faf6f0;border-left:2px solid #d8c8b0;line-height:1.5;">'+
+    '<div style="margin-top:16px;font-family:Arial,sans-serif;font-size:8px;color:#9a7a60;font-style:italic;padding:6px 10px;background:#faf6f0;border-left:2px solid #d8c8b0;line-height:1.5;">'+
     'Los puntajes Z se calculan respecto de baremos normativos argentinos por edad y escolaridad. '+
-    'Los tests clínicos utilizan puntos de corte validados. Este resumen no reemplaza el informe clínico completo.</div>'+
-    '<div style="margin-top:8px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:sans-serif;font-size:8px;color:#b09070;">'+
-    '<div>PsicoEscala · ActivaMente · Plataforma de evaluación psicológica</div>'+
+    'Los tests clínicos utilizan puntos de corte validados. Este informe no reemplaza la evaluación clínica completa.</div>'+
+    '<div style="margin-top:8px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:8px;color:#b09070;">'+
+    '<div>PsicoEscala · ActivaMente · Plataforma de evaluación neuropsicológica</div>'+
     '<div>'+new Date().toLocaleDateString('es-AR')+'</div></div>'+
     '</div></body></html>';
 
@@ -4160,7 +4292,7 @@ function irVista(v) {
   var el = document.getElementById('vista-' + v);
   if(el) el.classList.add('active');
   document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
-  var map = {inicio:'snav-inicio', pacientes:'snav-pacientes', historial:'snav-historial'};
+  var map = {inicio:'snav-inicio', pacientes:'snav-pacientes', historial:'snav-historial', informe:'snav-historial'};
   if(map[v]) { var s=document.getElementById(map[v]); if(s) s.classList.add('active'); }
   if(v === 'historial') { renderFiltroHistorial(); renderHistorial(); }
 }
@@ -6468,6 +6600,93 @@ function guardarBNT() {
     if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
   }).catch(function(){toast('Error al guardar','error');});
 }
+
+// ══ INFORME NEUROPSICOLÓGICO ══════════════════════════════════════════════════
+var INFORME_PAC_ID = null;
+
+function abrirInforme() {
+  var filtro = document.getElementById('historial-filtro-pac');
+  var pacId = filtro ? filtro.value : '';
+  if (!pacId) { toast('Seleccioná un paciente primero.', 'error'); return; }
+  INFORME_PAC_ID = pacId;
+  var pac = PACIENTES.find(function(p){ return p.id === pacId; });
+  var nombre = pac ? pac.nombre : '—';
+  document.getElementById('informe-pac-nombre').textContent = nombre;
+  // Limpiar campos
+  var campos = ['inf-fecha-eval','inf-evaluado-por','inf-derivado-por','inf-dni','inf-ocupacion',
+    'inf-procedencia','inf-dominancia','inf-contacto','inf-ant-clinicos','inf-ant-psiq',
+    'inf-ant-fam','inf-habitos','inf-motivo','inf-conducta','inf-perfil-cog','inf-conclusiones','inf-recomendaciones'];
+  campos.forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  // Cargar datos existentes
+  cargarInforme(pacId);
+  irVista('informe');
+}
+
+function cargarInforme(pacId) {
+  if (!SESSION) return;
+  supaFetch('/rest/v1/psico_informes?paciente_id=eq.'+pacId+'&user_id=eq.'+SESSION.user.id+'&select=*', 'GET', null, SESSION.access_token)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data || !data.length) return;
+      var inf = data[0];
+      var map = {
+        'inf-fecha-eval':   inf.fecha_evaluacion||'',
+        'inf-evaluado-por': inf.evaluado_por||'',
+        'inf-derivado-por': inf.derivado_por||'',
+        'inf-dni':          inf.dni||'',
+        'inf-ocupacion':    inf.ocupacion||'',
+        'inf-procedencia':  inf.procedencia||'',
+        'inf-dominancia':   inf.dominancia||'',
+        'inf-contacto':     inf.contacto||'',
+        'inf-ant-clinicos': inf.ant_clinicos||'',
+        'inf-ant-psiq':     inf.ant_psiquiatricos||'',
+        'inf-ant-fam':      inf.ant_familiares||'',
+        'inf-habitos':      inf.habitos_toxicos||'',
+        'inf-motivo':       inf.motivo_consulta||'',
+        'inf-conducta':     inf.descripcion_conducta||'',
+        'inf-perfil-cog':   inf.perfil_cognitivo||'',
+        'inf-conclusiones': inf.conclusiones||'',
+        'inf-recomendaciones': inf.recomendaciones||''
+      };
+      Object.keys(map).forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.value = map[id];
+      });
+    });
+}
+
+function guardarInforme() {
+  if (!SESSION || !INFORME_PAC_ID) return;
+  var body = {
+    user_id:          SESSION.user.id,
+    paciente_id:      INFORME_PAC_ID,
+    fecha_evaluacion: document.getElementById('inf-fecha-eval').value || null,
+    evaluado_por:     document.getElementById('inf-evaluado-por').value || null,
+    derivado_por:     document.getElementById('inf-derivado-por').value || null,
+    dni:              document.getElementById('inf-dni').value || null,
+    ocupacion:        document.getElementById('inf-ocupacion').value || null,
+    procedencia:      document.getElementById('inf-procedencia').value || null,
+    dominancia:       document.getElementById('inf-dominancia').value || null,
+    contacto:         document.getElementById('inf-contacto').value || null,
+    ant_clinicos:     document.getElementById('inf-ant-clinicos').value || null,
+    ant_psiquiatricos:document.getElementById('inf-ant-psiq').value || null,
+    ant_familiares:   document.getElementById('inf-ant-fam').value || null,
+    habitos_toxicos:  document.getElementById('inf-habitos').value || null,
+    motivo_consulta:  document.getElementById('inf-motivo').value || null,
+    descripcion_conducta: document.getElementById('inf-conducta').value || null,
+    perfil_cognitivo: document.getElementById('inf-perfil-cog').value || null,
+    conclusiones:     document.getElementById('inf-conclusiones').value || null,
+    recomendaciones:  document.getElementById('inf-recomendaciones').value || null,
+    actualizado:      new Date().toISOString()
+  };
+  // UPSERT — si ya existe lo actualiza, si no lo crea
+  supaFetch('/rest/v1/psico_informes?on_conflict=user_id,paciente_id', 'POST', body, SESSION.access_token, {'Prefer':'resolution=merge-duplicates'})
+    .then(function(){
+      toast('✓ Informe guardado', 'success');
+    })
+    .catch(function(){ toast('Error al guardar informe', 'error'); });
+}
+
 // ── Auto-iniciar si hay sesión ─────────────────
 window.addEventListener('DOMContentLoaded', function() {
   // Siempre empezar por el gate. La sesión se restaura solo después del login manual.
