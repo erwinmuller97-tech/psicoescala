@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.1</div>
     </div>
   </aside>
 
@@ -3555,6 +3555,14 @@ function cutoffBarHTML(val, max, cutoff) {
     '</div>';
 }
 
+
+// Helper para secciones narrativas del PDF (evita regex inline)
+function pdfSec(titulo, texto) {
+  if (!texto) return '';
+  var t = texto.split('\n').join('<br>');
+  return '<div class="sec-titulo">'+titulo+'</div><p class="narrativa">'+t+'</p>';
+}
+
 function generarPDFHistorial() {
   var filtro = document.getElementById('historial-filtro-pac');
   var pacId = filtro ? filtro.value : '';
@@ -4194,17 +4202,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     (inf.habitos_toxicos?'<div class="ficha-item" style="grid-column:1/-1"><span class="ficha-lbl">Hábitos Tóxicos:</span><span>'+inf.habitos_toxicos+'</span></div>':'')+
     '</div>'+
 
-    // ── Motivo de consulta ──
-    (inf.motivo_consulta?'<div class="sec-titulo">Motivo de Consulta</div><p class="narrativa">'+inf.motivo_consulta.replace(/
-/g,'<br>')+'</p>':'')+
-
-    // ── Descripción de la conducta ──
-    (inf.descripcion_conducta?'<div class="sec-titulo">Descripción de la Conducta Durante la Evaluación</div><p class="narrativa">'+inf.descripcion_conducta.replace(/
-/g,'<br>')+'</p>':'')+
-
-    // ── Perfil cognitivo ──
-    (inf.perfil_cognitivo?'<div class="sec-titulo">Perfil Cognitivo</div><p class="narrativa">'+inf.perfil_cognitivo.replace(/
-/g,'<br>')+'</p>':'')+
+    // ── Secciones narrativas ──
+    pdfSec('Motivo de Consulta', inf.motivo_consulta)+
+    pdfSec('Descripción de la Conducta Durante la Evaluación', inf.descripcion_conducta)+
+    pdfSec('Perfil Cognitivo', inf.perfil_cognitivo)+
 
 
     // ── Stats ──
@@ -4238,11 +4239,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     (testsNp.length ? refZ : '')+
 
-    // ── Conclusiones ──
-    (inf.conclusiones?'<div class="sec-titulo">Conclusiones</div><p class="narrativa">'+inf.conclusiones.replace(/\n/g,'<br>')+'</p>':'')+
-
-    // ── Recomendaciones ──
-    (inf.recomendaciones?'<div class="sec-titulo">Recomendaciones</div><p class="narrativa">'+inf.recomendaciones.replace(/\n/g,'<br>')+'</p>':'')+
+    // ── Conclusiones y Recomendaciones ──
+    pdfSec('Conclusiones', inf.conclusiones)+
+    pdfSec('Recomendaciones', inf.recomendaciones)+
 
     // ── Firma ──
     (inf.evaluado_por?'<div style="margin-top:40px;font-family:Arial,sans-serif;font-size:11pt;">'+
