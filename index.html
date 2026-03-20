@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.3</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.4</div>
     </div>
   </aside>
 
@@ -4227,42 +4227,54 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     pdfSec('Perfil Cognitivo', inf.perfil_cognitivo)+
 
 
-    // ── Stats ──
-    '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
-    '<div style="background:#f5ede0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
-    '<div style="font-size:18px;font-weight:700;color:#7a4e38;">'+datos.length+'</div>'+
-    '<div style="font-size:8px;color:#a08060;text-transform:uppercase;letter-spacing:0.6px;">Tests</div></div>'+
-    (conAlter?'<div style="background:#fde8e8;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
-    '<div style="font-size:18px;font-weight:700;color:#a82828;">'+conAlter+'</div>'+
-    '<div style="font-size:8px;color:#c05050;text-transform:uppercase;letter-spacing:0.6px;">Alteración</div></div>':'')+
-    (conRiesgo?'<div style="background:#fff0e0;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
-    '<div style="font-size:18px;font-weight:700;color:#c25000;">'+conRiesgo+'</div>'+
-    '<div style="font-size:8px;color:#c25000;text-transform:uppercase;letter-spacing:0.6px;">Riesgo</div></div>':'')+
-    (conNormal?'<div style="background:#e8f5e9;border-radius:6px;padding:6px 14px;text-align:center;font-family:sans-serif;">'+
-    '<div style="font-size:18px;font-weight:700;color:#2e7a4f;">'+conNormal+'</div>'+
-    '<div style="font-size:8px;color:#2e7a4f;text-transform:uppercase;letter-spacing:0.6px;">Normal</div></div>':'')+
-    '</div>'+
-
-    // ── Tests Administrados ──
-    '<div class="sec-titulo">Tests Administrados</div>'+
-    '<table style="width:100%;font-family:Arial,sans-serif;font-size:11pt;border-collapse:collapse;margin-bottom:12px;">'+
-    '<thead><tr>'+
-    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Test</th>'+
-    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Área</th>'+
-    '<th style="text-align:center;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Fecha</th>'+
-    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Resultado</th>'+
-    '</tr></thead><tbody>'+
-    datos.map(function(r,i){
-      var area = NP.indexOf(r.test)!==-1?'Neuropsicológico': TD.indexOf(r.test)!==-1?'TDAH':'Clínico';
-      var bg = i%2===0?'#fafaf8':'#fff';
-      return '<tr style="background:'+bg+';">'+
-        '<td style="padding:4px 8px;font-weight:600;">'+r.test+'</td>'+
-        '<td style="padding:4px 8px;color:#7a4e38;font-size:10pt;">'+area+'</td>'+
-        '<td style="padding:4px 8px;text-align:center;font-size:10pt;">'+( r.fecha||'—')+'</td>'+
-        '<td style="padding:4px 8px;font-size:10pt;">'+( r.categoria||'—')+'</td>'+
-        '</tr>';
-    }).join('')+
-    '</tbody></table>'+
+    // ── Pruebas Administradas (formato narrativo por dominio) ──
+    (function(){
+      var NOMBRES = {
+        'MoCA':               'Montreal Cognitive Assessment (MoCA)',
+        'ACE-R':              'Addenbrooke\'s Cognitive Examination — Revisado (ACE-R)',
+        'WAIS-IV':            'Retención de Dígitos, Claves y Secuencia Número-Letra — WAIS-IV',
+        'TMT A-B':            'Trail Making Test (TMT-A y TMT-B)',
+        'Fluencia Verbal':    'Fluencia Verbal Semántica y Fonológica',
+        'BNT-60':             'Test de Denominación de Boston — Versión completa 60 ítems (BNT-60)',
+        'BNT-12':             'Test de Denominación de Boston — Versión abreviada 12 ítems (BNT-12)',
+        'Rey Verbal':         'Test de Aprendizaje Auditivo-Verbal de Rey (RAVLT)',
+        'BEM 144 Signoret':   'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
+        'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
+        'IFS':                'INECO Frontal Screening (IFS)',
+        'Test del Reloj (Cacho)': 'Test del Reloj — Método Cacho et al.',
+        'BDI-II':             'Inventario de Depresión de Beck — Segunda Edición (BDI-II)',
+        'STAI':               'Inventario de Ansiedad Estado-Rasgo (STAI)',
+        'PHQ-9':              'Cuestionario de Salud del Paciente (PHQ-9)',
+        'GAD-7':              'Escala de Trastorno de Ansiedad Generalizada (GAD-7)',
+        'SPAI-B':             'Inventario de Fobia Social — Versión Breve (SPAI-B)',
+        'SCL-90-R':           'Inventario de Síntomas SCL-90-R',
+        'MBI-HSS':            'Inventario de Burnout de Maslach (MBI-HSS)',
+        'ASRS-V1.1':          'Escala de Autodetección de TDAH en Adultos (ASRS-V1.1)',
+        'WURS-25':            'Escala de Wender-Utah — Versión 25 ítems (WURS-25)'
+      };
+      var DOMINIOS = [
+        {label:'Screening cognitivo global',      tests:['MoCA','ACE-R']},
+        {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B']},
+        {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
+        {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
+        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS']},
+        {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
+        {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
+        {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']}
+      ];
+      var testsTomados = datos.map(function(r){return r.test;});
+      var html = '<div class="sec-titulo">Pruebas Administradas</div>';
+      DOMINIOS.forEach(function(dom){
+        var presentes = dom.tests.filter(function(t){return testsTomados.indexOf(t)!==-1;});
+        if (!presentes.length) return;
+        html += '<p style="font-family:Arial,sans-serif;font-size:11pt;margin:6px 0 2px;">';
+        html += '<strong>'+dom.label+'</strong></p>';
+        html += '<p style="font-family:Arial,sans-serif;font-size:11pt;margin:0 0 8px;line-height:1.5;text-align:justify;">';
+        html += presentes.map(function(t){return NOMBRES[t]||t;}).join(' · ');
+        html += '</p>';
+      });
+      return html;
+    })()+
 
     // ── Secciones ──
     (testsNp.length ?
