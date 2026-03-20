@@ -7253,21 +7253,21 @@ function guardarDolor(tipo) {
   if(!pacId){toast('Seleccioná un paciente.','error');return;}
   var pb=null,cat=null,z=null,dat={};
   if(tipo==='pcs'&&window._pcsData){
-    var d=window._pcsData;pb=d.tot;cat=d.niv;
-    z=parseFloat(((d.tot-13)/10).toFixed(2));
-    dat={tot:d.tot,rum:d.rum,mag:d.mag,ind:d.ind};
+    var dp=window._pcsData;pb=dp.tot;cat=dp.niv;
+    z=parseFloat(((dp.tot-13)/10).toFixed(2));
+    dat={tot:dp.tot,rum:dp.rum,mag:dp.mag,ind:dp.ind};
   } else if(tipo==='csq'&&window._csqData){
-    var d=window._csqData;pb=d['CAT'].score;
-    cat='CAT Pc '+d['CAT'].pc+' · IGD Pc '+d['IDO'].pc;
-    dat=d;
+    var dc=window._csqData;pb=dc['CAT'].score;
+    cat='CAT Pc '+dc['CAT'].pc+' · IGD Pc '+dc['IDO'].pc;
+    dat=dc;
   } else if(tipo==='pbq'&&window._pbqData){
-    var d=window._pbqData;pb=d['QNV'].score;
-    cat='QNV Pc '+d['QNV'].pc+' · EVAC Pc '+d['EVAC'].pc;
-    dat=d;
+    var dq=window._pbqData;pb=dq['QNV'].score;
+    cat='QNV Pc '+dq['QNV'].pc+' · EVAC Pc '+dq['EVAC'].pc;
+    dat=dq;
   } else if(tipo==='bpi'&&window._bpiData){
-    var d=window._bpiData;pb=d.int!==null?d.int:d.inf;
-    cat=d.int!==null?dolorColorBPI(d.int,'int').txt:'—';
-    dat=d;
+    var db=window._bpiData;pb=db.int!==null?db.int:db.inf;
+    cat=db.int!==null?dolorColorBPI(db.int,'int').txt:'—';
+    dat=db;
   }
   var testNombre={pcs:'PCS',csq:'CSQ',pbq:'PBQ',bpi:'BPI'}[tipo];
   supaFetch('/rest/v1/psico_resultados','POST',{
