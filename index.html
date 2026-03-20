@@ -418,6 +418,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <span class="sidebar-icon">○</span> Pacientes
       </div>
       <div class="sidebar-divider"></div>
+      <div class="sidebar-section" id="snav-dolor" onclick="irSector('dolor')">
+        <span class="sidebar-icon">⬡</span> Dolor
+      </div>
       <div class="sidebar-section" id="snav-clinica" onclick="irSector('clinica')">
         <span class="sidebar-icon">◈</span> Psicología Clínica
       </div>
@@ -435,7 +438,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.0</div>
     </div>
   </aside>
 
@@ -496,7 +499,12 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <span class="sector-tag">WCST-64</span>
           </div>
         </div>
-        <div class="sector-card" onclick="irSector('tdah')">
+        <div class="sector-card" onclick="irSector('dolor')">
+          <div class="sector-icon">⬡</div>
+          <div class="sector-nombre">Dolor</div>
+          <div class="sector-desc">PCS · CSQ · PBQ · BPI</div>
+        </div>
+      <div class="sector-card" onclick="irSector('tdah')">
           <div class="sector-icon">⚡</div>
           <div class="sector-titulo">TDAH</div>
           <div class="sector-sub">Escalas de evaluación para TDAH en adultos.</div>
@@ -668,6 +676,174 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div style="display:flex;gap:10px;margin-bottom:32px;">
         <button class="btn-primary" onclick="guardarInforme()">💾 Guardar informe</button>
         <button class="btn-secondary" onclick="irVista('historial')">← Volver</button>
+      </div>
+    </div>
+
+
+    <!-- ── TEST PCS ── -->
+    <div class="vista" id="vista-pcs">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">PCS · Escala de Catastrofización del Dolor</div></div>
+      <div id="pcs-form">
+        <div class="card">
+          <div class="card-title">Datos</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="pcs-paciente"><option value="">— Seleccionar —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="pcs-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems (0 = Nunca · 4 = Siempre)</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;"><strong>Rumiación</strong>: 1,8,9,10 · <strong>Magnificación</strong>: 3,6,13 · <strong>Indefensión</strong>: 2,4,5,7,11,12</p>
+          <div class="items-grid" id="pcs-items-wrap"></div>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn-secondary" onclick="limpiarPCS()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularPCS()">Calcular →</button>
+        </div>
+      </div>
+      <div id="pcs-resultado" style="display:none;">
+        <div class="card">
+          <div class="resultado-detalle" id="pcs-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="pcs-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('pcs-resultado').style.display='none';document.getElementById('pcs-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarDolor('pcs')">💾 Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST CSQ ── -->
+    <div class="vista" id="vista-csq">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">CSQ · Cuestionario de Estrategias de Afrontamiento</div></div>
+      <div id="csq-form">
+        <div class="card">
+          <div class="card-title">Datos</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="csq-paciente"><option value="">— Seleccionar —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="csq-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems 1–13 (0–6)</div>
+          <div class="items-grid" id="csq-items-a"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems 14–26</div>
+          <div class="items-grid" id="csq-items-b"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems 27–39</div>
+          <div class="items-grid" id="csq-items-c"></div>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn-secondary" onclick="limpiarCSQ()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularCSQ()">Calcular →</button>
+        </div>
+      </div>
+      <div id="csq-resultado" style="display:none;">
+        <div class="card">
+          <div class="resultado-detalle" id="csq-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="csq-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('csq-resultado').style.display='none';document.getElementById('csq-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarDolor('csq')">💾 Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST PBQ ── -->
+    <div class="vista" id="vista-pbq">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">PBQ · Cuestionario de Conductas de Dolor</div></div>
+      <div id="pbq-form">
+        <div class="card">
+          <div class="card-title">Datos</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="pbq-paciente"><option value="">— Seleccionar —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="pbq-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ítems 1–16</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;"><strong>QNV</strong>: 1,10,14,15,16 · <strong>EVES</strong>: 2,4,7,8 · <strong>QV</strong>: 11,12,13 · <strong>EVAC</strong>: 3,5,6,9</p>
+          <div class="items-grid" id="pbq-items-wrap"></div>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn-secondary" onclick="limpiarPBQ()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularPBQ()">Calcular →</button>
+        </div>
+      </div>
+      <div id="pbq-resultado" style="display:none;">
+        <div class="card">
+          <div class="resultado-detalle" id="pbq-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="pbq-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('pbq-resultado').style.display='none';document.getElementById('pbq-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarDolor('pbq')">💾 Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST BPI ── -->
+    <div class="vista" id="vista-bpi">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">BPI · Inventario Breve de Dolor</div></div>
+      <div id="bpi-form">
+        <div class="card">
+          <div class="card-title">Datos</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="bpi-paciente"><option value="">— Seleccionar —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="bpi-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Intensidad del dolor — Ítems 3, 4, 5, 6 (0–10)</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Ítem 3 — Dolor máximo</label><input type="number" id="bpi-3" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>Ítem 4 — Dolor mínimo</label><input type="number" id="bpi-4" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>Ítem 5 — Dolor medio</label><input type="number" id="bpi-5" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>Ítem 6 — Dolor actual</label><input type="number" id="bpi-6" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Tratamiento y alivio</div>
+          <div class="form-grid-3">
+            <div class="field" style="grid-column:1/-1"><label>Ítem 7 — Tratamiento / medicación</label><input type="text" id="bpi-7" placeholder="Ej: Tramadol 50mg, fisioterapia..."></div>
+            <div class="field"><label>Ítem 8 — Alivio con tratamiento (%)</label><input type="number" id="bpi-8" min="0" max="100" placeholder="0–100" oninput="bpiActualizar()"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Interferencia — Ítems 9A–9G (0–10)</div>
+          <div class="form-grid-3">
+            <div class="field"><label>9A — Actividad general</label><input type="number" id="bpi-9a" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9B — Estado de ánimo</label><input type="number" id="bpi-9b" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9C — Caminar</label><input type="number" id="bpi-9c" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9D — Trabajo habitual</label><input type="number" id="bpi-9d" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9E — Relaciones</label><input type="number" id="bpi-9e" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9F — Sueño</label><input type="number" id="bpi-9f" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+            <div class="field"><label>9G — Disfrutar la vida</label><input type="number" id="bpi-9g" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
+          </div>
+          <div id="bpi-live" style="font-size:0.85rem;color:var(--accent);margin-top:8px;min-height:20px;font-weight:600;"></div>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn-secondary" onclick="limpiarBPI()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularBPI()">Calcular →</button>
+        </div>
+      </div>
+      <div id="bpi-resultado" style="display:none;">
+        <div class="card">
+          <div class="resultado-detalle" id="bpi-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación</div><div class="interp-texto" id="bpi-interp"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn-secondary" onclick="document.getElementById('bpi-resultado').style.display='none';document.getElementById('bpi-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarDolor('bpi')">💾 Guardar</button>
+        </div>
       </div>
     </div>
 
@@ -3430,7 +3606,8 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente'].forEach(function(id){
+   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3629,7 +3806,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   // ── Clasificación de tests ──
   var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
-  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
+  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','PCS','CSQ','PBQ','BPI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td':'cl'; }
 
@@ -4250,7 +4427,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'SCL-90-R':           'Inventario de Síntomas SCL-90-R',
         'MBI-HSS':            'Inventario de Burnout de Maslach (MBI-HSS)',
         'ASRS-V1.1':          'Escala de Autodetección de TDAH en Adultos (ASRS-V1.1)',
-        'WURS-25':            'Escala de Wender-Utah — Versión 25 ítems (WURS-25)'
+        'WURS-25':            'Escala de Wender-Utah — Versión 25 ítems (WURS-25)',
+        'PCS':                'Escala de Catastrofización del Dolor (PCS)',
+        'CSQ':                'Cuestionario de Estrategias de Afrontamiento al Dolor (CSQ)',
+        'PBQ':                'Cuestionario de Conductas de Dolor (PBQ)',
+        'BPI':                'Inventario Breve de Dolor (BPI)'
       };
       var DOMINIOS = [
         {label:'Screening cognitivo global',      tests:['MoCA','ACE-R']},
@@ -4260,7 +4441,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         {label:'Funciones ejecutivas',             tests:['WCST-64','IFS']},
         {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
         {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
-        {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']}
+        {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']},
+        {label:'Evaluación del dolor',                tests:['PCS','CSQ','PBQ','BPI']}
       ];
       var testsTomados = datos.map(function(r){return r.test;});
       var html = '<div class="sec-titulo">Pruebas Administradas</div>';
@@ -4351,7 +4533,7 @@ function irVista(v) {
 function irSector(s) {
   sectorActual = s;
   document.querySelectorAll('.sidebar-section').forEach(function(el){ el.classList.remove('active'); });
-  var map = {clinica:'snav-clinica', tdah:'snav-tdah', neuro:'snav-neuro'};
+  var map = {clinica:'snav-clinica', tdah:'snav-tdah', neuro:'snav-neuro', dolor:'snav-dolor'};
   if(map[s]) { var sid=document.getElementById(map[s]); if(sid) sid.classList.add('active'); }
   document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
   document.getElementById('vista-sector').classList.add('active');
@@ -4470,6 +4652,34 @@ function irSector(s) {
         '<span class="test-tag">Cacho et al. 1999 · 0–10 pts</span>'+
       '</div>';
   }
+  if (s === 'dolor') {
+    document.getElementById('sector-titulo').textContent = 'Evaluación del Dolor';
+    document.getElementById('tests-grid').innerHTML =
+      '<div class="test-card" onclick="irTest('pcs')">' +
+        '<div class="test-icon">🔥</div>' +
+        '<div class="test-nombre">PCS</div>' +
+        '<div class="test-desc">Escala de Catastrofización del Dolor — Rumiación, Magnificación e Indefensión</div>' +
+        '<span class="test-tag">Sullivan et al. 1995 · 13 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest('csq')">' +
+        '<div class="test-icon">🧩</div>' +
+        '<div class="test-nombre">CSQ</div>' +
+        '<div class="test-desc">Cuestionario de Estrategias de Afrontamiento al Dolor — 8 subescalas</div>' +
+        '<span class="test-tag">Rosenstiel & Keefe 1983 · 39 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest('pbq')">' +
+        '<div class="test-icon">🚶</div>' +
+        '<div class="test-nombre">PBQ</div>' +
+        '<div class="test-desc">Cuestionario de Conductas de Dolor — Queja verbal/no verbal y evitación</div>' +
+        '<span class="test-tag">Appelbaum et al. 1988 · 16 ítems</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest('bpi')">' +
+        '<div class="test-icon">📊</div>' +
+        '<div class="test-nombre">BPI</div>' +
+        '<div class="test-desc">Inventario Breve de Dolor — Índice de Intensidad e Interferencia funcional</div>' +
+        '<span class="test-tag">Cleeland & Ryan 1994 · ítems 3–6 y 9A–9G</span>' +
+      '</div>';
+  }
   if (s === 'tdah') {
     document.getElementById('sector-titulo').textContent = 'TDAH';
     document.getElementById('tests-grid').innerHTML =
@@ -4502,6 +4712,10 @@ function irTest(t) {
   if (t === 'spaib') iniciarSPAIB();
   if (t === 'moca') iniciarMoCA();
   if (t === 'ifs') iniciarIFS();
+  if (t === 'pcs') iniciarPCS();
+  if (t === 'csq') iniciarCSQ();
+  if (t === 'pbq') iniciarPBQ();
+  if (t === 'bpi') iniciarBPI();
   if (t === 'bnt') iniciarBNT();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
@@ -6773,6 +6987,300 @@ function borrarFirma() {
   var input = document.getElementById('inf-firma-input');
   if(wrap) wrap.style.display='none';
   if(input) input.value='';
+}
+
+
+// ══ ESCALAS DE DOLOR ══════════════════════════════════════════════════════════
+
+// ── Baremos ──
+var CSQ_STATS = {
+  CAT:{m:11.91,s:9.94}, CDI:{m:9.53,s:7.82}, AUT:{m:15.31,s:7.41},
+  IDO:{m:17.54,s:9.86}, RDO:{m:6.91,s:7.06}, ESP:{m:9.11,s:5.56},
+  FEP:{m:8.60,s:6.26},  DIC:{m:6.07,s:5.09}
+};
+var CSQ_CLAVES = {
+  CAT:[5,12,16,23,31,32], CDI:[4,6,8,9,11,35], AUT:[1,3,10,25,27],
+  IDO:[5,7,20,24,28,29,38], RDO:[15,17,18,22,30,33],
+  ESP:[13,14,26], FEP:[19,21,37], DIC:[34,36,39]
+};
+var CSQ_NOM = {
+  CAT:'Catastrofización', CDI:'Conductas distractoras', AUT:'Autoinstrucciones',
+  IDO:'Ignorar el dolor', RDO:'Reinterpretar el dolor',
+  ESP:'Esperanza', FEP:'Fe y Plegarias', DIC:'Distracción cognitiva'
+};
+var CSQ_PCT = [
+  [5,null,null,1,2,null,null,null,null],[10,null,null,5,4,null,null,null,null],
+  [15,null,null,8,6,null,2,null,null],[20,2,2,9,8,null,3,1,null],
+  [25,3,3,11,11,null,5,3,null],[30,4,4,12,12,1,6,4,3],
+  [35,6,5,12,13,3,7,6,3],[40,7,6,14,15,3,7,6,3],
+  [45,9,6,14,16,4,8,7,4],[50,11,9,15,17,6,9,8,6],
+  [55,12,9,17,19,6,10,10,7],[60,13,11,18,20,8,12,11,8],
+  [65,15,12,19,22,8,12,12,9],[70,18,13,20,23,10,13,13,9],
+  [75,19,16,20,24,12,13,14,10],[80,21,17,22,27,13,15,15,11],
+  [85,23,18,23,29,15,16,17,12],[90,26,20,25,30,18,17,18,13],
+  [95,31,25,28,34,20,18,18,15],[99,36,30,30,42,28.95,18,18,18]
+];
+var PBQ_STATS = {
+  QNV:{m:10.13,s:5.45}, EVES:{m:7.82,s:4.90}, QV:{m:4.09,s:3.62}, EVAC:{m:7.21,s:4.52}
+};
+var PBQ_CLAVES = { QNV:[1,10,14,15,16], EVES:[2,4,7,8], QV:[11,12,13], EVAC:[3,5,6,9] };
+var PBQ_NOM = { QNV:'Queja no verbal', EVES:'Evitación de estímulos', QV:'Queja verbal', EVAC:'Evitación de actividades' };
+var PBQ_PCT = [
+  [4,1,null,null,null],[5,2,null,null,null],[10,3,null,null,1],
+  [15,4,2,null,2],[20,5,3,null,3],[25,6,4,1,4],[30,7,5,1,4],
+  [35,7,5,2,5],[40,8,6,3,6],[45,9,7,3,7],[50,10,8,3,7],
+  [55,12,9,4,8],[60,12,10,4,8],[65,13,11,4,9],[70,14,11,5,10],
+  [75,14,12,7,11],[80,15,12,8,11],[85,16,13,9,12],
+  [90,17,14,9,14],[95,19,16,12,16],[99,20,16,12,16]
+];
+
+// ── Helpers ──
+function dolorGV(id) { var e=document.getElementById(id); return (e&&e.value!=='') ? parseFloat(e.value) : null; }
+function dolorZC(v,m,s) { return s>0 ? (v-m)/s : 0; }
+function dolorToPc(score, col, table) {
+  var pc=1;
+  for(var i=0;i<table.length;i++){
+    if(table[i][col+1]===null) continue;
+    if(score>=table[i][col+1]) pc=table[i][0]; else break;
+  }
+  return pc;
+}
+function dolorColorNiv(pc) {
+  if(pc>=90) return {txt:'Muy elevado', c:'#c0392b'};
+  if(pc>=75) return {txt:'Elevado', c:'#D85A30'};
+  if(pc>=40) return {txt:'Moderado', c:'#BA7517'};
+  return {txt:'Bajo', c:'#639922'};
+}
+function dolorColorBPI(v, tipo) {
+  if(tipo==='int') {
+    if(v>=7) return {txt:'Severa', c:'#c0392b'};
+    if(v>=4) return {txt:'Moderada', c:'#D85A30'};
+    if(v>=1) return {txt:'Leve', c:'#BA7517'};
+    return {txt:'Sin dolor', c:'#639922'};
+  }
+  if(v>=7) return {txt:'Severa', c:'#c0392b'};
+  if(v>=4) return {txt:'Moderada', c:'#D85A30'};
+  if(v>=1) return {txt:'Leve', c:'#BA7517'};
+  return {txt:'Sin interferencia', c:'#639922'};
+}
+
+// ── Render ítems ──
+function dolorRenderItems(contId, from, to, prefix, max, fn) {
+  var cont=document.getElementById(contId);
+  if(!cont) return;
+  for(var i=from;i<=to;i++){
+    var d=document.createElement('div');
+    var ii=String(i).padStart(2,'0');
+    d.innerHTML='<label style="font-size:0.72rem;color:var(--muted);font-weight:500;text-transform:uppercase;">Ítem '+ii+'</label>'+
+      '<input type="number" id="'+prefix+i+'" min="0" max="'+max+'" placeholder="0–'+max+'" oninput="'+fn+'()" '+
+      'style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);font-size:0.9rem;">';
+    cont.appendChild(d);
+  }
+}
+
+// ── Iniciar ──
+function iniciarPCS(){
+  document.getElementById('pcs-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('pcs-form').style.display='block';
+  document.getElementById('pcs-resultado').style.display='none';
+  if(!document.getElementById('pcs-1')) dolorRenderItems('pcs-items-wrap',1,13,'pcs-',4,'calcularPCS');
+}
+function iniciarCSQ(){
+  document.getElementById('csq-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('csq-form').style.display='block';
+  document.getElementById('csq-resultado').style.display='none';
+  if(!document.getElementById('csq-1')){
+    dolorRenderItems('csq-items-a',1,13,'csq-',6,'calcularCSQ');
+    dolorRenderItems('csq-items-b',14,26,'csq-',6,'calcularCSQ');
+    dolorRenderItems('csq-items-c',27,39,'csq-',6,'calcularCSQ');
+  }
+}
+function iniciarPBQ(){
+  document.getElementById('pbq-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('pbq-form').style.display='block';
+  document.getElementById('pbq-resultado').style.display='none';
+  if(!document.getElementById('pbq-1')) dolorRenderItems('pbq-items-wrap',1,16,'pbq-',20,'calcularPBQ');
+}
+function iniciarBPI(){
+  document.getElementById('bpi-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('bpi-form').style.display='block';
+  document.getElementById('bpi-resultado').style.display='none';
+}
+
+// ── Limpiar ──
+function limpiarPCS(){ for(var i=1;i<=13;i++){var e=document.getElementById('pcs-'+i);if(e)e.value='';} }
+function limpiarCSQ(){ for(var i=1;i<=39;i++){var e=document.getElementById('csq-'+i);if(e)e.value='';} }
+function limpiarPBQ(){ for(var i=1;i<=16;i++){var e=document.getElementById('pbq-'+i);if(e)e.value='';} }
+function limpiarBPI(){
+  ['3','4','5','6','8','9a','9b','9c','9d','9e','9f','9g'].forEach(function(x){
+    var e=document.getElementById('bpi-'+x);if(e)e.value='';
+  });
+  var e7=document.getElementById('bpi-7');if(e7)e7.value='';
+}
+
+// ── bpiActualizar (live) ──
+function bpiActualizar(){
+  var ii=[dolorGV('bpi-3'),dolorGV('bpi-4'),dolorGV('bpi-5'),dolorGV('bpi-6')].filter(function(x){return x!==null;});
+  var fi=[dolorGV('bpi-9a'),dolorGV('bpi-9b'),dolorGV('bpi-9c'),dolorGV('bpi-9d'),dolorGV('bpi-9e'),dolorGV('bpi-9f'),dolorGV('bpi-9g')].filter(function(x){return x!==null;});
+  var el=document.getElementById('bpi-live');
+  if(!el) return;
+  var html='';
+  if(ii.length){var int=parseFloat((ii.reduce(function(a,x){return a+x;},0)/ii.length).toFixed(1));var niv=dolorColorBPI(int,'int');html+='Intensidad: <strong style="color:'+niv.c+'">'+int+'/10 — '+niv.txt+'</strong> · ';}
+  if(fi.length){var inf=parseFloat((fi.reduce(function(a,x){return a+x;},0)/fi.length).toFixed(1));var niv2=dolorColorBPI(inf,'inf');html+='Interferencia: <strong style="color:'+niv2.c+'">'+inf+'/10 — '+niv2.txt+'</strong>';}
+  el.innerHTML=html;
+}
+
+// ── Calcular PCS ──
+function calcularPCS(){
+  var vals={};for(var i=1;i<=13;i++)vals[i]=dolorGV('pcs-'+i);
+  var filled=Object.values(vals).filter(function(x){return x!==null;});
+  if(!filled.length){alert('Ingresá al menos un ítem.');return;}
+  var rum=[1,8,9,10].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
+  var mag=[3,6,13].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
+  var ind=[2,4,5,7,11,12].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
+  var tot=filled.reduce(function(a,x){return a+x;},0);
+  var niv,nc;
+  if(tot>=30){niv='Elevada / Clínicamente significativa';nc='#c0392b';}
+  else if(tot>=20){niv='Moderada';nc='#D85A30';}
+  else{niv='Baja';nc='#639922';}
+  window._pcsData={tot:tot,rum:rum,mag:mag,ind:ind,niv:niv};
+  var det='<div class="detalle-item"><div class="detalle-num" style="color:'+nc+'">'+tot+'</div><div class="detalle-lbl">Total /52</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+rum+'</div><div class="detalle-lbl">Rumiación /16</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+mag+'</div><div class="detalle-lbl">Magnificación /12</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+ind+'</div><div class="detalle-lbl">Indefensión /24</div></div>';
+  var interp='<p><strong style="color:'+nc+'">Total: '+tot+'/52 — Catastrofización '+niv+'</strong></p>';
+  if(tot>=30) interp+='<p>Puntaje clínicamente significativo (≥30). Tendencia marcada a interpretar el dolor de forma amenazante.</p>';
+  else if(tot>=20) interp+='<p>Nivel moderado (20–29). Cogniciones negativas relevantes en torno al dolor.</p>';
+  else interp+='<p>Nivel bajo (&lt;20). No se identifican indicadores clínicamente significativos.</p>';
+  if(rum>=9) interp+='<p>Rumiación elevada: hipervigilancia atencional hacia la experiencia dolorosa.</p>';
+  if(mag>=7) interp+='<p>Magnificación elevada: tendencia a anticipar el daño y el empeoramiento.</p>';
+  if(ind>=13) interp+='<p>Indefensión elevada: mayor relevancia pronóstica, asociada a peor evolución funcional.</p>';
+  interp+='<p><em>Baremo: Sullivan et al. (1995). Corte clínico ≥30.</em></p>';
+  document.getElementById('pcs-detalle').innerHTML=det;
+  document.getElementById('pcs-interp').innerHTML=interp;
+  document.getElementById('pcs-form').style.display='none';
+  document.getElementById('pcs-resultado').style.display='block';
+}
+
+// ── Calcular CSQ ──
+function calcularCSQ(){
+  var items={};for(var i=1;i<=39;i++)items[i]=dolorGV('csq-'+i);
+  var filled=Object.values(items).filter(function(x){return x!==null;});
+  if(!filled.length){alert('Ingresá al menos un ítem.');return;}
+  var subs=['CAT','CDI','AUT','IDO','RDO','ESP','FEP','DIC'];
+  var res={};var det='';
+  subs.forEach(function(s,ci){
+    var score=CSQ_CLAVES[s].reduce(function(a,n){return items[n]!==null?a+items[n]:a;},0);
+    var z=dolorZC(score,CSQ_STATS[s].m,CSQ_STATS[s].s).toFixed(2);
+    var pc=dolorToPc(score,ci,CSQ_PCT);
+    var niv=dolorColorNiv(pc);
+    res[s]={score:score,z:z,pc:pc};
+    det+='<div class="detalle-item"><div class="detalle-num" style="color:'+niv.c+'">Pc '+pc+'</div><div class="detalle-lbl">'+CSQ_NOM[s]+'</div></div>';
+  });
+  window._csqData=res;
+  var interp='';
+  subs.forEach(function(s){
+    var r=res[s];var niv=dolorColorNiv(r.pc);
+    interp+='<p><strong>'+CSQ_NOM[s]+':</strong> Bruto '+r.score+' · Z '+r.z+' · <span style="color:'+niv.c+'">Pc '+r.pc+' — '+niv.txt+'</span></p>';
+  });
+  interp+='<p><em>Baremo: Rosenstiel & Keefe (1983). Traducción al español.</em></p>';
+  document.getElementById('csq-detalle').innerHTML=det;
+  document.getElementById('csq-interp').innerHTML=interp;
+  document.getElementById('csq-form').style.display='none';
+  document.getElementById('csq-resultado').style.display='block';
+}
+
+// ── Calcular PBQ ──
+function calcularPBQ(){
+  var items={};for(var i=1;i<=16;i++)items[i]=dolorGV('pbq-'+i);
+  var filled=Object.values(items).filter(function(x){return x!==null;});
+  if(!filled.length){alert('Ingresá al menos un ítem.');return;}
+  var subs=['QNV','EVES','QV','EVAC'];
+  var res={};var det='';
+  subs.forEach(function(s,ci){
+    var score=PBQ_CLAVES[s].reduce(function(a,n){return items[n]!==null?a+items[n]:a;},0);
+    var z=dolorZC(score,PBQ_STATS[s].m,PBQ_STATS[s].s).toFixed(2);
+    var pc=dolorToPc(score,ci,PBQ_PCT);
+    var niv=dolorColorNiv(pc);
+    res[s]={score:score,z:z,pc:pc};
+    det+='<div class="detalle-item"><div class="detalle-num" style="color:'+niv.c+'">Pc '+pc+'</div><div class="detalle-lbl">'+PBQ_NOM[s]+'</div></div>';
+  });
+  window._pbqData=res;
+  var interp='';
+  subs.forEach(function(s){
+    var r=res[s];var niv=dolorColorNiv(r.pc);
+    interp+='<p><strong>'+PBQ_NOM[s]+' ('+s+'):</strong> Bruto '+r.score+' · Z '+r.z+' · <span style="color:'+niv.c+'">Pc '+r.pc+' — '+niv.txt+'</span></p>';
+  });
+  if(res['EVAC']&&res['EVAC'].pc>=75) interp+='<p>Evitación de actividades elevada: restricción funcional significativa.</p>';
+  if(res['QNV']&&res['QNV'].pc>=75) interp+='<p>Queja no verbal elevada: el malestar se expresa principalmente a través de conductas observables.</p>';
+  interp+='<p><em>Baremo: Appelbaum et al. (1988) — Rodríguez, Cano y Blanco (2000).</em></p>';
+  document.getElementById('pbq-detalle').innerHTML=det;
+  document.getElementById('pbq-interp').innerHTML=interp;
+  document.getElementById('pbq-form').style.display='none';
+  document.getElementById('pbq-resultado').style.display='block';
+}
+
+// ── Calcular BPI ──
+function calcularBPI(){
+  var ii=[dolorGV('bpi-3'),dolorGV('bpi-4'),dolorGV('bpi-5'),dolorGV('bpi-6')].filter(function(x){return x!==null;});
+  var fi=[dolorGV('bpi-9a'),dolorGV('bpi-9b'),dolorGV('bpi-9c'),dolorGV('bpi-9d'),dolorGV('bpi-9e'),dolorGV('bpi-9f'),dolorGV('bpi-9g')].filter(function(x){return x!==null;});
+  if(!ii.length&&!fi.length){alert('Ingresá al menos un ítem.');return;}
+  var intVal=ii.length?parseFloat((ii.reduce(function(a,x){return a+x;},0)/ii.length).toFixed(2)):null;
+  var infVal=fi.length?parseFloat((fi.reduce(function(a,x){return a+x;},0)/fi.length).toFixed(2)):null;
+  var alivio=dolorGV('bpi-8');
+  var trat=document.getElementById('bpi-7')?document.getElementById('bpi-7').value.trim():'';
+  window._bpiData={int:intVal,inf:infVal,alivio:alivio,trat:trat};
+  var det='';
+  if(intVal!==null){var ni=dolorColorBPI(intVal,'int');det+='<div class="detalle-item"><div class="detalle-num" style="color:'+ni.c+'">'+intVal.toFixed(1)+'</div><div class="detalle-lbl">Intensidad /10</div></div>';}
+  if(infVal!==null){var nf=dolorColorBPI(infVal,'inf');det+='<div class="detalle-item"><div class="detalle-num" style="color:'+nf.c+'">'+infVal.toFixed(1)+'</div><div class="detalle-lbl">Interferencia /10</div></div>';}
+  if(alivio!==null) det+='<div class="detalle-item"><div class="detalle-num">'+alivio+'%</div><div class="detalle-lbl">Alivio</div></div>';
+  var interp='';
+  if(intVal!==null){var ni2=dolorColorBPI(intVal,'int');interp+='<p><strong>Índice de Intensidad: <span style="color:'+ni2.c+'">'+intVal.toFixed(1)+'/10 — '+ni2.txt+'</span></strong></p>';}
+  if(infVal!==null){var nf2=dolorColorBPI(infVal,'inf');interp+='<p><strong>Índice de Interferencia: <span style="color:'+nf2.c+'">'+infVal.toFixed(1)+'/10 — '+nf2.txt+'</span></strong></p>';}
+  if(alivio!==null) interp+='<p>Alivio con tratamiento: <strong>'+alivio+'%</strong>'+(trat?' ('+trat+')':'')+'. </p>';
+  interp+='<p><em>Baremo: Cleeland & Ryan (1994).</em></p>';
+  document.getElementById('bpi-detalle').innerHTML=det;
+  document.getElementById('bpi-interp').innerHTML=interp;
+  document.getElementById('bpi-form').style.display='none';
+  document.getElementById('bpi-resultado').style.display='block';
+}
+
+// ── Guardar Dolor (común para los 4) ──
+function guardarDolor(tipo) {
+  if(!SESSION) return;
+  var pacId=document.getElementById(tipo+'-paciente').value;
+  var fecha=document.getElementById(tipo+'-fecha').value;
+  if(!pacId){toast('Seleccioná un paciente.','error');return;}
+  var pb=null,cat=null,z=null,dat={};
+  if(tipo==='pcs'&&window._pcsData){
+    var d=window._pcsData;pb=d.tot;cat=d.niv;
+    z=parseFloat(((d.tot-13)/10).toFixed(2));
+    dat={tot:d.tot,rum:d.rum,mag:d.mag,ind:d.ind};
+  } else if(tipo==='csq'&&window._csqData){
+    var d=window._csqData;pb=d['CAT'].score;
+    cat='CAT Pc '+d['CAT'].pc+' · IGD Pc '+d['IDO'].pc;
+    dat=d;
+  } else if(tipo==='pbq'&&window._pbqData){
+    var d=window._pbqData;pb=d['QNV'].score;
+    cat='QNV Pc '+d['QNV'].pc+' · EVAC Pc '+d['EVAC'].pc;
+    dat=d;
+  } else if(tipo==='bpi'&&window._bpiData){
+    var d=window._bpiData;pb=d.int!==null?d.int:d.inf;
+    cat=d.int!==null?dolorColorBPI(d.int,'int').txt:'—';
+    dat=d;
+  }
+  var testNombre={pcs:'PCS',csq:'CSQ',pbq:'PBQ',bpi:'BPI'}[tipo];
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId,
+    test:testNombre, fecha:fecha,
+    puntaje_total:pb, categoria:cat,
+    puntaje_z:z, datos:dat
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
 }
 
 // ── Auto-iniciar si hay sesión ─────────────────
