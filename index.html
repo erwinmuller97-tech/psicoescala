@@ -435,7 +435,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.5.3</div>
     </div>
   </aside>
 
@@ -644,6 +644,25 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Recomendaciones</div>
         <div class="field"><textarea id="inf-recomendaciones" rows="5" placeholder="Intervenciones sugeridas, derivaciones, seguimiento..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Firma del profesional</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Subí una imagen de tu firma (JPG, PNG). Se guardará y aparecerá al pie del informe PDF.</p>
+        <div class="form-grid" style="grid-template-columns:auto 1fr;align-items:center;gap:16px;">
+          <div>
+            <input type="file" id="inf-firma-input" accept="image/*" onchange="firmaPreview(event)" style="display:none;">
+            <button class="btn-secondary" onclick="document.getElementById('inf-firma-input').click()">📎 Seleccionar imagen</button>
+          </div>
+          <div id="inf-firma-preview-wrap" style="display:none;">
+            <img id="inf-firma-preview" style="max-height:80px;max-width:250px;border:1px solid var(--border);border-radius:6px;padding:4px;">
+            <button onclick="borrarFirma()" style="margin-left:8px;font-size:0.78rem;color:#c0392b;background:none;border:none;cursor:pointer;">✕ Quitar</button>
+          </div>
+          <div id="inf-firma-existente" style="display:none;">
+            <span style="font-size:0.8rem;color:var(--muted);">Firma guardada</span>
+            <img id="inf-firma-existente-img" style="display:block;max-height:80px;max-width:250px;border:1px solid var(--border);border-radius:6px;padding:4px;margin-top:4px;">
+          </div>
+        </div>
       </div>
 
       <div style="display:flex;gap:10px;margin-bottom:32px;">
@@ -4224,6 +4243,27 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     '<div style="font-size:8px;color:#2e7a4f;text-transform:uppercase;letter-spacing:0.6px;">Normal</div></div>':'')+
     '</div>'+
 
+    // ── Tests Administrados ──
+    '<div class="sec-titulo">Tests Administrados</div>'+
+    '<table style="width:100%;font-family:Arial,sans-serif;font-size:11pt;border-collapse:collapse;margin-bottom:12px;">'+
+    '<thead><tr>'+
+    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Test</th>'+
+    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Área</th>'+
+    '<th style="text-align:center;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Fecha</th>'+
+    '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid #c4977a;color:#5a3520;font-size:10pt;">Resultado</th>'+
+    '</tr></thead><tbody>'+
+    datos.map(function(r,i){
+      var area = NP.indexOf(r.test)!==-1?'Neuropsicológico': TD.indexOf(r.test)!==-1?'TDAH':'Clínico';
+      var bg = i%2===0?'#fafaf8':'#fff';
+      return '<tr style="background:'+bg+';">'+
+        '<td style="padding:4px 8px;font-weight:600;">'+r.test+'</td>'+
+        '<td style="padding:4px 8px;color:#7a4e38;font-size:10pt;">'+area+'</td>'+
+        '<td style="padding:4px 8px;text-align:center;font-size:10pt;">'+( r.fecha||'—')+'</td>'+
+        '<td style="padding:4px 8px;font-size:10pt;">'+( r.categoria||'—')+'</td>'+
+        '</tr>';
+    }).join('')+
+    '</tbody></table>'+
+
     // ── Secciones ──
     (testsNp.length ?
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación Neuropsicológica</div>'+
@@ -4244,8 +4284,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     pdfSec('Recomendaciones', inf.recomendaciones)+
 
     // ── Firma ──
-    (inf.evaluado_por?'<div style="margin-top:40px;font-family:Arial,sans-serif;font-size:11pt;">'+
-    '<div style="border-top:1px solid #333;width:220px;padding-top:4px;">'+inf.evaluado_por+'</div></div>':'')+
+    '<div style="margin-top:50px;font-family:Arial,sans-serif;font-size:11pt;">'+
+    (inf.firma_imagen?'<img src="'+inf.firma_imagen+'" style="max-height:80px;max-width:220px;display:block;margin-bottom:4px;">':
+    '<div style="height:60px;"></div>')+
+    '<div style="border-top:1px solid #333;width:240px;padding-top:5px;">'+(inf.evaluado_por||'')+'</div>'+
+    '</div>'+
 
     // ── Nota y pie ──
 
@@ -6613,6 +6656,11 @@ function abrirInforme() {
     'inf-procedencia','inf-dominancia','inf-contacto','inf-ant-clinicos','inf-ant-psiq',
     'inf-ant-fam','inf-habitos','inf-motivo','inf-conducta','inf-perfil-cog','inf-conclusiones','inf-recomendaciones'];
   campos.forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  window._firmaBase64 = null;
+  var prev = document.getElementById('inf-firma-preview-wrap');
+  if(prev) prev.style.display='none';
+  var exist = document.getElementById('inf-firma-existente');
+  if(exist) exist.style.display='none';
   // Cargar datos existentes
   cargarInforme(pacId);
   irVista('informe');
@@ -6648,6 +6696,12 @@ function cargarInforme(pacId) {
         var el = document.getElementById(id);
         if(el) el.value = map[id];
       });
+      // Mostrar firma existente si hay
+      if (inf.firma_imagen) {
+        var wrap = document.getElementById('inf-firma-existente');
+        var img = document.getElementById('inf-firma-existente-img');
+        if (wrap && img) { img.src = inf.firma_imagen; wrap.style.display='block'; }
+      }
     });
 }
 
@@ -6673,6 +6727,7 @@ function guardarInforme() {
     perfil_cognitivo: document.getElementById('inf-perfil-cog').value || null,
     conclusiones:     document.getElementById('inf-conclusiones').value || null,
     recomendaciones:  document.getElementById('inf-recomendaciones').value || null,
+    firma_imagen:     window._firmaBase64 || null,
     actualizado:      new Date().toISOString()
   };
   // UPSERT — si ya existe lo actualiza, si no lo crea
@@ -6681,6 +6736,31 @@ function guardarInforme() {
       toast('✓ Informe guardado', 'success');
     })
     .catch(function(){ toast('Error al guardar informe', 'error'); });
+}
+
+
+// ── Firma del profesional ──────────────────────────────
+function firmaPreview(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._firmaBase64 = e.target.result;
+    var img = document.getElementById('inf-firma-preview');
+    var wrap = document.getElementById('inf-firma-preview-wrap');
+    var exist = document.getElementById('inf-firma-existente');
+    if(img) img.src = e.target.result;
+    if(wrap) wrap.style.display='flex';
+    if(exist) exist.style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+function borrarFirma() {
+  window._firmaBase64 = null;
+  var wrap = document.getElementById('inf-firma-preview-wrap');
+  var input = document.getElementById('inf-firma-input');
+  if(wrap) wrap.style.display='none';
+  if(input) input.value='';
 }
 
 // ── Auto-iniciar si hay sesión ─────────────────
