@@ -102,11 +102,12 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   display:flex; flex-direction:column;
   padding:32px 0 24px;
   position:fixed; top:0; left:0; bottom:0; z-index:100;
+  overflow-y:auto;
 }
 .sidebar-logo { display:flex; flex-direction:column; align-items:center; padding:0 24px 28px; border-bottom:1px solid var(--border); margin-bottom:20px; }
 .sidebar-logo svg { width:52px; height:52px; margin-bottom:10px; }
 .sidebar-nombre { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; color:var(--accentdk); letter-spacing:2.5px; text-transform:uppercase; }
-.sidebar-nav { flex:1; padding:0 12px; }
+.sidebar-nav { flex:1; padding:0 12px; overflow-y:visible; }
 .sidebar-section { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:400; letter-spacing:0.2px; transition:background 0.15s, color 0.15s; margin-bottom:2px; user-select:none; }
 .sidebar-section:hover { background:rgba(155,106,80,0.1); color:var(--accentdk); }
 .sidebar-section.active { background:rgba(155,106,80,0.15); color:var(--accentdk); font-weight:500; }
@@ -438,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.2</div>
     </div>
   </aside>
 
@@ -3800,13 +3801,15 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   // ── Clasificación de tests ──
   var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
-  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','PCS','CSQ','PBQ','BPI'];
+  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
   var TD = ['ASRS-V1.1','WURS-25'];
-  function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td':'cl'; }
+  var DO = ['PCS','CSQ','PBQ','BPI'];
+  function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td': DO.indexOf(t)!==-1?'do':'cl'; }
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
   var testsCl = datos.filter(function(r){ return tipo(r.test)==='cl'; });
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
+  var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
 
   var conAlter  = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z < -1.5; }).length;
   var conRiesgo = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z>=-1.5 && r.puntaje_z<-1.0; }).length;
@@ -4057,6 +4060,230 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     });
 
     return '<table style="width:100%;border-collapse:collapse;">' + tablaHeader() + '<tbody>' + rows + '</tbody></table>';
+  }
+
+  // ── Render sección Dolor ──
+  function renderDolor(list) {
+    if (!list.length) return '';
+    var thS = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 8px;';
+    var tdS = 'font-size:10px;border-bottom:0.5px solid #ecdece;padding:5px 8px;vertical-align:middle;';
+
+    // Barrita de percentil (0–100)
+    function pcBar(pc, color) {
+      var pct = Math.min(100, pc);
+      return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+        '<div style="position:absolute;left:0;width:'+pct+'%;top:0;bottom:0;background:'+color+';border-radius:3px;"></div>'+
+        '<div style="position:absolute;left:75%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;opacity:0.5;"></div>'+
+        '</div>';
+    }
+
+    // Color según percentil
+    function pcColor(pc) {
+      if (pc >= 90) return '#c0392b';
+      if (pc >= 75) return '#D85A30';
+      if (pc >= 40) return '#BA7517';
+      return '#2e7a4f';
+    }
+    function pcLabel(pc) {
+      if (pc >= 90) return 'Muy elevado';
+      if (pc >= 75) return 'Elevado';
+      if (pc >= 40) return 'Moderado';
+      return 'Bajo';
+    }
+
+    // Color BPI
+    function bpiColor(v, tipo) {
+      if (tipo === 'int') {
+        if (v >= 7) return '#c0392b';
+        if (v >= 4) return '#D85A30';
+        if (v >= 1) return '#BA7517';
+        return '#2e7a4f';
+      }
+      if (v >= 7) return '#c0392b';
+      if (v >= 4) return '#D85A30';
+      if (v >= 1) return '#BA7517';
+      return '#2e7a4f';
+    }
+    function bpiLabel(v, tipo) {
+      if (tipo === 'int') {
+        if (v >= 7) return 'Severa';
+        if (v >= 4) return 'Moderada';
+        if (v >= 1) return 'Leve';
+        return 'Sin dolor';
+      }
+      if (v >= 7) return 'Severa';
+      if (v >= 4) return 'Moderada';
+      if (v >= 1) return 'Leve';
+      return 'Sin interferencia';
+    }
+    function bpiBar(v, max) {
+      var pct = Math.min(100, (v / max) * 100);
+      var col = bpiColor(v, 'int');
+      return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+        '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:3px;"></div>'+
+        '</div>';
+    }
+
+    var html = '';
+
+    list.forEach(function(r) {
+      var d = r.datos || {};
+      var fecha = r.fecha || '';
+
+      // ── PCS ──
+      if (r.test === 'PCS') {
+        var tot = d.tot != null ? d.tot : r.puntaje_total;
+        var rum = d.rum != null ? d.rum : null;
+        var mag = d.mag != null ? d.mag : null;
+        var ind = d.ind != null ? d.ind : null;
+        var nivColor = tot >= 30 ? '#c0392b' : tot >= 20 ? '#D85A30' : '#2e7a4f';
+        var nivLabel = tot >= 30 ? 'Clínicamente significativa' : tot >= 20 ? 'Moderada' : 'Baja';
+        html += '<div style="margin-bottom:12px;">';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PCS · Escala de Catastrofización del Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
+        html += '<thead><tr>'+
+          '<th style="'+thS+'">Subescala</th>'+
+          '<th style="'+thS+'text-align:center;">Puntaje</th>'+
+          '<th style="'+thS+'text-align:center;min-width:100px;">Perfil</th>'+
+          '<th style="'+thS+'">Interpretación</th>'+
+          '</tr></thead><tbody>';
+        var subsData = [
+          {label:'Rumiación', val:rum, max:16, items:'1,8,9,10'},
+          {label:'Magnificación', val:mag, max:12, items:'3,6,13'},
+          {label:'Indefensión', val:ind, max:24, items:'2,4,5,7,11,12'}
+        ];
+        subsData.forEach(function(sub) {
+          if (sub.val === null) return;
+          var pct = Math.min(100, (sub.val / sub.max) * 100);
+          var col = sub.val >= Math.round(sub.max * 0.7) ? '#c0392b' : sub.val >= Math.round(sub.max * 0.5) ? '#D85A30' : '#2e7a4f';
+          var lbl = sub.val >= Math.round(sub.max * 0.7) ? 'Significativa' : sub.val >= Math.round(sub.max * 0.5) ? 'Moderada' : 'No significativa';
+          html += '<tr><td style="'+tdS+'">'+sub.label+' <span style="font-size:8px;color:#9a7a60;">(ítems '+sub.items+')</span></td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+sub.val+'/'+sub.max+'</td>'+
+            '<td style="'+tdS+'text-align:center;">'+
+            '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+            '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:3px;"></div>'+
+            '</div></td>'+
+            '<td style="'+tdS+'color:'+col+';font-weight:600;">'+lbl+'</td></tr>';
+        });
+        // Fila total
+        if (tot != null) {
+          var totPct = Math.min(100, (tot / 52) * 100);
+          html += '<tr style="background:#faf0e6;"><td style="'+tdS+'font-weight:700;">Puntaje Total</td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:'+nivColor+';">'+tot+'/52</td>'+
+            '<td style="'+tdS+'text-align:center;">'+
+            '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+            '<div style="position:absolute;left:0;width:'+totPct.toFixed(1)+'%;top:0;bottom:0;background:'+nivColor+';border-radius:3px;"></div>'+
+            '<div style="position:absolute;left:'+(30/52*100).toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;opacity:0.7;"></div>'+
+            '</div></td>'+
+            '<td style="'+tdS+'color:'+nivColor+';font-weight:700;">'+nivLabel+' <span style="font-size:8px;font-weight:400;">(corte ≥30)</span></td></tr>';
+        }
+        html += '</tbody></table></div>';
+      }
+
+      // ── PBQ ──
+      else if (r.test === 'PBQ') {
+        var subsNombres = {QNV:'Quejas no verbales', EVES:'Evitación de situaciones', QV:'Quejas verbales', EVAC:'Evitación de actividades'};
+        html += '<div style="margin-bottom:12px;">';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PBQ · Cuestionario de Conductas de Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
+        html += '<thead><tr>'+
+          '<th style="'+thS+'">Subescala</th>'+
+          '<th style="'+thS+'text-align:center;">PB / Pc</th>'+
+          '<th style="'+thS+'text-align:center;min-width:100px;">Perfil</th>'+
+          '<th style="'+thS+'">Interpretación</th>'+
+          '</tr></thead><tbody>';
+        ['QNV','EVES','QV','EVAC'].forEach(function(key) {
+          var sub = d[key] || {};
+          var score = sub.score != null ? sub.score : null;
+          var pc = sub.pc != null ? sub.pc : null;
+          if (score === null && pc === null) return;
+          var col = pc != null ? pcColor(pc) : '#888';
+          var lbl = pc != null ? pcLabel(pc) : '—';
+          var sigLabel = pc >= 75 ? 'Sintomatología significativa' : 'Sintomatología no significativa';
+          var sigCol = pc >= 75 ? '#c0392b' : '#2e7a4f';
+          html += '<tr><td style="'+tdS+'">'+subsNombres[key]+'</td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
+            '<td style="'+tdS+'text-align:center;">'+(pc!=null?pcBar(pc,col):'')+'</td>'+
+            '<td style="'+tdS+'color:'+sigCol+';font-weight:600;">'+sigLabel+'</td></tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+
+      // ── CSQ ──
+      else if (r.test === 'CSQ') {
+        var csqNombres = {
+          CAT:'Catastrofización', CDI:'Distracción cognitiva', AUT:'Autoafirmaciones / afrontamiento activo',
+          IDO:'Ignorar el dolor', RDO:'Reinterpretación positiva', ESP:'Esperanza',
+          FEP:'Focalización en el problema', DIC:'Distracción conductual'
+        };
+        html += '<div style="margin-bottom:12px;">';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">CSQ · Cuestionario de Estrategias de Afrontamiento del Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
+        html += '<thead><tr>'+
+          '<th style="'+thS+'">Estrategia</th>'+
+          '<th style="'+thS+'text-align:center;">PB / Pc</th>'+
+          '<th style="'+thS+'text-align:center;min-width:100px;">Perfil</th>'+
+          '<th style="'+thS+'">Interpretación</th>'+
+          '</tr></thead><tbody>';
+        ['CAT','CDI','AUT','IDO','RDO','ESP','FEP','DIC'].forEach(function(key) {
+          var sub = d[key] || {};
+          var score = sub.score != null ? sub.score : null;
+          var pc = sub.pc != null ? sub.pc : null;
+          if (score === null && pc === null) return;
+          var col = pc != null ? pcColor(pc) : '#888';
+          var lbl = pc != null ? pcLabel(pc) : '—';
+          html += '<tr><td style="'+tdS+'">'+csqNombres[key]+'</td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
+            '<td style="'+tdS+'text-align:center;">'+(pc!=null?pcBar(pc,col):'')+'</td>'+
+            '<td style="'+tdS+'color:'+col+';font-weight:600;">'+lbl+'</td></tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+
+      // ── BPI ──
+      else if (r.test === 'BPI') {
+        var intVal = d.int != null ? d.int : null;
+        var infVal = d.inf != null ? d.inf : null;
+        var alivio = d.alivio != null ? d.alivio : null;
+        var trat   = d.trat || '';
+        html += '<div style="margin-bottom:12px;">';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">BPI · Inventario Breve de Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
+        html += '<thead><tr>'+
+          '<th style="'+thS+'">Índice</th>'+
+          '<th style="'+thS+'text-align:center;">Puntaje</th>'+
+          '<th style="'+thS+'text-align:center;min-width:100px;">Perfil</th>'+
+          '<th style="'+thS+'">Interpretación</th>'+
+          '</tr></thead><tbody>';
+        if (intVal !== null) {
+          var ic = bpiColor(intVal, 'int');
+          var il = bpiLabel(intVal, 'int');
+          html += '<tr><td style="'+tdS+'">Índice de Intensidad <span style="font-size:8px;color:#9a7a60;">(ítems 3–6)</span></td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:'+ic+';">'+intVal.toFixed(1)+'/10</td>'+
+            '<td style="'+tdS+'text-align:center;">'+bpiBar(intVal, 10)+'</td>'+
+            '<td style="'+tdS+'color:'+ic+';font-weight:600;">'+il+'</td></tr>';
+        }
+        if (infVal !== null) {
+          var fc = bpiColor(infVal, 'inf');
+          var fl = bpiLabel(infVal, 'inf');
+          html += '<tr><td style="'+tdS+'">Índice de Interferencia <span style="font-size:8px;color:#9a7a60;">(ítems 9A–9G)</span></td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:'+fc+';">'+infVal.toFixed(1)+'/10</td>'+
+            '<td style="'+tdS+'text-align:center;">'+bpiBar(infVal, 10)+'</td>'+
+            '<td style="'+tdS+'color:'+fc+';font-weight:600;">'+fl+'</td></tr>';
+        }
+        if (alivio !== null) {
+          html += '<tr><td style="'+tdS+'">Alivio con tratamiento <span style="font-size:8px;color:#9a7a60;">'+(trat?'('+trat+')'):'')+'</span></td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+alivio+'%</td>'+
+            '<td style="'+tdS+'text-align:center;">'+
+            '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+            '<div style="position:absolute;left:0;width:'+alivio+'%;top:0;bottom:0;background:#2e7a4f;border-radius:3px;"></div>'+
+            '</div></td>'+
+            '<td style="'+tdS+'color:#2e7a4f;font-weight:600;">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
+        }
+        html += '</tbody></table></div>';
+      }
+    });
+    return html;
   }
 
   // ── Render sección Clínica / TDAH (puntos de corte) ──
@@ -4464,6 +4691,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     (testsTd.length ?
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">TDAH</div>'+
       renderCL(testsTd) : '')+
+
+    (testsDo.length ?
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
+      renderDolor(testsDo) : '')+
 
     (testsNp.length ? refZ : '')+
 
