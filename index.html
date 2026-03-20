@@ -7065,14 +7065,14 @@ function dolorColorBPI(v, tipo) {
 }
 
 // ── Render ítems ──
-function dolorRenderItems(contId, from, to, prefix, max, fn) {
+function dolorRenderItems(contId, from, to, prefix, max) {
   var cont=document.getElementById(contId);
   if(!cont) return;
   for(var i=from;i<=to;i++){
     var d=document.createElement('div');
     var ii=String(i).padStart(2,'0');
     d.innerHTML='<label style="font-size:0.72rem;color:var(--muted);font-weight:500;text-transform:uppercase;">Ítem '+ii+'</label>'+
-      '<input type="number" id="'+prefix+i+'" min="0" max="'+max+'" placeholder="0–'+max+'" oninput="'+fn+'()" '+
+      '<input type="number" id="'+prefix+i+'" min="0" max="'+max+'" placeholder="0–'+max+'" '+
       'style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);font-size:0.9rem;">';
     cont.appendChild(d);
   }
@@ -7083,23 +7083,23 @@ function iniciarPCS(){
   document.getElementById('pcs-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('pcs-form').style.display='block';
   document.getElementById('pcs-resultado').style.display='none';
-  if(!document.getElementById('pcs-1')) dolorRenderItems('pcs-items-wrap',1,13,'pcs-',4,'calcularPCS');
+  if(!document.getElementById('pcs-1')) dolorRenderItems('pcs-items-wrap',1,13,'pcs-',4);
 }
 function iniciarCSQ(){
   document.getElementById('csq-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('csq-form').style.display='block';
   document.getElementById('csq-resultado').style.display='none';
   if(!document.getElementById('csq-1')){
-    dolorRenderItems('csq-items-a',1,13,'csq-',6,'calcularCSQ');
-    dolorRenderItems('csq-items-b',14,26,'csq-',6,'calcularCSQ');
-    dolorRenderItems('csq-items-c',27,39,'csq-',6,'calcularCSQ');
+    dolorRenderItems('csq-items-a',1,13,'csq-',6);
+    dolorRenderItems('csq-items-b',14,26,'csq-',6);
+    dolorRenderItems('csq-items-c',27,39,'csq-',6);
   }
 }
 function iniciarPBQ(){
   document.getElementById('pbq-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('pbq-form').style.display='block';
   document.getElementById('pbq-resultado').style.display='none';
-  if(!document.getElementById('pbq-1')) dolorRenderItems('pbq-items-wrap',1,16,'pbq-',20,'calcularPBQ');
+  if(!document.getElementById('pbq-1')) dolorRenderItems('pbq-items-wrap',1,16,'pbq-',20);
 }
 function iniciarBPI(){
   document.getElementById('bpi-fecha').value=new Date().toISOString().split('T')[0];
