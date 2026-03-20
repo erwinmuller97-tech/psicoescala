@@ -438,7 +438,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.1</div>
     </div>
   </aside>
 
@@ -802,33 +802,27 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Intensidad del dolor — Ítems 3, 4, 5, 6 (0–10)</div>
-          <div class="form-grid-3">
-            <div class="field"><label>Ítem 3 — Dolor máximo</label><input type="number" id="bpi-3" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>Ítem 4 — Dolor mínimo</label><input type="number" id="bpi-4" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>Ítem 5 — Dolor medio</label><input type="number" id="bpi-5" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>Ítem 6 — Dolor actual</label><input type="number" id="bpi-6" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-          </div>
+          <div class="card-title">Intensidad del dolor — Ítems 3 a 6</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Marque el número que mejor describe su dolor (0 = sin dolor · 10 = el peor dolor imaginable)</p>
+          <div id="bpi-int-wrap"></div>
         </div>
         <div class="card">
           <div class="card-title">Tratamiento y alivio</div>
-          <div class="form-grid-3">
-            <div class="field" style="grid-column:1/-1"><label>Ítem 7 — Tratamiento / medicación</label><input type="text" id="bpi-7" placeholder="Ej: Tramadol 50mg, fisioterapia..."></div>
-            <div class="field"><label>Ítem 8 — Alivio con tratamiento (%)</label><input type="number" id="bpi-8" min="0" max="100" placeholder="0–100" oninput="bpiActualizar()"></div>
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="field" style="grid-column:1/-1"><label>Ítem 7 — Tratamiento o medicación actual</label><input type="text" id="bpi-7" placeholder="Ej: Tramadol 50mg, fisioterapia..."></div>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text);margin:12px 0 8px;font-weight:500;">Ítem 8 — ¿Cuánto alivio ha sentido con el tratamiento? (0% = ningún alivio · 100% = alivio total)</p>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:flex-end;">
+            <span style="font-size:0.7rem;color:var(--muted);margin-right:2px;">Ningún alivio</span>
+            <div id="bpi-alivio-wrap" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+            <span style="font-size:0.7rem;color:var(--muted);margin-left:2px;">Alivio total</span>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Interferencia — Ítems 9A–9G (0–10)</div>
-          <div class="form-grid-3">
-            <div class="field"><label>9A — Actividad general</label><input type="number" id="bpi-9a" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9B — Estado de ánimo</label><input type="number" id="bpi-9b" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9C — Caminar</label><input type="number" id="bpi-9c" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9D — Trabajo habitual</label><input type="number" id="bpi-9d" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9E — Relaciones</label><input type="number" id="bpi-9e" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9F — Sueño</label><input type="number" id="bpi-9f" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-            <div class="field"><label>9G — Disfrutar la vida</label><input type="number" id="bpi-9g" min="0" max="10" placeholder="0–10" oninput="bpiActualizar()"></div>
-          </div>
-          <div id="bpi-live" style="font-size:0.85rem;color:var(--accent);margin-top:8px;min-height:20px;font-weight:600;"></div>
+          <div class="card-title">Interferencia del dolor — Ítems 9A a 9G</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">¿Cómo ha interferido el dolor en las últimas 24 horas? (0 = no interfiere · 10 = interfiere completamente)</p>
+          <div id="bpi-inf-wrap"></div>
+          <div id="bpi-live" style="font-size:0.85rem;color:var(--accent);margin-top:12px;min-height:20px;font-weight:600;"></div>
         </div>
         <div class="btn-row" style="margin-top:4px;">
           <button class="btn-secondary" onclick="limpiarBPI()">🗑 Limpiar</button>
@@ -7036,6 +7030,16 @@ var PBQ_PCT = [
 
 // ── Helpers ──
 function dolorGV(id) { var e=document.getElementById(id); return (e&&e.value!=='') ? parseFloat(e.value) : null; }
+// Lee un radio button por nombre (para PCS, CSQ, PBQ) o hidden input (para BPI)
+function dolorGVR(prefix, num) {
+  var s = document.querySelector('[name="'+prefix+num+'"]:checked');
+  return s ? parseInt(s.value) : null;
+}
+// Para BPI — lee hidden input sincronizado desde radio
+function bpiGV(id) {
+  var s = document.querySelector('[name="bpi_'+id+'"]:checked');
+  return s ? parseFloat(s.value) : null;
+}
 function dolorZC(v,m,s) { return s>0 ? (v-m)/s : 0; }
 function dolorToPc(score, col, table) {
   var pc=1;
@@ -7065,16 +7069,168 @@ function dolorColorBPI(v, tipo) {
 }
 
 // ── Render ítems ──
-function dolorRenderItems(contId, from, to, prefix, max) {
-  var cont=document.getElementById(contId);
-  if(!cont) return;
-  for(var i=from;i<=to;i++){
-    var d=document.createElement('div');
-    var ii=String(i).padStart(2,'0');
-    d.innerHTML='<label style="font-size:0.72rem;color:var(--muted);font-weight:500;text-transform:uppercase;">Ítem '+ii+'</label>'+
-      '<input type="number" id="'+prefix+i+'" min="0" max="'+max+'" placeholder="0–'+max+'" '+
-      'style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);font-size:0.9rem;">';
+// ── Textos de los ítems ──
+var PCS_TEXTOS = [
+  'Me preocupo sobre si el dolor se acabará.',
+  'Siento que ya no puedo continuar debido al dolor.',
+  'El dolor es muy fuerte y creo que nunca va a mejorar.',
+  'El dolor es muy desagradable y siento que me supera.',
+  'Siento que no aguanto más el dolor.',
+  'Tengo miedo de que el dolor pueda ir en aumento.',
+  'Me vienen a la memoria experiencias dolorosas anteriores.',
+  'Deseo con muchas ganas que el dolor desaparezca.',
+  'No paro de pensar en el dolor.',
+  'Estoy centrado en cuanto me duele.',
+  'Pienso en que lo quiero es que me deje de doler.',
+  'No puedo hacer nada para disminuir la intensidad del dolor.',
+  'Me pregunto si me podría pasar algo grave.'
+];
+var PCS_FACTORES = {1:'R',2:'I',3:'M',4:'I',5:'I',6:'M',7:'I',8:'R',9:'R',10:'R',11:'I',12:'I',13:'M'};
+var PCS_LABELS = ['Nunca','Rara vez','Algunas veces','Muchas veces','Siempre'];
+
+var CSQ_TEXTOS = [
+  'Veo el dolor como un desafío ("a ver quién puede más, él o yo") y no dejo que me moleste',
+  'Creo que no puedo más',
+  'Me digo a mi mismo que no puedo permitir que el dolor interfiera en lo que tengo que hacer',
+  'Me pongo a cantar o a tararear canciones mentalmente',
+  'No presto atención al dolor',
+  'Hago cosas que me gustan, como ver la televisión o escuchar la radio',
+  'No pienso en el dolor',
+  'Realizo juegos o distracciones mentales para quitarme el dolor de la cabeza',
+  'Salgo de casa y hago algo, como ir al cine o de compras',
+  'Me digo a mí mismo que puedo superar el dolor',
+  'Paseo mucho',
+  'El dolor es terrible y pienso que nunca me pondré mejor',
+  'Tengo confianza en que algún día los médicos me curarán el dolor',
+  'Creo que algún día alguien me ayudará y el dolor desaparecerá',
+  'Me imagino que el dolor está fuera de mí',
+  'Creo que no puedo soportarlo más',
+  'Hago como si no me doliera nada',
+  'Hago como si el dolor no fuera parte de mí',
+  'Rezo a Dios para que no dure más el dolor',
+  'Me pongo a hacer cosas como tareas domésticas o planear actividades',
+  'Rezo para que pare el dolor',
+  'Me digo a mi mismo que no me duele',
+  'Pienso que no vale la pena vivir así',
+  'Aunque me duela sigo con lo que estuviera haciendo',
+  'No importa lo grande que sea el dolor, sé que puedo con él',
+  'Trato de imaginarme un futuro en el que me haya librado del dolor',
+  'Me digo a mí mismo que debo ser fuerte y continuar a pesar del dolor',
+  'Continúo con lo que estaba haciendo como si no pasara nada',
+  'Ignoro el dolor',
+  'Trato de distanciarme del dolor, casi como si el dolor estuviera en otro cuerpo',
+  'El dolor es horrible y siento que me desborda',
+  'Me paso el día preocupado de si acabará alguna vez el dolor',
+  'Trato de no pensar en que el dolor está en mi cuerpo, sino que más bien está fuera de mí',
+  'Pienso en cosas que disfruto haciendo',
+  'Trato de estar con otras personas',
+  'Recuerdo buenos momentos del pasado',
+  'Cuento con mi fe en Dios',
+  'Me acuesto',
+  'Pienso en personas con las que me gusta estar'
+];
+var CSQ_LABELS = ['Nunca','Casi nunca','Pocas veces','A veces','Muchas veces','Casi siempre','Siempre'];
+
+var PBQ_TEXTOS = [
+  'Agarrotarse, encogerse',
+  'Cerrar los ojos',
+  'Echarse y descansar',
+  'Evitar ciertas comidas o bebidas',
+  'Evitar el contacto con otras personas',
+  'Evitar la actividad física',
+  'Evitar luces brillantes',
+  'Evitar ruidos y sonidos fuertes',
+  'Faltar a la escuela o el trabajo',
+  'Gemir, llorar, suspirar',
+  'Hablarle a una persona del dolor',
+  'Hablarle a una persona varias veces del dolor',
+  'Hablarle a varias personas del dolor',
+  'Hacer gestos de dolor, entrecerrar los ojos',
+  'Reducir el dolor con masajes',
+  'Tocarse, presionarse la zona donde duele'
+];
+var PBQ_LABELS = ['Nunca','Algunas veces','La mitad de las veces','La mayoría de las veces','Siempre'];
+var PBQ_FACT_LABELS = {1:'QNV',2:'EVES',3:'EVAC',4:'EVES',5:'EVAC',6:'EVAC',7:'EVES',8:'EVES',9:'EVAC',10:'QNV',11:'QV',12:'QV',13:'QV',14:'QNV',15:'QNV',16:'QNV'};
+
+var BPI_TEXTOS_INT = [
+  {id:'3', label:'Ítem 3 — Dolor máximo en las últimas 24 h'},
+  {id:'4', label:'Ítem 4 — Dolor mínimo en las últimas 24 h'},
+  {id:'5', label:'Ítem 5 — Dolor promedio en las últimas 24 h'},
+  {id:'6', label:'Ítem 6 — Dolor actual'}
+];
+var BPI_TEXTOS_INF = [
+  {id:'9a', label:'9A — Actividad en general'},
+  {id:'9b', label:'9B — Estado de ánimo'},
+  {id:'9c', label:'9C — Capacidad de caminar'},
+  {id:'9d', label:'9D — Trabajo habitual (en casa o afuera)'},
+  {id:'9e', label:'9E — Relaciones con otras personas'},
+  {id:'9f', label:'9F — Sueño'},
+  {id:'9g', label:'9G — Capacidad de disfrutar la vida'}
+];
+
+// ── Render ítems con escala horizontal (estilo ASRS/WURS) ──
+function dolorRenderItemsEscala(contId, textos, prefix, labels, factores) {
+  var cont = document.getElementById(contId);
+  if (!cont) return;
+  textos.forEach(function(txt, idx) {
+    var n = idx + parseInt(prefix.replace(/\D/g,'')) || idx + 1;
+    // Calcular número correcto según el contenedor
+    var num = idx + 1;
+    if (prefix === 'csq-') {
+      // Los bloques de CSQ empiezan en distintos números
+      var base = parseInt(cont.id.replace('csq-items-','').replace('a','1').replace('b','14').replace('c','27'));
+      num = base + idx;
+    } else {
+      num = idx + 1;
+    }
+    var fact = factores ? factores[num] : null;
+    var factBadge = '';
+    if (fact) {
+      var factColors = {
+        'R':'#7c4daa','I':'#c62828','M':'#c0602b',
+        'QNV':'#c62828','EVES':'#1565c0','QV':'#2e7d32','EVAC':'#c0602b'
+      };
+      factBadge = '<span style="font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;background:'+(factColors[fact]||'#888')+'22;color:'+(factColors[fact]||'#888')+';border:0.5px solid '+(factColors[fact]||'#888')+'44;margin-left:6px;">'+fact+'</span>';
+    }
+    var radios = labels.map(function(lbl, j) {
+      return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:'+Math.max(52, Math.round(280/labels.length))+'px;">'+
+        '<input type="radio" name="'+prefix+num+'" value="'+j+'" style="accent-color:var(--accent);">'+
+        '<span style="font-size:0.68rem;color:var(--muted);text-align:center;line-height:1.2;">'+lbl+'</span></label>';
+    }).join('');
+    var d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);';
+    d.innerHTML = '<span style="font-size:0.87rem;flex:1;line-height:1.45;"><strong style="color:var(--accent);margin-right:4px;">'+(prefix==='csq-'?(Object.keys(CSQ_TEXTOS).indexOf(txt)+1 || num):num)+'.</strong> '+txt+factBadge+'</span>'+
+      '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div>';
     cont.appendChild(d);
+  });
+}
+
+function dolorRenderItemsBPI(contId, items, max, nota) {
+  var cont = document.getElementById(contId);
+  if (!cont) return;
+  var labels = Array.from({length: max+1}, function(_,i){ return String(i); });
+  items.forEach(function(item) {
+    var radios = labels.map(function(lbl, j) {
+      return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:26px;">'+
+        '<input type="radio" name="bpi_'+item.id+'" value="'+j+'" style="accent-color:var(--accent);" onchange="bpiActualizarRadio()">'+
+        '<span style="font-size:0.65rem;color:var(--muted);">'+lbl+'</span></label>';
+    }).join('');
+    var d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;';
+    d.innerHTML = '<span style="font-size:0.87rem;flex:1;min-width:160px;line-height:1.4;">'+item.label+'</span>'+
+      '<div style="display:flex;gap:2px;align-items:flex-end;flex-wrap:wrap;">'+
+      '<span style="font-size:0.65rem;color:var(--muted);margin-right:2px;">Sin dolor</span>'+
+      radios+
+      '<span style="font-size:0.65rem;color:var(--muted);margin-left:2px;">Máximo</span>'+
+      '</div>'+
+      '<input type="hidden" id="bpi-'+item.id+'">';
+    cont.appendChild(d);
+  });
+  if (nota) {
+    var p = document.createElement('p');
+    p.style.cssText = 'font-size:0.76rem;color:var(--muted);margin-top:8px;font-style:italic;';
+    p.textContent = nota;
+    cont.appendChild(p);
   }
 }
 
@@ -7083,62 +7239,150 @@ function iniciarPCS(){
   document.getElementById('pcs-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('pcs-form').style.display='block';
   document.getElementById('pcs-resultado').style.display='none';
-  if(!document.getElementById('pcs-1')) dolorRenderItems('pcs-items-wrap',1,13,'pcs-',4);
+  var cont = document.getElementById('pcs-items-wrap');
+  if (cont && !document.querySelector('[name="pcs-1"]')) {
+    cont.innerHTML = '';
+    dolorRenderItemsEscala('pcs-items-wrap', PCS_TEXTOS, 'pcs-', PCS_LABELS, PCS_FACTORES);
+  }
 }
+
 function iniciarCSQ(){
   document.getElementById('csq-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('csq-form').style.display='block';
   document.getElementById('csq-resultado').style.display='none';
-  if(!document.getElementById('csq-1')){
-    dolorRenderItems('csq-items-a',1,13,'csq-',6);
-    dolorRenderItems('csq-items-b',14,26,'csq-',6);
-    dolorRenderItems('csq-items-c',27,39,'csq-',6);
+  if (!document.querySelector('[name="csq-1"]')) {
+    ['csq-items-a','csq-items-b','csq-items-c'].forEach(function(id){ document.getElementById(id).innerHTML=''; });
+    // Bloque A: ítems 1-13
+    var contA = document.getElementById('csq-items-a');
+    CSQ_TEXTOS.slice(0,13).forEach(function(txt, idx) {
+      var num = idx + 1;
+      _csqRenderItem(contA, num, txt);
+    });
+    // Bloque B: ítems 14-26
+    var contB = document.getElementById('csq-items-b');
+    CSQ_TEXTOS.slice(13,26).forEach(function(txt, idx) {
+      var num = idx + 14;
+      _csqRenderItem(contB, num, txt);
+    });
+    // Bloque C: ítems 27-39
+    var contC = document.getElementById('csq-items-c');
+    CSQ_TEXTOS.slice(26,39).forEach(function(txt, idx) {
+      var num = idx + 27;
+      _csqRenderItem(contC, num, txt);
+    });
   }
 }
+
+function _csqRenderItem(cont, num, txt) {
+  // Obtener a qué subescala pertenece
+  var subMap = {
+    CAT:[2,12,16,23,31,32], CDI:[4,6,8,9,11,35], AUT:[3,10,25,27,1],
+    IDO:[5,7,20,24,28,29,38], RDO:[15,17,18,22,30,33],
+    ESP:[13,14,26], FEP:[19,21,37], DIC:[34,36,39]
+  };
+  var factColors = {CAT:'#c62828',CDI:'#1565c0',AUT:'#2e7d32',IDO:'#7c4daa',RDO:'#00838f',ESP:'#f57f17',FEP:'#6a1b9a',DIC:'#37474f'};
+  var fact = null;
+  Object.keys(subMap).forEach(function(k){ if(subMap[k].indexOf(num)!==-1) fact=k; });
+  var factBadge = fact ? '<span style="font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;background:'+(factColors[fact]||'#888')+'22;color:'+(factColors[fact]||'#888')+';border:0.5px solid '+(factColors[fact]||'#888')+'44;margin-left:6px;">'+fact+'</span>' : '';
+  var radios = CSQ_LABELS.map(function(lbl, j) {
+    return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:52px;">'+
+      '<input type="radio" name="csq-'+num+'" value="'+j+'" style="accent-color:var(--accent);">'+
+      '<span style="font-size:0.65rem;color:var(--muted);text-align:center;line-height:1.2;">'+lbl+'</span></label>';
+  }).join('');
+  var d = document.createElement('div');
+  d.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);';
+  d.innerHTML = '<span style="font-size:0.87rem;flex:1;line-height:1.45;"><strong style="color:var(--accent);margin-right:4px;">'+num+'.</strong> '+txt+factBadge+'</span>'+
+    '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div>';
+  cont.appendChild(d);
+}
+
 function iniciarPBQ(){
   document.getElementById('pbq-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('pbq-form').style.display='block';
   document.getElementById('pbq-resultado').style.display='none';
-  if(!document.getElementById('pbq-1')) dolorRenderItems('pbq-items-wrap',1,16,'pbq-',20);
+  var cont = document.getElementById('pbq-items-wrap');
+  if (cont && !document.querySelector('[name="pbq-1"]')) {
+    cont.innerHTML = '';
+    PBQ_TEXTOS.forEach(function(txt, idx) {
+      var num = idx + 1;
+      var fact = PBQ_FACT_LABELS[num];
+      var factColors = {QNV:'#c62828',EVES:'#1565c0',QV:'#2e7d32',EVAC:'#c0602b'};
+      var factBadge = '<span style="font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;background:'+(factColors[fact]||'#888')+'22;color:'+(factColors[fact]||'#888')+';border:0.5px solid '+(factColors[fact]||'#888')+'44;margin-left:6px;">'+fact+'</span>';
+      var radios = PBQ_LABELS.map(function(lbl, j) {
+        return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:64px;">'+
+          '<input type="radio" name="pbq-'+num+'" value="'+j+'" style="accent-color:var(--accent);">'+
+          '<span style="font-size:0.68rem;color:var(--muted);text-align:center;line-height:1.2;">'+lbl+'</span></label>';
+      }).join('');
+      var d = document.createElement('div');
+      d.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);';
+      d.innerHTML = '<span style="font-size:0.87rem;flex:1;line-height:1.45;"><strong style="color:var(--accent);margin-right:4px;">'+num+'.</strong> '+txt+factBadge+'</span>'+
+        '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div>';
+      cont.appendChild(d);
+    });
+  }
 }
+
 function iniciarBPI(){
   document.getElementById('bpi-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('bpi-form').style.display='block';
   document.getElementById('bpi-resultado').style.display='none';
+  if (!document.querySelector('[name="bpi_3"]')) {
+    dolorRenderItemsBPI('bpi-int-wrap', BPI_TEXTOS_INT, 10, null);
+    dolorRenderItemsBPI('bpi-inf-wrap', BPI_TEXTOS_INF, 10, null);
+    // Renderizar ítem 8 — alivio (0–100 en pasos de 10)
+    var alivioWrap = document.getElementById('bpi-alivio-wrap');
+    if (alivioWrap) {
+      [0,10,20,30,40,50,60,70,80,90,100].forEach(function(v) {
+        var lbl = document.createElement('label');
+        lbl.style.cssText = 'display:inline-flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:32px;';
+        lbl.innerHTML = '<input type="radio" name="bpi_8" value="'+v+'" style="accent-color:var(--accent);" onchange="bpiActualizarRadio()">'+
+          '<span style="font-size:0.68rem;color:var(--muted);">'+v+'%</span>';
+        alivioWrap.appendChild(lbl);
+      });
+    }
+  }
+}
+
+// Sincronizar radio → hidden input para BPI
+function bpiActualizarRadio() {
+  bpiActualizar();
 }
 
 // ── Limpiar ──
-function limpiarPCS(){ for(var i=1;i<=13;i++){var e=document.getElementById('pcs-'+i);if(e)e.value='';} }
-function limpiarCSQ(){ for(var i=1;i<=39;i++){var e=document.getElementById('csq-'+i);if(e)e.value='';} }
-function limpiarPBQ(){ for(var i=1;i<=16;i++){var e=document.getElementById('pbq-'+i);if(e)e.value='';} }
+function limpiarPCS(){ if(!confirm('¿Limpiar todos los ítems?'))return; for(var i=1;i<=13;i++){var s=document.querySelector('[name="pcs-'+i+'"]:checked');if(s)s.checked=false;} }
+function limpiarCSQ(){ if(!confirm('¿Limpiar todos los ítems?'))return; for(var i=1;i<=39;i++){var s=document.querySelector('[name="csq-'+i+'"]:checked');if(s)s.checked=false;} }
+function limpiarPBQ(){ if(!confirm('¿Limpiar todos los ítems?'))return; for(var i=1;i<=16;i++){var s=document.querySelector('[name="pbq-'+i+'"]:checked');if(s)s.checked=false;} }
 function limpiarBPI(){
+  if(!confirm('¿Limpiar todos los ítems?'))return;
   ['3','4','5','6','8','9a','9b','9c','9d','9e','9f','9g'].forEach(function(x){
-    var e=document.getElementById('bpi-'+x);if(e)e.value='';
+    var s=document.querySelector('[name="bpi_'+x+'"]:checked');if(s)s.checked=false;
   });
   var e7=document.getElementById('bpi-7');if(e7)e7.value='';
+  var el=document.getElementById('bpi-live');if(el)el.innerHTML='';
 }
 
-// ── bpiActualizar (live) ──
+// ── bpiActualizar (live) — lee desde radio buttons ──
 function bpiActualizar(){
-  var ii=[dolorGV('bpi-3'),dolorGV('bpi-4'),dolorGV('bpi-5'),dolorGV('bpi-6')].filter(function(x){return x!==null;});
-  var fi=[dolorGV('bpi-9a'),dolorGV('bpi-9b'),dolorGV('bpi-9c'),dolorGV('bpi-9d'),dolorGV('bpi-9e'),dolorGV('bpi-9f'),dolorGV('bpi-9g')].filter(function(x){return x!==null;});
+  var ii=[bpiGV('3'),bpiGV('4'),bpiGV('5'),bpiGV('6')].filter(function(x){return x!==null;});
+  var fi=[bpiGV('9a'),bpiGV('9b'),bpiGV('9c'),bpiGV('9d'),bpiGV('9e'),bpiGV('9f'),bpiGV('9g')].filter(function(x){return x!==null;});
   var el=document.getElementById('bpi-live');
   if(!el) return;
   var html='';
-  if(ii.length){var int=parseFloat((ii.reduce(function(a,x){return a+x;},0)/ii.length).toFixed(1));var niv=dolorColorBPI(int,'int');html+='Intensidad: <strong style="color:'+niv.c+'">'+int+'/10 — '+niv.txt+'</strong> · ';}
-  if(fi.length){var inf=parseFloat((fi.reduce(function(a,x){return a+x;},0)/fi.length).toFixed(1));var niv2=dolorColorBPI(inf,'inf');html+='Interferencia: <strong style="color:'+niv2.c+'">'+inf+'/10 — '+niv2.txt+'</strong>';}
+  if(ii.length){var intv=parseFloat((ii.reduce(function(a,x){return a+x;},0)/ii.length).toFixed(1));var niv=dolorColorBPI(intv,'int');html+='Intensidad: <strong style="color:'+niv.c+'">'+intv+'/10 — '+niv.txt+'</strong> · ';}
+  if(fi.length){var infv=parseFloat((fi.reduce(function(a,x){return a+x;},0)/fi.length).toFixed(1));var niv2=dolorColorBPI(infv,'inf');html+='Interferencia: <strong style="color:'+niv2.c+'">'+infv+'/10 — '+niv2.txt+'</strong>';}
   el.innerHTML=html;
 }
 
 // ── Calcular PCS ──
 function calcularPCS(){
-  var vals={};for(var i=1;i<=13;i++)vals[i]=dolorGV('pcs-'+i);
-  var filled=Object.values(vals).filter(function(x){return x!==null;});
-  if(!filled.length){alert('Ingresá al menos un ítem.');return;}
+  var vals={};for(var i=1;i<=13;i++)vals[i]=dolorGVR('pcs-',i);
+  var sinResp=Object.values(vals).filter(function(x){return x===null;}).length;
+  if(sinResp===13){alert('Ingresá al menos un ítem.');return;}
+  if(sinResp>0&&!confirm('Hay '+sinResp+' ítem(s) sin respuesta. ¿Continuar de todos modos?'))return;
   var rum=[1,8,9,10].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
   var mag=[3,6,13].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
   var ind=[2,4,5,7,11,12].reduce(function(a,n){return vals[n]!==null?a+vals[n]:a;},0);
-  var tot=filled.reduce(function(a,x){return a+x;},0);
+  var tot=Object.values(vals).filter(function(x){return x!==null;}).reduce(function(a,x){return a+x;},0);
   var niv,nc;
   if(tot>=30){niv='Elevada / Clínicamente significativa';nc='#c0392b';}
   else if(tot>=20){niv='Moderada';nc='#D85A30';}
@@ -7170,7 +7414,7 @@ function calcularCSQ(){
   var subs=['CAT','CDI','AUT','IDO','RDO','ESP','FEP','DIC'];
   var res={};var det='';
   subs.forEach(function(s,ci){
-    var score=CSQ_CLAVES[s].reduce(function(a,n){return items[n]!==null?a+items[n]:a;},0);
+    var score=CSQ_CLAVES[s].reduce(function(a,n){var v=dolorGVR('csq-',n);return v!==null?a+v:a;},0);
     var z=dolorZC(score,CSQ_STATS[s].m,CSQ_STATS[s].s).toFixed(2);
     var pc=dolorToPc(score,ci,CSQ_PCT);
     var niv=dolorColorNiv(pc);
@@ -7192,7 +7436,7 @@ function calcularCSQ(){
 
 // ── Calcular PBQ ──
 function calcularPBQ(){
-  var items={};for(var i=1;i<=16;i++)items[i]=dolorGV('pbq-'+i);
+  var items={};for(var i=1;i<=16;i++)items[i]=dolorGVR('pbq-',i);
   var filled=Object.values(items).filter(function(x){return x!==null;});
   if(!filled.length){alert('Ingresá al menos un ítem.');return;}
   var subs=['QNV','EVES','QV','EVAC'];
@@ -7222,12 +7466,13 @@ function calcularPBQ(){
 
 // ── Calcular BPI ──
 function calcularBPI(){
-  var ii=[dolorGV('bpi-3'),dolorGV('bpi-4'),dolorGV('bpi-5'),dolorGV('bpi-6')].filter(function(x){return x!==null;});
-  var fi=[dolorGV('bpi-9a'),dolorGV('bpi-9b'),dolorGV('bpi-9c'),dolorGV('bpi-9d'),dolorGV('bpi-9e'),dolorGV('bpi-9f'),dolorGV('bpi-9g')].filter(function(x){return x!==null;});
-  if(!ii.length&&!fi.length){alert('Ingresá al menos un ítem.');return;}
+  var ii=[bpiGV('3'),bpiGV('4'),bpiGV('5'),bpiGV('6')].filter(function(x){return x!==null;});
+  var fi=[bpiGV('9a'),bpiGV('9b'),bpiGV('9c'),bpiGV('9d'),bpiGV('9e'),bpiGV('9f'),bpiGV('9g')].filter(function(x){return x!==null;});
+  if(!ii.length&&!fi.length){alert('Ingresá al menos un ítem de intensidad o interferencia.');return;}
   var intVal=ii.length?parseFloat((ii.reduce(function(a,x){return a+x;},0)/ii.length).toFixed(2)):null;
   var infVal=fi.length?parseFloat((fi.reduce(function(a,x){return a+x;},0)/fi.length).toFixed(2)):null;
-  var alivio=dolorGV('bpi-8');
+  var alivioS=document.querySelector('[name="bpi_8"]:checked');
+  var alivio=alivioS?parseFloat(alivioS.value):null;
   var trat=document.getElementById('bpi-7')?document.getElementById('bpi-7').value.trim():'';
   window._bpiData={int:intVal,inf:infVal,alivio:alivio,trat:trat};
   var det='';
