@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.5</div>
     </div>
   </aside>
 
@@ -2925,6 +2925,13 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           <div class="card-title">Datos de la evaluación</div>
           <div class="form-grid-3">
             <div class="field"><label>Paciente *</label><select id="asrs-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Grupo etario *</label>
+              <select id="asrs-grupo">
+                <option value="">— Seleccionar —</option>
+                <option value="18-50">18–50 años</option>
+                <option value=">50">&gt;50 años</option>
+              </select>
+            </div>
             <div class="field"><label>Fecha</label><input type="date" id="asrs-fecha"></div>
           </div>
         </div>
@@ -6474,32 +6481,28 @@ function guardarWaisiv() {
     if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
   }).catch(function(){toast('Error al guardar','error');});
 }
-// guardarAsrs (TDAH)
-function guardarAsrs() {
-  if(!SESSION)return;
-  var pacId=document.getElementById('asrs-paciente').value;
-  var fecha=document.getElementById('asrs-fecha').value;
-  if(!pacId){alert('Seleccioná un paciente.');return;}
-  var sel=document.querySelector('input[name="asrs_1"]:checked');
-  if(!sel){alert('Calculá el resultado antes de guardar.');return;}
-  var asrsParteA=0;
-  for(var i=1;i<=6;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s&&parseInt(s.value)>=2)asrsParteA++;}
-  var asrsTotal=0;
-  for(var i=1;i<=18;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s)asrsTotal+=parseInt(s.value);}
-  supaFetch('/rest/v1/psico_resultados','POST',{
-    user_id:SESSION.user.id,paciente_id:pacId,test:'ASRS-V1.1',fecha:fecha,
-    puntaje_total:asrsTotal,categoria:asrsParteA>=4?'Positivo para TDAH':'Negativo para TDAH',
-    datos:{parte_a_positivos:asrsParteA,total_18:asrsTotal}
-  },SESSION.access_token).then(function(){
-    cargarResultados();toast('✓ Resultado guardado','success');
-    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
-    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
-    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
-  }).catch(function(){toast('Error al guardar','error');});
-}
-
-
 // ══ ASRS-V1.1 ════════════════════════════════════════════════════════════════
+// Baremos Scandar MG (2021) — Rev Neurol 72(3):77-84 — Tabla V — n=1.173, Argentina
+var ASRS_BAR = {
+  '18-50': {
+    I: {p1:3,p5:6,p10:8,p15:9,p20:10,p25:11,p30:12,p35:13,p50:15,p55:16,p60:17,p65:17,p70:18,p75:19,p80:20,p85:21,p90:23,p95:25,p99:29, M:15.14, DS:5.63},
+    H: {p1:3,p5:5,p10:7,p15:8,p20:9,p25:10,p30:11,p35:12,p50:14,p55:15,p60:16,p65:17,p70:18,p75:19,p80:20,p85:21,p90:23,p95:26,p99:31, M:14.81, DS:6.18},
+    T: {p1:8,p5:13.5,p10:17,p15:19,p20:20,p25:22,p30:24,p35:25,p50:29,p55:31,p60:33,p65:34,p70:35,p75:37,p80:39,p85:41,p90:44,p95:48,p99:56, M:30.22, DS:10.5}
+  },
+  '>50': {
+    I: {p1:3.05,p5:7,p10:9.5,p15:11,p20:12,p25:12.25,p30:13.5,p35:14,p50:15.5,p55:16,p60:17,p65:17,p70:18.5,p75:19,p80:20,p85:21,p90:24,p95:26.75,p99:29, M:16, DS:5.35},
+    H: {p1:2.15,p5:6,p10:8,p15:9,p20:11,p25:12,p30:13,p35:14,p50:16,p55:16.75,p60:18,p65:19,p70:19.5,p75:21,p80:22,p85:24,p90:27.5,p95:29,p99:32.95, M:16.6, DS:6.78},
+    T: {p1:7.25,p5:14,p10:18.5,p15:22,p20:24,p25:26,p30:26.5,p35:27.75,p50:31,p55:32,p60:36,p65:37.25,p70:39,p75:39,p80:40,p85:44,p90:47.5,p95:53.75,p99:61.85, M:32.19, DS:11.05}
+  }
+};
+function asrsBuscarPc(score, bar) {
+  var pts=[{p:1,v:bar.p1},{p:5,v:bar.p5},{p:10,v:bar.p10},{p:15,v:bar.p15},{p:20,v:bar.p20},{p:25,v:bar.p25},{p:30,v:bar.p30},{p:35,v:bar.p35},{p:50,v:bar.p50},{p:55,v:bar.p55},{p:60,v:bar.p60},{p:65,v:bar.p65},{p:70,v:bar.p70},{p:75,v:bar.p75},{p:80,v:bar.p80},{p:85,v:bar.p85},{p:90,v:bar.p90},{p:95,v:bar.p95},{p:99,v:bar.p99}];
+  var pc=1;
+  for(var i=0;i<pts.length;i++){ if(score>=pts[i].v) pc=pts[i].p; else break; }
+  return pc;
+}
+var ASRS_INATENCION    = [1,2,3,4,7,8,9,10,11,12];
+var ASRS_HIPERACTIVIDAD= [5,6,13,14,15,16,17,18];
 var ASRS_ITEMS = [
   {n:1,txt:'¿Con qué frecuencia tiene dificultad para acabar con los detalles finales de un proyecto?',sec:'A'},
   {n:2,txt:'¿Con qué frecuencia tiene dificultad para ordenar las cosas cuando hace una tarea que requiere organización?',sec:'A'},
@@ -6547,34 +6550,79 @@ function limpiarAsrs() {
   ASRS_ITEMS.forEach(function(it){ var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked'); if(s) s.checked=false; });
 }
 function calcularAsrs() {
-  var parteA=0, parteB=0, positivos=0;
+  var grupo=document.getElementById('asrs-grupo').value;
+  if(!grupo){toast('Seleccioná el grupo etario.','error');return;}
+  var positivos=0,scoreI=0,scoreH=0,scoreT=0;
   for(var i=1;i<=6;i++){
     var s=document.querySelector('input[name="asrs_'+i+'"]:checked');
     if(!s){toast('Completá todos los ítems de la Sección A.','error');return;}
-    var v=parseInt(s.value);
-    parteA+=v;
-    var umbral=i<=3?2:3;
+    var v=parseInt(s.value); var umbral=i<=3?2:3;
     if(v>=umbral)positivos++;
   }
-  for(var i=7;i<=18;i++){
-    var s=document.querySelector('input[name="asrs_'+i+'"]:checked');
-    if(s) parteB+=parseInt(s.value);
-  }
+  ASRS_ITEMS.forEach(function(it){
+    var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked');
+    if(!s)return; var v=parseInt(s.value); scoreT+=v;
+    if(ASRS_INATENCION.indexOf(it.n)!==-1)scoreI+=v;
+    if(ASRS_HIPERACTIVIDAD.indexOf(it.n)!==-1)scoreH+=v;
+  });
   var positivo=positivos>=4;
-  var detalleHtml='<div class="detalle-item"><div class="detalle-num" style="color:'+(positivo?'#c0392b':'#3a7a3a')+'">'+positivos+'/6</div><div class="detalle-lbl">Ítems A positivos</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+parteA+'</div><div class="detalle-lbl">Suma Secc. A</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+parteB+'</div><div class="detalle-lbl">Suma Secc. B</div></div>';
-  var interp='<p><strong>Sección A:</strong> '+positivos+'/6 ítems positivos. '+
+  var bar=ASRS_BAR[grupo];
+  var pcI=asrsBuscarPc(scoreI,bar.I),pcH=asrsBuscarPc(scoreH,bar.H),pcT=asrsBuscarPc(scoreT,bar.T);
+  var zI=parseFloat(((scoreI-bar.I.M)/bar.I.DS).toFixed(2));
+  var zH=parseFloat(((scoreH-bar.H.M)/bar.H.DS).toFixed(2));
+  var zT=parseFloat(((scoreT-bar.T.M)/bar.T.DS).toFixed(2));
+  function pcCol(pc){return pc>=90?'#c0392b':pc>=75?'#D85A30':pc>=40?'#555':'#2e7a4f';}
+  function pcLbl(pc){return pc>=90?'Muy elevado':pc>=75?'Elevado':pc>=40?'Promedio':'Bajo';}
+  var detalleHtml=
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+(positivo?'#c0392b':'#3a7a3a')+'">'+positivos+'/6</div><div class="detalle-lbl">Ítems A positivos</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+pcCol(pcI)+'">Pc '+pcI+'</div><div class="detalle-lbl">ASRS-I ('+scoreI+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+pcCol(pcH)+'">Pc '+pcH+'</div><div class="detalle-lbl">ASRS-H ('+scoreH+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+pcCol(pcT)+'">Pc '+pcT+'</div><div class="detalle-lbl">ASRS-T ('+scoreT+')</div></div>';
+  var interp=
+    '<p><strong>Sección A (Screener):</strong> '+positivos+'/6 ítems positivos. '+
     (positivo?'<strong style="color:#c0392b;">Screening positivo para TDAH</strong> (≥4 positivos).':'<strong style="color:#3a7a3a;">Screening negativo</strong> (< 4 positivos).')+'</p>'+
-    '<p><strong>Sección B (orientativa):</strong> Suma total 18 ítems = '+parteB+'/72.</p>'+
-    '<p style="font-size:0.8rem;color:var(--muted);">Kessler RC et al. (2005). Psychological Medicine. OMS-ASRS-V1.1.</p>';
+    '<p><strong>Inatención (ASRS-I):</strong> '+scoreI+' · Z='+zI+' · <span style="color:'+pcCol(pcI)+'">Pc '+pcI+' — '+pcLbl(pcI)+'</span></p>'+
+    '<p><strong>Hiperactividad (ASRS-H):</strong> '+scoreH+' · Z='+zH+' · <span style="color:'+pcCol(pcH)+'">Pc '+pcH+' — '+pcLbl(pcH)+'</span></p>'+
+    '<p><strong>Total (ASRS-T):</strong> '+scoreT+' · Z='+zT+' · <span style="color:'+pcCol(pcT)+'">Pc '+pcT+' — '+pcLbl(pcT)+'</span></p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Scandar MG (2021) Rev Neurol 72(3):77-84 — n=1.173, Argentina. Grupo: '+grupo+' años.</p>';
   document.getElementById('asrs-detalle').innerHTML=detalleHtml;
   document.getElementById('asrs-interp').innerHTML=interp;
   document.getElementById('asrs-form').style.display='none';
   document.getElementById('asrs-resultado').style.display='block';
 }
-
-// ══ WURS-25 ════════════════════════════════════════════════════════════════
+function guardarAsrs() {
+  if(!SESSION)return;
+  var pacId=document.getElementById('asrs-paciente').value;
+  var fecha=document.getElementById('asrs-fecha').value;
+  var grupo=document.getElementById('asrs-grupo').value;
+  if(!pacId){alert('Seleccioná un paciente.');return;}
+  if(!grupo){alert('Seleccioná el grupo etario.');return;}
+  var sel=document.querySelector('input[name="asrs_1"]:checked');
+  if(!sel){alert('Calculá el resultado antes de guardar.');return;}
+  var positivos=0,scoreI=0,scoreH=0,scoreT=0;
+  for(var i=1;i<=6;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s&&parseInt(s.value)>=(i<=3?2:3))positivos++;}
+  ASRS_ITEMS.forEach(function(it){
+    var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked');
+    if(!s)return; var v=parseInt(s.value); scoreT+=v;
+    if(ASRS_INATENCION.indexOf(it.n)!==-1)scoreI+=v;
+    if(ASRS_HIPERACTIVIDAD.indexOf(it.n)!==-1)scoreH+=v;
+  });
+  var bar=ASRS_BAR[grupo];
+  var pcI=asrsBuscarPc(scoreI,bar.I),pcH=asrsBuscarPc(scoreH,bar.H),pcT=asrsBuscarPc(scoreT,bar.T);
+  var zT=parseFloat(((scoreT-bar.T.M)/bar.T.DS).toFixed(2));
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,test:'ASRS-V1.1',fecha:fecha,
+    puntaje_total:scoreT,puntaje_z:zT,
+    categoria:positivos>=4?'Positivo para TDAH':'Negativo para TDAH',
+    datos:{parte_a_positivos:positivos,total_18:scoreT,scoreI:scoreI,scoreH:scoreH,scoreT:scoreT,pcI:pcI,pcH:pcH,pcT:pcT,grupo:grupo}
+  },SESSION.access_token).then(function(){
+    cargarResultados();toast('✓ Resultado guardado','success');
+    var btnAll=document.querySelectorAll('.vista.active .btn-primary');
+    var btn=btnAll.length?btnAll[btnAll.length-1]:null;
+    if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
+  }).catch(function(){toast('Error al guardar','error');});
+}
+// ══ WURS-25 ══// ══ WURS-25 ════════════════════════════════════════════════════════════════
 var WURS_ITEMS_LIST = [
   'Activo/a, no paraba nunca','Problemas de concentración, me distraía con facilidad',
   'Ansioso/a, preocupado/a','Nervioso/a, inquieto/a','Poco atento/a, en las nubes',
@@ -6622,14 +6670,26 @@ function calcularWurs() {
     if(!s){toast('Completá todos los ítems.','error');return;}
     total+=parseInt(s.value);
   }
-  var clf,col,badge;
-  if(total>=46){clf='Significativo para síntomas en la infancia';col='var(--red)';badge='bg-grave';}
-  else if(total>=36){clf='Probable historia de síntomas infantiles';col='var(--orange)';badge='bg-moderada';}
-  else{clf='Sin síntomas significativos en la infancia';col='var(--green)';badge='bg-minima';}
-  var detalleHtml='<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+total+'</div><div class="detalle-lbl">Total /75</div></div>';
-  var interp='<p><strong>Puntaje total WURS-25: '+total+'/75.</strong> '+clf+'.</p>'+
-    '<p>Cortes: &lt;36 sin síntomas · 36–45 probable · ≥46 significativo.</p>'+
-    '<p style="font-size:0.8rem;color:var(--muted);">Scandar MG (2021). Rev Neurol. Versión rioplatense.</p>';
+  // Percentiles Scandar 2021 — Tabla V — WURS-25 — n=1.173, Argentina
+  var WURS_PCT=[{p:1,v:3},{p:5,v:6},{p:10,v:8},{p:15,v:11},{p:20,v:12},{p:25,v:14},{p:30,v:15},{p:35,v:17},{p:50,v:21},{p:55,v:22},{p:60,v:24},{p:65,v:26},{p:70,v:29},{p:75,v:31},{p:80,v:34},{p:85,v:37},{p:90,v:41},{p:95,v:49},{p:99,v:62.6}];
+  var pc=1;
+  for(var j=0;j<WURS_PCT.length;j++){if(total>=WURS_PCT[j].v)pc=WURS_PCT[j].p;else break;}
+  var zW=parseFloat(((total-23.5)/13.16).toFixed(2));
+  function pcCol(p){return p>=90?'#c0392b':p>=75?'#D85A30':p>=40?'#555':'#2e7a4f';}
+  function pcLbl(p){return p>=90?'Muy elevado':p>=75?'Elevado':p>=40?'Promedio':'Bajo';}
+  var clf,col;
+  if(total>=46){clf='Significativo para síntomas en la infancia';col='var(--red)';}
+  else if(total>=36){clf='Probable historia de síntomas infantiles';col='var(--orange)';}
+  else{clf='Sin síntomas significativos en la infancia';col='var(--green)';}
+  var detalleHtml=
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+col+'">'+total+'</div><div class="detalle-lbl">Total /75</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+pcCol(pc)+'">Pc '+pc+'</div><div class="detalle-lbl">Percentil</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num" style="color:'+pcCol(pc)+'">'+(zW>=0?'+':'')+zW+'</div><div class="detalle-lbl">Z</div></div>';
+  var interp=
+    '<p><strong>Puntaje total WURS-25: '+total+'/75.</strong> '+clf+'.</p>'+
+    '<p>Percentil: <span style="color:'+pcCol(pc)+'"><strong>Pc '+pc+' — '+pcLbl(pc)+'</strong></span> · Z='+zW+'</p>'+
+    '<p>Cortes diagnósticos: &lt;36 sin síntomas · 36–45 probable TDAH infantil · ≥46 altamente compatible.</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Scandar MG (2021) Rev Neurol 72(3):77-84 — n=1.173, Argentina. M=23.5, DS=13.16.</p>';
   document.getElementById('wurs-detalle').innerHTML=detalleHtml;
   document.getElementById('wurs-interp').innerHTML=interp;
   document.getElementById('wurs-form').style.display='none';
@@ -6642,10 +6702,15 @@ function guardarWurs() {
   if(!pacId){toast('Seleccioná un paciente.','error');return;}
   var total=0;
   for(var i=1;i<=25;i++){var s=document.querySelector('input[name="wurs_'+i+'"]:checked');if(s)total+=parseInt(s.value);}
+  var WURS_PCT=[{p:1,v:3},{p:5,v:6},{p:10,v:8},{p:15,v:11},{p:20,v:12},{p:25,v:14},{p:30,v:15},{p:35,v:17},{p:50,v:21},{p:55,v:22},{p:60,v:24},{p:65,v:26},{p:70,v:29},{p:75,v:31},{p:80,v:34},{p:85,v:37},{p:90,v:41},{p:95,v:49},{p:99,v:62.6}];
+  var pc=1;
+  for(var j=0;j<WURS_PCT.length;j++){if(total>=WURS_PCT[j].v)pc=WURS_PCT[j].p;else break;}
+  var zW=parseFloat(((total-23.5)/13.16).toFixed(2));
   var cat=total>=46?'Significativo para síntomas en la infancia':total>=36?'Probable historia síntomas infantiles':'Sin síntomas significativos en la infancia';
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'WURS-25',fecha:fecha,
-    puntaje_total:total,categoria:cat,datos:{total:total}
+    puntaje_total:total,puntaje_z:zW,categoria:cat,
+    datos:{total:total,pc:pc,z:zW}
   },SESSION.access_token).then(function(){
     cargarResultados();toast('✓ Resultado guardado','success');
     var btnAll=document.querySelectorAll('.vista.active .btn-primary');
