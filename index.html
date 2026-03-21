@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.2</div>
     </div>
   </aside>
 
@@ -4163,8 +4163,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   // ── Render sección Dolor ──
   function renderDolor(list) {
     if (!list.length) return '';
-    var thS = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 8px;';
-    var tdS = 'font-size:10px;border-bottom:0.5px solid #ecdece;padding:5px 8px;vertical-align:middle;';
+    var thS = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:left;border:0.5px solid #555;';
+    var tdS = 'font-size:10px;border-bottom:0.5px solid #ddd;padding:5px 8px;vertical-align:middle;';
 
     // Barrita de percentil (0–100)
     function pcBar(pc, color) {
@@ -4237,7 +4237,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var nivColor = tot >= 30 ? '#c0392b' : tot >= 20 ? '#D85A30' : '#2e7a4f';
         var nivLabel = tot >= 30 ? 'Clínicamente significativa' : tot >= 20 ? 'Moderada' : 'Baja';
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PCS · Escala de Catastrofización del Dolor</div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin-bottom:4px;padding:3px 8px;border-left:3px solid #555;">PCS · Escala de Catastrofización del Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Subescala</th>'+
@@ -4282,7 +4282,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       else if (r.test === 'PBQ') {
         var subsNombres = {QNV:'Quejas no verbales', EVES:'Evitación de situaciones', QV:'Quejas verbales', EVAC:'Evitación de actividades'};
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PBQ · Cuestionario de Conductas de Dolor</div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin-bottom:4px;padding:3px 8px;border-left:3px solid #555;">PBQ · Cuestionario de Conductas de Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Subescala</th>'+
@@ -4315,7 +4315,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           FEP:'Focalización en el problema', DIC:'Distracción conductual'
         };
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">CSQ · Cuestionario de Estrategias de Afrontamiento del Dolor</div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin-bottom:4px;padding:3px 8px;border-left:3px solid #555;">CSQ · Cuestionario de Estrategias de Afrontamiento del Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Estrategia</th>'+
@@ -4345,7 +4345,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var alivio = d.alivio != null ? d.alivio : null;
         var trat   = d.trat || '';
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">BPI · Inventario Breve de Dolor</div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin-bottom:4px;padding:3px 8px;border-left:3px solid #555;">BPI · Inventario Breve de Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Índice</th>'+
@@ -4408,257 +4408,157 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   function renderCL(list) {
     if (!list.length) return '';
-    var thS = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
-    var tdS = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;vertical-align:top;';
+    // Estilos comunes
+    var thDark = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:left;border:0.5px solid #555;';
+    var thDarkC = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:center;border:0.5px solid #555;';
+    var tdR = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
+    var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
+    var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
 
-    function catColor(cat) {
-      var cl = (cat||'').toLowerCase();
-      if (cl.match(/grave|severo|severa/))   return '#c0392b';
-      if (cl.match(/moderado|moderada/))     return '#c0602b';
-      if (cl.match(/alto|positivo/))         return '#c0392b';
-      if (cl.match(/leve/))                  return '#b8760a';
-      return '#3d2410';
+    function rowBg(i) { return i%2===0?'#fff':'#f7f7f7'; }
+
+    function clHeader(title) {
+      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #555;padding-left:6px;">'+title+'</div>';
     }
 
-    var rows = list.map(function(r) {
-      var d = r.datos || {};
-      var corte = CORTES[r.test];
+    var html = '';
 
-      // ── STAI: 2 renglones con barritas ──
+    list.forEach(function(r) {
+      var d = r.datos || {};
+
+      // ── STAI ──
       if (r.test === 'STAI') {
-        var stE   = d.estado  != null ? d.estado  : null;
-        var stR   = d.rasgo   != null ? d.rasgo   : null;
-        var catE  = d.cat_estado || '';
-        var catR  = d.cat_rasgo  || '';
-        var MAX_S = 60;
-        function staiBar(val, label, cat) {
-          if (val === null) return '';
-          var pct = Math.min(100,(val/MAX_S)*100);
-          var cut = (25/MAX_S)*100;
-          var col = val>=45?'#c0392b': val>=35?'#c0602b': val>=25?'#b8760a':'#3a7a3a';
-          return '<tr style="border-bottom:0.5px solid #f0e8de;">'+
-            '<td style="padding:3px 7px;font-size:10px;color:#5a3520;font-style:italic;">'+label+'</td>'+
-            '<td style="padding:3px 7px;text-align:center;font-family:monospace;font-weight:700;font-size:11px;">'+val+'</td>'+
-            '<td style="padding:3px 7px;text-align:center;">'+
-            '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:110px;display:inline-block;">'+
-            '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
-            '<div style="position:absolute;left:'+cut.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
-            '</div></td>'+
-            '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥25</td>'+
-            '<td style="padding:3px 7px;font-weight:700;font-size:10px;color:#222;">'+cat+'</td>'+
-            '<td style="padding:3px 7px;"></td>'+
-            '</tr>';
-        }
-        var staiLabel = '<tr><td colspan="6" style="padding:2px 7px 0;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;border-bottom:0.5px solid #f0e8de;">STAI · Inventario de Ansiedad Estado-Rasgo</td></tr>';
-        return staiLabel+staiBar(stE,'Estado',catE)+staiBar(stR,'Rasgo',catR);
+        var stE = d.estado != null ? d.estado : null;
+        var stR = d.rasgo  != null ? d.rasgo  : null;
+        var catE = d.cat_estado || '—';
+        var catR = d.cat_rasgo  || '—';
+        html += clHeader('STAI · Inventario de Ansiedad Estado-Rasgo');
+        html += '<table style="width:100%;border-collapse:collapse;margin-bottom:6px;"><thead><tr>'+
+          '<th style="'+thDark+'min-width:160px;">Escala</th>'+
+          '<th style="'+thDarkC+'">Puntaje</th>'+
+          '<th style="'+thDark+'">Interpretación</th>'+
+          '</tr></thead><tbody>';
+        if (stE !== null) html += '<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Estado</td><td style="'+tdRC+'">'+stE+'/60</td><td style="'+tdRI+'">'+catE+'</td></tr>';
+        if (stR !== null) html += '<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Rasgo</td><td style="'+tdRC+'">'+stR+'/60</td><td style="'+tdRI+'">'+catR+'</td></tr>';
+        html += '</tbody></table>';
+        return;
       }
 
-      // ── SCL-90-R: tabla estilo imagen de referencia ──
+      // ── SCL-90-R (mantiene su tabla interna con colores) ──
       if (r.test === 'SCL-90-R') {
         var subs = d.subescalas || {};
-        var SCL_DESC = {
-          som:'Malestares físicos percibidos (cardiovasculares, gastrointestinales)',
-          obs:'Pensamientos, impulsos o acciones vivenciados como no deseados',
-          sen:'Sentimientos de inferioridad e inadecuación respecto a otros',
-          dep:'Ánimo disfórico, falta de motivación, desesperanza',
-          ans:'Nerviosismo, tensión, ataques de pánico, miedos',
-          hos:'Enojo, irritabilidad y afectos negativos de hostilidad',
-          fob:'Miedo irracional y desproporcionado a estímulos específicos',
-          par:'Suspicacia, desconfianza y temor a pérdida de autonomía',
-          psi:'Soledad, estilo esquizoide, posibles experiencias de desrealización'
-        };
         var dimFull = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
         var dimNombres = {som:'Somatizaciones',obs:'Obsesiones y Compulsiones',sen:'Sensitividad Interpersonal',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad Fóbica',par:'Ideación Paranoide',psi:'Psicoticismo'};
-        function sclCelBg(t) {
-          if (t==null) return '#f5f5f5';
-          if (t>=80) return '#e74c3c';
-          if (t>=65) return '#f39c12';
-          return '#f5f5f5';
-        }
-        function sclCelColor(t) {
-          if (t==null) return '#aaa';
-          if (t>=65) return '#fff';
-          return '#3d2410';
-        }
-        var thStyle = 'padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;';
-        var thLStyle = 'padding:4px 10px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:left;';
-        var html = '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
-        // Header dimensiones primarias
-        html += '<tr><td colspan="3" style="background:#5a3520;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #c09070;">Dimensiones primarias</td>'+
-          '<th style="'+thStyle+'">Ptos brutos</th>'+
-          '<th style="'+thStyle+'">T</th>'+
-          '<th style="'+thStyle+'">Estado</th></tr>';
-        dimFull.forEach(function(k) {
+        function sclCelBg(t) { if(t==null)return'#f5f5f5';if(t>=80)return'#e74c3c';if(t>=65)return'#f39c12';return'#f5f5f5'; }
+        function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#3d2410'; }
+        html += clHeader('SCL-90-R · Inventario de Síntomas de Derogatis');
+        html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
+        html += '<tr><td colspan="3" style="background:#444;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Dimensiones primarias</td>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">Ptos brutos</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">T</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">Estado</th></tr>';
+        dimFull.forEach(function(k,i) {
           var t = subs[k] ? subs[k].t : null;
-          var bg = sclCelBg(t);
-          var fc = sclCelColor(t);
+          var bg = sclCelBg(t); var fc = sclCelColor(t);
           var avg = subs[k] && subs[k].avg != null ? parseFloat(subs[k].avg).toFixed(2) : '—';
           var estado = t==null?'—': t>=80?'Muy elevado': t>=65?'Elevado': t>=55?'Moderado':'Normal';
-          html += '<tr>'+
+          html += '<tr style="background:'+rowBg(i)+'">'+
             '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">'+dimNombres[k]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+avg+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
-            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td>'+
-            '</tr>';
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td></tr>';
         });
-        // Escalas globales
-        html += '<tr><td colspan="6" style="background:#5a3520;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #c09070;">Escalas globales</td></tr>';
+        html += '<tr><td colspan="6" style="background:#444;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Escalas globales</td></tr>';
         var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
-        var tsp = d.tsp != null ? d.tsp : null;
-        var imsp = d.imsp != null ? parseFloat(d.imsp).toFixed(2) : null;
         [['IGS — Índice de Severidad Global', d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—', igt],
-         ['TSP — Total Síntomas Positivos', tsp!=null?tsp:'—', d.tsp_t!=null?d.tsp_t:null],
-         ['IMSP — Índice Malestar Positivo', imsp!=null?imsp:'—', d.imsp_t!=null?d.imsp_t:null]
-        ].forEach(function(row){
-          var t = row[2];
-          var bg = sclCelBg(t);
-          var fc = sclCelColor(t);
+         ['TSP — Total Síntomas Positivos', d.tsp!=null?d.tsp:'—', d.tsp_t!=null?d.tsp_t:null],
+         ['IMSP — Índice Malestar Positivo', d.imsp!=null?parseFloat(d.imsp).toFixed(2):'—', d.imsp_t!=null?d.imsp_t:null]
+        ].forEach(function(row,i) {
+          var t = row[2]; var bg = sclCelBg(t); var fc = sclCelColor(t);
           var estado = t==null?'—': t>=80?'Muy elevado': t>=65?'Elevado': t>=55?'Moderado':'Normal';
-          html += '<tr>'+
+          html += '<tr style="background:'+rowBg(i)+'">'+
             '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;font-weight:600;">'+row[0]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+row[1]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
-            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t!=null&&t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td>'+
-            '</tr>';
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t!=null&&t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td></tr>';
         });
         html += '</table>';
-        // Leyenda colores
-        html += '<div style="display:flex;gap:10px;font-size:8px;color:#7a4e38;margin-bottom:4px;">'+
-          '<span><span style="display:inline-block;width:10px;height:10px;background:#e74c3c;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>T≥80 Muy elevado</span>'+
-          '<span><span style="display:inline-block;width:10px;height:10px;background:#f39c12;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>T≥65 Elevado</span>'+
-          '<span style="color:#9a7a60;">Punto de riesgo clínico: T≥63 (p90) · Baremos: Casullo & Pérez (2008) · Fecha: '+(r.fecha||'')+'</span>'+
-          '</div>';
-        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">SCL-90-R</td>'+
-          '<td style="'+tdS+'" colspan="4">'+html+'</td></tr>';
+        html += '<div style="font-size:8px;color:#666;margin-bottom:6px;">T≥65 clínicamente significativo · Baremos: Casullo & Pérez (2008)</div>';
+        return;
       }
 
-      // ── MBI-HSS: tabla con 3 subescalas ──
+      // ── MBI-HSS (mantiene su tabla interna con colores) ──
       if (r.test === 'MBI-HSS') {
-        var mbiSubescalas = [
-          { key:'CE', label:'Cansancio Emocional',  val:d.CE, cat:d.CE_cat, corte:'≥27', dir:'alto' },
-          { key:'DP', label:'Despersonalización',   val:d.DP, cat:d.DP_cat, corte:'≥10', dir:'alto' },
-          { key:'RP', label:'Realización Personal', val:d.RP, cat:d.RP_cat, corte:'≤33', dir:'bajo' }
+        var mbiSubs = [
+          {key:'CE',label:'Cansancio Emocional',  val:d.CE, cat:d.CE_cat, corte:'≥27', dir:'alto'},
+          {key:'DP',label:'Despersonalización',   val:d.DP, cat:d.DP_cat, corte:'≥10', dir:'alto'},
+          {key:'RP',label:'Realización Personal', val:d.RP, cat:d.RP_cat, corte:'≤33', dir:'bajo'}
         ];
-        function mbiColor(cat, dir) {
-          if (!cat) return '#888';
-          var cl = cat.toLowerCase();
-          if (dir === 'bajo') return cl==='bajo'?'#c0392b': cl==='moderado'?'#c0602b':'#3a7a3a';
-          return cl==='alto'?'#c0392b': cl==='moderado'?'#c0602b':'#3a7a3a';
-        }
-        function mbiBg(cat, dir) {
-          if (!cat) return '#f5f5f5';
-          var cl = cat.toLowerCase();
-          if (dir === 'bajo') return cl==='bajo'?'#e74c3c': cl==='moderado'?'#f39c12':'#f5f5f5';
-          return cl==='alto'?'#e74c3c': cl==='moderado'?'#f39c12':'#f5f5f5';
-        }
-        function mbiFc(cat) {
-          if (!cat) return '#3d2410';
-          var cl = cat.toLowerCase();
-          return (cl==='alto'||cl==='bajo'||cl==='moderado') && cl!=='bajo'?'#fff':'#3d2410';
-        }
-        var mbiHtml = '<table style="border-collapse:collapse;width:100%;font-size:10px;">';
-        mbiHtml += '<tr>'+
-          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:left;">Subescala</th>'+
-          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Puntaje</th>'+
-          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Corte</th>'+
-          '<th style="padding:3px 8px;font-size:8px;font-weight:700;color:#fff;background:#7a4e38;border:0.5px solid #c09070;text-align:center;">Nivel</th>'+
-          '</tr>';
-        mbiSubescalas.forEach(function(sub) {
-          var bg = mbiBg(sub.cat, sub.dir);
-          var fc = bg!=='#f5f5f5'?'#fff':'#3d2410';
-          mbiHtml += '<tr>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">'+sub.label+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+(sub.val!=null?sub.val:'—')+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-size:9px;color:#9a7a60;">'+sub.corte+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-weight:700;background:'+bg+';color:'+fc+';font-size:9px;">'+(sub.cat||'—')+'</td>'+
-            '</tr>';
+        function mbiBg(cat,dir){if(!cat)return'#f5f5f5';var cl=cat.toLowerCase();if(dir==='bajo')return cl==='bajo'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';return cl==='alto'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';}
+        function mbiFc(bg){return bg==='#f5f5f5'?'#3d2410':'#fff';}
+        html += clHeader('MBI-HSS · Inventario de Burnout de Maslach');
+        html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;"><thead><tr>'+
+          '<th style="'+thDark+'">Subescala</th>'+
+          '<th style="'+thDarkC+'">Puntaje</th>'+
+          '<th style="'+thDarkC+'">Corte</th>'+
+          '<th style="'+thDark+'">Nivel</th></tr></thead><tbody>';
+        mbiSubs.forEach(function(sub,i){
+          var bg=mbiBg(sub.cat,sub.dir); var fc=mbiFc(bg);
+          html += '<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+sub.label+'</td>'+
+            '<td style="'+tdRC+'">'+(sub.val!=null?sub.val:'—')+'</td>'+
+            '<td style="'+tdRC+';font-family:inherit;font-size:9px;color:#555;">'+sub.corte+'</td>'+
+            '<td style="padding:4px 8px;border:0.5px solid #ddd;font-weight:700;background:'+bg+';color:'+fc+';font-size:9px;">'+(sub.cat||'—')+'</td></tr>';
         });
-        var catGlobal = r.categoria || '—';
-        var catCol = catGlobal.toLowerCase().includes('burnout')?'#c0392b': catGlobal.toLowerCase().includes('riesgo')?'#c0602b':'#3a7a3a';
-        mbiHtml += '<tr><td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:8.5px;font-weight:700;color:#7a4e38;">Conclusión global</td>'+
-          '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:'+catCol+';font-size:9px;">'+catGlobal+'</td></tr>';
-        mbiHtml += '</table>';
-        mbiHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:3px;">CE alto≥27 · DP alto≥10 · RP bajo≤33 · Fecha: '+(r.fecha||'')+'</div>';
-        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">MBI-HSS</td>'+
-          '<td style="'+tdS+'" colspan="4">'+mbiHtml+'</td></tr>';
+        var catG = r.categoria||'—';
+        html += '<tr style="background:#f0f0f0;"><td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:8.5px;font-weight:700;">Conclusión global</td>'+
+          '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;font-size:9px;">'+catG+'</td></tr>';
+        html += '</tbody></table>';
+        html += '<div style="font-size:8px;color:#666;margin-bottom:6px;">CE alto≥27 · DP alto≥10 · RP bajo≤33</div>';
+        return;
       }
 
-      // ── ASRS: secciones A y B con barras diferenciadas ──
+      // ── ASRS-V1.1 ──
       if (r.test === 'ASRS-V1.1') {
         var secA  = d.parte_a_positivos != null ? d.parte_a_positivos : null;
-        var sI    = d.scoreI != null ? d.scoreI : null;
-        var sH    = d.scoreH != null ? d.scoreH : null;
-        var sT    = d.scoreT != null ? d.scoreT : (d.total_18 != null ? d.total_18 : null);
-        var zI    = d.zI    != null ? d.zI    : null;
-        var zH    = d.zH    != null ? d.zH    : null;
-        var zT    = d.zT    != null ? d.zT    : null;
-        var pcI   = d.pcI   != null ? d.pcI   : null;
-        var pcH   = d.pcH   != null ? d.pcH   : null;
-        var pcT   = d.pcT   != null ? d.pcT   : null;
-        var grupo = d.grupo || '';
-        function pcLblA(pc) { return pc>=90?'Muy elevado':pc>=75?'Elevado':pc>=40?'Promedio':pc>=16?'Bajo':'Muy bajo'; }
-        var positivo = secA != null && secA >= 4;
-        var asrsHtml = '<table style="border-collapse:collapse;width:100%;font-size:10px;">';
-        asrsHtml += '<tr><td colspan="4" style="background:#f0e8dc;padding:3px 8px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;border:0.5px solid #d8c8b0;">ASRS-V1.1 · Escala de Autoreporte de TDAH'+(grupo?' · Grupo: '+grupo+' años':'')+'</td></tr>';
-        // Sección A
-        if (secA !== null) {
-          asrsHtml += '<tr>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Sección A (Screener Kessler)</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+secA+'/6</td>'+
-            '<td colspan="2" style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+
-            (positivo?'Screening positivo (≥4 positivos)':'Screening negativo (< 4 positivos)')+'</td></tr>';
-        }
-        // Subdominios con Z y Pc
-        if (sI !== null) {
-          asrsHtml += '<tr><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Inatención (ASRS-I)</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sI+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zI!=null?(zI>=0?'+':'')+zI+' · Pc '+(pcI||'—'):'—')+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcI!=null?pcLblA(pcI):'—')+'</td></tr>';
-        }
-        if (sH !== null) {
-          asrsHtml += '<tr><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Hiperactividad/Impulsividad (ASRS-H)</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sH+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zH!=null?(zH>=0?'+':'')+zH+' · Pc '+(pcH||'—'):'—')+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcH!=null?pcLblA(pcH):'—')+'</td></tr>';
-        }
-        if (sT !== null) {
-          asrsHtml += '<tr style="background:#faf3ea;"><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;font-weight:600;">Total (ASRS-T)</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sT+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zT!=null?(zT>=0?'+':'')+zT+' · Pc '+(pcT||'—'):'—')+'</td>'+
-            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcT!=null?pcLblA(pcT):'—')+'</td></tr>';
-        }
-        asrsHtml += '</table>';
-        asrsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Baremos: Scandar MG (2021) Rev Neurol 72(3) — n=1.173, Argentina.</div>';
-        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">ASRS-V1.1</td>'+
-          '<td style="'+tdS+'" colspan="4">'+asrsHtml+'</td></tr>';
+        var sI=d.scoreI!=null?d.scoreI:null, sH=d.scoreH!=null?d.scoreH:null, sT=d.scoreT!=null?d.scoreT:(d.total_18!=null?d.total_18:null);
+        var zI=d.zI!=null?d.zI:null, zH=d.zH!=null?d.zH:null, zT=d.zT!=null?d.zT:null;
+        var pcI=d.pcI!=null?d.pcI:null, pcH=d.pcH!=null?d.pcH:null, pcT=d.pcT!=null?d.pcT:null;
+        var grupo=d.grupo||'';
+        function pcLblA(pc){return pc>=90?'Muy elevado':pc>=75?'Elevado':pc>=40?'Promedio':pc>=16?'Bajo':'Muy bajo';}
+        var positivo = secA!=null && secA>=4;
+        html += clHeader('ASRS-V1.1 · Escala de Autodetección de TDAH en Adultos'+(grupo?' · '+grupo+' años':''));
+        html += '<table style="width:100%;border-collapse:collapse;margin-bottom:4px;"><thead><tr>'+
+          '<th style="'+thDark+'min-width:200px;">Subescala</th>'+
+          '<th style="'+thDarkC+'">Puntaje</th>'+
+          '<th style="'+thDarkC+'">Z · Pc</th>'+
+          '<th style="'+thDark+'">Interpretación</th></tr></thead><tbody>';
+        if (secA!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Sección A — Screener Kessler</td><td style="'+tdRC+'">'+secA+'/6</td><td style="'+tdRC+';font-family:inherit;">—</td><td style="'+tdRI+'">'+(positivo?'Screening positivo (≥4)':'Screening negativo')+'</td></tr>';
+        if (sI!==null)   html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Inatención (ASRS-I)</td><td style="'+tdRC+'">'+sI+'</td><td style="'+tdRC+'">'+(zI!=null?(zI>=0?'+':'')+zI:'—')+(pcI!=null?' · Pc '+pcI:'')+'</td><td style="'+tdRI+'">'+(pcI!=null?pcLblA(pcI):'—')+'</td></tr>';
+        if (sH!==null)   html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Hiperactividad/Impulsividad (ASRS-H)</td><td style="'+tdRC+'">'+sH+'</td><td style="'+tdRC+'">'+(zH!=null?(zH>=0?'+':'')+zH:'—')+(pcH!=null?' · Pc '+pcH:'')+'</td><td style="'+tdRI+'">'+(pcH!=null?pcLblA(pcH):'—')+'</td></tr>';
+        if (sT!==null)   html+='<tr style="background:#f0f0f0;"><td style="'+tdR+'font-weight:700;">Total (ASRS-T)</td><td style="'+tdRC+'">'+sT+'</td><td style="'+tdRC+'">'+(zT!=null?(zT>=0?'+':'')+zT:'—')+(pcT!=null?' · Pc '+pcT:'')+'</td><td style="'+tdRI+'">'+(pcT!=null?pcLblA(pcT):'—')+'</td></tr>';
+        html += '</tbody></table>';
+        html += '<div style="font-size:8px;color:#666;margin-bottom:6px;">Baremos: Scandar MG (2021) Rev Neurol 72(3) — n=1.173, Argentina.</div>';
+        return;
       }
 
-      // ── Resto de tests clínicos ──
-      var pb = '';
-      switch(r.test) {
-        case 'MBI-HSS': pb = ''; break; // se maneja abajo
-        case 'ASRS-V1.1': pb = ''; break; // se maneja abajo
-        default: pb = r.puntaje_total!==null?r.puntaje_total:'—';
-      }
-      var barVal = r._barVal != null ? r._barVal : r.puntaje_total;
-      var barHtml = (corte && barVal!==null) ? clBar(barVal, corte.max, corte.cut) : '';
+      // ── Resto de tests clínicos (BDI, PHQ-9, GAD-7, SPAI-B, WURS-25) ──
+      var corte = CORTES[r.test];
+      var pb = r.puntaje_total != null ? r.puntaje_total : '—';
       var cat = r.categoria || '—';
-      return '<tr>'+
-        '<td style="'+tdS+'font-weight:500;">'+r.test+'</td>'+
-        '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+pb+'</td>'+
-        '<td style="'+tdS+'text-align:center;">'+barHtml+'</td>'+
-        (corte?'<td style="'+tdS+'text-align:center;font-size:9px;color:#555;">≥'+corte.cut+'</td>':'<td style="'+tdS+'">—</td>')+
-        '<td style="'+tdS+'font-weight:700;color:#222;">'+cat+'</td>'+
-        '</tr>';
-    }).join('');
-    return '<table style="width:100%;border-collapse:collapse;">'+
-      '<thead><tr>'+
-      '<th style="'+thS+'min-width:120px;">Test</th>'+
-      '<th style="'+thS+'text-align:center;">Puntaje</th>'+
-      '<th style="'+thS+'text-align:center;min-width:110px;">Perfil</th>'+
-      '<th style="'+thS+'text-align:center;">Corte</th>'+
-      '<th style="'+thS+'">Resultado</th>'+
-      '</tr></thead><tbody>'+rows+'</tbody></table>';
+      var puntajeStr = pb;
+      if (corte) puntajeStr = pb + ' / ' + corte.max;
+      html += clHeader(r.test + (corte ? ' · Corte ≥' + corte.cut : ''));
+      html += '<table style="width:100%;border-collapse:collapse;margin-bottom:6px;"><thead><tr>'+
+        '<th style="'+thDark+'min-width:200px;">Test</th>'+
+        '<th style="'+thDarkC+'">Puntaje</th>'+
+        '<th style="'+thDark+'">Interpretación</th></tr></thead><tbody>'+
+        '<tr style="background:#fff;"><td style="'+tdR+'">'+r.test+'</td>'+
+        '<td style="'+tdRC+'">'+puntajeStr+'</td>'+
+        '<td style="'+tdRI+'">'+cat+'</td></tr>'+
+        '</tbody></table>';
+    });
+
+    return html;
   }
 
   // ── Logo SVG ──
