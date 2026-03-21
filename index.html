@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.3</div>
     </div>
   </aside>
 
@@ -7639,13 +7639,13 @@ function calcularPCS(){
 
 // ── Calcular CSQ ──
 function calcularCSQ(){
-  var items={};for(var i=1;i<=39;i++)items[i]=dolorGV('csq-'+i);
+  var items={};for(var i=1;i<=39;i++)items[i]=dolorGVR('csq-',i);
   var filled=Object.values(items).filter(function(x){return x!==null;});
   if(!filled.length){alert('Ingresá al menos un ítem.');return;}
   var subs=['CAT','CDI','AUT','IDO','RDO','ESP','FEP','DIC'];
   var res={};var det='';
   subs.forEach(function(s,ci){
-    var score=CSQ_CLAVES[s].reduce(function(a,n){var v=dolorGVR('csq-',n);return v!==null?a+v:a;},0);
+    var score=CSQ_CLAVES[s].reduce(function(a,n){var v=items[n];return v!==null?a+v:a;},0);
     var z=dolorZC(score,CSQ_STATS[s].m,CSQ_STATS[s].s).toFixed(2);
     var pc=dolorToPc(score,ci,CSQ_PCT);
     var niv=dolorColorNiv(pc);
