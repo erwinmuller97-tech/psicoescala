@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.6</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.7</div>
     </div>
   </aside>
 
@@ -3896,25 +3896,33 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   // ── Fila de tabla neuropsicológica ──
   // cols: Variable | PB | PT | M | DT | Z | -3..+3 grilla | Interpretación
+  function zLabel(z) {
+    if (z === null || z === undefined) return '—';
+    if (z >= 1.5)   return 'Superior';
+    if (z >= -0.5)  return 'Normal';
+    if (z >= -0.99) return 'Límite inferior normativo';
+    if (z >= -1.49) return 'Dificultad leve';
+    if (z >= -1.99) return 'Dificultad moderada';
+    return 'Dificultad elevada';
+  }
+
   function filaTabla(label, pb, m, ds, z, fecha, nota) {
     var t   = zToT(z);
-    var col = zColor(z);
-    var lbl = zLabel(z);
     var pbStr = pb!==null&&pb!==undefined ? String(parseFloat(pb).toFixed ? parseFloat(pb)%1===0 ? parseInt(pb) : parseFloat(pb).toFixed(1) : pb) : '—';
     var mStr  = m!==null&&m!==undefined   ? parseFloat(m).toFixed(2)  : '—';
     var dsStr = ds!==null&&ds!==undefined ? parseFloat(ds).toFixed(2) : '—';
     var zStr  = z!==null&&z!==undefined   ? (z>=0?'+':'')+parseFloat(z).toFixed(2) : '—';
     var tStr  = t!==null ? t : '—';
+    var lbl   = zLabel(z);
     return '<tr>'+
       '<td style="'+tdBase+'font-weight:500;">'+label+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+pbStr+'</td>'+
-      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;color:'+col+';">'+zStr+'</td>'+
+      '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+zStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;">'+tStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<span style="font-size:8px;color:#9a7a60;font-style:italic;">'+nota+'</span>':'<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+col+'22;color:'+col+';border:0.5px solid '+col+'44;white-space:nowrap;">'+lbl+'</span>')+'</td>'+
-      '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+( fecha||'')+'</td>'+
+      '<td style="'+tdBase+'font-size:9px;color:#222;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#9a7a60;">'+nota+'</em>':lbl)+'</td>'+
       '</tr>';
   }
 
@@ -3928,7 +3936,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<th style="'+thBase+'text-align:center;">DS</th>'+
       '<th style="'+thBase+'text-align:center;min-width:220px;">Perfil</th>'+
       '<th style="'+thBase+'">Interpretación</th>'+
-      '<th style="'+thBase+'text-align:center;">Fecha</th>'+
       '</tr></thead>';
   }
 
@@ -4568,25 +4575,25 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#9B6A50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#9B6A50" opacity="0.65"/></svg>';
 
   // ── Tabla escala de referencia Z ──
-  var refZ = '<div style="margin-top:14px;border:0.5px solid #e8d9c6;border-radius:6px;overflow:hidden;font-family:sans-serif;">'+
-    '<div style="background:#f5ede0;padding:4px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;">Escala de referencia</div>'+
-    '<table style="width:auto;font-size:9px;"><thead><tr>'+
-    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">Z</th>'+
-    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">T</th>'+
-    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;text-align:center;">Percentil</th>'+
-    '<th style="padding:3px 10px;background:#faf3ea;color:#7a4e38;border-bottom:0.5px solid #e8d9c6;">Interpretación</th>'+
+  var refZ = '<div style="margin-top:14px;border:0.5px solid #cccccc;border-radius:4px;overflow:hidden;font-family:sans-serif;">'+
+    '<div style="background:#eeeeee;padding:4px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;">Escala de referencia</div>'+
+    '<table style="width:auto;font-size:9px;border-collapse:collapse;"><thead><tr>'+
+    '<th style="padding:3px 10px;background:#f5f5f5;color:#333;border-bottom:0.5px solid #ccc;text-align:center;">Z</th>'+
+    '<th style="padding:3px 10px;background:#f5f5f5;color:#333;border-bottom:0.5px solid #ccc;text-align:center;">T</th>'+
+    '<th style="padding:3px 10px;background:#f5f5f5;color:#333;border-bottom:0.5px solid #ccc;text-align:center;">Percentil</th>'+
+    '<th style="padding:3px 10px;background:#f5f5f5;color:#333;border-bottom:0.5px solid #ccc;">Interpretación</th>'+
     '</tr></thead><tbody>'+
-    [['≥ +1.5','≥65','≥93','Muy superior / Excepcional','#1D9E75'],
-     ['≥ +1.0','≥60','≥84','Superior','#2e7a4f'],
-     ['-1.0 a +0.99','40–59','16–83','Dentro de lo esperado','#888780'],
-     ['-1.5 a -1.0','35–39','7–15','Dificultad leve','#BA7517'],
-     ['-2.0 a -1.5','30–34','2–6','Dificultad moderada','#D85A30'],
-     ['≤ -2.0','≤29','≤2','Dificultad severa','#E24B4A']].map(function(row,i){
-      return '<tr style="background:'+(i%2?'#faf9f7':'#fff')+';">'+
-        '<td style="padding:3px 10px;text-align:center;font-family:monospace;font-weight:700;color:'+row[4]+';">'+row[0]+'</td>'+
-        '<td style="padding:3px 10px;text-align:center;">'+row[1]+'</td>'+
-        '<td style="padding:3px 10px;text-align:center;">'+row[2]+'</td>'+
-        '<td style="padding:3px 10px;font-weight:600;color:'+row[4]+';">'+row[3]+'</td>'+
+    [['≥ +1.5','≥65','≥93','Superior'],
+     ['-0.5 a +1.49','40–64','31–93','Normal'],
+     ['-0.99 a -0.5','35–39','16–30','Límite inferior normativo'],
+     ['-1.49 a -1.0','33–35','7–15','Dificultad leve'],
+     ['-1.99 a -1.5','30–32','2–6','Dificultad moderada'],
+     ['≤ -2.0','≤29','≤2','Dificultad elevada']].map(function(row,i){
+      return '<tr style="background:'+(i%2?'#f9f9f9':'#fff')+';">'+
+        '<td style="padding:3px 10px;text-align:center;font-family:monospace;font-weight:700;color:#222;">'+row[0]+'</td>'+
+        '<td style="padding:3px 10px;text-align:center;color:#222;">'+row[1]+'</td>'+
+        '<td style="padding:3px 10px;text-align:center;color:#222;">'+row[2]+'</td>'+
+        '<td style="padding:3px 10px;color:#222;">'+row[3]+'</td>'+
         '</tr>';
     }).join('')+'</tbody></table></div>';
 
