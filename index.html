@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.8</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.9</div>
     </div>
   </aside>
 
@@ -4611,11 +4611,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     '</style></head><body><div class="pg">'+
 
     // ── Header ──
-    '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #5a3520;padding-bottom:10px;margin-bottom:14px;">'+
-    '<div style="display:flex;align-items:center;gap:10px;">'+logoSVG+
-    '<div><div style="font-size:17px;font-weight:700;color:#3d2410;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;">PsicoEscala</div>'+
-    '<div style="font-size:9px;color:#9a7a60;letter-spacing:1px;text-transform:uppercase;font-family:sans-serif;">Perfil de evaluación neuropsicológica · ActivaMente</div></div></div>'+
-    '<div style="text-align:right;font-family:sans-serif;font-size:9px;color:#9a7a60;">'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:14px;">'+
+    '<div style="font-family:Arial,sans-serif;">'+
+    '<div style="font-size:15px;font-weight:700;color:#111;letter-spacing:0.5px;">Lic. Erwin Müller Gudiño</div>'+
+    '<div style="font-size:10px;color:#444;margin-top:2px;">M.P. 13920</div>'+
+    '<div style="font-size:10px;color:#444;">27 de Abril 424 7C</div>'+
+    '<div style="font-size:10px;color:#444;">Tel. 351 350-0540</div>'+
+    '</div>'+
+    '<div style="text-align:right;font-family:Arial,sans-serif;font-size:9px;color:#666;">'+
     '<div>Generado: '+new Date().toLocaleDateString('es-AR')+'</div></div></div>'+
 
     // ── Ficha del paciente (con datos del informe) ──
@@ -4733,8 +4736,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // ── Nota y pie ──
 
-    '<div style="margin-top:8px;border-top:0.5px solid #d8c8b0;padding-top:6px;display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:8px;color:#b09070;">'+
-    '<div>PsicoEscala · ActivaMente · Plataforma de evaluación neuropsicológica</div>'+
+    '<div style="margin-top:8px;border-top:0.5px solid #ccc;padding-top:6px;display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:8px;color:#888;">'+
+    '<div>Lic. Erwin Müller Gudiño · M.P. 13920 · Tel. 351 350-0540</div>'+
     '<div>'+new Date().toLocaleDateString('es-AR')+'</div></div>'+
     '</div></body></html>';
 
