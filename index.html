@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.9</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.0</div>
     </div>
   </aside>
 
@@ -1603,7 +1603,70 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       </div>
     </div>
 
-
+<div class="vista" id="vista-stroop">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">Stroop · Test de Colores y Palabras</div></div>
+  <div id="stroop-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="stroop-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Grupo etario *</label>
+          <select id="stroop-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">18–45 años (Adultos Jóvenes)</option>
+            <option value="1">46–65 años (Adultos)</option>
+            <option value="2">66+ años (Adultos Mayores)</option>
+          </select>
+        </div>
+        <div class="field"><label>Escolaridad *</label>
+          <select id="stroop-escol">
+            <option value="">— Seleccionar —</option>
+            <option value="0">Baja (sin secundario completo)</option>
+            <option value="1">Media (secundario completo)</option>
+            <option value="2">Alta (universitario)</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="stroop-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Puntuaciones brutas</div>
+      <div class="form-grid-3">
+        <div class="field">
+          <label>P — Palabras (Lámina 1)</label>
+          <input type="number" id="stroop-p" min="0" max="200" placeholder="Total palabras leídas" oninput="stroopActualizar()">
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Total de palabras leídas correctamente</div>
+        </div>
+        <div class="field">
+          <label>C — Color (Lámina 2)</label>
+          <input type="number" id="stroop-c" min="0" max="200" placeholder="Total colores dichos" oninput="stroopActualizar()">
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Total de colores dichos correctamente</div>
+        </div>
+        <div class="field">
+          <label>PC — Palabra-Color (Lámina 3)</label>
+          <input type="number" id="stroop-pc" min="0" max="200" placeholder="Total colores lámina 3" oninput="stroopActualizar()">
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Total de colores dichos correctamente en lámina de interferencia</div>
+        </div>
+      </div>
+      <div id="stroop-live" style="margin-top:12px;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:0.85rem;min-height:32px;"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarStroop()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularStroop()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="stroop-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="stroop-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="stroop-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('stroop-resultado').style.display='none';document.getElementById('stroop-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarStroop()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
 
 <div class="vista" id="vista-scl90">
       <div class="back-btn" onclick="volverSector()">← Volver</div>
@@ -3609,7 +3672,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3807,7 +3870,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -3948,7 +4011,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var dominios = {
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
-      'ATENCIÓN':       ['WAIS-IV','TMT A-B'],
+      'ATENCIÓN':       ['WAIS-IV','TMT A-B','Stroop'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
       'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
@@ -4067,6 +4130,18 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</td>'+
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
             '</tr>';
+
+        } else if (testNombre === 'Stroop') {
+          var escolLabelsS = ['Baja','Media','Alta'];
+          var edadLabelsS  = ['18–45','46–65','66+'];
+          var gi2 = d.gi != null ? d.gi : null;
+          var ei2 = d.ei != null ? d.ei : null;
+          var notaS = gi2!==null && ei2!==null ? 'Grupo: '+edadLabelsS[gi2]+' · Escol. '+escolLabelsS[ei2] : null;
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
+          if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,      gi2!==null?STROOP_BAR.P.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.P.DS[gi2][ei2]:null,   d.zP,   r.fecha, notaS);
+          if (d.c    != null) rows += filaTabla('Color (C)',               d.c,      gi2!==null?STROOP_BAR.C.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.C.DS[gi2][ei2]:null,   d.zC,   r.fecha, notaS);
+          if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,     gi2!==null?STROOP_BAR.PC.M[gi2][ei2]:null,  gi2!==null?STROOP_BAR.PC.DS[gi2][ei2]:null,  d.zPC,  r.fecha, notaS);
+          if (d.interf != null) rows += filaTabla("Interferencia (PC\u2212PC')", d.interf, gi2!==null?STROOP_BAR.INT.M[gi2][ei2]:null, gi2!==null?STROOP_BAR.INT.DS[gi2][ei2]:null, d.zInt, r.fecha, notaS);
 
         } else {
           rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
@@ -4662,6 +4737,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'Rey Verbal':         'Test de Aprendizaje Auditivo-Verbal de Rey (RAVLT)',
         'BEM 144 Signoret':   'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
+        'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
         'IFS':                'INECO Frontal Screening (IFS)',
         'Test del Reloj (Cacho)': 'Test del Reloj — Método Cacho et al.',
         'BDI-II':             'Inventario de Depresión de Beck — Segunda Edición (BDI-II)',
@@ -4889,6 +4965,12 @@ function irSector(s) {
         '<div class="test-desc">Wisconsin Card Sorting Test — 64 cartas. Flexibilidad cognitiva y perseveración</div>' +
         '<span class="test-tag">Baremos Córdoba 2023</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'stroop\')">' +
+        '<div class="test-icon">🎨</div>' +
+        '<div class="test-nombre">Stroop</div>' +
+        '<div class="test-desc">Test de Colores y Palabras — Atención selectiva, inhibición e interferencia</div>' +
+        '<span class="test-tag">3 láminas · Galaverna et al. 2018</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'signoret\')">'+
         '<div class="test-icon">📖</div>'+
         '<div class="test-nombre">BEM 144 · Signoret</div>'+
@@ -4982,6 +5064,7 @@ function irTest(t) {
   if (t === 'reloj') iniciarReloj();
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
+  if (t === 'stroop') iniciarStroop();
 }
 
 function volverSector() {
@@ -7843,6 +7926,134 @@ function guardarDolor(tipo) {
 }
 
 // ── Auto-iniciar si hay sesión ─────────────────
+// ══ STROOP · Test de Colores y Palabras ══════════════════════════════════════
+// Baremos: Galaverna et al. (2018) — Datos normativos Stroop versión 3 colores, Argentina
+// Tabla 2: [edad0=18-45, edad1=46-65, edad2=66+] x [escol0=Baja, escol1=Media, escol2=Alta]
+var STROOP_BAR = {
+  P: {
+    M:  [[112.00, 101.18, 103.75],[78.10, 89.87, 99.38],[68.73, 83.83, 81.00]],
+    DS: [[14.62,  15.14,  15.89], [11.95, 11.48, 16.92],[22.38, 26.00, 21.57]]
+  },
+  C: {
+    M:  [[69.75, 73.59, 74.99],[59.50, 64.35, 74.08],[46.91, 55.67, 49.80]],
+    DS: [[9.53,  9.16,  12.52],[9.08,  9.56,  13.97],[17.33, 14.73, 8.67]]
+  },
+  PC: {
+    M:  [[34.25, 43.47, 47.43],[31.30, 35.30, 42.21],[17.64, 29.33, 24.00]],
+    DS: [[9.70,  14.25, 11.58],[6.76,  8.98,  13.72],[13.12, 15.21, 6.51]]
+  },
+  INT: {
+    // Interferencia = PC - PC' donde PC'=(P×C)/(P+C)
+    // Z de interferencia: mayor interferencia = más negativo = déficit
+    // Invertimos el signo del Z para que Z negativo = déficit (coherente con el perfil)
+    M:  [[-8.30, 1.06, 4.14],[-2.24, -1.97, -0.01],[-10.06, -3.81, -6.72]],
+    DS: [[7.77,  11.27, 9.40],[8.42,  7.04,  10.81],[9.92,   8.37,  9.16]]
+  }
+};
+
+function stroopActualizar() {
+  var p  = parseFloat(document.getElementById('stroop-p').value);
+  var c  = parseFloat(document.getElementById('stroop-c').value);
+  var pc = parseFloat(document.getElementById('stroop-pc').value);
+  var el = document.getElementById('stroop-live');
+  if (!el) return;
+  if (isNaN(p) || isNaN(c) || isNaN(pc)) { el.innerHTML = ''; return; }
+  var pcp = parseFloat(((p * c) / (p + c)).toFixed(2));
+  var interf = parseFloat((pc - pcp).toFixed(2));
+  el.innerHTML = 'PC\' = ('+p+' × '+c+') / ('+p+' + '+c+') = <strong>'+pcp+'</strong> · Interferencia = '+pc+' − '+pcp+' = <strong style="color:'+(interf<0?'var(--red)':'var(--green)')+'">'+interf+'</strong>';
+}
+
+function limpiarStroop() {
+  ['stroop-p','stroop-c','stroop-pc'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('stroop-live').innerHTML = '';
+}
+
+function iniciarStroop() {
+  document.getElementById('stroop-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('stroop-form').style.display = 'block';
+  document.getElementById('stroop-resultado').style.display = 'none';
+}
+
+function calcularStroop() {
+  var gi   = parseInt(document.getElementById('stroop-edad').value);
+  var ei   = parseInt(document.getElementById('stroop-escol').value);
+  if (isNaN(gi) || isNaN(ei)) { toast('Seleccioná grupo etario y escolaridad.','error'); return; }
+  var p  = parseFloat(document.getElementById('stroop-p').value);
+  var c  = parseFloat(document.getElementById('stroop-c').value);
+  var pc = parseFloat(document.getElementById('stroop-pc').value);
+  if (isNaN(p) || isNaN(c) || isNaN(pc)) { toast('Ingresá los tres puntajes brutos.','error'); return; }
+  if (p + c === 0) { toast('P y C no pueden ser cero.','error'); return; }
+
+  // PC' e Interferencia
+  var pcp   = parseFloat(((p * c) / (p + c)).toFixed(2));
+  var interf = parseFloat((pc - pcp).toFixed(2));
+
+  // Z para cada puntuación
+  function zS(bruto, tipo) {
+    var m  = STROOP_BAR[tipo].M[gi][ei];
+    var ds = STROOP_BAR[tipo].DS[gi][ei];
+    return parseFloat(((bruto - m) / ds).toFixed(2));
+  }
+  var zP   = zS(p,  'P');
+  var zC   = zS(c,  'C');
+  var zPC  = zS(pc, 'PC');
+  // Para interferencia: Z se calcula igual (interf − M) / DS
+  // Interferencia positiva = resistencia (buena), negativa = mayor interferencia (mala)
+  // Para el perfil mantenemos la lógica: Z positivo = mejor rendimiento
+  var mI   = STROOP_BAR.INT.M[gi][ei];
+  var dsI  = STROOP_BAR.INT.DS[gi][ei];
+  var zInt = parseFloat(((interf - mI) / dsI).toFixed(2));
+
+  var edadLabels = ['18–45 años','46–65 años','66+ años'];
+  var escolLabels = ['Baja','Media','Alta'];
+
+  function zLbl(z) { return z>=1.5?'Superior':z>=-0.5?'Normal':z>=-0.99?'Límite inferior normativo':z>=-1.49?'Dificultad leve':z>=-1.99?'Dificultad moderada':'Dificultad elevada'; }
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+(zP>=0?'+':'')+zP+'</div><div class="detalle-lbl">Z Palabras ('+p+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zC>=0?'+':'')+zC+'</div><div class="detalle-lbl">Z Color ('+c+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zPC>=0?'+':'')+zPC+'</div><div class="detalle-lbl">Z Pal-Color ('+pc+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zInt>=0?'+':'')+zInt+'</div><div class="detalle-lbl">Z Interferencia ('+interf+')</div></div>';
+
+  var interp =
+    '<p><strong>Grupo:</strong> '+edadLabels[gi]+' · Escolaridad '+escolLabels[ei]+'</p>'+
+    '<p><strong>PC\' (esperado sin interferencia):</strong> '+pcp+' · <strong>Interferencia:</strong> '+interf+' (PC − PC\')</p>'+
+    '<p><strong>Palabras (P='+p+'):</strong> Z='+zP+' — '+zLbl(zP)+'</p>'+
+    '<p><strong>Color (C='+c+'):</strong> Z='+zC+' — '+zLbl(zC)+'</p>'+
+    '<p><strong>Palabra-Color (PC='+pc+'):</strong> Z='+zPC+' — '+zLbl(zPC)+'</p>'+
+    '<p><strong>Interferencia ('+interf+'):</strong> Z='+zInt+' — '+zLbl(zInt)+'</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Galaverna et al. (2018). Test Stroop versión 3 colores — n=238, Argentina. Fórmula interferencia: PC\'=(P×C)/(P+C) · Interferencia=PC−PC\'</p>';
+
+  window._stroopData = { p:p, c:c, pc:pc, pcp:pcp, interf:interf, zP:zP, zC:zC, zPC:zPC, zInt:zInt, gi:gi, ei:ei };
+
+  document.getElementById('stroop-detalle').innerHTML = detalleHtml;
+  document.getElementById('stroop-interp').innerHTML  = interp;
+  document.getElementById('stroop-form').style.display = 'none';
+  document.getElementById('stroop-resultado').style.display = 'block';
+}
+
+function guardarStroop() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('stroop-paciente').value;
+  var fecha = document.getElementById('stroop-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._stroopData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._stroopData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'Stroop', fecha: fecha,
+    puntaje_total: d.pc,
+    puntaje_z: d.zInt,
+    categoria: d.zInt >= -0.5 ? 'Sin interferencia significativa' : d.zInt >= -1.49 ? 'Interferencia leve' : d.zInt >= -1.99 ? 'Interferencia moderada' : 'Interferencia severa',
+    datos: { p:d.p, c:d.c, pc:d.pc, pcp:d.pcp, interf:d.interf, zP:d.zP, zC:d.zC, zPC:d.zPC, zInt:d.zInt, gi:d.gi, ei:d.ei }
+  }, SESSION.access_token).then(function(){
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); }, 1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
 window.addEventListener('DOMContentLoaded', function() {
   // Siempre empezar por el gate. La sesión se restaura solo después del login manual.
   actualizarSaludo();
