@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.3</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.4</div>
     </div>
   </aside>
 
@@ -3807,9 +3807,18 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td': DO.indexOf(t)!==-1?'do':'cl'; }
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
-  var testsCl = datos.filter(function(r){ return tipo(r.test)==='cl'; });
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
   var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
+  // Orden fijo para clínica: BDI → STAI → GAD-7 → PHQ-9 → SPAI-B → SCL-90-R → MBI-HSS
+  var CL_ORDEN = ['BDI-II','STAI','GAD-7','PHQ-9','SPAI-B','SCL-90-R','MBI-HSS'];
+  var clRaw = datos.filter(function(r){ return tipo(r.test)==='cl'; });
+  var testsCl = CL_ORDEN.map(function(nombre){
+    return clRaw.filter(function(r){ return r.test===nombre; });
+  }).reduce(function(a,b){ return a.concat(b); },[]);
+  // Agregar cualquier test clínico no contemplado en el orden fijo al final
+  clRaw.forEach(function(r){
+    if(CL_ORDEN.indexOf(r.test)===-1) testsCl.push(r);
+  });
 
   var conAlter  = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z < -1.5; }).length;
   var conRiesgo = datos.filter(function(r){ return r.puntaje_z!==null && r.puntaje_z>=-1.5 && r.puntaje_z<-1.0; }).length;
@@ -4684,10 +4693,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
-    (testsCl.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
-      renderCL(testsCl) : '')+
-
     (testsTd.length ?
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">TDAH</div>'+
       renderCL(testsTd) : '')+
@@ -4695,6 +4700,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     (testsDo.length ?
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
       renderDolor(testsDo) : '')+
+
+    (testsCl.length ?
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
+      renderCL(testsCl) : '')+
 
     (testsNp.length ? refZ : '')+
 
