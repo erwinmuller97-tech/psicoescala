@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.7</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.8</div>
     </div>
   </aside>
 
@@ -4162,7 +4162,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var nivColor = tot >= 30 ? '#c0392b' : tot >= 20 ? '#D85A30' : '#2e7a4f';
         var nivLabel = tot >= 30 ? 'Clínicamente significativa' : tot >= 20 ? 'Moderada' : 'Baja';
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PCS · Escala de Catastrofización del Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PCS · Escala de Catastrofización del Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Subescala</th>'+
@@ -4186,7 +4186,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
             '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:3px;"></div>'+
             '</div></td>'+
-            '<td style="'+tdS+'color:'+col+';font-weight:600;">'+lbl+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+lbl+'</td></tr>';
         });
         // Fila total
         if (tot != null) {
@@ -4198,7 +4198,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<div style="position:absolute;left:0;width:'+totPct.toFixed(1)+'%;top:0;bottom:0;background:'+nivColor+';border-radius:3px;"></div>'+
             '<div style="position:absolute;left:'+(30/52*100).toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;opacity:0.7;"></div>'+
             '</div></td>'+
-            '<td style="'+tdS+'color:'+nivColor+';font-weight:700;">'+nivLabel+' <span style="font-size:8px;font-weight:400;">(corte ≥30)</span></td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+nivLabel+' <span style="font-size:8px;font-weight:400;">(corte ≥30)</span></td></tr>';
         }
         html += '</tbody></table></div>';
       }
@@ -4207,7 +4207,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       else if (r.test === 'PBQ') {
         var subsNombres = {QNV:'Quejas no verbales', EVES:'Evitación de situaciones', QV:'Quejas verbales', EVAC:'Evitación de actividades'};
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PBQ · Cuestionario de Conductas de Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">PBQ · Cuestionario de Conductas de Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Subescala</th>'+
@@ -4227,7 +4227,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           html += '<tr><td style="'+tdS+'">'+subsNombres[key]+'</td>'+
             '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
             '<td style="'+tdS+'text-align:center;">'+(pc!=null?pcBar(pc,col):'')+'</td>'+
-            '<td style="'+tdS+'color:'+sigCol+';font-weight:600;">'+sigLabel+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+sigLabel+'</td></tr>';
         });
         html += '</tbody></table></div>';
       }
@@ -4240,7 +4240,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           FEP:'Focalización en el problema', DIC:'Distracción conductual'
         };
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">CSQ · Cuestionario de Estrategias de Afrontamiento del Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">CSQ · Cuestionario de Estrategias de Afrontamiento del Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Estrategia</th>'+
@@ -4258,7 +4258,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           html += '<tr><td style="'+tdS+'">'+csqNombres[key]+'</td>'+
             '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
             '<td style="'+tdS+'text-align:center;">'+(pc!=null?pcBar(pc,col):'')+'</td>'+
-            '<td style="'+tdS+'color:'+col+';font-weight:600;">'+lbl+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+lbl+'</td></tr>';
         });
         html += '</tbody></table></div>';
       }
@@ -4270,7 +4270,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var alivio = d.alivio != null ? d.alivio : null;
         var trat   = d.trat || '';
         html += '<div style="margin-bottom:12px;">';
-        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">BPI · Inventario Breve de Dolor <span style="font-weight:400;color:#9a7a60;float:right;">'+fecha+'</span></div>';
+        html += '<div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;margin-bottom:4px;padding:3px 8px;background:#faf0e6;border-left:3px solid #c4977a;">BPI · Inventario Breve de Dolor</div>';
         html += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
         html += '<thead><tr>'+
           '<th style="'+thS+'">Índice</th>'+
@@ -4282,17 +4282,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var ic = bpiColor(intVal, 'int');
           var il = bpiLabel(intVal, 'int');
           html += '<tr><td style="'+tdS+'">Índice de Intensidad <span style="font-size:8px;color:#9a7a60;">(ítems 3–6)</span></td>'+
-            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:'+ic+';">'+intVal.toFixed(1)+'/10</td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:#222;">'+intVal.toFixed(1)+'/10</td>'+
             '<td style="'+tdS+'text-align:center;">'+bpiBar(intVal, 10)+'</td>'+
-            '<td style="'+tdS+'color:'+ic+';font-weight:600;">'+il+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+il+'</td></tr>';
         }
         if (infVal !== null) {
           var fc = bpiColor(infVal, 'inf');
           var fl = bpiLabel(infVal, 'inf');
           html += '<tr><td style="'+tdS+'">Índice de Interferencia <span style="font-size:8px;color:#9a7a60;">(ítems 9A–9G)</span></td>'+
-            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:'+fc+';">'+infVal.toFixed(1)+'/10</td>'+
+            '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;color:#222;">'+infVal.toFixed(1)+'/10</td>'+
             '<td style="'+tdS+'text-align:center;">'+bpiBar(infVal, 10)+'</td>'+
-            '<td style="'+tdS+'color:'+fc+';font-weight:600;">'+fl+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+fl+'</td></tr>';
         }
         if (alivio !== null) {
           html += '<tr><td style="'+tdS+'">Alivio con tratamiento <span style="font-size:8px;color:#9a7a60;">'+(trat?'('+trat+')':'')+'</span></td>'+
@@ -4301,7 +4301,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
             '<div style="position:absolute;left:0;width:'+alivio+'%;top:0;bottom:0;background:#2e7a4f;border-radius:3px;"></div>'+
             '</div></td>'+
-            '<td style="'+tdS+'color:#2e7a4f;font-weight:600;">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
+            '<td style="'+tdS+'font-weight:700;color:#222;">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
         }
         html += '</tbody></table></div>';
       }
@@ -4370,7 +4370,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<div style="position:absolute;left:'+cut.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
             '</div></td>'+
             '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥25</td>'+
-            '<td style="padding:3px 7px;color:'+catColor(cat)+';font-weight:600;font-size:10px;">'+cat+'</td>'+
+            '<td style="padding:3px 7px;font-weight:700;font-size:10px;color:#222;">'+cat+'</td>'+
             '<td style="padding:3px 7px;"></td>'+
             '</tr>';
         }
@@ -4530,7 +4530,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
               '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
               '</div></td>'+
             '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥'+cut+'</td>'+
-            '<td style="padding:3px 7px;font-weight:600;font-size:10px;color:'+(val>=cut?'#c0392b':'#3a7a3a')+';">'+
+            '<td style="padding:3px 7px;font-weight:700;font-size:10px;color:#222;">'+
               (label==='Sección A' ? (val>=cut?'Positivo TDAH':'Negativo') : (val>=cut?'Elevado':'Normal'))+'</td>'+
             '<td style="padding:3px 7px;"></td>'+
             '</tr>';
@@ -4555,9 +4555,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         '<td style="'+tdS+'font-weight:500;">'+r.test+'</td>'+
         '<td style="'+tdS+'text-align:center;font-family:monospace;font-weight:700;">'+pb+'</td>'+
         '<td style="'+tdS+'text-align:center;">'+barHtml+'</td>'+
-        (corte?'<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">≥'+corte.cut+'</td>':'<td style="'+tdS+'">—</td>')+
-        '<td style="'+tdS+'color:'+catColor(cat)+';font-weight:600;">'+cat+'</td>'+
-        '<td style="'+tdS+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
+        (corte?'<td style="'+tdS+'text-align:center;font-size:9px;color:#555;">≥'+corte.cut+'</td>':'<td style="'+tdS+'">—</td>')+
+        '<td style="'+tdS+'font-weight:700;color:#222;">'+cat+'</td>'+
         '</tr>';
     }).join('');
     return '<table style="width:100%;border-collapse:collapse;">'+
@@ -4567,7 +4566,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<th style="'+thS+'text-align:center;min-width:110px;">Perfil</th>'+
       '<th style="'+thS+'text-align:center;">Corte</th>'+
       '<th style="'+thS+'">Resultado</th>'+
-      '<th style="'+thS+'text-align:center;">Fecha</th>'+
       '</tr></thead><tbody>'+rows+'</tbody></table>';
   }
 
@@ -4704,7 +4702,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // ── Secciones ──
     (testsNp.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación Neuropsicológica</div>'+
+      '<div style="page-break-before:always;"></div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
     (testsTd.length ?
