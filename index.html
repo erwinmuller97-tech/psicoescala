@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.3</div>
     </div>
   </aside>
 
@@ -1664,6 +1664,39 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('stroop-resultado').style.display='none';document.getElementById('stroop-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarStroop()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="vista" id="vista-csi">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">CSI · Inventario de Estrategias de Afrontamiento</div></div>
+  <div id="csi-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="csi-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Fecha</label><input type="date" id="csi-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ítems</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Piense en una situación estresante del último mes. Indique en qué medida realizó cada una de las siguientes acciones: <strong>0 = En absoluto · 1 = Un poco · 2 = Bastante · 3 = Mucho · 4 = Totalmente</strong></p>
+      <div id="csi-items-wrap"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarCSI()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularCSI()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="csi-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="csi-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="csi-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('csi-resultado').style.display='none';document.getElementById('csi-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarCSI()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -3672,7 +3705,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3871,7 +3904,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   // ── Clasificación de tests ──
   var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop'];
-  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS'];
+  var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td': DO.indexOf(t)!==-1?'do':'cl'; }
@@ -3880,7 +3913,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
   var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
   // Orden fijo para clínica: BDI → STAI → GAD-7 → PHQ-9 → SPAI-B → SCL-90-R → MBI-HSS
-  var CL_ORDEN = ['BDI-II','STAI','GAD-7','PHQ-9','SPAI-B','SCL-90-R','MBI-HSS'];
+  var CL_ORDEN = ['BDI-II','STAI','GAD-7','PHQ-9','SPAI-B','CSI','SCL-90-R','MBI-HSS'];
   var clRaw = datos.filter(function(r){ return tipo(r.test)==='cl'; });
   var testsCl = CL_ORDEN.map(function(nombre){
     return clRaw.filter(function(r){ return r.test===nombre; });
@@ -4541,6 +4574,32 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         return;
       }
 
+      // ── CSI ──
+      if (r.test === 'CSI') {
+        var csiSubs = ['REP','AUC','EEM','PSD','APS','REC','EVP','RES'];
+        var csiLbls = {REP:'Resolución de problemas',AUC:'Autocrítica',EEM:'Expresión emocional',PSD:'Pensamiento desiderativo',APS:'Apoyo social',REC:'Reestructuración cognitiva',EVP:'Evitación de problemas',RES:'Retirada social'};
+        function pcLblCSI(pc){return pc>=75?'Elevado':pc>=25?'Promedio':'Bajo';}
+        html += clHeader('CSI · Inventario de Estrategias de Afrontamiento');
+        html += '<table style="width:100%;border-collapse:collapse;margin-bottom:4px;"><thead><tr>'+
+          '<th style="'+thDark+'min-width:200px;">Subescala</th>'+
+          '<th style="'+thDarkC+'">Puntaje</th>'+
+          '<th style="'+thDarkC+'">Z · Pc</th>'+
+          '<th style="'+thDark+'">Interpretación</th></tr></thead><tbody>';
+        csiSubs.forEach(function(sub,i){
+          var sd = d[sub]||{};
+          var score = sd.score!=null?sd.score:'—';
+          var z = sd.z!=null?(sd.z>=0?'+':'')+sd.z:'—';
+          var pc = sd.pc!=null?sd.pc:null;
+          html += '<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+csiLbls[sub]+' ('+sub+')</td>'+
+            '<td style="'+tdRC+'">'+(score!=='—'?score+'/20':score)+'</td>'+
+            '<td style="'+tdRC+'">'+(sd.z!=null?z+' · Pc '+(pc||'—'):'—')+'</td>'+
+            '<td style="'+tdRI+'">'+(pc!=null?pcLblCSI(pc):'—')+'</td></tr>';
+        });
+        html += '</tbody></table>';
+        html += '<div style="font-size:8px;color:#666;margin-bottom:6px;">Baremo: Cano, Rodríguez & García (2006) — n=335.</div>';
+        return;
+      }
+
       // ── Resto de tests clínicos (BDI, PHQ-9, GAD-7, SPAI-B, WURS-25) ──
       var corte = CORTES[r.test];
       var pb = r.puntaje_total != null ? r.puntaje_total : '—';
@@ -4662,6 +4721,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'PHQ-9':              'Cuestionario de Salud del Paciente (PHQ-9)',
         'GAD-7':              'Escala de Trastorno de Ansiedad Generalizada (GAD-7)',
         'SPAI-B':             'Inventario de Fobia Social — Versión Breve (SPAI-B)',
+        'CSI':                'Inventario de Estrategias de Afrontamiento (CSI)',
         'SCL-90-R':           'Inventario de Síntomas SCL-90-R',
         'MBI-HSS':            'Inventario de Burnout de Maslach (MBI-HSS)',
         'ASRS-V1.1':          'Escala de Autodetección de TDAH en Adultos (ASRS-V1.1)',
@@ -4813,6 +4873,12 @@ function irSector(s) {
         '<div class="test-desc">Inventario de Fobia y Ansiedad Social — Forma Breve</div>' +
         '<span class="test-tag">16 ítems · Baremos argentinos</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'csi\')">' +
+        '<div class="test-icon">🧩</div>' +
+        '<div class="test-nombre">CSI</div>' +
+        '<div class="test-desc">Inventario de Estrategias de Afrontamiento — 8 subescalas</div>' +
+        '<span class="test-tag">40 ítems · Cano, Rodríguez & García 2006</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'scl90\')">'+
         '<div class="test-icon">🧩</div>'+
         '<div class="test-nombre">SCL-90-R</div>'+
@@ -4959,6 +5025,7 @@ function irTest(t) {
   if (t === 'phq') iniciarPHQ();
   if (t === 'gad') iniciarGAD();
   if (t === 'spaib') iniciarSPAIB();
+  if (t === 'csi') iniciarCSI();
   if (t === 'moca') iniciarMoCA();
   if (t === 'ifs') iniciarIFS();
   if (t === 'pcs') iniciarPCS();
@@ -7963,6 +8030,219 @@ function guardarStroop() {
     puntaje_z: d.zInt,
     categoria: d.zInt >= -0.5 ? 'Sin interferencia significativa' : d.zInt >= -1.49 ? 'Interferencia leve' : d.zInt >= -1.99 ? 'Interferencia moderada' : 'Interferencia severa',
     datos: { p:d.p, c:d.c, pc:d.pc, pcp:d.pcp, interf:d.interf, zP:d.zP, zC:d.zC, zPC:d.zPC, zInt:d.zInt, gi:d.gi, ei:d.ei }
+  }, SESSION.access_token).then(function(){
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); }, 1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ══ CSI · Inventario de Estrategias de Afrontamiento ═════════════════════════
+// Tobin, Holroyd, Reynolds & Kigal (1989). Adaptación: Cano, Rodríguez & García (2006)
+// 8 subescalas × 5 ítems, escala 0–4, máximo 20 por subescala
+var CSI_TEXTOS = [
+  'Luché para resolver el problema',
+  'Me culpé a mí mismo',
+  'Deje salir mis sentimientos para reducir el estrés',
+  'Deseé que la situación nunca hubiera empezado',
+  'Encontré a alguien que escuchó mi problema',
+  'Repasé el problema una y otra vez en mi mente y al final vi las cosas de una forma diferente',
+  'No dejé que me afectara; evité pensar en ello demasiado',
+  'Pasé algún tiempo solo',
+  'Me esforcé para resolver los problemas de la situación',
+  'Me di cuenta de que era personalmente responsable de mis dificultades y me lo reproché',
+  'Expresé mis emociones, lo que sentía',
+  'Deseé que la situación no existiera o que de alguna manera terminase',
+  'Hablé con una persona de confianza',
+  'Cambié la forma en que veía la situación para que las cosas no parecieran tan malas',
+  'Traté de olvidar por completo el asunto',
+  'Evité estar con gente',
+  'Hice frente al problema',
+  'Me critiqué por lo ocurrido',
+  'Analice mis sentimientos y simplemente los deje salir',
+  'Deseé no encontrarme nunca más en esa situación',
+  'Dejé que mis amigos me echaran una mano',
+  'Me convencí de que las cosas no eran tan malas como parecían',
+  'Quité importancia a la situación y no quise preocuparme más',
+  'Oculté lo que pensaba y sentía',
+  'Supe lo que había que hacer, así que doblé mis esfuerzos y traté con más ímpetu de hacer que las cosas funcionaran',
+  'Me recriminé por permitir que esto ocurriera',
+  'Dejé desahogar mis emociones',
+  'Deseé poder cambiar lo que había sucedido',
+  'Pasé algún tiempo con mis amigos',
+  'Me pregunté qué era realmente importante y descubrí que las cosas no estaban tan mal después de todo',
+  'Me comporté como si nada hubiera pasado',
+  'No dejé que nadie supiera como me sentía',
+  'Mantuve mi postura y luché por lo que quería',
+  'Fue un error mío, así que tenía que sufrir las consecuencias',
+  'Mis sentimientos eran abrumadores y estallaron',
+  'Me imaginé que las cosas podrían ser diferentes',
+  'Pedí consejo a un amigo o familiar que respeto',
+  'Me fijé en el lado bueno de las cosas',
+  'Evité pensar o hacer nada',
+  'Traté de ocultar mis sentimientos'
+];
+
+// Claves: índice 0-based
+var CSI_CLAVES = {
+  REP: [0,8,16,24,32],
+  AUC: [1,9,17,25,33],
+  EEM: [2,10,18,26,34],
+  PSD: [3,11,19,27,35],
+  APS: [4,12,20,28,36],
+  REC: [5,13,21,29,37],
+  EVP: [6,14,22,30,38],
+  RES: [7,15,23,31,39]
+};
+
+var CSI_LABELS = {
+  REP:'Resolución de problemas', AUC:'Autocrítica', EEM:'Expresión emocional',
+  PSD:'Pensamiento desiderativo', APS:'Apoyo social', REC:'Reestructuración cognitiva',
+  EVP:'Evitación de problemas', RES:'Retirada social'
+};
+
+// Baremo (Cano, Rodríguez & García, 2006) — n=335
+// M y DT para Z
+var CSI_STATS = {
+  REP:{M:14.25,DT:5.01}, AUC:{M:5.11,DT:5.05}, EEM:{M:8.98,DT:5.05},
+  PSD:{M:11.66,DT:5.05}, APS:{M:10.93,DT:5.12}, REC:{M:10.17,DT:4.94},
+  EVP:{M:5.81,DT:3.89},  RES:{M:3.93,DT:3.53}
+};
+
+// Tabla de percentiles: [Pc, REP, AUC, EEM, PSD, APS, REC, EVP, RES]
+// null = no especificado
+var CSI_PCT_TABLE = [
+  [1,  null,null,null,null,null,null,null,1],
+  [2,  null,0,   0,   0,   null,null,null,2],
+  [3,  null,1,   1,   1,   null,null,null,3],
+  [4,  null,0,   1,   2,   2,   null,null,4],
+  [5,  null,1,   2,   3,   2,   null,null,5],
+  [10, null,3,   4,   4,   4,   null,1,   10],
+  [15, 6,   4,   5,   5,   5,   null,2,   0],
+  [20, 8,   4,   6,   6,   6,   null,2,   1],
+  [25, 10,  4,   6,   6,   6,   null,2,   1],
+  [30, 11,  5,   7,   7,   6,   3,   2,   null],
+  [35, 12,  5,   7,   8,   8,   7,   3,   2],
+  [40, 13,  1,   6,   9,   8,   8,   4,   2],
+  [45, 14,  2,   7,   10,  9,   9,   4,   2],
+  [50, 15,  3,   8,   12,  10,  9,   5,   3],
+  [55, 16,  3,   9,   12,  11,  10,  5,   3],
+  [60, 16,  4,   9,   13,  12,  11,  6,   4],
+  [65, 16,  5,   10,  14,  13,  12,  7,   4],
+  [70, 17,  6,   11,  15,  13,  12,  7,   5],
+  [75, 18,  7,   11,  16,  14,  13,  8,   5],
+  [80, 19,  8,   12,  16,  15,  14,  8,   6],
+  [85, 19,  10,  14,  17,  16,  15,  9,   7],
+  [90, 20,  12,  15,  18,  17,  16,  10,  8],
+  [95, 20,  14,  16,  19,  18,  17,  11,  9],
+  [96, 20,  16,  18,  20,  19,  18,  13,  11],
+  [97, 20,  17,  18,  20,  20,  19,  13,  11],
+  [98, 20,  18,  19,  20,  20,  19,  14,  11],
+  [99, 20,  20,  20,  20,  20,  20,  16,  13]
+];
+var CSI_SUB_ORDER = ['REP','AUC','EEM','PSD','APS','REC','EVP','RES'];
+
+function csiBuscarPc(score, subIdx) {
+  var pc = 1;
+  for (var i = 0; i < CSI_PCT_TABLE.length; i++) {
+    var val = CSI_PCT_TABLE[i][subIdx + 1]; // +1 porque col 0 es el Pc
+    if (val !== null && score >= val) pc = CSI_PCT_TABLE[i][0];
+    else if (val !== null && score < val) break;
+  }
+  return pc;
+}
+
+function iniciarCSI() {
+  document.getElementById('csi-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('csi-form').style.display = 'block';
+  document.getElementById('csi-resultado').style.display = 'none';
+  var wrap = document.getElementById('csi-items-wrap');
+  if (wrap && !document.querySelector('[name="csi_1"]')) {
+    wrap.innerHTML = CSI_TEXTOS.map(function(txt, i) {
+      var n = i + 1;
+      var sub = CSI_SUB_ORDER.find(function(s){ return CSI_CLAVES[s].indexOf(i) !== -1; });
+      var colores = {REP:'#2e7d32',AUC:'#c62828',EEM:'#1565c0',PSD:'#7c4daa',APS:'#00838f',REC:'#f57f17',EVP:'#6a1b9a',RES:'#37474f'};
+      var badge = sub ? '<span style="font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;background:'+(colores[sub]||'#888')+'22;color:'+(colores[sub]||'#888')+';border:0.5px solid '+(colores[sub]||'#888')+'44;margin-left:6px;">'+sub+'</span>' : '';
+      var radios = [0,1,2,3,4].map(function(v){
+        return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:48px;">'+
+          '<input type="radio" name="csi_'+n+'" value="'+v+'" style="accent-color:var(--accent);">'+
+          '<span style="font-size:0.68rem;color:var(--muted);">'+['En absoluto','Un poco','Bastante','Mucho','Totalmente'][v]+'</span></label>';
+      }).join('');
+      return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">'+
+        '<span style="font-size:0.87rem;flex:1;line-height:1.45;"><strong style="color:var(--accent);margin-right:4px;">'+n+'.</strong>'+txt+badge+'</span>'+
+        '<div style="display:flex;gap:4px;flex-shrink:0;">'+radios+'</div></div>';
+    }).join('');
+  }
+}
+
+function limpiarCSI() {
+  for (var i = 1; i <= 40; i++) {
+    var s = document.querySelector('[name="csi_'+i+'"]:checked');
+    if (s) s.checked = false;
+  }
+}
+
+function calcularCSI() {
+  // Leer los 40 ítems
+  var vals = [];
+  for (var i = 1; i <= 40; i++) {
+    var s = document.querySelector('[name="csi_'+i+'"]:checked');
+    if (!s) { toast('Completá todos los ítems.','error'); return; }
+    vals.push(parseInt(s.value));
+  }
+
+  var res = {};
+  CSI_SUB_ORDER.forEach(function(sub, si) {
+    var score = CSI_CLAVES[sub].reduce(function(a, idx) { return a + vals[idx]; }, 0);
+    var z = parseFloat(((score - CSI_STATS[sub].M) / CSI_STATS[sub].DT).toFixed(2));
+    var pc = csiBuscarPc(score, si);
+    res[sub] = { score: score, z: z, pc: pc };
+  });
+
+  window._csiData = res;
+
+  function pcLbl(pc) { return pc>=75?'Elevado':pc>=25?'Promedio':'Bajo'; }
+
+  var detalleHtml = CSI_SUB_ORDER.map(function(sub) {
+    var r = res[sub];
+    return '<div class="detalle-item"><div class="detalle-num">Pc '+r.pc+'</div><div class="detalle-lbl">'+sub+'<br><small>'+r.score+'/20</small></div></div>';
+  }).join('');
+
+  var interp = CSI_SUB_ORDER.map(function(sub) {
+    var r = res[sub];
+    return '<p><strong>'+CSI_LABELS[sub]+' ('+sub+'):</strong> '+r.score+'/20 · Z='+(r.z>=0?'+':'')+r.z+' · Pc '+r.pc+' — '+pcLbl(r.pc)+'</p>';
+  }).join('');
+  interp += '<p style="font-size:0.8rem;color:var(--muted);">Baremo: Cano, Rodríguez & García (2006). Adaptación española CSI — n=335. Tobin et al. (1989).</p>';
+
+  document.getElementById('csi-detalle').innerHTML = detalleHtml;
+  document.getElementById('csi-interp').innerHTML = interp;
+  document.getElementById('csi-form').style.display = 'none';
+  document.getElementById('csi-resultado').style.display = 'block';
+}
+
+function guardarCSI() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('csi-paciente').value;
+  var fecha = document.getElementById('csi-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._csiData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._csiData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'CSI', fecha: fecha,
+    puntaje_total: d.REP.score,
+    categoria: 'REP Pc'+d.REP.pc+' · AUC Pc'+d.AUC.pc+' · APS Pc'+d.APS.pc,
+    datos: {
+      REP:{score:d.REP.score,z:d.REP.z,pc:d.REP.pc},
+      AUC:{score:d.AUC.score,z:d.AUC.z,pc:d.AUC.pc},
+      EEM:{score:d.EEM.score,z:d.EEM.z,pc:d.EEM.pc},
+      PSD:{score:d.PSD.score,z:d.PSD.z,pc:d.PSD.pc},
+      APS:{score:d.APS.score,z:d.APS.z,pc:d.APS.pc},
+      REC:{score:d.REC.score,z:d.REC.z,pc:d.REC.pc},
+      EVP:{score:d.EVP.score,z:d.EVP.z,pc:d.EVP.pc},
+      RES:{score:d.RES.score,z:d.RES.z,pc:d.RES.pc}
+    }
   }, SESSION.access_token).then(function(){
     cargarResultados(); toast('✓ Resultado guardado','success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
