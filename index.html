@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.5</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.6.6</div>
     </div>
   </aside>
 
@@ -3868,20 +3868,20 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
   function zGrilla(z) {
     if (z !== null && z !== undefined) z = Math.max(-3, Math.min(3, z));
-    var col = zColor(z);
     var hds = COLS.map(function(v){
-      var lbl = Number.isInteger(v) ? (v>0?'+'+v:v) : '';
-      return '<td style="width:16px;font-size:7px;text-align:center;color:#555;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
+      var lbl = Number.isInteger(v) ? (v>0?'+'+v:String(v)) : '';
+      return '<td style="width:16px;font-size:7px;text-align:center;color:#333;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
     }).join('');
     var cells = COLS.map(function(v){
-      var isX = z!==null && Math.abs(z-v)<0.26;
-      var bg = v===0 ? '#b0b0b0' : '#d8d8d8';
+      var isX  = z !== null && Math.abs(z - v) < 0.26;
+      // Zona normativa -1 a +1: gris claro; resto: blanco
+      var enNormal = (v >= -1 && v <= 1);
+      var bg = enNormal ? '#d0d0d0' : '#ffffff';
       var inner = isX
-        ? '<div style="width:11px;height:11px;border-radius:50%;background:'+col+';margin:auto;box-shadow:0 0 0 1px '+col+'44;"></div>'
+        ? '<span style="font-size:11px;font-weight:900;color:#000;line-height:1;">X</span>'
         : '';
       return '<td style="width:16px;height:16px;text-align:center;vertical-align:middle;'+
-        'background:'+bg+';border:0.5px solid #d0d0d0;padding:0;">'+
-        inner+'</td>';
+        'background:'+bg+';border:0.5px solid #aaaaaa;padding:0;">'+inner+'</td>';
     }).join('');
     return '<table style="border-collapse:collapse;table-layout:fixed;"><tr>'+hds+'</tr><tr>'+cells+'</tr></table>';
   }
