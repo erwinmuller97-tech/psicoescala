@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.1</div>
     </div>
   </aside>
 
@@ -4585,35 +4585,52 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
       // ── ASRS: secciones A y B con barras diferenciadas ──
       if (r.test === 'ASRS-V1.1') {
-        var MAX_A = 6; var CUT_A = 4;
-        var MAX_B = 48; var CUT_B = 28;
-        var secA = d.parte_a_positivos != null ? d.parte_a_positivos : null;
-        var totB = d.total_18 != null ? d.total_18 : null;
-        var totA_raw = secA; // positivos de A (0-6)
-        function asrsBar(val, max, cut, label, note) {
-          if (val === null) return '';
-          var pct  = Math.min(100,(val/max)*100);
-          var cpct = Math.min(100,(cut/max)*100);
-          var col  = val>=cut?'#c0392b': val>=(cut*0.75)?'#D85A30':'#639922';
-          var positivo = (label === 'Sección A' && val >= 4);
-          return '<tr style="border-bottom:0.5px solid #f0e8de;">'+
-            '<td style="padding:3px 7px;font-size:10px;color:#5a3520;font-style:italic;">'+label+'</td>'+
-            '<td style="padding:3px 7px;text-align:center;font-family:monospace;font-weight:700;font-size:11px;">'+val+(note?' '+note:'')+'</td>'+
-            '<td style="padding:3px 7px;text-align:center;">'+
-              '<div style="position:relative;height:9px;background:#e0e0e0;border-radius:2px;width:110px;display:inline-block;">'+
-              '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
-              '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>'+
-              '</div></td>'+
-            '<td style="padding:3px 7px;text-align:center;font-size:9px;color:#9a7a60;">≥'+cut+'</td>'+
-            '<td style="padding:3px 7px;font-weight:700;font-size:10px;color:#222;">'+
-              (label==='Sección A' ? (val>=cut?'Positivo TDAH':'Negativo') : (val>=cut?'Elevado':'Normal'))+'</td>'+
-            '<td style="padding:3px 7px;"></td>'+
-            '</tr>';
+        var secA  = d.parte_a_positivos != null ? d.parte_a_positivos : null;
+        var sI    = d.scoreI != null ? d.scoreI : null;
+        var sH    = d.scoreH != null ? d.scoreH : null;
+        var sT    = d.scoreT != null ? d.scoreT : (d.total_18 != null ? d.total_18 : null);
+        var zI    = d.zI    != null ? d.zI    : null;
+        var zH    = d.zH    != null ? d.zH    : null;
+        var zT    = d.zT    != null ? d.zT    : null;
+        var pcI   = d.pcI   != null ? d.pcI   : null;
+        var pcH   = d.pcH   != null ? d.pcH   : null;
+        var pcT   = d.pcT   != null ? d.pcT   : null;
+        var grupo = d.grupo || '';
+        function pcLblA(pc) { return pc>=90?'Muy elevado':pc>=75?'Elevado':pc>=40?'Promedio':pc>=16?'Bajo':'Muy bajo'; }
+        var positivo = secA != null && secA >= 4;
+        var asrsHtml = '<table style="border-collapse:collapse;width:100%;font-size:10px;">';
+        asrsHtml += '<tr><td colspan="4" style="background:#f0e8dc;padding:3px 8px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5a3520;border:0.5px solid #d8c8b0;">ASRS-V1.1 · Escala de Autoreporte de TDAH'+(grupo?' · Grupo: '+grupo+' años':'')+'</td></tr>';
+        // Sección A
+        if (secA !== null) {
+          asrsHtml += '<tr>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Sección A (Screener Kessler)</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+secA+'/6</td>'+
+            '<td colspan="2" style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+
+            (positivo?'Screening positivo (≥4 positivos)':'Screening negativo (< 4 positivos)')+'</td></tr>';
         }
-        var asrsLabel = '<tr><td colspan="6" style="padding:2px 7px 0;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7a4e38;border-bottom:0.5px solid #f0e8de;">ASRS-V1.1 · Escala de Autoreporte de TDAH</td></tr>';
-        return asrsLabel +
-          asrsBar(secA, MAX_A, CUT_A, 'Sección A (screening)', '/6') +
-          (totB!=null ? asrsBar(totB, MAX_B, CUT_B, 'Total 18 ítems', '/72') : '');
+        // Subdominios con Z y Pc
+        if (sI !== null) {
+          asrsHtml += '<tr><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Inatención (ASRS-I)</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sI+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zI!=null?(zI>=0?'+':'')+zI+' · Pc '+(pcI||'—'):'—')+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcI!=null?pcLblA(pcI):'—')+'</td></tr>';
+        }
+        if (sH !== null) {
+          asrsHtml += '<tr><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">Hiperactividad/Impulsividad (ASRS-H)</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sH+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zH!=null?(zH>=0?'+':'')+zH+' · Pc '+(pcH||'—'):'—')+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcH!=null?pcLblA(pcH):'—')+'</td></tr>';
+        }
+        if (sT !== null) {
+          asrsHtml += '<tr style="background:#faf3ea;"><td style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;font-weight:600;">Total (ASRS-T)</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;">'+sT+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-size:9px;">'+(zT!=null?(zT>=0?'+':'')+zT+' · Pc '+(pcT||'—'):'—')+'</td>'+
+            '<td style="padding:3px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;">'+(pcT!=null?pcLblA(pcT):'—')+'</td></tr>';
+        }
+        asrsHtml += '</table>';
+        asrsHtml += '<div style="font-size:8px;color:#9a7a60;margin-top:2px;">Baremos: Scandar MG (2021) Rev Neurol 72(3) — n=1.173, Argentina.</div>';
+        return '<tr><td style="'+tdS+'font-weight:500;vertical-align:top;">ASRS-V1.1</td>'+
+          '<td style="'+tdS+'" colspan="4">'+asrsHtml+'</td></tr>';
       }
 
       // ── Resto de tests clínicos ──
