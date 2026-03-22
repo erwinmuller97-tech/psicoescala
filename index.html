@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.1</div>
     </div>
   </aside>
 
@@ -1856,6 +1856,120 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('fcr-resultado').style.display='none';document.getElementById('fcr-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarFCR()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEST DEL HOTEL ── -->
+<div class="vista" id="vista-hotel">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">Test del Hotel · Multitasking y Memoria Prospectiva</div></div>
+  <div id="hotel-form">
+
+    <!-- Alerta normativa -->
+    <div style="background:#fff3f3;border:2px solid #c62828;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
+      <div style="font-weight:700;color:#c62828;margin-bottom:6px;font-size:0.88rem;">⚠ Limitación normativa — leer antes de administrar</div>
+      <p style="font-size:0.82rem;color:#333;margin:0;">Los baremos corresponden a <strong>Pinasco et al. (2023)</strong> — Neurología Argentina 15(1):8–14. Muestra de adultos de <strong>19 a 60 años</strong> de Buenos Aires con <strong>12 o más años de educación</strong>. <strong>No aplicar en mayores de 60 años ni en personas con escolaridad menor a secundario completo.</strong></p>
+    </div>
+
+    <!-- Alerta de registro -->
+    <div style="background:#fff8e1;border:2px solid #f57f17;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:6px;font-size:0.88rem;">⚠ Registro del tiempo</div>
+      <p style="font-size:0.82rem;color:#333;margin:0;">Ingresá el tiempo dedicado a cada tarea en <strong>minutos y segundos exactos</strong> tal como registraste durante la administración. El sistema convierte todo a segundos internamente. El tiempo óptimo por tarea es <strong>3 minutos (180 segundos)</strong>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="hotel-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Sexo *</label>
+          <select id="hotel-sexo">
+            <option value="">— Seleccionar —</option>
+            <option value="f">Femenino</option>
+            <option value="m">Masculino</option>
+          </select>
+        </div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="hotel-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">19–29 años</option>
+            <option value="1">30–39 años</option>
+            <option value="2">40–49 años</option>
+            <option value="3">50–59 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="hotel-fecha"></div>
+      </div>
+    </div>
+
+    <!-- Registro de tareas -->
+    <div class="card">
+      <div class="card-title">1. Registro de tareas</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Para cada tarea indicá si fue intentada, si fue correcta, y el tiempo dedicado (min + seg).</p>
+      <div id="hotel-tareas-wrap"></div>
+    </div>
+
+    <!-- Botones del garage -->
+    <div class="card">
+      <div class="card-title">2. Botones del garage (Memoria Prospectiva)</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Tiempo programado: Botón 1 (ROJO — Abrir) a los <strong>6 min</strong> del inicio · Botón 2 (NEGRO — Cerrar) a los <strong>12 min</strong> del inicio.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:end;margin-bottom:10px;">
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Botón</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">¿Presionó?</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Momento real (min + seg)</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Desvío calculado</div>
+      </div>
+      <!-- Botón 1 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:0.85rem;font-weight:600;color:#c62828;">🔴 Botón 1 — Abrir</div>
+        <div style="display:flex;gap:10px;">
+          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="si" id="hotel-b1-si" onchange="hotelUpdateDesvio(1)"> Sí</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="no" id="hotel-b1-no" onchange="hotelUpdateDesvio(1)"> No</label>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="number" id="hotel-b1-min" min="0" max="15" placeholder="min" style="width:55px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.8rem;color:var(--muted);">min</span>
+          <input type="number" id="hotel-b1-seg" min="0" max="59" placeholder="seg" style="width:55px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.8rem;color:var(--muted);">seg</span>
+        </div>
+        <div id="hotel-b1-desv" style="font-size:0.85rem;font-weight:700;color:var(--accent);">—</div>
+      </div>
+      <!-- Botón 2 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;">
+        <div style="font-size:0.85rem;font-weight:600;color:#333;">⚫ Botón 2 — Cerrar</div>
+        <div style="display:flex;gap:10px;">
+          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="si" id="hotel-b2-si" onchange="hotelUpdateDesvio(2)"> Sí</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="no" id="hotel-b2-no" onchange="hotelUpdateDesvio(2)"> No</label>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="number" id="hotel-b2-min" min="0" max="15" placeholder="min" style="width:55px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.8rem;color:var(--muted);">min</span>
+          <input type="number" id="hotel-b2-seg" min="0" max="59" placeholder="seg" style="width:55px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.8rem;color:var(--muted);">seg</span>
+        </div>
+        <div id="hotel-b2-desv" style="font-size:0.85rem;font-weight:700;color:var(--accent);">—</div>
+      </div>
+      <div style="margin-top:10px;padding:8px 12px;background:#f4faf2;border-radius:6px;border:0.5px solid var(--border);">
+        <span style="font-size:0.82rem;color:var(--muted);">Desvío total botones: </span>
+        <span id="hotel-botones-total" style="font-weight:700;color:var(--accent);">— seg</span>
+        <span style="font-size:0.75rem;color:var(--muted);margin-left:8px;">(Botones no presionados = 900 seg de penalización c/u)</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarHotel()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularHotel()">Calcular resultado →</button>
+    </div>
+  </div>
+
+  <div id="hotel-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="hotel-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="hotel-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('hotel-resultado').style.display='none';document.getElementById('hotel-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarHotel()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -4158,7 +4272,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -4452,7 +4566,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','Test del Hotel'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4604,6 +4718,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       { dom: 'ATENCIÓN', tests: [
         { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
         { t:'BTA',         fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
+        { t:'Test del Hotel', fn: function(r){ var d=r.datos||{}; addPunto('Hotel Tareas',d.zTareas,'FUNC. EJEC.'); addPunto('Hotel Tiempo',d.zTiempo,'FUNC. EJEC.'); addPunto('Hotel Botones',d.zBotones,'FUNC. EJEC.'); } },
         { t:'BTA',        fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
         { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
         { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
@@ -4739,7 +4854,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
       'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','TMT A-B'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
-      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop'],
+      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop','Test del Hotel'],
     };
 
     // Construir mapa test → resultado
@@ -4839,6 +4954,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
+        } else if (testNombre === 'Test del Hotel') {
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, null, null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, null, null, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, null, null, d.zBotones, r.fecha, 'Mem. prospectiva');
+
         } else if (testNombre === 'BTA') {
           var btaEi = d.ei != null ? d.ei : null;
           var btaGi = d.gi != null ? d.gi : null;
@@ -4873,6 +4993,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</td>'+
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a7040;">'+(r.fecha||'')+'</td>'+
             '</tr>';
+
+        } else if (testNombre === 'Test del Hotel') {
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, null, null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, null, null, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, null, null, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BTA') {
           var btaEd = BTA_EDAD_LABELS[d.gi] || '—';
@@ -5354,7 +5479,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
         'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
         'BTA':                'Brief Test of Attention (BTA)',
+        'Test del Hotel':     'Test del Hotel (Pinasco et al., 2023)',
         'BTA':                'Brief Test of Attention (BTA)',
+        'Test del Hotel':     'Test del Hotel (Pinasco et al., 2023)',
         'SDMT-escrita':       'Symbol Digit Modalities Test — Versión Escrita (SDMT)',
         'SDMT-oral':          'Symbol Digit Modalities Test — Versión Oral (SDMT)',
         'IFS':                'INECO Frontal Screening (IFS)',
@@ -5379,7 +5506,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral','BTA']},
         {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
         {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
-        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop']},
+        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop','Test del Hotel']},
         {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
         {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
         {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']},
@@ -5745,6 +5872,7 @@ function irTest(t) {
   if (t === 'stroop') iniciarStroop();
   if (t === 'fcr') iniciarFCR();
   if (t === 'bta') iniciarBTA();
+  if (t === 'hotel') iniciarHotel();
   if (t === 'sdmt') iniciarSDMT();
 }
 
@@ -7814,7 +7942,264 @@ function guardarAsrs() {
   }).catch(function(){toast('Error al guardar','error');});
 }
 
+// ══ TEST DEL HOTEL ═══════════════════════════════════════════════════════════
+// Baremos: Pinasco et al. (2023) — Neurología Argentina 15(1):8–14
+// Muestra: n=160, 19–60 años, ≥12 años educación, Buenos Aires
+// Variables: tareas realizadas, desvío total tiempo, desvío botones
+// Tiempo óptimo por tarea: 180 seg. Tiempo programado botones: 360s y 720s
+// Baremos estratificados por SEXO × 4 grupos etarios
+// Dirección Z: tareas → más=mejor; desvíos → menos=mejor (Z invertido)
+
+var HOTEL_TAREAS = [
+  'Facturas de huéspedes',
+  'Clasificar monedas',
+  'Números de teléfono',
+  'Tarjetas de conferencia',
+  'Corrección del folleto'
+];
+
+// Baremos: [M, DS] para cada grupo etario [19-29, 30-39, 40-49, 50-59]
+var HOTEL_BAR = {
+  f: {
+    tareas:  [[4.89,0.31],[4.86,0.35],[4.81,0.47],[4.70,0.72]],
+    tiempo:  [[365.81,140.84],[368.83,184.59],[420.18,205.95],[431.25,191.97]],
+    botones: [[162.62,186.81],[236.72,281.05],[323.25,386.68],[211.74,241.80]]
+  },
+  m: {
+    tareas:  [[4.92,0.27],[4.81,0.55],[4.71,0.64],[4.70,0.58]],
+    tiempo:  [[302.03,208.79],[330.78,192.03],[329.95,187.94],[338.29,182.09]],
+    botones: [[131.42,156.42],[158.11,210.50],[205.57,267.39],[309.29,355.15]]
+  }
+};
+
+var HOTEL_TIEMPO_OPTIMO = 180; // seg por tarea
+var HOTEL_B1_PROG = 360;       // seg desde inicio (6 min)
+var HOTEL_B2_PROG = 720;       // seg desde inicio (12 min)
+var HOTEL_PENALIZACION = 900;  // seg si no presionó el botón
+
+function hotelBuildTareas() {
+  var wrap = document.getElementById('hotel-tareas-wrap');
+  if (!wrap) return;
+  var html = '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:8px;align-items:end;margin-bottom:8px;">';
+  html += '<div style="font-weight:700;font-size:0.82rem;color:var(--text);">Tarea</div>';
+  html += '<div style="font-weight:700;font-size:0.82rem;color:var(--text);text-align:center;">¿Intentó?</div>';
+  html += '<div style="font-weight:700;font-size:0.82rem;color:var(--text);text-align:center;">¿Correcto?</div>';
+  html += '<div style="font-weight:700;font-size:0.82rem;color:var(--text);">Tiempo dedicado</div>';
+  html += '<div style="font-weight:700;font-size:0.82rem;color:var(--text);">Desvío (seg)</div>';
+  html += '</div>';
+  HOTEL_TAREAS.forEach(function(nombre, i) {
+    var n = i + 1;
+    html += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">';
+    html += '<div style="font-size:0.85rem;font-weight:600;color:var(--text);">'+n+'. '+nombre+'</div>';
+    // Intentó
+    html += '<div style="display:flex;gap:8px;justify-content:center;">';
+    html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.8rem;"><input type="radio" name="hotel-int-'+n+'" value="si" onchange="hotelUpdateDesvioTarea('+n+')"> Sí</label>';
+    html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.8rem;"><input type="radio" name="hotel-int-'+n+'" value="no" onchange="hotelUpdateDesvioTarea('+n+')"> No</label>';
+    html += '</div>';
+    // Correcto
+    html += '<div style="display:flex;gap:8px;justify-content:center;">';
+    html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.8rem;"><input type="radio" name="hotel-cor-'+n+'" value="si"> Sí</label>';
+    html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.8rem;"><input type="radio" name="hotel-cor-'+n+'" value="no"> No</label>';
+    html += '</div>';
+    // Tiempo
+    html += '<div style="display:flex;gap:4px;align-items:center;">';
+    html += '<input type="number" id="hotel-t'+n+'-min" min="0" max="15" placeholder="min" style="width:48px;" oninput="hotelUpdateDesvioTarea('+n+')">';
+    html += '<span style="font-size:0.75rem;color:var(--muted);">m</span>';
+    html += '<input type="number" id="hotel-t'+n+'-seg" min="0" max="59" placeholder="seg" style="width:48px;" oninput="hotelUpdateDesvioTarea('+n+')">';
+    html += '<span style="font-size:0.75rem;color:var(--muted);">s</span>';
+    html += '</div>';
+    // Desvío calculado
+    html += '<div id="hotel-desv-'+n+'" style="font-size:0.85rem;font-weight:700;color:var(--accent);">—</div>';
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+function hotelUpdateDesvioTarea(n) {
+  var intEl = document.querySelector('input[name="hotel-int-'+n+'"]:checked');
+  var intento = intEl ? intEl.value : null;
+  var minEl = document.getElementById('hotel-t'+n+'-min');
+  var segEl = document.getElementById('hotel-t'+n+'-seg');
+  var desvEl = document.getElementById('hotel-desv-'+n);
+  if (!desvEl) return;
+  if (intento === 'no') { desvEl.innerHTML = '<span style="color:#c62828;">No intentada</span>'; return; }
+  var minV = parseFloat(minEl.value) || 0;
+  var segV = parseFloat(segEl.value) || 0;
+  var total = minV * 60 + segV;
+  if (total === 0 && intento !== 'si') { desvEl.textContent = '—'; return; }
+  var desv = Math.abs(total - HOTEL_TIEMPO_OPTIMO);
+  desvEl.textContent = desv + ' seg';
+  hotelUpdateTiempoTotal();
+}
+
+function hotelUpdateTiempoTotal() {
+  // actualizar total desvío en tiempo real si queremos — opcional
+}
+
+function hotelUpdateDesvio(btn) {
+  var progSeg = btn === 1 ? HOTEL_B1_PROG : HOTEL_B2_PROG;
+  var presionoEl = document.querySelector('input[name="hotel-b'+btn+'"]:checked');
+  var minEl = document.getElementById('hotel-b'+btn+'-min');
+  var segEl = document.getElementById('hotel-b'+btn+'-seg');
+  var desvEl = document.getElementById('hotel-b'+btn+'-desv');
+  if (!presionoEl) { desvEl.textContent = '—'; hotelUpdateBotonesTotal(); return; }
+  if (presionoEl.value === 'no') {
+    desvEl.innerHTML = '<span style="color:#c62828;">No presionó (+900 seg)</span>';
+    hotelUpdateBotonesTotal(); return;
+  }
+  var minV = parseFloat(minEl.value) || 0;
+  var segV = parseFloat(segEl.value) || 0;
+  var realSeg = minV * 60 + segV;
+  var desv = Math.abs(realSeg - progSeg);
+  desvEl.textContent = desv + ' seg';
+  hotelUpdateBotonesTotal();
+}
+
+function hotelGetDesvioBoton(btn) {
+  var progSeg = btn === 1 ? HOTEL_B1_PROG : HOTEL_B2_PROG;
+  var presionoEl = document.querySelector('input[name="hotel-b'+btn+'"]:checked');
+  if (!presionoEl) return null;
+  if (presionoEl.value === 'no') return HOTEL_PENALIZACION;
+  var minV = parseFloat(document.getElementById('hotel-b'+btn+'-min').value) || 0;
+  var segV = parseFloat(document.getElementById('hotel-b'+btn+'-seg').value) || 0;
+  return Math.abs((minV * 60 + segV) - progSeg);
+}
+
+function hotelUpdateBotonesTotal() {
+  var d1 = hotelGetDesvioBoton(1);
+  var d2 = hotelGetDesvioBoton(2);
+  var el = document.getElementById('hotel-botones-total');
+  if (d1 === null || d2 === null) { el.textContent = '— seg'; return; }
+  el.textContent = (d1 + d2) + ' seg';
+}
+
+function hotelZLabel(z) {
+  if (z === null) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad elevada';
+}
+
+function iniciarHotel() {
+  document.getElementById('hotel-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('hotel-form').style.display = 'block';
+  document.getElementById('hotel-resultado').style.display = 'none';
+  hotelBuildTareas();
+}
+
+function limpiarHotel() {
+  ['hotel-sexo','hotel-edad'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  hotelBuildTareas();
+  [1,2].forEach(function(b){
+    ['si','no'].forEach(function(v){ var e=document.getElementById('hotel-b'+b+'-'+v); if(e) e.checked=false; });
+    ['min','seg'].forEach(function(s){ var e=document.getElementById('hotel-b'+b+'-'+s); if(e) e.value=''; });
+    var d=document.getElementById('hotel-b'+b+'-desv'); if(d) d.textContent='—';
+  });
+  var bt=document.getElementById('hotel-botones-total'); if(bt) bt.textContent='— seg';
+}
+
+function calcularHotel() {
+  var sexo = document.getElementById('hotel-sexo').value;
+  var gi   = document.getElementById('hotel-edad').value;
+  if (!sexo) { toast('Seleccioná el sexo.','error'); return; }
+  if (gi === '') { toast('Seleccioná el grupo de edad.','error'); return; }
+  gi = parseInt(gi);
+  var bar = HOTEL_BAR[sexo];
+
+  // Calcular tareas intentadas y correctas
+  var intentadas = 0, correctas = 0;
+  var desvioTiempoTotal = 0;
+  var detallesTareas = [];
+  for (var n = 1; n <= 5; n++) {
+    var intEl = document.querySelector('input[name="hotel-int-'+n+'"]:checked');
+    var corEl = document.querySelector('input[name="hotel-cor-'+n+'"]:checked');
+    var intento  = intEl ? intEl.value : 'no';
+    var correcto = corEl ? corEl.value : 'no';
+    var minV = parseFloat(document.getElementById('hotel-t'+n+'-min').value) || 0;
+    var segV = parseFloat(document.getElementById('hotel-t'+n+'-seg').value) || 0;
+    var tiempoSeg = minV * 60 + segV;
+    var desv = Math.abs(tiempoSeg - HOTEL_TIEMPO_OPTIMO);
+    if (intento === 'si') { intentadas++; desvioTiempoTotal += desv; }
+    if (correcto === 'si') correctas++;
+    detallesTareas.push({ nombre: HOTEL_TAREAS[n-1], intento: intento, correcto: correcto, tiempo: tiempoSeg, desv: desv });
+  }
+
+  // Botones
+  var d1 = hotelGetDesvioBoton(1);
+  var d2 = hotelGetDesvioBoton(2);
+  if (d1 === null || d2 === null) { toast('Completá el registro de botones del garage.','error'); return; }
+  var desvBotones = d1 + d2;
+  var botonesCorrectos = 0;
+  if (hotelGetDesvioBoton(1) !== HOTEL_PENALIZACION) botonesCorrectos++;
+  if (hotelGetDesvioBoton(2) !== HOTEL_PENALIZACION) botonesCorrectos++;
+
+  // Z scores (desvíos: invertir signo — menos desvío = mejor)
+  var zTareas  = parseFloat(((intentadas - bar.tareas[gi][0]) / bar.tareas[gi][1]).toFixed(2));
+  var zTiempo  = parseFloat((-(desvioTiempoTotal - bar.tiempo[gi][0]) / bar.tiempo[gi][1]).toFixed(2));
+  var zBotones = parseFloat((-(desvBotones - bar.botones[gi][0]) / bar.botones[gi][1]).toFixed(2));
+
+  var edadLabels = ['19–29','30–39','40–49','50–59'];
+  var sexoLabel  = sexo === 'f' ? 'Femenino' : 'Masculino';
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+intentadas+'/5</div><div class="detalle-lbl">Tareas<br>intentadas</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+correctas+'/5</div><div class="detalle-lbl">Tareas<br>correctas</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+desvioTiempoTotal+'"</div><div class="detalle-lbl">Desvío<br>tiempo</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+botonesCorrectos+'/2</div><div class="detalle-lbl">Botones<br>correctos</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+desvBotones+'"</div><div class="detalle-lbl">Desvío<br>botones</div></div>';
+
+  var interpHtml =
+    '<p><strong>Grupo:</strong> '+sexoLabel+' · '+edadLabels[gi]+' años</p>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:8px;">'+
+    '<thead><tr><th style="text-align:left;padding:3px 6px;background:var(--accent);color:#eef6ea;">Variable</th>'+
+    '<th style="text-align:center;padding:3px 6px;background:var(--accent);color:#eef6ea;">Resultado</th>'+
+    '<th style="text-align:center;padding:3px 6px;background:var(--accent);color:#eef6ea;">Z</th>'+
+    '<th style="text-align:left;padding:3px 6px;background:var(--accent);color:#eef6ea;">Interpretación</th></tr></thead><tbody>'+
+    '<tr><td style="padding:3px 6px;border-bottom:0.5px solid var(--border);">Tareas intentadas</td><td style="text-align:center;padding:3px 6px;border-bottom:0.5px solid var(--border);">'+intentadas+'/5</td><td style="text-align:center;padding:3px 6px;border-bottom:0.5px solid var(--border);font-weight:700;">'+(zTareas>=0?'+':'')+zTareas+'</td><td style="padding:3px 6px;border-bottom:0.5px solid var(--border);font-weight:700;">'+hotelZLabel(zTareas)+'</td></tr>'+
+    '<tr style="background:#f4faf2;"><td style="padding:3px 6px;border-bottom:0.5px solid var(--border);">Desvío total tiempo</td><td style="text-align:center;padding:3px 6px;border-bottom:0.5px solid var(--border);">'+desvioTiempoTotal+' seg</td><td style="text-align:center;padding:3px 6px;border-bottom:0.5px solid var(--border);font-weight:700;">'+(zTiempo>=0?'+':'')+zTiempo+'</td><td style="padding:3px 6px;border-bottom:0.5px solid var(--border);font-weight:700;">'+hotelZLabel(zTiempo)+'</td></tr>'+
+    '<tr><td style="padding:3px 6px;">Desvío botones</td><td style="text-align:center;padding:3px 6px;">'+desvBotones+' seg</td><td style="text-align:center;padding:3px 6px;font-weight:700;">'+(zBotones>=0?'+':'')+zBotones+'</td><td style="padding:3px 6px;font-weight:700;">'+hotelZLabel(zBotones)+'</td></tr>'+
+    '</tbody></table>'+
+    '<p style="font-size:0.78rem;color:#c62828;margin-top:10px;">⚠ Baremos: Pinasco et al. (2023) — adultos 19–60 años, Buenos Aires, ≥12 años educación. No aplicar fuera de este rango.</p>';
+
+  window._hotelData = {
+    intentadas: intentadas, correctas: correctas,
+    desvioTiempo: desvioTiempoTotal, desvBotones: desvBotones,
+    botonesCorrectos: botonesCorrectos,
+    zTareas: zTareas, zTiempo: zTiempo, zBotones: zBotones,
+    sexo: sexo, gi: gi
+  };
+
+  document.getElementById('hotel-detalle').innerHTML = detalleHtml;
+  document.getElementById('hotel-interp').innerHTML  = interpHtml;
+  document.getElementById('hotel-form').style.display = 'none';
+  document.getElementById('hotel-resultado').style.display = 'block';
+}
+
+function guardarHotel() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('hotel-paciente').value;
+  var fecha = document.getElementById('hotel-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._hotelData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._hotelData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'Test del Hotel', fecha: fecha,
+    puntaje_total: d.intentadas,
+    puntaje_z: d.zTareas,
+    categoria: hotelZLabel(d.zTareas),
+    datos: d
+  }, SESSION.access_token).then(function(){
+    window._hotelData = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
 // ══ BTA — Brief Test of Attention ══════════════════════════════════════════
+
 var BTA_EDAD_LABELS = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
 var BTA_ESCOL_LABELS = ['>12 años de educación','1 a 12 años de educación'];
 var BTA_PCS = [5,10,15,20,30,40,50,60,70,80,85,90,95];
