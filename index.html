@@ -8,7 +8,7 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:        #f0f4fa;
+  --bg:        #d8e4f2;
   --surface:   #ffffff;
   --surface2:  #dce8f5;
   --sidebar:   #ccdaee;
@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.2</div>
     </div>
   </aside>
 
@@ -4735,11 +4735,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var lbl=s.v>=Math.round(s.max*0.7)?'Significativa':s.v>=Math.round(s.max*0.5)?'Moderada':'No significativa';
           html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+s.l+' <span style="font-size:8px;color:#4a6a8a;">(ítems '+s.it+')</span></td>'+
             '<td style="'+tdRC+'">'+s.v+'/'+s.max+'</td>'+
-            '<td style="'+tdRI+';color:'+col+';">'+lbl+'</td></tr>';
+            '<td style="'+tdRI+'">'+lbl+'</td></tr>';
         });
         if(tot!=null) html+='<tr style="background:#e8eff8;"><td style="'+tdR+'font-weight:700;border-top:1px solid #ccc;">Puntaje Total</td>'+
-          '<td style="'+tdRC+'color:'+nivCol+';border-top:1px solid #ccc;">'+tot+'/52</td>'+
-          '<td style="'+tdRI+'color:'+nivCol+';border-top:1px solid #ccc;">'+nivLbl+'</td></tr>';
+          '<td style="'+tdRC+'border-top:1px solid #ccc;">'+tot+'/52</td>'+
+          '<td style="'+tdRI+'border-top:1px solid #ccc;">'+nivLbl+'</td></tr>';
         html += '</tbody></table>';
       }
 
@@ -4759,7 +4759,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var col=pc!=null?(pc>=75?'#c0392b':'#2e7a4f'):'#888';
           html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+pbqN[k]+'</td>'+
             '<td style="'+tdRC+'">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
-            '<td style="'+tdRI+'color:'+col+';">'+lbl+'</td></tr>';
+            '<td style="'+tdRI+'">'+lbl+'</td></tr>';
         });
         html += '</tbody></table>';
       }
@@ -4782,7 +4782,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var col=pc!=null?pcColor(pc):'#888';
           html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+csqN[k]+'</td>'+
             '<td style="'+tdRC+'">'+(score!=null?score:'—')+(pc!=null?' / Pc '+pc:'')+'</td>'+
-            '<td style="'+tdRI+'color:'+col+';">'+lbl+'</td></tr>';
+            '<td style="'+tdRI+'">'+lbl+'</td></tr>';
         });
         html += '</tbody></table>';
       }
@@ -4798,10 +4798,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           '</tr></thead><tbody>';
         if(intVal!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Índice de Intensidad <span style="font-size:8px;color:#4a6a8a;">(ítems 3–6)</span></td>'+
           '<td style="'+tdRC+'">'+intVal.toFixed(1)+'/10</td>'+
-          '<td style="'+tdRI+'color:'+bpiCol(intVal)+';">'+bpiLbl(intVal,'int')+'</td></tr>';
+          '<td style="'+tdRI+'">'+bpiLbl(intVal,'int')+'</td></tr>';
         if(infVal!==null) html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Índice de Interferencia <span style="font-size:8px;color:#4a6a8a;">(ítems 9A–9G)</span></td>'+
           '<td style="'+tdRC+'">'+infVal.toFixed(1)+'/10</td>'+
-          '<td style="'+tdRI+'color:'+bpiCol(infVal)+';">'+bpiLbl(infVal,'inf')+'</td></tr>';
+          '<td style="'+tdRI+'">'+bpiLbl(infVal,'inf')+'</td></tr>';
         if(alivio!==null) html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Alivio con tratamiento'+(trat?' <span style="font-size:8px;color:#4a6a8a;">('+trat+')</span>':'')+'</td>'+
           '<td style="'+tdRC+'">'+alivio+'%</td>'+
           '<td style="'+tdRI+'">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
@@ -4893,7 +4893,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;">'+dimNombres[k]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+avg+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
-            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td></tr>';
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:700;color:#222;">'+estado+'</td></tr>';
         });
         html += '<tr><td colspan="6" style="background:#1a3a5c;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Escalas globales</td></tr>';
         var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
@@ -4907,7 +4907,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:9px;font-weight:600;">'+row[0]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;">'+row[1]+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
-            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t!=null&&t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td></tr>';
+            '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:700;color:#222;">'+estado+'</td></tr>';
         });
         html += '</table>';
         html += '<div style="font-size:8px;color:#666;margin-bottom:6px;">T≥65 clínicamente significativo · Baremos: Casullo & Pérez (2008)</div>';
@@ -4934,7 +4934,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           html += '<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+sub.label+'</td>'+
             '<td style="'+tdRC+'">'+(sub.val!=null?sub.val:'—')+'</td>'+
             '<td style="'+tdRC+';font-family:inherit;font-size:9px;color:#555;">'+sub.corte+'</td>'+
-            '<td style="padding:4px 8px;border:0.5px solid #ddd;font-weight:700;background:'+bg+';color:'+fc+';font-size:9px;">'+(sub.cat||'—')+'</td></tr>';
+            '<td style="padding:4px 8px;border:0.5px solid #ddd;font-weight:700;color:#222;font-size:9px;">'+(sub.cat||'—')+'</td></tr>';
         });
         var catG = r.categoria||'—';
         html += '<tr style="background:#f0f0f0;"><td colspan="3" style="padding:3px 8px;border:0.5px solid #ddd;font-size:8.5px;font-weight:700;">Conclusión global</td>'+
