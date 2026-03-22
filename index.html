@@ -217,7 +217,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .field input:focus, .field select:focus, .field textarea:focus {
   outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
 }
-.field input::placeholder, .field textarea::placeholder { color: #c4b09a; }
+.field input::placeholder, .field textarea::placeholder { color: #6a8aaa; }
 .field select option { background: var(--surface2); }
 .field textarea { resize: vertical; min-height: 80px; }
 .btn-row { display: flex; gap: 10px; margin-top: 16px; }
@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.3</div>
     </div>
   </aside>
 
@@ -3897,9 +3897,17 @@ function renderPacientes() {
       (meta ? '<div class="pac-meta">' + meta + '</div>' : '') + '</div>' +
       '<div class="pac-acciones">' +
       '<button class="btn-xs btn-xs-primary" data-ver-pac="' + p.id + '">Ver</button>' +
+      '<button class="btn-xs" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);" data-editar-pac="' + p.id + '" title="Editar datos">✏</button>' +
       '<button class="btn-xs btn-xs-danger" data-borrar-pac-id="' + p.id + '" data-borrar-pac-nombre="' + encodeURIComponent(p.nombre) + '">✕</button>' +
       '</div></div>';
   }).join('');
+  // Delegación Editar
+  el.querySelectorAll('[data-editar-pac]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      editarPaciente(this.getAttribute('data-editar-pac'));
+    });
+  });
   // Delegación Ver
   el.querySelectorAll('[data-ver-pac]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
@@ -3915,6 +3923,53 @@ function renderPacientes() {
     });
   });
 }
+
+function editarPaciente(id) {
+  var p = PACIENTES.find(function(x){ return String(x.id) === String(id); });
+  if (!p) { toast('Paciente no encontrado','error'); return; }
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML =
+    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:340px;max-width:480px;width:92%;box-shadow:0 8px 32px rgba(26,58,92,0.18);">' +
+    '<div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:18px;">Editar paciente</div>' +
+    '<div class="form-grid-3" style="margin-bottom:0;">' +
+    '<div class="field" style="grid-column:1/-1;"><label>Nombre completo *</label><input type="text" id="ep-nombre" value="'+escHtml(p.nombre||'')+'"></div>' +
+    '<div class="field"><label>Fecha de nacimiento</label><input type="date" id="ep-fnac" value="'+(p.fecha_nacimiento||'')+'"></div>' +
+    '<div class="field"><label>Sexo</label><select id="ep-sexo"><option value="">—</option><option value="Masculino"'+(p.sexo==='Masculino'?' selected':'')+'>Masculino</option><option value="Femenino"'+(p.sexo==='Femenino'?' selected':'')+'>Femenino</option><option value="No binario"'+(p.sexo==='No binario'?' selected':'')+'>No binario</option></select></div>' +
+    '<div class="field"><label>Escolaridad</label><input type="text" id="ep-escol" value="'+escHtml(p.escolaridad||'')+'"></div>' +
+    '<div class="field" style="grid-column:1/-1;"><label>Motivo de consulta</label><input type="text" id="ep-motivo" value="'+escHtml(p.motivo_consulta||'')+'"></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">' +
+    '<button class="btn-secondary" id="ep-cancel">Cancelar</button>' +
+    '<button class="btn-primary" id="ep-save">Guardar</button>' +
+    '</div></div>';
+  document.body.appendChild(modal);
+  modal.querySelector('#ep-cancel').onclick = function(){ document.body.removeChild(modal); };
+  modal.addEventListener('click', function(e){ if(e.target===modal) document.body.removeChild(modal); });
+  modal.querySelector('#ep-save').onclick = function(){
+    var nombre = modal.querySelector('#ep-nombre').value.trim();
+    if (!nombre) { toast('El nombre es obligatorio','error'); return; }
+    var updates = {
+      nombre: nombre,
+      fecha_nacimiento: modal.querySelector('#ep-fnac').value || null,
+      sexo: modal.querySelector('#ep-sexo').value || null,
+      escolaridad: modal.querySelector('#ep-escol').value.trim() || null,
+      motivo_consulta: modal.querySelector('#ep-motivo').value.trim() || null
+    };
+    supaFetch('/rest/v1/psico_pacientes?id=eq.'+id, 'PATCH', updates, SESSION.access_token)
+    .then(function(){
+      var idx = PACIENTES.findIndex(function(x){ return String(x.id)===String(id); });
+      if (idx !== -1) Object.assign(PACIENTES[idx], updates);
+      document.body.removeChild(modal);
+      renderPacientes();
+      renderPacientesInicio();
+      llenarSelectPacientes();
+      toast('✓ Paciente actualizado','success');
+    }).catch(function(){ toast('Error al guardar','error'); });
+  };
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function borrarPaciente(id, nombre) {
   try { nombre = decodeURIComponent(nombre); } catch(e) {}
@@ -4006,7 +4061,7 @@ function renderHistorial() {
     '<th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">T</th>' +
     '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Categoría</th>' +
     '<th style="text-align:left;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Fecha</th>' +
-    '<th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Borrar</th>' +
+    '<th style="text-align:center;padding:8px 12px;font-size:0.72rem;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);">Acciones</th>' +
     '</tr></thead><tbody>' +
     datos.map(function(r) {
       var nomPac = r.psico_pacientes ? r.psico_pacientes.nombre : '—';
@@ -4019,7 +4074,8 @@ function renderHistorial() {
         '<td style="padding:10px 12px;font-size:0.84rem;text-align:center;font-family:\'DM Mono\',monospace;">' + (r.puntaje_t !== null ? r.puntaje_t : '—') + '</td>' +
         '<td style="padding:10px 12px;font-size:0.84rem;">' + (r.categoria || '—') + '</td>' +
         '<td style="padding:10px 12px;font-size:0.82rem;color:var(--muted);">' + (r.fecha || '') + '</td>' +
-        '<td style="padding:10px 12px;text-align:center;">' +
+        '<td style="padding:6px 12px;text-align:center;white-space:nowrap;">' +
+        '<button class="btn-xs btn-xs-primary" data-editar-id="' + r.id + '" title="Editar fecha" style="margin-right:4px;">✏</button>' +
         '<button class="btn-xs btn-xs-danger" data-borrar-id="' + r.id + '" title="Borrar">✕</button>' +
         '</td></tr>';
     }).join('') + '</tbody></table>';
@@ -4027,6 +4083,9 @@ function renderHistorial() {
   // Delegación para botones borrar
   el.querySelectorAll('[data-borrar-id]').forEach(function(btn) {
     btn.addEventListener('click', function() { borrarResultado(this.getAttribute('data-borrar-id')); });
+  });
+  el.querySelectorAll('[data-editar-id]').forEach(function(btn) {
+    btn.addEventListener('click', function() { editarResultado(this.getAttribute('data-editar-id')); });
   });
 }
 
@@ -5198,6 +5257,39 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   win.document.write(html);
   win.document.close();
   setTimeout(function(){ win.print(); }, 800);
+}
+
+function editarResultado(id) {
+  var r = RESULTADOS.find(function(x){ return String(x.id) === String(id); });
+  if (!r) { toast('Resultado no encontrado','error'); return; }
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML =
+    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:320px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(26,58,92,0.18);">' +
+    '<div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px;">Editar resultado</div>' +
+    '<div style="font-size:0.82rem;color:var(--muted);margin-bottom:18px;">' + r.test + ' — ' + (r.psico_pacientes ? r.psico_pacientes.nombre : '') + '</div>' +
+    '<div class="field" style="margin-bottom:16px;"><label>Fecha de evaluación</label><input type="date" id="edit-res-fecha" value="' + (r.fecha||'') + '"></div>' +
+    '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
+    '<button class="btn-secondary" id="edit-res-cancel">Cancelar</button>' +
+    '<button class="btn-primary" id="edit-res-save">Guardar</button>' +
+    '</div></div>';
+  document.body.appendChild(modal);
+  modal.querySelector('#edit-res-cancel').onclick = function(){ document.body.removeChild(modal); };
+  modal.addEventListener('click', function(e){ if(e.target===modal) document.body.removeChild(modal); });
+  modal.querySelector('#edit-res-save').onclick = function(){
+    var nuevaFecha = modal.querySelector('#edit-res-fecha').value;
+    if (!nuevaFecha) { toast('Ingresá una fecha','error'); return; }
+    supaFetch('/rest/v1/psico_resultados?id=eq.'+id, 'PATCH',
+      { fecha: nuevaFecha },
+      SESSION.access_token
+    ).then(function(){
+      var idx = RESULTADOS.findIndex(function(x){ return String(x.id)===String(id); });
+      if (idx !== -1) RESULTADOS[idx].fecha = nuevaFecha;
+      document.body.removeChild(modal);
+      renderHistorial();
+      toast('✓ Fecha actualizada','success');
+    }).catch(function(){ toast('Error al guardar','error'); });
+  };
 }
 
 function borrarResultado(id) {
