@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.5</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.6</div>
     </div>
   </aside>
 
@@ -4958,9 +4958,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'Test del Hotel') {
-          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, d.mTareas||null, d.dsTareas||null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
-          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, d.mTiempo||null, d.dsTiempo||null, d.zTiempo, r.fecha, 'Multitasking');
-          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, d.mBotones||null, d.dsBotones||null, d.zBotones, r.fecha, 'Mem. prospectiva');
+          var hSexo = d.sexo||'f'; var hGi = d.gi!=null?d.gi:0;
+          var hBar = (typeof HOTEL_BAR !== 'undefined') ? HOTEL_BAR[hSexo] : null;
+          var hMT=d.mTareas||(hBar?hBar.tareas[hGi][0]:null), hDST=d.dsTareas||(hBar?hBar.tareas[hGi][1]:null);
+          var hMTi=d.mTiempo||(hBar?hBar.tiempo[hGi][0]:null), hDSTi=d.dsTiempo||(hBar?hBar.tiempo[hGi][1]:null);
+          var hMB=d.mBotones||(hBar?hBar.botones[hGi][0]:null), hDSB=d.dsBotones||(hBar?hBar.botones[hGi][1]:null);
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, hMT, hDST, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, hMTi, hDSTi, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, hMB, hDSB, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BTA') {
           var btaEi = d.ei != null ? d.ei : null;
@@ -4998,9 +5003,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</tr>';
 
         } else if (testNombre === 'Test del Hotel') {
-          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, d.mTareas||null, d.dsTareas||null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
-          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, d.mTiempo||null, d.dsTiempo||null, d.zTiempo, r.fecha, 'Multitasking');
-          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, d.mBotones||null, d.dsBotones||null, d.zBotones, r.fecha, 'Mem. prospectiva');
+          var hSexo = d.sexo||'f'; var hGi = d.gi!=null?d.gi:0;
+          var hBar = (typeof HOTEL_BAR !== 'undefined') ? HOTEL_BAR[hSexo] : null;
+          var hMT=d.mTareas||(hBar?hBar.tareas[hGi][0]:null), hDST=d.dsTareas||(hBar?hBar.tareas[hGi][1]:null);
+          var hMTi=d.mTiempo||(hBar?hBar.tiempo[hGi][0]:null), hDSTi=d.dsTiempo||(hBar?hBar.tiempo[hGi][1]:null);
+          var hMB=d.mBotones||(hBar?hBar.botones[hGi][0]:null), hDSB=d.dsBotones||(hBar?hBar.botones[hGi][1]:null);
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, hMT, hDST, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, hMTi, hDSTi, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, hMB, hDSB, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BTA') {
           var btaEd = BTA_EDAD_LABELS[d.gi] || '—';
@@ -5063,14 +5073,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function renderDolor(list) {
     if (!list.length) return '';
     // Mismo estilo que renderCL
-    var thD  = 'font-size:8.5px;font-weight:700;color:#eef6ea;background:#325c28;padding:5px 8px;text-align:left;border:0.5px solid #214b1a;';
-    var thDC = 'font-size:8.5px;font-weight:700;color:#eef6ea;background:#325c28;padding:5px 8px;text-align:center;border:0.5px solid #214b1a;';
+    var thD  = 'font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;padding:5px 8px;text-align:left;border:0.5px solid #a8c4a0;';
+    var thDC = 'font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;padding:5px 8px;text-align:center;border:0.5px solid #a8c4a0;';
     var tdR  = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
     function rowBg(i){ return i%2===0?'#fff':'#f5fbf3'; }
     function dolorHeader(title){
-      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#214b1a;margin:10px 0 0;padding:3px 7px;background:#d8ecd0;border-left:3px solid #325c28;">'+title+'</div>';
+      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#eef6ea;margin:10px 0 0;padding:4px 9px;background:#325c28;border-left:3px solid #214b1a;">'+title+'</div>';
     }
     function miniBar(pct, col){
       return '<div style="position:relative;height:8px;background:#dff0d8;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
@@ -5205,8 +5215,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function renderCL(list) {
     if (!list.length) return '';
     // Estilos comunes
-    var thDark = 'font-size:8.5px;font-weight:700;color:#eef6ea;background:#325c28;padding:5px 8px;text-align:left;border:0.5px solid #214b1a;';
-    var thDarkC = 'font-size:8.5px;font-weight:700;color:#eef6ea;background:#325c28;padding:5px 8px;text-align:center;border:0.5px solid #214b1a;';
+    var thDark = 'font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;padding:5px 8px;text-align:left;border:0.5px solid #a8c4a0;';
+    var thDarkC = 'font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;padding:5px 8px;text-align:center;border:0.5px solid #a8c4a0;';
     var tdR = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
@@ -5214,7 +5224,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     function rowBg(i) { return i%2===0?'#fff':'#f5fbf3'; }
 
     function clHeader(title) {
-      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#214b1a;margin:10px 0 0;padding:3px 7px;background:#d8ecd0;border-left:3px solid #325c28;">'+title+'</div>';
+      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#eef6ea;margin:10px 0 0;padding:4px 9px;background:#325c28;border-left:3px solid #214b1a;">'+title+'</div>';
     }
 
     var html = '';
@@ -5249,7 +5259,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#1a2e16'; }
         html += clHeader('SCL-90-R · Inventario de Síntomas de Derogatis');
         html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
-        html += '<tr><td colspan="3" style="background:#325c28;color:#eef6ea;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #4a8040;">Dimensiones primarias</td>'+
+        html += '<tr><td colspan="3" style="background:#d8ecd0;color:#214b1a;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #a8c4a0;">Dimensiones primarias</td>'+
           '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#eef6ea;background:#325c28;border:0.5px solid #214b1a;text-align:center;">Ptos brutos</th>'+
           '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#eef6ea;background:#325c28;border:0.5px solid #214b1a;text-align:center;">T</th>'+
           '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#eef6ea;background:#325c28;border:0.5px solid #214b1a;text-align:center;">Estado</th></tr>';
@@ -5264,7 +5274,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:700;color:#222;">'+estado+'</td></tr>';
         });
-        html += '<tr><td colspan="6" style="background:#325c28;color:#eef6ea;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #4a8040;">Escalas globales</td></tr>';
+        html += '<tr><td colspan="6" style="background:#d8ecd0;color:#214b1a;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #a8c4a0;">Escalas globales</td></tr>';
         var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
         [['IGS — Índice de Severidad Global', d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—', igt],
          ['TSP — Total Síntomas Positivos', d.tsp!=null?d.tsp:'—', d.tsp_t!=null?d.tsp_t:null],
