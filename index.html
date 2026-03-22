@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.1</div>
     </div>
   </aside>
 
@@ -4360,6 +4360,145 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Render sección Neuropsicológica (tabla con dominios) ──
+  // ── Gráfico de perfil neuropsicológico (line-dot chart) ──────────────────
+  function renderGraficoPerfil(list) {
+    if (!list.length) return '';
+
+    // Recopilar todos los puntos con Z, en orden de dominio
+    var puntos = [];
+    var byTest = {};
+    list.forEach(function(r){ byTest[r.test] = r; });
+
+    function addPunto(label, z, dominio) {
+      if (z === null || z === undefined || isNaN(parseFloat(z))) return;
+      puntos.push({ label: label, z: parseFloat(parseFloat(z).toFixed(2)), dominio: dominio });
+    }
+
+    // Orden fijo por dominio — igual que en la imagen de referencia
+    var ORDEN = [
+      { dom: 'ATENCIÓN', tests: [
+        { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
+        { t:'SDMT',      fn: function(r){ var d=r.datos||{}; addPunto('SDMT',d.z,'ATENCIÓN'); } },
+      ]},
+      { dom: 'TMT', tests: [
+        { t:'TMT A-B',   fn: function(r){ var d=r.datos||{}; addPunto('TMT-A',d.tmt_a_z||r.puntaje_z,'TMT'); addPunto('TMT-B',d.tmt_b_z,'TMT'); } },
+      ]},
+      { dom: 'STROOP', tests: [
+        { t:'Stroop',    fn: function(r){ var d=r.datos||{}; addPunto('Stroop P',d.zP,'STROOP'); addPunto('Stroop C',d.zC,'STROOP'); addPunto('Stroop PC',d.zPC,'STROOP'); addPunto('Stroop Int.',d.zInt,'STROOP'); } },
+      ]},
+      { dom: 'LENGUAJE', tests: [
+        { t:'Fluencia Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){addPunto(v.label.replace('Fluencia ','Fl. '),v.z,'LENGUAJE');});}else{addPunto('Fluencia',r.puntaje_z,'LENGUAJE');} } },
+        { t:'BNT-60',  fn: function(r){ addPunto('BNT-60', r.puntaje_z, 'LENGUAJE'); } },
+        { t:'BNT-12',  fn: function(r){ addPunto('BNT-12', r.puntaje_z, 'LENGUAJE'); } },
+      ]},
+      { dom: 'MEMORIA', tests: [
+        { t:'Rey Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){ if(v.z!==null&&v.z!==undefined) addPunto(v.label.replace('Ensayo ','A').replace('Recuerdo ','Rec. '),v.z,'MEMORIA'); });}else{addPunto('Rey Verbal',r.puntaje_z,'MEMORIA');} } },
+        { t:'Figura Rey', fn: function(r){ var d=r.datos||{}; addPunto('Fig.Rey Copia',d.zCopia,'MEMORIA'); addPunto('Fig.Rey RI',d.zRI,'MEMORIA'); } },
+        { t:'BEM 144 Signoret', fn: function(r){ addPunto('BEM', r.puntaje_z, 'MEMORIA'); } },
+      ]},
+      { dom: 'FUNC. EJEC.', tests: [
+        { t:'WCST-64',  fn: function(r){ var d=r.datos||{}; addPunto('WCST Cat.',d.cat_z,'FUNC. EJEC.'); addPunto('WCST Perse.',d.perse_z,'FUNC. EJEC.'); } },
+        { t:'IFS',      fn: function(r){ addPunto('IFS', r.puntaje_z, 'FUNC. EJEC.'); } },
+      ]},
+    ];
+
+    ORDEN.forEach(function(grupo){
+      grupo.tests.forEach(function(td){
+        if (byTest[td.t]) td.fn(byTest[td.t]);
+      });
+    });
+
+    if (!puntos.length) return '';
+
+    // ── Dimensiones del SVG ──
+    // Área gráfico: margen izq=52, der=12, arriba=42, abajo=72
+    // Ancho total: 680, alto total según puntos
+    var W = 680, MT = 42, MB = 72, ML = 52, MR = 12;
+    var chartW = W - ML - MR;  // 616
+    var chartH = 240;
+    var H = MT + chartH + MB;  // 354
+
+    // Escala Y: Z −3 a +3, 240px → 1Z = 40px, Z=0 → y=MT+120=162
+    function zy(z) { return MT + chartH/2 - z * (chartH/6); }
+
+    // Escala X: puntos distribuidos uniformemente
+    var n = puntos.length;
+    var paso = n > 1 ? chartW / (n - 1) : chartW;
+    function px(i) { return ML + (n > 1 ? i * paso : chartW/2); }
+
+    // ── Construir SVG ──
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="display:block;font-family:Arial,Helvetica,sans-serif;">';
+
+    // Fondo blanco
+    svg += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+
+    // Título
+    svg += '<text x="'+W/2+'" y="18" text-anchor="middle" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;fill:#0f2540;">Perfil Neuropsicológico</text>';
+
+    // Zona −1 a +1
+    var y1 = zy(1), ym1 = zy(-1);
+    svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#a0c0e0" opacity="0.22"/>';
+
+    // Líneas horizontales Y
+    [-3,-2,-1,0,1,2,3].forEach(function(z){
+      var y = zy(z);
+      var isZero = z === 0;
+      var is1 = z === 1 || z === -1;
+      svg += '<line x1="'+ML+'" y1="'+y+'" x2="'+(ML+chartW)+'" y2="'+y+'" stroke="'+(isZero?'#c8a070':is1?'#9ab8d8':'#c8d8ec')+'" stroke-width="'+(isZero?0.9:0.5)+'" '+(isZero?'stroke-dasharray="5 3"':'')+'/>';
+      // Etiqueta Y
+      var lbl = z > 0 ? '+'+z : String(z);
+      svg += '<text x="'+(ML-6)+'" y="'+(y+4)+'" text-anchor="end" style="font-size:8px;fill:#4a6a8a;">'+lbl+'</text>';
+    });
+
+    // Separadores de dominio y etiquetas
+    var dominios = [];
+    puntos.forEach(function(p, i){
+      var last = dominios.length ? dominios[dominios.length-1] : null;
+      if (!last || last.dom !== p.dominio) dominios.push({dom:p.dominio, start:i, end:i});
+      else last.end = i;
+    });
+    dominios.forEach(function(g, gi){
+      // Línea separadora (antes del primer punto de cada dominio excepto el primero)
+      if (gi > 0) {
+        var xSep = (px(g.start) + px(g.start-1)) / 2;
+        svg += '<line x1="'+xSep+'" y1="'+MT+'" x2="'+xSep+'" y2="'+(MT+chartH)+'" stroke="#9ab8d8" stroke-width="0.5" stroke-dasharray="3 3"/>';
+      }
+      // Etiqueta dominio centrada
+      var xC = (px(g.start) + px(g.end)) / 2;
+      svg += '<text x="'+xC+'" y="'+(MT-6)+'" text-anchor="middle" style="font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;fill:#4a6a8a;">'+g.dom+'</text>';
+    });
+
+    // Línea de perfil continua
+    var pts = puntos.map(function(p,i){ return px(i)+','+zy(p.z); }).join(' ');
+    svg += '<polyline points="'+pts+'" fill="none" stroke="#0f2540" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>';
+
+    // Puntos (círculo blanco + borde + punto central)
+    puntos.forEach(function(p, i){
+      var x = px(i), y = zy(p.z);
+      svg += '<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="#ffffff" stroke="#0f2540" stroke-width="1.5"/>';
+      svg += '<circle cx="'+x+'" cy="'+y+'" r="1.6" fill="#0f2540"/>';
+    });
+
+    // Etiquetas eje X rotadas −50°
+    puntos.forEach(function(p, i){
+      var x = px(i), yBase = MT + chartH + 8;
+      svg += '<text transform="rotate(-50,'+x+','+yBase+')" x="'+x+'" y="'+yBase+'" text-anchor="end" style="font-size:7.8px;fill:#0f2540;">'+p.label+'</text>';
+    });
+
+    // Leyenda
+    var yL = H - 14;
+    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="4.5" fill="#ffffff" stroke="#0f2540" stroke-width="1.5"/>';
+    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="1.6" fill="#0f2540"/>';
+    svg += '<text x="'+(ML+10)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Puntaje Z del paciente</text>';
+    svg += '<rect x="'+(ML+145)+'" y="'+(yL-5)+'" width="30" height="10" fill="#a0c0e0" opacity="0.40"/>';
+    svg += '<text x="'+(ML+180)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Rango normal (Z −1 a +1)</text>';
+    svg += '<line x1="'+(ML+320)+'" y1="'+yL+'" x2="'+(ML+346)+'" y2="'+yL+'" stroke="#c8a070" stroke-width="0.9" stroke-dasharray="5 3"/>';
+    svg += '<text x="'+(ML+352)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Media normativa (Z = 0)</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
   function renderNP(list) {
     if (!list.length) return '';
     var rows = '';
@@ -4953,6 +5092,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     pdfSec('Motivo de Consulta', inf.motivo_consulta)+
     pdfSec('Descripción de la Conducta Durante la Evaluación', inf.descripcion_conducta)+
     pdfSec('Perfil Cognitivo', inf.perfil_cognitivo)+
+
+    // ── Gráfico de perfil Z ──
+    (testsNp.length ? renderGraficoPerfil(testsNp) : '')+
 
 
     // ── Pruebas Administradas (formato narrativo por dominio) ──
