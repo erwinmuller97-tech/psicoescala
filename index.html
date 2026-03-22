@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.6</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.7</div>
     </div>
   </aside>
 
@@ -1540,6 +1540,63 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           <button class="btn-secondary" onclick="document.getElementById('ifs-resultado').style.display='none';document.getElementById('ifs-form').style.display='block';">← Modificar</button>
           <button class="btn-secondary" onclick="window.print()">🖨 Imprimir</button>
           <button class="btn-primary" onclick="guardarResultadoIFS()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEST ACE-R ── -->
+    <div class="vista" id="vista-acer">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">ACE-R · Addenbrooke's Cognitive Examination</div></div>
+      <div id="acer-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="acer-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Nivel educativo *</label>
+              <select id="acer-ne">
+                <option value="">— Seleccionar —</option>
+                <option value="baja">≤6 años de escolaridad</option>
+                <option value="alta">&gt;6 años de escolaridad</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="acer-fecha"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Puntajes por dominio</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Ingresá el puntaje bruto obtenido en cada dominio. Total máximo: 100 puntos.</p>
+          <div class="form-grid-3">
+            <div class="field"><label>Orientación (0–10)</label><input type="number" id="acer-orient" min="0" max="10" placeholder="0–10"></div>
+            <div class="field"><label>Atención (0–8)</label><input type="number" id="acer-aten" min="0" max="8" placeholder="0–8"></div>
+            <div class="field"><label>Memoria (0–26)</label><input type="number" id="acer-memo" min="0" max="26" placeholder="0–26"></div>
+            <div class="field"><label>Fluencia verbal (0–14)</label><input type="number" id="acer-fluencia" min="0" max="14" placeholder="0–14"></div>
+            <div class="field"><label>Lenguaje (0–26)</label><input type="number" id="acer-lenguaje" min="0" max="26" placeholder="0–26"></div>
+            <div class="field"><label>Visuoespacial (0–16)</label><input type="number" id="acer-visuo" min="0" max="16" placeholder="0–16"></div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:10px;">Corte: ≥85 (&gt;6 años escolaridad) o ≥70 (≤6 años). Índice VLOM = (Fluencia+Lenguaje)/(Orientación+Memoria). VLOM &gt;3.5 → DFT; ≤3.5 → EA.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="limpiarACER()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularACER()">Calcular resultado →</button>
+        </div>
+      </div>
+      <div id="acer-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <div style="text-align:center;">
+              <div style="font-size:2.2rem;font-weight:800;color:var(--accent);" id="acer-pts-total">—</div>
+              <div style="font-size:0.78rem;color:var(--muted);">Puntaje total /100</div>
+            </div>
+            <div id="acer-badge" class="badge-grande">—</div>
+            <div style="font-size:0.88rem;color:var(--text);" id="acer-cat">—</div>
+          </div>
+          <div class="resultado-detalle" id="acer-dominios"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="acer-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('acer-resultado').style.display='none';document.getElementById('acer-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarResultadoACER()">💾 Guardar resultado</button>
         </div>
       </div>
     </div>
@@ -6496,6 +6553,127 @@ function guardarResultadoMoCA(){
 // ══ IFS ══════════════════════════════════════════════════════════════════════
 // Baremos reales: Sierra Sanjurjo et al. (2018) — Tabla 2: M (DS) por escolaridad y edad
 // Escolaridad: 0=2-7años, 1=8-12años, 2=>12años  |  Edad: 0=20-34, 1=35-49, 2=50-64, 3=65-88
+// ══ WCST-64 · Wisconsin Card Sorting Test ═════════════════════════════════════
+// Baremos: Miranda et al. (2020) + Farías Sarquís et al. (2023) — Argentina
+// Grupos edad: 0=18-29, 1=30-39, 2=40-49, 3=50-59, 4=60-69, 5=70-79, 6=80-89
+// Nivel educativo: 'bajo' (<12 años) / 'alto' (≥12 años)
+// Variables normalizadas: Categorías completadas (cat) y Errores perseverativos % (perse)
+var WCST_BAR = {
+  cat: {
+    alto: { M:[5.2,5.1,5.0,4.8,4.5,4.0,3.5], DS:[1.1,1.1,1.2,1.3,1.4,1.5,1.6] },
+    bajo: { M:[4.5,4.4,4.3,4.1,3.8,3.3,2.8], DS:[1.3,1.3,1.4,1.5,1.6,1.7,1.8] }
+  },
+  perse: {
+    // Errores perseverativos %: puntuación inversa (mayor % = peor)
+    alto: { M:[14.2,15.1,16.3,18.5,21.4,25.3,30.1], DS:[8.1,8.5,9.0,9.8,10.5,11.2,12.0] },
+    bajo: { M:[18.5,19.4,20.8,23.2,27.1,32.0,38.5], DS:[9.5,9.8,10.3,11.1,12.0,12.8,13.5] }
+  }
+};
+
+function iniciarWCST() {
+  document.getElementById('wcst-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('wcst-form').style.display = 'block';
+  document.getElementById('wcst-resultado').style.display = 'none';
+}
+
+function limpiarWCST() {
+  ['wcst-cat','wcst-intentos','wcst-perse','wcst-fallas'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+}
+
+function calcularWCST() {
+  var gi = document.getElementById('wcst-edad').value;
+  var ne = document.getElementById('wcst-ne').value;
+  if (gi === '' || !ne) { toast('Seleccioná grupo de edad y escolaridad.','error'); return; }
+  gi = parseInt(gi);
+
+  var cat      = document.getElementById('wcst-cat').value;
+  var intentos = document.getElementById('wcst-intentos').value;
+  var perse    = document.getElementById('wcst-perse').value;
+  var fallas   = document.getElementById('wcst-fallas').value;
+
+  if (cat === '' && perse === '') { toast('Ingresá al menos Categorías o Errores perseverativos.','error'); return; }
+
+  var zCat = null, zPerse = null;
+  if (cat !== '') {
+    var catVal = parseFloat(cat);
+    var mCat = WCST_BAR.cat[ne].M[gi];
+    var dCat = WCST_BAR.cat[ne].DS[gi];
+    zCat = parseFloat(((catVal - mCat) / dCat).toFixed(2));
+  }
+  if (perse !== '') {
+    var perseVal = parseFloat(perse);
+    var mPerse = WCST_BAR.perse[ne].M[gi];
+    var dPerse = WCST_BAR.perse[ne].DS[gi];
+    // Inverso: mayor % de perseveraciones = peor rendimiento → Z invertido
+    zPerse = parseFloat(((mPerse - perseVal) / dPerse).toFixed(2));
+  }
+
+  var edadLabels = ['18–29','30–39','40–49','50–59','60–69','70–79','80–89'];
+
+  function zLab(z) {
+    if (z===null) return '—';
+    if (z >= 1.5)   return 'Superior';
+    if (z >= -0.5)  return 'Normal';
+    if (z >= -0.99) return 'Límite inferior normativo';
+    if (z >= -1.49) return 'Dificultad leve';
+    if (z >= -1.99) return 'Dificultad moderada';
+    return 'Dificultad elevada';
+  }
+
+  var detalleHtml = '';
+  if (cat !== '')      detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+(parseFloat(cat))+'/6</div><div class="detalle-lbl">Categorías<br>completadas</div></div>';
+  if (perse !== '')    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+parseFloat(perse)+'%</div><div class="detalle-lbl">Errores<br>perseverativos</div></div>';
+  if (zCat !== null)   detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+(zCat>=0?'+':'')+zCat+'</div><div class="detalle-lbl">Z Categorías</div></div>';
+  if (zPerse !== null) detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+(zPerse>=0?'+':'')+zPerse+'</div><div class="detalle-lbl">Z Perseveraciones</div></div>';
+
+  var interp = '<p><strong>Grupo:</strong> '+edadLabels[gi]+' años · Escolaridad: '+(ne==='alto'?'≥12 años':'&lt;12 años')+'</p>';
+  if (cat !== '')     interp += '<p><strong>Categorías:</strong> '+cat+'/6 · Z='+(zCat>=0?'+':'')+zCat+' — '+zLab(zCat)+'</p>';
+  if (perse !== '')   interp += '<p><strong>Errores perseverativos:</strong> '+perse+'% · Z='+(zPerse>=0?'+':'')+zPerse+' — '+zLab(zPerse)+'</p>';
+  if (intentos !== '') interp += '<p><strong>Intentos 1ª categoría:</strong> '+intentos+(parseInt(intentos)>20?' — Por encima del umbral de referencia (>20)':' — Dentro del rango esperado')+'</p>';
+  if (fallas !== '')  interp += '<p><strong>Fallas en mantener set:</strong> '+fallas+(parseInt(fallas)>3?' — Por encima del umbral de referencia (>3)':' — Dentro del rango esperado')+'</p>';
+  interp += '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Miranda et al. (2020) · Farías Sarquís et al. (2023) — Argentina</p>';
+
+  window._wcstData = {
+    categorias: cat !== '' ? parseFloat(cat) : null,
+    perse_pct:  perse !== '' ? parseFloat(perse) : null,
+    intentos:   intentos !== '' ? parseInt(intentos) : null,
+    fallas:     fallas !== '' ? parseInt(fallas) : null,
+    cat_z: zCat, perse_z: zPerse,
+    cat_m: cat !== '' ? WCST_BAR.cat[ne].M[gi] : null,
+    cat_ds: cat !== '' ? WCST_BAR.cat[ne].DS[gi] : null,
+    perse_m: perse !== '' ? WCST_BAR.perse[ne].M[gi] : null,
+    perse_ds: perse !== '' ? WCST_BAR.perse[ne].DS[gi] : null,
+    gi: gi, ne: ne
+  };
+
+  document.getElementById('wcst-detalle').innerHTML  = detalleHtml;
+  document.getElementById('wcst-interp').innerHTML   = interp;
+  document.getElementById('wcst-form').style.display = 'none';
+  document.getElementById('wcst-resultado').style.display = 'block';
+}
+
+function guardarResultadoWCST() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('wcst-paciente').value;
+  var fecha = document.getElementById('wcst-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._wcstData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._wcstData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'WCST-64', fecha: fecha,
+    puntaje_total: d.categorias,
+    puntaje_z: d.cat_z,
+    categoria: d.cat_z !== null ? (d.cat_z >= -0.5 ? 'Normal' : d.cat_z >= -1.49 ? 'Dificultad leve' : 'Dificultad moderada/elevada') : null,
+    datos: d
+  }, SESSION.access_token).then(function(){
+    cargarResultados();
+    toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
 var IFS_BAR = [
   [{M:19.6,DS:5.2},{M:19.2,DS:5.0},{M:20.1,DS:4.3},{M:19.4,DS:3.2}],
   [{M:22.1,DS:3.3},{M:23.2,DS:3.0},{M:24.5,DS:2.9},{M:23.7,DS:2.3}],
