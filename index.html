@@ -8,23 +8,23 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:        #faf6f1;
+  --bg:        #f0f4fa;
   --surface:   #ffffff;
-  --surface2:  #f5ede2;
-  --sidebar:   #f0e8dc;
-  --border:    #e4d5c0;
-  --border2:   #d4c0a6;
-  --accent:    #9B6A50;
-  --accentdk:  #7a4e38;
-  --accentlt:  #c4977a;
-  --text:      #2c2018;
-  --muted:     #7a6555;
+  --surface2:  #dce8f5;
+  --sidebar:   #ccdaee;
+  --border:    #b8cce4;
+  --border2:   #9ab8d8;
+  --accent:    #1a3a5c;
+  --accentdk:  #0f2540;
+  --accentlt:  #2c5f8a;
+  --text:      #0f1f30;
+  --muted:     #4a6a8a;
   --green:     #2e7a4f;
   --yellow:    #9a6e00;
   --orange:    #c25000;
   --red:       #a82828;
   --radius:    10px;
-  --shadow:    0 2px 12px rgba(155,106,80,0.10);
+  --shadow:    0 2px 12px rgba(26,58,92,0.10);
 }
 html { scroll-behavior: smooth; }
 body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
@@ -63,7 +63,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 1.8rem;
   margin-bottom: 14px;
-  box-shadow: 0 4px 16px rgba(224,123,58,0.35);
+  box-shadow: 0 4px 16px rgba(26,58,92,0.35);
 }
 .login-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--accentdk); }
 .login-sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
@@ -75,14 +75,14 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   border-radius: 8px; padding: 11px 14px; color: var(--text);
   font-family: 'Outfit', sans-serif; font-size: 0.92rem; transition: border-color 0.15s;
 }
-.login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.12); }
+.login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
 .login-field input::placeholder { color: #c4b09a; }
 
 .btn-login {
   width: 100%; padding: 13px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
   border: none; border-radius: 8px; color: white; font-family: 'Outfit', sans-serif;
   font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 8px;
-  box-shadow: 0 3px 12px rgba(224,123,58,0.35); transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 3px 12px rgba(26,58,92,0.35); transition: opacity 0.2s, transform 0.1s;
 }
 .btn-login:hover { opacity: 0.88; transform: translateY(-1px); }
 .login-forgot { text-align: center; margin-top: 14px; font-size: 0.82rem; }
@@ -109,8 +109,8 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .sidebar-nombre { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; color:var(--accentdk); letter-spacing:2.5px; text-transform:uppercase; }
 .sidebar-nav { flex:1; padding:0 12px; overflow-y:visible; }
 .sidebar-section { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:400; letter-spacing:0.2px; transition:background 0.15s, color 0.15s; margin-bottom:2px; user-select:none; }
-.sidebar-section:hover { background:rgba(155,106,80,0.1); color:var(--accentdk); }
-.sidebar-section.active { background:rgba(155,106,80,0.15); color:var(--accentdk); font-weight:500; }
+.sidebar-section:hover { background:rgba(26,58,92,0.1); color:var(--accentdk); }
+.sidebar-section.active { background:rgba(26,58,92,0.15); color:var(--accentdk); font-weight:500; }
 .sidebar-icon { font-size:15px; opacity:0.7; width:18px; text-align:center; }
 .sidebar-divider { height:1px; background:var(--border); margin:12px 14px; }
 .sidebar-bottom { padding:0 12px; }
@@ -168,7 +168,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .btn-primary {
   padding: 9px 18px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
   border: none; border-radius: 7px; color: white; font-family: 'Outfit', sans-serif;
-  font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(224,123,58,0.25);
+  font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(26,58,92,0.25);
   transition: opacity 0.2s, transform 0.1s;
 }
 .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
@@ -215,7 +215,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; transition: border-color 0.15s;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
-  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,58,0.1);
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
 }
 .field input::placeholder, .field textarea::placeholder { color: #c4b09a; }
 .field select option { background: var(--surface2); }
@@ -249,7 +249,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .bdi-pregunta { font-size: 0.84rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
 .bdi-opciones { display: flex; flex-direction: column; gap: 6px; }
 .bdi-opcion { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 6px; transition: background 0.12s; }
-.bdi-opcion:hover { background: rgba(224,123,58,0.06); }
+.bdi-opcion:hover { background: rgba(26,58,92,0.06); }
 .bdi-opcion input[type=radio] { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
 .bdi-opcion-texto { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
 .bdi-score { font-size: 0.7rem; color: var(--muted); margin-left: auto; font-family: 'DM Mono', monospace; padding-left: 8px; }
@@ -404,10 +404,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   <circle cx="60" cy="60" r="66" fill="none" stroke="#C4977A" stroke-width="0.6" opacity="0.3"/>
   <line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
   <line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
-  <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#9B6A50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="50" cy="88" r="2.8" fill="#9B6A50" opacity="0.65"/>
-  <circle cx="66" cy="80" r="2.8" fill="#9B6A50" opacity="0.65"/>
-  <circle cx="42" cy="42" r="2.8" fill="#9B6A50" opacity="0.65"/>
+  <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+  <circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+  <circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/>
 </svg></div>
       <div class="sidebar-nombre">PsicoEscala</div>
     </div>
@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.9</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.0</div>
     </div>
   </aside>
 
@@ -456,10 +456,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <circle cx="60" cy="60" r="66" fill="none" stroke="#C4977A" stroke-width="0.6" opacity="0.3"/>
             <line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
             <line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
-            <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#9B6A50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="50" cy="88" r="2.8" fill="#9B6A50" opacity="0.65"/>
-            <circle cx="66" cy="80" r="2.8" fill="#9B6A50" opacity="0.65"/>
-            <circle cx="42" cy="42" r="2.8" fill="#9B6A50" opacity="0.65"/>
+            <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+            <circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+            <circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/>
           </svg>
         </div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--accentdk);letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;">PsicoEscala</div>
@@ -858,7 +858,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" id="bdi-back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">BDI-II · Inventario de Depresión de Beck</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('bdi')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('bdi')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
 
       <div id="bdi-form">
@@ -913,7 +913,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">STAI · Inventario de Ansiedad Estado-Rasgo</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('stai')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('stai')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
 
       <div id="stai-form">
@@ -1269,7 +1269,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">PHQ-9 · Cuestionario de Salud del Paciente</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('phq')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('phq')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="phq-form">
         <div class="card">
@@ -1316,7 +1316,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">GAD-7 · Escala de Trastorno de Ansiedad Generalizada</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('gad')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('gad')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="gad-form">
         <div class="card">
@@ -1363,7 +1363,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">SPAI-B · Inventario de Fobia y Ansiedad Social (Forma Breve)</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('spai')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('spai')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="spaib-form">
         <div class="card">
@@ -1938,7 +1938,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">SCL-90-R · Inventario de Síntomas</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('scl90')" style="
-          background:#e07b3a;
+          background:#1a3a5c;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -1949,7 +1949,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(224,123,58,0.25);
+          box-shadow:0 2px 6px rgba(26,58,92,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="scl90-form">
@@ -3234,7 +3234,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">ASRS-V1.1 · Escala de Autodetección de TDAH en Adultos</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('asrs')" style="
-          background:#e07b3a;
+          background:#1a3a5c;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -3245,7 +3245,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(224,123,58,0.25);
+          box-shadow:0 2px 6px rgba(26,58,92,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="asrs-form">
@@ -3302,7 +3302,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">WURS-25 · Escala de Wender-Utah</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('wurs')" style="
-          background:#e07b3a;
+          background:#1a3a5c;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -3313,7 +3313,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(224,123,58,0.25);
+          box-shadow:0 2px 6px rgba(26,58,92,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="wurs-form">
@@ -3360,7 +3360,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header">
         <div class="vista-titulo">MBI-HSS · Inventario de Burnout de Maslach</div>
         <div style="margin-bottom:16px;">
-          <button onclick="generarPDF('mbi')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+          <button onclick="generarPDF('mbi')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
         </div>
       </div>
 
@@ -3601,7 +3601,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header">
         <div class="vista-titulo">Test del Reloj · Versión Cacho a la orden</div>
         <div style="margin-bottom:16px;">
-          <button onclick="generarPDF('reloj')" style="background:#e07b3a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(224,123,58,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+          <button onclick="generarPDF('reloj')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
         </div>
       </div>
 
@@ -4077,7 +4077,7 @@ function cutoffBarHTML(val, max, cutoff) {
   var color = val >= cutoff ? '#E24B4A' : val >= cutoff * 0.75 ? '#D85A30' : '#639922';
   return '<div style="position:relative;height:10px;background:#f0e5d5;border-radius:2px;width:120px;">' +
     '<div style="position:absolute;left:0;width:' + pct + '%;top:0;bottom:0;background:' + color + ';border-radius:2px;"></div>' +
-    '<div style="position:absolute;left:' + cutPct + '%;top:-2px;bottom:-2px;width:1.5px;background:#5a3520;"></div>' +
+    '<div style="position:absolute;left:' + cutPct + '%;top:-2px;bottom:-2px;width:1.5px;background:#0f2540;"></div>' +
     '</div>';
 }
 
@@ -4146,15 +4146,15 @@ function generarPDF(tipo) {
       estilosApp+
       'body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;margin:20px;padding:0;}'+
       '.vista-header{margin-bottom:12px;}'+
-      '.vista-titulo{font-size:14pt;font-weight:700;color:#3d2410;border-bottom:2px solid #9B6A50;padding-bottom:6px;}'+
+      '.vista-titulo{font-size:14pt;font-weight:700;color:#0f1f30;border-bottom:2px solid #1a3a5c;padding-bottom:6px;}'+
       '.card{background:#fff;border:0.5px solid #ddd;border-radius:6px;padding:14px;margin-bottom:12px;}'+
-      '.card-title{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#5a3520;border-bottom:1px solid #e8ddd0;margin-bottom:10px;padding-bottom:4px;}'+
+      '.card-title{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0f2540;border-bottom:1px solid #c8d8ec;margin-bottom:10px;padding-bottom:4px;}'+
       '.form-grid, .form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;}'+
-      '.field label{display:block;font-size:8pt;font-weight:700;color:#7a5540;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;}'+
+      '.field label{display:block;font-size:8pt;font-weight:700;color:#1a3a5c;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;}'+
       'input[type="number"],select,input[type="date"],input[type="text"]{width:100%;box-sizing:border-box;border:1px solid #ccc;border-radius:4px;padding:4px 6px;font-size:10pt;}'+
       '.scl-block,.spai-block,.asrs-block,.wurs-block,.mbi-block{margin-bottom:8px;}'+
       '.item-row,.spai-item,.scl-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:0.3px solid #eee;font-size:9pt;}'+
-      '.item-num,.spai-num,.scl-num{min-width:22px;font-weight:700;color:#9a7a60;font-size:8pt;padding-top:2px;}'+
+      '.item-num,.spai-num,.scl-num{min-width:22px;font-weight:700;color:#4a6a8a;font-size:8pt;padding-top:2px;}'+
       '.item-text,.spai-item-text,.scl-item-text{flex:1;line-height:1.4;}'+
       '.likert-opts,.radio-opts{display:flex;gap:8px;min-width:120px;justify-content:flex-end;}'+
       '.likert-opt,.radio-opt{display:flex;flex-direction:column;align-items:center;font-size:7.5pt;gap:2px;}'+
@@ -4163,7 +4163,7 @@ function generarPDF(tipo) {
     '</style></head><body>'+
     '<div style="text-align:center;margin-bottom:14px;">'+
       '<div style="font-size:7pt;color:#888;">Lic. Erwin Müller Gudiño · M.P. 13920 · 27 de Abril 424 7C · Tel. 351 350-0540</div>'+
-      '<div style="font-size:13pt;font-weight:800;color:#3d2410;margin-top:4px;">'+cfg.titulo+'</div>'+
+      '<div style="font-size:13pt;font-weight:800;color:#0f1f30;margin-top:4px;">'+cfg.titulo+'</div>'+
       '<div style="margin-top:8px;font-size:9pt;display:flex;gap:30px;justify-content:center;">'+
         '<span>Paciente: ____________________________</span>'+
         '<span>Fecha: ____________</span>'+
@@ -4296,7 +4296,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       var isX  = z !== null && Math.abs(z - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
-      var bg = enNormal ? '#d0d0d0' : '#ffffff';
+      var bg = enNormal ? '#a0c0e0' : '#ffffff';
       var inner = isX
         ? '<span style="font-size:11px;font-weight:900;color:#000;line-height:1;">X</span>'
         : '';
@@ -4307,11 +4307,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Estilos de tabla ──
-  var thBase = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#7a4e38;background:#f5ede0;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
-  var tdBase = 'font-size:10.5px;border-bottom:0.5px solid #ecdece;padding:5px 7px;';
+  var thBase = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#0f2540;background:#dce8f5;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
+  var tdBase = 'font-size:10.5px;border-bottom:0.5px solid #c8d8ec;padding:5px 7px;';
 
   function domHeader(txt) {
-    return '<tr><td colspan="9" style="background:#ede4d4;padding:4px 10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#5a3010;border-bottom:1px solid #d4c0a0;">'+txt+'</td></tr>';
+    return '<tr><td colspan="9" style="background:#dce8f5;padding:4px 10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;border-bottom:1px solid #b8cce4;">'+txt+'</td></tr>';
   }
 
   // ── Fila de tabla neuropsicológica ──
@@ -4342,7 +4342,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'font-size:9px;color:#222;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#9a7a60;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
+      '<td style="'+tdBase+'font-size:9px;color:#222;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#4a6a8a;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
       '</tr>';
   }
 
@@ -4467,21 +4467,21 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           }
 
         } else if (testNombre === 'WAIS-IV') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
           if (d.rd_pb != null) rows += filaTabla('Retención de Dígitos', d.rd_pb, 10, 3, d.rd_z, r.fecha);
           if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'WCST-64') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
           if (d.categorias != null)
             rows += filaTabla('Categorías completadas', d.categorias+'/6', d.cat_m||null, d.cat_ds||null, d.cat_z!=null?d.cat_z:null, r.fecha);
           if (d.perse_pct != null)
             rows += filaTabla('Errores perseverativos (%)', d.perse_pct+'%', d.perse_m||null, d.perse_ds||null, d.perse_z!=null?d.perse_z:null, r.fecha);
           if (d.intentos != null)
-            rows += filaTabla('Intentos 1ª categoría <span style="font-size:8px;color:#9a7a60;font-style:italic;">(ref: >20)</span>', d.intentos, null, null, null, r.fecha);
+            rows += filaTabla('Intentos 1ª categoría <span style="font-size:8px;color:#4a6a8a;font-style:italic;">(ref: >20)</span>', d.intentos, null, null, null, r.fecha);
           if (d.fallas != null)
-            rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#9a7a60;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
+            rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#4a6a8a;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
 
         } else if (testNombre === 'Test del Reloj (Cacho)') {
           var d2 = r.datos || {};
@@ -4491,12 +4491,12 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += '<tr>'+
             '<td style="'+tdBase+'font-weight:500;">Test del Reloj (Cacho)</td>'+
             '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+(total2!=null?total2+'/10':'—')+'</td>'+
-            '<td colspan="4" style="'+tdBase+'font-size:9px;color:#9a7a60;">'+
+            '<td colspan="4" style="'+tdBase+'font-size:9px;color:#4a6a8a;">'+
               (d2.esfera!=null?'Esfera:'+d2.esfera+'/2 · ':'')+(d2.numeros!=null?'Números:'+d2.numeros+'/4 · ':'')+(d2.agujas!=null?'Agujas:'+d2.agujas+'/4':'')+'</td>'+
             '<td style="'+tdBase+'">'+
               '<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+(normal2?'#1D9E7522':'#E24B4A22')+';color:'+(normal2?'#1D9E75':'#E24B4A')+';border:0.5px solid '+(normal2?'#1D9E7544':'#E24B4A44')+';white-space:nowrap;">'+cat2+'</span>'+
             '</td>'+
-            '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
+            '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a6a8a;">'+(r.fecha||'')+'</td>'+
             '</tr>';
 
         } else if (testNombre === 'SDMT') {
@@ -4516,7 +4516,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2F = d.gi != null ? d.gi : null;
           var ei2F = d.ei != null ? d.ei : null;
           var notaF = gi2F!==null && ei2F!==null ? edadLabelsF[gi2F]+' · '+escolLabelsF[ei2F] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
           if (d.copia != null) rows += filaTabla('Copia', d.copia, null, null, d.zCopia, r.fecha, 'Pc '+(d.pcCopia||'—'));
           if (d.ri    != null) rows += filaTabla('Recuerdo Inmediato', d.ri, null, null, d.zRI, r.fecha, 'Pc '+(d.pcRI||'—'));
           if (d.ir    != null) rows += filaTabla('Índice de Retención', d.ir+'%', null, null, null, r.fecha, d.ir+'%');
@@ -4527,7 +4527,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2 = d.gi != null ? d.gi : null;
           var ei2 = d.ei != null ? d.ei : null;
           var notaS = gi2!==null && ei2!==null ? 'Grupo: '+edadLabelsS[gi2]+' · Escol. '+escolLabelsS[ei2] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
           if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,      gi2!==null?STROOP_BAR.P.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.P.DS[gi2][ei2]:null,   d.zP,   r.fecha, notaS);
           if (d.c    != null) rows += filaTabla('Color (C)',               d.c,      gi2!==null?STROOP_BAR.C.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.C.DS[gi2][ei2]:null,   d.zC,   r.fecha, notaS);
           if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,     gi2!==null?STROOP_BAR.PC.M[gi2][ei2]:null,  gi2!==null?STROOP_BAR.PC.DS[gi2][ei2]:null,  d.zPC,  r.fecha, notaS);
@@ -4555,8 +4555,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function renderDolor(list) {
     if (!list.length) return '';
     // Mismo estilo que renderCL
-    var thD  = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:left;border:0.5px solid #555;';
-    var thDC = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:center;border:0.5px solid #555;';
+    var thD  = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:left;border:0.5px solid #555;';
+    var thDC = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:center;border:0.5px solid #555;';
     var tdR  = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
@@ -4565,7 +4565,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #555;padding-left:6px;">'+title+'</div>';
     }
     function miniBar(pct, col){
-      return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+      return '<div style="position:relative;height:8px;background:#dce8f5;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
         '<div style="position:absolute;left:0;width:'+Math.min(100,pct).toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:3px;"></div>'+
         '</div>';
     }
@@ -4594,11 +4594,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if(s.v===null)return;
           var col=s.v>=Math.round(s.max*0.7)?'#c0392b':s.v>=Math.round(s.max*0.5)?'#D85A30':'#2e7a4f';
           var lbl=s.v>=Math.round(s.max*0.7)?'Significativa':s.v>=Math.round(s.max*0.5)?'Moderada':'No significativa';
-          html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+s.l+' <span style="font-size:8px;color:#9a7a60;">(ítems '+s.it+')</span></td>'+
+          html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+s.l+' <span style="font-size:8px;color:#4a6a8a;">(ítems '+s.it+')</span></td>'+
             '<td style="'+tdRC+'">'+s.v+'/'+s.max+'</td>'+
             '<td style="'+tdRI+';color:'+col+';">'+lbl+'</td></tr>';
         });
-        if(tot!=null) html+='<tr style="background:#f0ece6;"><td style="'+tdR+'font-weight:700;border-top:1px solid #ccc;">Puntaje Total</td>'+
+        if(tot!=null) html+='<tr style="background:#e8eff8;"><td style="'+tdR+'font-weight:700;border-top:1px solid #ccc;">Puntaje Total</td>'+
           '<td style="'+tdRC+'color:'+nivCol+';border-top:1px solid #ccc;">'+tot+'/52</td>'+
           '<td style="'+tdRI+'color:'+nivCol+';border-top:1px solid #ccc;">'+nivLbl+'</td></tr>';
         html += '</tbody></table>';
@@ -4657,13 +4657,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           '<th style="'+thDC+'">Puntaje</th>'+
           '<th style="'+thDC+'">Interpretación</th>'+
           '</tr></thead><tbody>';
-        if(intVal!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Índice de Intensidad <span style="font-size:8px;color:#9a7a60;">(ítems 3–6)</span></td>'+
+        if(intVal!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Índice de Intensidad <span style="font-size:8px;color:#4a6a8a;">(ítems 3–6)</span></td>'+
           '<td style="'+tdRC+'">'+intVal.toFixed(1)+'/10</td>'+
           '<td style="'+tdRI+'color:'+bpiCol(intVal)+';">'+bpiLbl(intVal,'int')+'</td></tr>';
-        if(infVal!==null) html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Índice de Interferencia <span style="font-size:8px;color:#9a7a60;">(ítems 9A–9G)</span></td>'+
+        if(infVal!==null) html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Índice de Interferencia <span style="font-size:8px;color:#4a6a8a;">(ítems 9A–9G)</span></td>'+
           '<td style="'+tdRC+'">'+infVal.toFixed(1)+'/10</td>'+
           '<td style="'+tdRI+'color:'+bpiCol(infVal)+';">'+bpiLbl(infVal,'inf')+'</td></tr>';
-        if(alivio!==null) html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Alivio con tratamiento'+(trat?' <span style="font-size:8px;color:#9a7a60;">('+trat+')</span>':'')+'</td>'+
+        if(alivio!==null) html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Alivio con tratamiento'+(trat?' <span style="font-size:8px;color:#4a6a8a;">('+trat+')</span>':'')+'</td>'+
           '<td style="'+tdRC+'">'+alivio+'%</td>'+
           '<td style="'+tdRI+'">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
         html += '</tbody></table>';
@@ -4688,17 +4688,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var pct  = Math.min(100,(val/max)*100);
     var cpct = Math.min(100,(cutoff/max)*100);
     var col  = val>=cutoff?'#E24B4A': val>=(cutoff*0.75)?'#D85A30':'#639922';
-    return '<div style="position:relative;height:8px;background:#ede4d6;border-radius:3px;width:100px;display:inline-block;">'+
+    return '<div style="position:relative;height:8px;background:#dce8f5;border-radius:3px;width:100px;display:inline-block;">'+
       '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
-      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#5a3520;"></div>'+
+      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#0f2540;"></div>'+
       '</div>';
   }
 
   function renderCL(list) {
     if (!list.length) return '';
     // Estilos comunes
-    var thDark = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:left;border:0.5px solid #555;';
-    var thDarkC = 'font-size:8.5px;font-weight:700;color:#fff;background:#333;padding:5px 8px;text-align:center;border:0.5px solid #555;';
+    var thDark = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:left;border:0.5px solid #555;';
+    var thDarkC = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:center;border:0.5px solid #555;';
     var tdR = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
@@ -4738,13 +4738,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var dimFull = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
         var dimNombres = {som:'Somatizaciones',obs:'Obsesiones y Compulsiones',sen:'Sensitividad Interpersonal',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad Fóbica',par:'Ideación Paranoide',psi:'Psicoticismo'};
         function sclCelBg(t) { if(t==null)return'#f5f5f5';if(t>=80)return'#e74c3c';if(t>=65)return'#f39c12';return'#f5f5f5'; }
-        function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#3d2410'; }
+        function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#0f1f30'; }
         html += clHeader('SCL-90-R · Inventario de Síntomas de Derogatis');
         html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
-        html += '<tr><td colspan="3" style="background:#444;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Dimensiones primarias</td>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">Ptos brutos</th>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">T</th>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#444;border:0.5px solid #555;text-align:center;">Estado</th></tr>';
+        html += '<tr><td colspan="3" style="background:#1a3a5c;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Dimensiones primarias</td>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">Ptos brutos</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">T</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">Estado</th></tr>';
         dimFull.forEach(function(k,i) {
           var t = subs[k] ? subs[k].t : null;
           var bg = sclCelBg(t); var fc = sclCelColor(t);
@@ -4756,7 +4756,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:600;color:'+(t>=65?'#c0392b':'#3a7a3a')+';">'+estado+'</td></tr>';
         });
-        html += '<tr><td colspan="6" style="background:#444;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Escalas globales</td></tr>';
+        html += '<tr><td colspan="6" style="background:#1a3a5c;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Escalas globales</td></tr>';
         var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
         [['IGS — Índice de Severidad Global', d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—', igt],
          ['TSP — Total Síntomas Positivos', d.tsp!=null?d.tsp:'—', d.tsp_t!=null?d.tsp_t:null],
@@ -4783,7 +4783,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           {key:'RP',label:'Realización Personal', val:d.RP, cat:d.RP_cat, corte:'≤33', dir:'bajo'}
         ];
         function mbiBg(cat,dir){if(!cat)return'#f5f5f5';var cl=cat.toLowerCase();if(dir==='bajo')return cl==='bajo'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';return cl==='alto'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';}
-        function mbiFc(bg){return bg==='#f5f5f5'?'#3d2410':'#fff';}
+        function mbiFc(bg){return bg==='#f5f5f5'?'#0f1f30':'#fff';}
         html += clHeader('MBI-HSS · Inventario de Burnout de Maslach');
         html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;"><thead><tr>'+
           '<th style="'+thDark+'">Subescala</th>'+
@@ -4876,7 +4876,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Logo SVG ──
-  var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#9B6A50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#9B6A50" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#9B6A50" opacity="0.65"/></svg>';
+  var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/></svg>';
 
   // ── Tabla escala de referencia Z ──
   var refZ = '<div style="margin-top:14px;border:0.5px solid #cccccc;border-radius:4px;overflow:hidden;font-family:sans-serif;">'+
@@ -4909,10 +4909,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
     '.narrativa{font-family:Arial,sans-serif;font-size:12pt;line-height:1.5;text-align:justify;color:#1a1a1a;margin:0 0 8px 0;}'+
-    '.sec-titulo{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#5a3520;border-bottom:1.5px solid #c4977a;margin:16px 0 6px;padding-bottom:3px;}'+
+    '.sec-titulo{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0f2540;border-bottom:1.5px solid #2c5f8a;margin:16px 0 6px;padding-bottom:3px;}'+
     '.ficha-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;font-family:Arial,sans-serif;font-size:11pt;}'+
     '.ficha-item{display:flex;gap:6px;padding:2px 0;}'+
-    '.ficha-lbl{font-weight:700;white-space:nowrap;color:#5a3520;}'+
+    '.ficha-lbl{font-weight:700;white-space:nowrap;color:#0f2540;}'+
     '@media print{body{padding:0;}@page{margin:15mm 15mm 15mm 20mm;size:A4 portrait;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
     '</style></head><body><div class="pg">'+
 
@@ -5016,19 +5016,19 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     // ── Secciones ──
     (testsNp.length ?
       '<div style="page-break-before:always;"></div>'+
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
     (testsTd.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">TDAH</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">TDAH</div>'+
       renderCL(testsTd) : '')+
 
     (testsDo.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
       renderDolor(testsDo) : '')+
 
     (testsCl.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7a4e38;background:#f5ede0;padding:5px 10px;border-left:3px solid #9B6A50;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
       renderCL(testsCl) : '')+
 
     (testsNp.length ? refZ : '')+
