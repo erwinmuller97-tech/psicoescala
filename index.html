@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.6</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.7</div>
     </div>
   </aside>
 
@@ -4328,7 +4328,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4397,7 +4397,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       var isX  = z !== null && Math.abs(z - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
-      var bg = enNormal ? '#77b966' : '#ffffff';
+      var bg = enNormal ? '#b8ddb0' : '#ffffff';
       var inner = isX
         ? '<span style="font-size:11px;font-weight:900;color:#000;line-height:1;">X</span>'
         : '';
@@ -4479,13 +4479,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var ORDEN = [
       { dom: 'ATENCIÓN', tests: [
         { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
-        { t:'SDMT',      fn: function(r){ var d=r.datos||{}; addPunto('SDMT',d.z,'ATENCIÓN'); } },
+        { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
+        { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
       ]},
       { dom: 'TMT', tests: [
         { t:'TMT A-B',   fn: function(r){ var d=r.datos||{}; addPunto('TMT-A',d.tmt_a_z||r.puntaje_z,'TMT'); addPunto('TMT-B',d.tmt_b_z,'TMT'); } },
       ]},
       { dom: 'STROOP', tests: [
-        { t:'Stroop',    fn: function(r){ var d=r.datos||{}; addPunto('Stroop P',d.zP,'STROOP'); addPunto('Stroop C',d.zC,'STROOP'); addPunto('Stroop PC',d.zPC,'STROOP'); addPunto('Stroop Int.',d.zInt,'STROOP'); } },
+        { t:'Stroop',    fn: function(r){ var d=r.datos||{}; addPunto('Stroop P',d.zP,'FUNC. EJEC.'); addPunto('Stroop C',d.zC,'FUNC. EJEC.'); addPunto('Stroop PC',d.zPC,'FUNC. EJEC.'); addPunto('Stroop Int.',d.zInt,'FUNC. EJEC.'); } },
       ]},
       { dom: 'LENGUAJE', tests: [
         { t:'Fluencia Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){addPunto(v.label.replace('Fluencia ','Fl. '),v.z,'LENGUAJE');});}else{addPunto('Fluencia',r.puntaje_z,'LENGUAJE');} } },
@@ -4538,7 +4539,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // Zona −1 a +1
     var y1 = zy(1), ym1 = zy(-1);
-    svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#c8e8c0" opacity="0.60"/>';
+    svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#b8ddb0" opacity="0.85"/>';
 
     // Líneas horizontales Y
     [-3,-2,-1,0,1,2,3].forEach(function(z){
@@ -4591,7 +4592,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="4.5" fill="#ffffff" stroke="#214b1a" stroke-width="1.5"/>';
     svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="1.6" fill="#214b1a"/>';
     svg += '<text x="'+(ML+10)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Puntaje Z del paciente</text>';
-    svg += '<rect x="'+(ML+145)+'" y="'+(yL-5)+'" width="30" height="10" fill="#c8e8c0" opacity="0.80"/>';
+    svg += '<rect x="'+(ML+145)+'" y="'+(yL-5)+'" width="30" height="10" fill="#b8ddb0" opacity="0.90"/>';
     svg += '<text x="'+(ML+180)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Rango normal (Z −1 a +1)</text>';
     svg += '<line x1="'+(ML+320)+'" y1="'+yL+'" x2="'+(ML+346)+'" y2="'+yL+'" stroke="#c8a070" stroke-width="0.9" stroke-dasharray="5 3"/>';
     svg += '<text x="'+(ML+352)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Media normativa (Z = 0)</text>';
@@ -4610,9 +4611,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','SDMT','TMT A-B','Stroop'],
+      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','TMT A-B'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
-      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
+      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop'],
     };
 
     // Construir mapa test → resultado
@@ -4739,8 +4740,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a7040;">'+(r.fecha||'')+'</td>'+
             '</tr>';
 
-        } else if (testNombre === 'SDMT') {
-          var sdmtVer = d.version || 'escrita';
+        } else if (testNombre === 'SDMT-escrita' || testNombre === 'SDMT-oral') {
+          var sdmtVer = testNombre === 'SDMT-oral' ? 'oral' : 'escrita';
           var sdmtEdadLabels = sdmtVer==='escrita'
             ? ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77']
             : ['19–35','36–50','51–70'];
@@ -5213,7 +5214,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
         'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
-        'SDMT':               'Symbol Digit Modalities Test (SDMT)',
+        'SDMT-escrita':       'Symbol Digit Modalities Test — Versión Escrita (SDMT)',
+        'SDMT-oral':          'Symbol Digit Modalities Test — Versión Oral (SDMT)',
         'IFS':                'INECO Frontal Screening (IFS)',
         'Test del Reloj (Cacho)': 'Test del Reloj — Método Cacho et al.',
         'BDI-II':             'Inventario de Depresión de Beck — Segunda Edición (BDI-II)',
@@ -5233,10 +5235,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       };
       var DOMINIOS = [
         {label:'Screening cognitivo global',      tests:['MoCA','ACE-R']},
-        {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B']},
+        {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral']},
         {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
         {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
-        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS']},
+        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop']},
         {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
         {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
         {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']},
@@ -9605,7 +9607,7 @@ function guardarSDMT() {
   var d = window._sdmtData;
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id: SESSION.user.id, paciente_id: pacId,
-    test: 'SDMT', fecha: fecha,
+    test: 'SDMT-'+d.version, fecha: fecha,
     puntaje_total: d.puntaje,
     puntaje_z: d.z,
     categoria: sdmtZLabel(d.z),
