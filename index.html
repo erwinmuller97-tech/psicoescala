@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.6</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.7</div>
     </div>
   </aside>
 
@@ -1912,43 +1912,64 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <!-- Botones del garage -->
     <div class="card">
       <div class="card-title">2. Botones del garage (Memoria Prospectiva)</div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Tiempo programado: Botón 1 (ROJO — Abrir) a los <strong>6 min</strong> del inicio · Botón 2 (NEGRO — Cerrar) a los <strong>12 min</strong> del inicio.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:end;margin-bottom:10px;">
+
+      <!-- Nota metodológica -->
+      <div style="background:#f4faf2;border:1px solid #a8c4a0;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:0.8rem;color:#333;">
+        <span style="font-weight:700;color:#325c28;">ℹ Nota metodológica:</span> Pinasco et al. (2023) utilizaron tiempos programados de 6 y 12 minutos. Si usás tiempos distintos, el desvío absoluto sigue siendo comparable ya que los baremos miden la <em>precisión del recuerdo prospectivo</em>, independientemente del momento programado. Ingresá los tiempos que efectivamente indicaste al paciente.
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:end;margin-bottom:8px;">
         <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Botón</div>
         <div style="font-weight:700;font-size:0.82rem;color:var(--text);">¿Presionó?</div>
-        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Momento real (min + seg)</div>
-        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Desvío calculado</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Tiempo programado</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Momento real</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Desvío</div>
       </div>
+
       <!-- Botón 1 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
         <div style="font-size:0.85rem;font-weight:600;color:#c62828;">🔴 Botón 1 — Abrir</div>
-        <div style="display:flex;gap:10px;">
-          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="si" id="hotel-b1-si" onchange="hotelUpdateDesvio(1)"> Sí</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="no" id="hotel-b1-no" onchange="hotelUpdateDesvio(1)"> No</label>
+        <div style="display:flex;gap:8px;">
+          <label style="display:flex;align-items:center;gap:3px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="si" id="hotel-b1-si" onchange="hotelUpdateDesvio(1)"> Sí</label>
+          <label style="display:flex;align-items:center;gap:3px;font-size:0.82rem;"><input type="radio" name="hotel-b1" value="no" id="hotel-b1-no" onchange="hotelUpdateDesvio(1)"> No</label>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="number" id="hotel-b1-min" min="0" max="15" placeholder="min" style="width:55px;" oninput="hotelUpdateDesvio(1)">
-          <span style="font-size:0.8rem;color:var(--muted);">min</span>
-          <input type="number" id="hotel-b1-seg" min="0" max="59" placeholder="seg" style="width:55px;" oninput="hotelUpdateDesvio(1)">
-          <span style="font-size:0.8rem;color:var(--muted);">seg</span>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <input type="number" id="hotel-b1-prog-min" min="0" max="15" placeholder="min" value="6" style="width:48px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.75rem;color:var(--muted);">m</span>
+          <input type="number" id="hotel-b1-prog-seg" min="0" max="59" placeholder="seg" value="0" style="width:48px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.75rem;color:var(--muted);">s</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <input type="number" id="hotel-b1-min" min="0" max="15" placeholder="min" style="width:48px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.75rem;color:var(--muted);">m</span>
+          <input type="number" id="hotel-b1-seg" min="0" max="59" placeholder="seg" style="width:48px;" oninput="hotelUpdateDesvio(1)">
+          <span style="font-size:0.75rem;color:var(--muted);">s</span>
         </div>
         <div id="hotel-b1-desv" style="font-size:0.85rem;font-weight:700;color:var(--accent);">—</div>
       </div>
+
       <!-- Botón 2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 0;">
         <div style="font-size:0.85rem;font-weight:600;color:#333;">⚫ Botón 2 — Cerrar</div>
-        <div style="display:flex;gap:10px;">
-          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="si" id="hotel-b2-si" onchange="hotelUpdateDesvio(2)"> Sí</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="no" id="hotel-b2-no" onchange="hotelUpdateDesvio(2)"> No</label>
+        <div style="display:flex;gap:8px;">
+          <label style="display:flex;align-items:center;gap:3px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="si" id="hotel-b2-si" onchange="hotelUpdateDesvio(2)"> Sí</label>
+          <label style="display:flex;align-items:center;gap:3px;font-size:0.82rem;"><input type="radio" name="hotel-b2" value="no" id="hotel-b2-no" onchange="hotelUpdateDesvio(2)"> No</label>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="number" id="hotel-b2-min" min="0" max="15" placeholder="min" style="width:55px;" oninput="hotelUpdateDesvio(2)">
-          <span style="font-size:0.8rem;color:var(--muted);">min</span>
-          <input type="number" id="hotel-b2-seg" min="0" max="59" placeholder="seg" style="width:55px;" oninput="hotelUpdateDesvio(2)">
-          <span style="font-size:0.8rem;color:var(--muted);">seg</span>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <input type="number" id="hotel-b2-prog-min" min="0" max="15" placeholder="min" value="12" style="width:48px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.75rem;color:var(--muted);">m</span>
+          <input type="number" id="hotel-b2-prog-seg" min="0" max="59" placeholder="seg" value="0" style="width:48px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.75rem;color:var(--muted);">s</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <input type="number" id="hotel-b2-min" min="0" max="15" placeholder="min" style="width:48px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.75rem;color:var(--muted);">m</span>
+          <input type="number" id="hotel-b2-seg" min="0" max="59" placeholder="seg" style="width:48px;" oninput="hotelUpdateDesvio(2)">
+          <span style="font-size:0.75rem;color:var(--muted);">s</span>
         </div>
         <div id="hotel-b2-desv" style="font-size:0.85rem;font-weight:700;color:var(--accent);">—</div>
       </div>
+
       <div style="margin-top:10px;padding:8px 12px;background:#f4faf2;border-radius:6px;border:0.5px solid var(--border);">
         <span style="font-size:0.82rem;color:var(--muted);">Desvío total botones: </span>
         <span id="hotel-botones-total" style="font-weight:700;color:var(--accent);">— seg</span>
@@ -8055,12 +8076,21 @@ function hotelUpdateTiempoTotal() {
   // actualizar total desvío en tiempo real si queremos — opcional
 }
 
+function hotelGetProgSeg(btn) {
+  var minEl = document.getElementById('hotel-b'+btn+'-prog-min');
+  var segEl = document.getElementById('hotel-b'+btn+'-prog-seg');
+  var minV = minEl ? (parseFloat(minEl.value) || 0) : (btn===1?6:12);
+  var segV = segEl ? (parseFloat(segEl.value) || 0) : 0;
+  return minV * 60 + segV;
+}
+
 function hotelUpdateDesvio(btn) {
-  var progSeg = btn === 1 ? HOTEL_B1_PROG : HOTEL_B2_PROG;
+  var progSeg = hotelGetProgSeg(btn);
   var presionoEl = document.querySelector('input[name="hotel-b'+btn+'"]:checked');
   var minEl = document.getElementById('hotel-b'+btn+'-min');
   var segEl = document.getElementById('hotel-b'+btn+'-seg');
   var desvEl = document.getElementById('hotel-b'+btn+'-desv');
+  if (!desvEl) return;
   if (!presionoEl) { desvEl.textContent = '—'; hotelUpdateBotonesTotal(); return; }
   if (presionoEl.value === 'no') {
     desvEl.innerHTML = '<span style="color:#c62828;">No presionó (+900 seg)</span>';
@@ -8075,7 +8105,7 @@ function hotelUpdateDesvio(btn) {
 }
 
 function hotelGetDesvioBoton(btn) {
-  var progSeg = btn === 1 ? HOTEL_B1_PROG : HOTEL_B2_PROG;
+  var progSeg = hotelGetProgSeg(btn);
   var presionoEl = document.querySelector('input[name="hotel-b'+btn+'"]:checked');
   if (!presionoEl) return null;
   if (presionoEl.value === 'no') return HOTEL_PENALIZACION;
