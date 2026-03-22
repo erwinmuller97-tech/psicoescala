@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.8</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.9</div>
     </div>
   </aside>
 
@@ -4342,7 +4342,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'font-size:9px;color:#222;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#9a7a60;">'+nota+'</em>':lbl)+'</td>'+
+      '<td style="'+tdBase+'font-size:9px;color:#222;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#9a7a60;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
       '</tr>';
   }
 
@@ -4366,13 +4366,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // Agrupar por dominio
     var dominios = {
+      'COGNITIVO GLOBAL':['MoCA','ACE-R','Test del Reloj (Cacho)'],
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
       'ATENCIÓN':       ['WAIS-IV','SDMT','TMT A-B','Stroop'],
-      'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
+      'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
-      'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
     };
 
     // Construir mapa test → resultado
