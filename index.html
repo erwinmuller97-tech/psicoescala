@@ -8,23 +8,23 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:        #d8e4f2;
+  --bg:        #e8f0e4;
   --surface:   #ffffff;
-  --surface2:  #dce8f5;
-  --sidebar:   #ccdaee;
-  --border:    #b8cce4;
-  --border2:   #9ab8d8;
-  --accent:    #1a3a5c;
-  --accentdk:  #0f2540;
-  --accentlt:  #2c5f8a;
-  --text:      #0f1f30;
-  --muted:     #4a6a8a;
+  --surface2:  #d8ecd0;
+  --sidebar:   #c8dcc0;
+  --border:    #a8c4a0;
+  --border2:   #88b878;
+  --accent:    #325c28;
+  --accentdk:  #214b1a;
+  --accentlt:  #599a4a;
+  --text:      #1a2e16;
+  --muted:     #4a7040;
   --green:     #2e7a4f;
-  --yellow:    #9a6e00;
+  --yellow:    #7a6200;
   --orange:    #c25000;
   --red:       #a82828;
   --radius:    10px;
-  --shadow:    0 2px 12px rgba(26,58,92,0.10);
+  --shadow:    0 2px 12px rgba(50,92,40,0.10);
 }
 html { scroll-behavior: smooth; }
 body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
@@ -63,7 +63,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 1.8rem;
   margin-bottom: 14px;
-  box-shadow: 0 4px 16px rgba(26,58,92,0.35);
+  box-shadow: 0 4px 16px rgba(45,92,34,0.35);
 }
 .login-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--accentdk); }
 .login-sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
@@ -75,14 +75,14 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   border-radius: 8px; padding: 11px 14px; color: var(--text);
   font-family: 'Outfit', sans-serif; font-size: 0.92rem; transition: border-color 0.15s;
 }
-.login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.12); }
+.login-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,92,34,0.12); }
 .login-field input::placeholder { color: #c4b09a; }
 
 .btn-login {
   width: 100%; padding: 13px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
   border: none; border-radius: 8px; color: white; font-family: 'Outfit', sans-serif;
   font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 8px;
-  box-shadow: 0 3px 12px rgba(26,58,92,0.35); transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 3px 12px rgba(45,92,34,0.35); transition: opacity 0.2s, transform 0.1s;
 }
 .btn-login:hover { opacity: 0.88; transform: translateY(-1px); }
 .login-forgot { text-align: center; margin-top: 14px; font-size: 0.82rem; }
@@ -109,8 +109,8 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .sidebar-nombre { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; color:var(--accentdk); letter-spacing:2.5px; text-transform:uppercase; }
 .sidebar-nav { flex:1; padding:0 12px; overflow-y:visible; }
 .sidebar-section { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; cursor:pointer; color:var(--muted); font-size:0.85rem; font-weight:400; letter-spacing:0.2px; transition:background 0.15s, color 0.15s; margin-bottom:2px; user-select:none; }
-.sidebar-section:hover { background:rgba(26,58,92,0.1); color:var(--accentdk); }
-.sidebar-section.active { background:rgba(26,58,92,0.15); color:var(--accentdk); font-weight:500; }
+.sidebar-section:hover { background:rgba(45,92,34,0.1); color:var(--accentdk); }
+.sidebar-section.active { background:rgba(45,92,34,0.15); color:var(--accentdk); font-weight:500; }
 .sidebar-icon { font-size:15px; opacity:0.7; width:18px; text-align:center; }
 .sidebar-divider { height:1px; background:var(--border); margin:12px 14px; }
 .sidebar-bottom { padding:0 12px; }
@@ -168,7 +168,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .btn-primary {
   padding: 9px 18px; background: linear-gradient(135deg, var(--accent), var(--accentlt));
   border: none; border-radius: 7px; color: white; font-family: 'Outfit', sans-serif;
-  font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(26,58,92,0.25);
+  font-size: 0.86rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(45,92,34,0.25);
   transition: opacity 0.2s, transform 0.1s;
 }
 .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
@@ -221,9 +221,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; transition: border-color 0.15s;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
-  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,92,34,0.1);
 }
-.field input::placeholder, .field textarea::placeholder { color: #6a8aaa; }
+.field input::placeholder, .field textarea::placeholder { color: #4a7a40; }
 .field select option { background: var(--surface2); }
 .field textarea { resize: vertical; min-height: 80px; }
 .btn-row { display: flex; gap: 10px; margin-top: 16px; }
@@ -255,7 +255,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .bdi-pregunta { font-size: 0.84rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
 .bdi-opciones { display: flex; flex-direction: column; gap: 6px; }
 .bdi-opcion { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 6px; transition: background 0.12s; }
-.bdi-opcion:hover { background: rgba(26,58,92,0.06); }
+.bdi-opcion:hover { background: rgba(45,92,34,0.06); }
 .bdi-opcion input[type=radio] { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
 .bdi-opcion-texto { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
 .bdi-score { font-size: 0.7rem; color: var(--muted); margin-left: auto; font-family: 'DM Mono', monospace; padding-left: 8px; }
@@ -410,10 +410,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   <circle cx="60" cy="60" r="66" fill="none" stroke="#C4977A" stroke-width="0.6" opacity="0.3"/>
   <line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
   <line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
-  <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/>
-  <circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/>
-  <circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+  <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#325c28" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="88" r="2.8" fill="#325c28" opacity="0.65"/>
+  <circle cx="66" cy="80" r="2.8" fill="#325c28" opacity="0.65"/>
+  <circle cx="42" cy="42" r="2.8" fill="#325c28" opacity="0.65"/>
 </svg></div>
       <div class="sidebar-nombre">PsicoEscala</div>
     </div>
@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.5</div>
     </div>
   </aside>
 
@@ -462,10 +462,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <circle cx="60" cy="60" r="66" fill="none" stroke="#C4977A" stroke-width="0.6" opacity="0.3"/>
             <line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
             <line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/>
-            <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/>
-            <circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/>
-            <circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/>
+            <path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#325c28" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="50" cy="88" r="2.8" fill="#325c28" opacity="0.65"/>
+            <circle cx="66" cy="80" r="2.8" fill="#325c28" opacity="0.65"/>
+            <circle cx="42" cy="42" r="2.8" fill="#325c28" opacity="0.65"/>
           </svg>
         </div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--accentdk);letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;">PsicoEscala</div>
@@ -864,7 +864,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" id="bdi-back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">BDI-II · Inventario de Depresión de Beck</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('bdi')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('bdi')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
 
       <div id="bdi-form">
@@ -923,7 +923,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">STAI · Inventario de Ansiedad Estado-Rasgo</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('stai')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('stai')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
 
       <div id="stai-form">
@@ -1283,7 +1283,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">PHQ-9 · Cuestionario de Salud del Paciente</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('phq')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('phq')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="phq-form">
         <div class="card">
@@ -1337,7 +1337,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">GAD-7 · Escala de Trastorno de Ansiedad Generalizada</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('gad')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('gad')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="gad-form">
         <div class="card">
@@ -1385,7 +1385,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="back-btn" onclick="volverSector()">← Volver</div>
       <div class="vista-header"><div class="vista-titulo">SPAI-B · Inventario de Fobia y Ansiedad Social (Forma Breve)</div>
       <div style="margin-bottom:16px;">
-        <button onclick="generarPDF('spai')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+        <button onclick="generarPDF('spai')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="spaib-form">
         <div class="card">
@@ -1968,7 +1968,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">SCL-90-R · Inventario de Síntomas</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('scl90')" style="
-          background:#1a3a5c;
+          background:#325c28;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -1979,7 +1979,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(26,58,92,0.25);
+          box-shadow:0 2px 6px rgba(45,92,34,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="scl90-form">
@@ -3199,7 +3199,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div id="bnt-panel-60" style="display:none;">
           <div class="card">
             <div class="card-title">BNT-60 · Versión completa</div>
-            <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
+            <div style="background:#fff8f0;border:1.5px solid #325c28;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
               <strong>Baremo:</strong> Olabarrieta-Landa et al. (2015) — muestra argentina (n=320). Ajuste por educación únicamente.<br>
               <em>Sin corrección por edad ni sexo. Interpretar con cautela en mayores de 65 años.</em>
             </div>
@@ -3224,7 +3224,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div id="bnt-panel-12" style="display:none;">
           <div class="card">
             <div class="card-title">BNT-12 · Versión abreviada</div>
-            <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
+            <div style="background:#fff8f0;border:1.5px solid #325c28;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#7a4a10;">
               <strong>Baremo:</strong> Serrano, Allegri et al. (2001) — muestra Buenos Aires (50–82 años, n=143). Sin corrección por edad ni educación.<br>
               <strong>Láminas:</strong> helicóptero, pulpo, máscara, volcán, armónica, zancos, dominó, cactus, cerradura, pirámide, bozal y paleta.<br>
               <strong>Corte diagnóstico EA:</strong> ≥9 (sens. 85%, esp. 94%).
@@ -3264,7 +3264,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">ASRS-V1.1 · Escala de Autodetección de TDAH en Adultos</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('asrs')" style="
-          background:#1a3a5c;
+          background:#325c28;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -3275,7 +3275,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(26,58,92,0.25);
+          box-shadow:0 2px 6px rgba(45,92,34,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="asrs-form">
@@ -3297,7 +3297,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div id="man-area-asrs" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Sección A positivos (0–6)</label><input type="number" id="man-asrs-a" min="0" max="6" placeholder="0–6"></div><div class="field"><label>ASRS-I Inatención (0–48)</label><input type="number" id="man-asrs-i" min="0" max="48" placeholder="0–48"></div><div class="field"><label>ASRS-H Hiperactividad (0–36)</label><input type="number" id="man-asrs-h" min="0" max="36" placeholder="0–36"></div><div class="field"><label>ASRS-T Total (0–72)</label><input type="number" id="man-asrs-t" min="0" max="72" placeholder="0–72"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('asrs')">Calcular resultado →</button></div></div>
         <div id="auto-area-asrs">
         <div class="card">
-          <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
+          <div style="background:#fff8f0;border:1.5px solid #325c28;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
             <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
             <p style="margin:0 0 4px;"><strong>Sección A (Screener):</strong> ítem positivo si ítems 1–3 ≥ "A veces" (≥2) o ítems 4–6 ≥ "Frecuentemente" (≥3). <strong>Screening positivo: ≥ 4 ítems positivos.</strong> Sensibilidad 68,7% · Especificidad 99,5% (Kessler et al., 2005).</p>
             <p style="margin:0;"><strong>Sección B:</strong> sumatoria orientativa 0–48. Sin baremos oficiales.</p>
@@ -3336,7 +3336,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header"><div class="vista-titulo">WURS-25 · Escala de Wender-Utah</div>
       <div style="margin-bottom:16px;">
         <button onclick="generarPDF('wurs')" style="
-          background:#1a3a5c;
+          background:#325c28;
           color:#fff;
           border:none;
           border-radius:8px;
@@ -3347,7 +3347,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           display:inline-flex;
           align-items:center;
           gap:8px;
-          box-shadow:0 2px 6px rgba(26,58,92,0.25);
+          box-shadow:0 2px 6px rgba(45,92,34,0.25);
         ">🖨 Imprimir en blanco para completar a mano</button>
       </div></div>
       <div id="wurs-form">
@@ -3362,7 +3362,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div id="man-area-wurs" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–100)</label><input type="number" id="man-wurs-total" min="0" max="100" placeholder="0–100"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('wurs')">Calcular resultado →</button></div></div>
         <div id="auto-area-wurs">
         <div class="card">
-          <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
+          <div style="background:#fff8f0;border:1.5px solid #325c28;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
             <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
             <p style="margin:0;"><strong>0–25:</strong> sin historia infantil compatible · <strong>26–35:</strong> rasgos leves · <strong>36–45:</strong> probable TDAH infantil · <strong>≥46:</strong> altamente compatible con TDAH infantil. Rango total: 0–75. Fuentes: Rodríguez-Jiménez et al. (2001) · Scandar MG (2021, Rev Neurol, población argentina).</p>
           </div>
@@ -3398,7 +3398,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header">
         <div class="vista-titulo">MBI-HSS · Inventario de Burnout de Maslach</div>
         <div style="margin-bottom:16px;">
-          <button onclick="generarPDF('mbi')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+          <button onclick="generarPDF('mbi')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
         </div>
       </div>
 
@@ -3643,7 +3643,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="vista-header">
         <div class="vista-titulo">Test del Reloj · Versión Cacho a la orden</div>
         <div style="margin-bottom:16px;">
-          <button onclick="generarPDF('reloj')" style="background:#1a3a5c;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(26,58,92,0.25);">🖨 Imprimir en blanco para completar a mano</button>
+          <button onclick="generarPDF('reloj')" style="background:#325c28;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:0.85rem;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(45,92,34,0.25);">🖨 Imprimir en blanco para completar a mano</button>
         </div>
       </div>
 
@@ -3972,7 +3972,7 @@ function editarPaciente(id) {
   var modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
   modal.innerHTML =
-    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:340px;max-width:480px;width:92%;box-shadow:0 8px 32px rgba(26,58,92,0.18);">' +
+    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:340px;max-width:480px;width:92%;box-shadow:0 8px 32px rgba(45,92,34,0.18);">' +
     '<div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:18px;">Editar paciente</div>' +
     '<div class="form-grid-3" style="margin-bottom:0;">' +
     '<div class="field" style="grid-column:1/-1;"><label>Nombre completo *</label><input type="text" id="ep-nombre" value="'+escHtml(p.nombre||'')+'"></div>' +
@@ -4178,7 +4178,7 @@ function cutoffBarHTML(val, max, cutoff) {
   var color = val >= cutoff ? '#E24B4A' : val >= cutoff * 0.75 ? '#D85A30' : '#639922';
   return '<div style="position:relative;height:10px;background:#f0e5d5;border-radius:2px;width:120px;">' +
     '<div style="position:absolute;left:0;width:' + pct + '%;top:0;bottom:0;background:' + color + ';border-radius:2px;"></div>' +
-    '<div style="position:absolute;left:' + cutPct + '%;top:-2px;bottom:-2px;width:1.5px;background:#0f2540;"></div>' +
+    '<div style="position:absolute;left:' + cutPct + '%;top:-2px;bottom:-2px;width:1.5px;background:#214b1a;"></div>' +
     '</div>';
 }
 
@@ -4247,15 +4247,15 @@ function generarPDF(tipo) {
       estilosApp+
       'body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;margin:20px;padding:0;}'+
       '.vista-header{margin-bottom:12px;}'+
-      '.vista-titulo{font-size:14pt;font-weight:700;color:#0f1f30;border-bottom:2px solid #1a3a5c;padding-bottom:6px;}'+
+      '.vista-titulo{font-size:14pt;font-weight:700;color:#1a2e16;border-bottom:2px solid #325c28;padding-bottom:6px;}'+
       '.card{background:#fff;border:0.5px solid #ddd;border-radius:6px;padding:14px;margin-bottom:12px;}'+
-      '.card-title{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0f2540;border-bottom:1px solid #c8d8ec;margin-bottom:10px;padding-bottom:4px;}'+
+      '.card-title{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#214b1a;border-bottom:1px solid #b8ddb0;margin-bottom:10px;padding-bottom:4px;}'+
       '.form-grid, .form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;}'+
-      '.field label{display:block;font-size:8pt;font-weight:700;color:#1a3a5c;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;}'+
+      '.field label{display:block;font-size:8pt;font-weight:700;color:#325c28;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;}'+
       'input[type="number"],select,input[type="date"],input[type="text"]{width:100%;box-sizing:border-box;border:1px solid #ccc;border-radius:4px;padding:4px 6px;font-size:10pt;}'+
       '.scl-block,.spai-block,.asrs-block,.wurs-block,.mbi-block{margin-bottom:8px;}'+
       '.item-row,.spai-item,.scl-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:0.3px solid #eee;font-size:9pt;}'+
-      '.item-num,.spai-num,.scl-num{min-width:22px;font-weight:700;color:#4a6a8a;font-size:8pt;padding-top:2px;}'+
+      '.item-num,.spai-num,.scl-num{min-width:22px;font-weight:700;color:#4a7040;font-size:8pt;padding-top:2px;}'+
       '.item-text,.spai-item-text,.scl-item-text{flex:1;line-height:1.4;}'+
       '.likert-opts,.radio-opts{display:flex;gap:8px;min-width:120px;justify-content:flex-end;}'+
       '.likert-opt,.radio-opt{display:flex;flex-direction:column;align-items:center;font-size:7.5pt;gap:2px;}'+
@@ -4264,7 +4264,7 @@ function generarPDF(tipo) {
     '</style></head><body>'+
     '<div style="text-align:center;margin-bottom:14px;">'+
       '<div style="font-size:7pt;color:#888;">Lic. Erwin Müller Gudiño · M.P. 13920 · 27 de Abril 424 7C · Tel. 351 350-0540</div>'+
-      '<div style="font-size:13pt;font-weight:800;color:#0f1f30;margin-top:4px;">'+cfg.titulo+'</div>'+
+      '<div style="font-size:13pt;font-weight:800;color:#1a2e16;margin-top:4px;">'+cfg.titulo+'</div>'+
       '<div style="margin-top:8px;font-size:9pt;display:flex;gap:30px;justify-content:center;">'+
         '<span>Paciente: ____________________________</span>'+
         '<span>Fecha: ____________</span>'+
@@ -4397,7 +4397,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       var isX  = z !== null && Math.abs(z - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
-      var bg = enNormal ? '#a0c0e0' : '#ffffff';
+      var bg = enNormal ? '#77b966' : '#ffffff';
       var inner = isX
         ? '<span style="font-size:11px;font-weight:900;color:#000;line-height:1;">X</span>'
         : '';
@@ -4408,11 +4408,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Estilos de tabla ──
-  var thBase = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#0f2540;background:#dce8f5;border-bottom:1px solid #d8c8b0;padding:5px 7px;';
-  var tdBase = 'font-size:10.5px;border-bottom:0.5px solid #c8d8ec;padding:5px 7px;';
+  var thBase = 'font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#fff;background:#c8dcc0;border-bottom:1px solid #325c28;padding:5px 7px;';
+  var tdBase = 'font-size:10.5px;border-bottom:0.5px solid #b8ddb0;padding:5px 7px;';
 
   function domHeader(txt) {
-    return '<tr><td colspan="9" style="background:#dce8f5;padding:4px 10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;border-bottom:1px solid #b8cce4;">'+txt+'</td></tr>';
+    return '<tr><td colspan="9" style="background:#e8f5e4;padding:4px 10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;border-bottom:1px solid #a8c8a0;">'+txt+'</td></tr>';
   }
 
   // ── Fila de tabla neuropsicológica ──
@@ -4443,7 +4443,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'font-size:9px;color:#222;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#4a6a8a;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
+      '<td style="'+tdBase+'font-size:9px;color:#111;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#4a7040;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
       '</tr>';
   }
 
@@ -4534,21 +4534,21 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     svg += '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
 
     // Título
-    svg += '<text x="'+W/2+'" y="18" text-anchor="middle" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;fill:#0f2540;">Perfil Neuropsicológico</text>';
+    svg += '<text x="'+W/2+'" y="18" text-anchor="middle" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;fill:#214b1a;">Perfil Neuropsicológico</text>';
 
     // Zona −1 a +1
     var y1 = zy(1), ym1 = zy(-1);
-    svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#a0c0e0" opacity="0.22"/>';
+    svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#77b966" opacity="0.22"/>';
 
     // Líneas horizontales Y
     [-3,-2,-1,0,1,2,3].forEach(function(z){
       var y = zy(z);
       var isZero = z === 0;
       var is1 = z === 1 || z === -1;
-      svg += '<line x1="'+ML+'" y1="'+y+'" x2="'+(ML+chartW)+'" y2="'+y+'" stroke="'+(isZero?'#c8a070':is1?'#9ab8d8':'#c8d8ec')+'" stroke-width="'+(isZero?0.9:0.5)+'" '+(isZero?'stroke-dasharray="5 3"':'')+'/>';
+      svg += '<line x1="'+ML+'" y1="'+y+'" x2="'+(ML+chartW)+'" y2="'+y+'" stroke="'+(isZero?'#c8a070':is1?'#88b080':'#b8ddb0')+'" stroke-width="'+(isZero?0.9:0.5)+'" '+(isZero?'stroke-dasharray="5 3"':'')+'/>';
       // Etiqueta Y
       var lbl = z > 0 ? '+'+z : String(z);
-      svg += '<text x="'+(ML-6)+'" y="'+(y+4)+'" text-anchor="end" style="font-size:8px;fill:#4a6a8a;">'+lbl+'</text>';
+      svg += '<text x="'+(ML-6)+'" y="'+(y+4)+'" text-anchor="end" style="font-size:8px;fill:#4a7040;">'+lbl+'</text>';
     });
 
     // Separadores de dominio y etiquetas
@@ -4562,39 +4562,39 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       // Línea separadora (antes del primer punto de cada dominio excepto el primero)
       if (gi > 0) {
         var xSep = (px(g.start) + px(g.start-1)) / 2;
-        svg += '<line x1="'+xSep+'" y1="'+MT+'" x2="'+xSep+'" y2="'+(MT+chartH)+'" stroke="#9ab8d8" stroke-width="0.5" stroke-dasharray="3 3"/>';
+        svg += '<line x1="'+xSep+'" y1="'+MT+'" x2="'+xSep+'" y2="'+(MT+chartH)+'" stroke="#88b080" stroke-width="0.5" stroke-dasharray="3 3"/>';
       }
       // Etiqueta dominio centrada
       var xC = (px(g.start) + px(g.end)) / 2;
-      svg += '<text x="'+xC+'" y="'+(MT-6)+'" text-anchor="middle" style="font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;fill:#4a6a8a;">'+g.dom+'</text>';
+      svg += '<text x="'+xC+'" y="'+(MT-6)+'" text-anchor="middle" style="font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;fill:#4a7040;">'+g.dom+'</text>';
     });
 
     // Línea de perfil continua
     var pts = puntos.map(function(p,i){ return px(i)+','+zy(p.z); }).join(' ');
-    svg += '<polyline points="'+pts+'" fill="none" stroke="#0f2540" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>';
+    svg += '<polyline points="'+pts+'" fill="none" stroke="#214b1a" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>';
 
     // Puntos (círculo blanco + borde + punto central)
     puntos.forEach(function(p, i){
       var x = px(i), y = zy(p.z);
-      svg += '<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="#ffffff" stroke="#0f2540" stroke-width="1.5"/>';
-      svg += '<circle cx="'+x+'" cy="'+y+'" r="1.6" fill="#0f2540"/>';
+      svg += '<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="#ffffff" stroke="#214b1a" stroke-width="1.5"/>';
+      svg += '<circle cx="'+x+'" cy="'+y+'" r="1.6" fill="#214b1a"/>';
     });
 
     // Etiquetas eje X rotadas −50°
     puntos.forEach(function(p, i){
       var x = px(i), yBase = MT + chartH + 8;
-      svg += '<text transform="rotate(-50,'+x+','+yBase+')" x="'+x+'" y="'+yBase+'" text-anchor="end" style="font-size:7.8px;fill:#0f2540;">'+p.label+'</text>';
+      svg += '<text transform="rotate(-50,'+x+','+yBase+')" x="'+x+'" y="'+yBase+'" text-anchor="end" style="font-size:7.8px;fill:#214b1a;">'+p.label+'</text>';
     });
 
     // Leyenda
     var yL = H - 14;
-    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="4.5" fill="#ffffff" stroke="#0f2540" stroke-width="1.5"/>';
-    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="1.6" fill="#0f2540"/>';
-    svg += '<text x="'+(ML+10)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Puntaje Z del paciente</text>';
-    svg += '<rect x="'+(ML+145)+'" y="'+(yL-5)+'" width="30" height="10" fill="#a0c0e0" opacity="0.40"/>';
-    svg += '<text x="'+(ML+180)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Rango normal (Z −1 a +1)</text>';
+    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="4.5" fill="#ffffff" stroke="#214b1a" stroke-width="1.5"/>';
+    svg += '<circle cx="'+(ML)+'" cy="'+yL+'" r="1.6" fill="#214b1a"/>';
+    svg += '<text x="'+(ML+10)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Puntaje Z del paciente</text>';
+    svg += '<rect x="'+(ML+145)+'" y="'+(yL-5)+'" width="30" height="10" fill="#77b966" opacity="0.40"/>';
+    svg += '<text x="'+(ML+180)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Rango normal (Z −1 a +1)</text>';
     svg += '<line x1="'+(ML+320)+'" y1="'+yL+'" x2="'+(ML+346)+'" y2="'+yL+'" stroke="#c8a070" stroke-width="0.9" stroke-dasharray="5 3"/>';
-    svg += '<text x="'+(ML+352)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a6a8a;">Media normativa (Z = 0)</text>';
+    svg += '<text x="'+(ML+352)+'" y="'+(yL+4)+'" style="font-size:7.5px;fill:#4a7040;">Media normativa (Z = 0)</text>';
 
     svg += '</svg>';
     return svg;
@@ -4707,21 +4707,21 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           }
 
         } else if (testNombre === 'WAIS-IV') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
           if (d.rd_pb != null) rows += filaTabla('Retención de Dígitos', d.rd_pb, 10, 3, d.rd_z, r.fecha);
           if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'WCST-64') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
           if (d.categorias != null)
             rows += filaTabla('Categorías completadas', d.categorias+'/6', d.cat_m||null, d.cat_ds||null, d.cat_z!=null?d.cat_z:null, r.fecha);
           if (d.perse_pct != null)
             rows += filaTabla('Errores perseverativos (%)', d.perse_pct+'%', d.perse_m||null, d.perse_ds||null, d.perse_z!=null?d.perse_z:null, r.fecha);
           if (d.intentos != null)
-            rows += filaTabla('Intentos 1ª categoría <span style="font-size:8px;color:#4a6a8a;font-style:italic;">(ref: >20)</span>', d.intentos, null, null, null, r.fecha);
+            rows += filaTabla('Intentos 1ª categoría <span style="font-size:8px;color:#4a7040;font-style:italic;">(ref: >20)</span>', d.intentos, null, null, null, r.fecha);
           if (d.fallas != null)
-            rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#4a6a8a;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
+            rows += filaTabla('Fallas en mantener set <span style="font-size:8px;color:#4a7040;font-style:italic;">(ref: >3)</span>', d.fallas, null, null, null, r.fecha);
 
         } else if (testNombre === 'Test del Reloj (Cacho)') {
           var d2 = r.datos || {};
@@ -4731,12 +4731,12 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += '<tr>'+
             '<td style="'+tdBase+'font-weight:500;">Test del Reloj (Cacho)</td>'+
             '<td style="'+tdBase+'text-align:center;font-family:monospace;font-weight:700;">'+(total2!=null?total2+'/10':'—')+'</td>'+
-            '<td colspan="4" style="'+tdBase+'font-size:9px;color:#4a6a8a;">'+
+            '<td colspan="4" style="'+tdBase+'font-size:9px;color:#4a7040;">'+
               (d2.esfera!=null?'Esfera:'+d2.esfera+'/2 · ':'')+(d2.numeros!=null?'Números:'+d2.numeros+'/4 · ':'')+(d2.agujas!=null?'Agujas:'+d2.agujas+'/4':'')+'</td>'+
             '<td style="'+tdBase+'">'+
               '<span style="font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:700;background:'+(normal2?'#1D9E7522':'#E24B4A22')+';color:'+(normal2?'#1D9E75':'#E24B4A')+';border:0.5px solid '+(normal2?'#1D9E7544':'#E24B4A44')+';white-space:nowrap;">'+cat2+'</span>'+
             '</td>'+
-            '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a6a8a;">'+(r.fecha||'')+'</td>'+
+            '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a7040;">'+(r.fecha||'')+'</td>'+
             '</tr>';
 
         } else if (testNombre === 'SDMT') {
@@ -4756,7 +4756,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2F = d.gi != null ? d.gi : null;
           var ei2F = d.ei != null ? d.ei : null;
           var notaF = gi2F!==null && ei2F!==null ? edadLabelsF[gi2F]+' · '+escolLabelsF[ei2F] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
           if (d.copia != null) rows += filaTabla('Copia', d.copia, null, null, d.zCopia, r.fecha, 'Pc '+(d.pcCopia||'—'));
           if (d.ri    != null) rows += filaTabla('Recuerdo Inmediato', d.ri, null, null, d.zRI, r.fecha, 'Pc '+(d.pcRI||'—'));
           if (d.ir    != null) rows += filaTabla('Índice de Retención', d.ir+'%', null, null, null, r.fecha, d.ir+'%');
@@ -4767,7 +4767,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2 = d.gi != null ? d.gi : null;
           var ei2 = d.ei != null ? d.ei : null;
           var notaS = gi2!==null && ei2!==null ? 'Grupo: '+edadLabelsS[gi2]+' · Escol. '+escolLabelsS[ei2] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a6a8a;border-bottom:0.5px solid #c8d8ec;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
           if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,      gi2!==null?STROOP_BAR.P.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.P.DS[gi2][ei2]:null,   d.zP,   r.fecha, notaS);
           if (d.c    != null) rows += filaTabla('Color (C)',               d.c,      gi2!==null?STROOP_BAR.C.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.C.DS[gi2][ei2]:null,   d.zC,   r.fecha, notaS);
           if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,     gi2!==null?STROOP_BAR.PC.M[gi2][ei2]:null,  gi2!==null?STROOP_BAR.PC.DS[gi2][ei2]:null,  d.zPC,  r.fecha, notaS);
@@ -4795,17 +4795,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function renderDolor(list) {
     if (!list.length) return '';
     // Mismo estilo que renderCL
-    var thD  = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:left;border:0.5px solid #555;';
-    var thDC = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:center;border:0.5px solid #555;';
+    var thD  = 'font-size:8.5px;font-weight:700;color:#fff;background:#c8dcc0;padding:5px 8px;text-align:left;border:0.5px solid #4a8040;';
+    var thDC = 'font-size:8.5px;font-weight:700;color:#fff;background:#c8dcc0;padding:5px 8px;text-align:center;border:0.5px solid #4a8040;';
     var tdR  = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
-    function rowBg(i){ return i%2===0?'#fff':'#f7f7f7'; }
+    function rowBg(i){ return i%2===0?'#fff':'#f5fbf3'; }
     function dolorHeader(title){
-      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #555;padding-left:6px;">'+title+'</div>';
+      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #325c28;padding-left:6px;">'+title+'</div>';
     }
     function miniBar(pct, col){
-      return '<div style="position:relative;height:8px;background:#dce8f5;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
+      return '<div style="position:relative;height:8px;background:#dff0d8;border-radius:3px;width:90px;display:inline-block;vertical-align:middle;">'+
         '<div style="position:absolute;left:0;width:'+Math.min(100,pct).toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:3px;"></div>'+
         '</div>';
     }
@@ -4834,11 +4834,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if(s.v===null)return;
           var col=s.v>=Math.round(s.max*0.7)?'#c0392b':s.v>=Math.round(s.max*0.5)?'#D85A30':'#2e7a4f';
           var lbl=s.v>=Math.round(s.max*0.7)?'Significativa':s.v>=Math.round(s.max*0.5)?'Moderada':'No significativa';
-          html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+s.l+' <span style="font-size:8px;color:#4a6a8a;">(ítems '+s.it+')</span></td>'+
+          html+='<tr style="background:'+rowBg(i)+'"><td style="'+tdR+'">'+s.l+' <span style="font-size:8px;color:#4a7040;">(ítems '+s.it+')</span></td>'+
             '<td style="'+tdRC+'">'+s.v+'/'+s.max+'</td>'+
             '<td style="'+tdRI+'">'+lbl+'</td></tr>';
         });
-        if(tot!=null) html+='<tr style="background:#e8eff8;"><td style="'+tdR+'font-weight:700;border-top:1px solid #ccc;">Puntaje Total</td>'+
+        if(tot!=null) html+='<tr style="background:#e8f4e4;"><td style="'+tdR+'font-weight:700;border-top:1px solid #ccc;">Puntaje Total</td>'+
           '<td style="'+tdRC+'border-top:1px solid #ccc;">'+tot+'/52</td>'+
           '<td style="'+tdRI+'border-top:1px solid #ccc;">'+nivLbl+'</td></tr>';
         html += '</tbody></table>';
@@ -4897,13 +4897,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           '<th style="'+thDC+'">Puntaje</th>'+
           '<th style="'+thDC+'">Interpretación</th>'+
           '</tr></thead><tbody>';
-        if(intVal!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Índice de Intensidad <span style="font-size:8px;color:#4a6a8a;">(ítems 3–6)</span></td>'+
+        if(intVal!==null) html+='<tr style="background:'+rowBg(0)+'"><td style="'+tdR+'">Índice de Intensidad <span style="font-size:8px;color:#4a7040;">(ítems 3–6)</span></td>'+
           '<td style="'+tdRC+'">'+intVal.toFixed(1)+'/10</td>'+
           '<td style="'+tdRI+'">'+bpiLbl(intVal,'int')+'</td></tr>';
-        if(infVal!==null) html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Índice de Interferencia <span style="font-size:8px;color:#4a6a8a;">(ítems 9A–9G)</span></td>'+
+        if(infVal!==null) html+='<tr style="background:'+rowBg(1)+'"><td style="'+tdR+'">Índice de Interferencia <span style="font-size:8px;color:#4a7040;">(ítems 9A–9G)</span></td>'+
           '<td style="'+tdRC+'">'+infVal.toFixed(1)+'/10</td>'+
           '<td style="'+tdRI+'">'+bpiLbl(infVal,'inf')+'</td></tr>';
-        if(alivio!==null) html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Alivio con tratamiento'+(trat?' <span style="font-size:8px;color:#4a6a8a;">('+trat+')</span>':'')+'</td>'+
+        if(alivio!==null) html+='<tr style="background:'+rowBg(2)+'"><td style="'+tdR+'">Alivio con tratamiento'+(trat?' <span style="font-size:8px;color:#4a7040;">('+trat+')</span>':'')+'</td>'+
           '<td style="'+tdRC+'">'+alivio+'%</td>'+
           '<td style="'+tdRI+'">'+(alivio>=50?'Alivio adecuado':alivio>=25?'Alivio parcial':'Alivio insuficiente')+'</td></tr>';
         html += '</tbody></table>';
@@ -4928,25 +4928,25 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var pct  = Math.min(100,(val/max)*100);
     var cpct = Math.min(100,(cutoff/max)*100);
     var col  = val>=cutoff?'#E24B4A': val>=(cutoff*0.75)?'#D85A30':'#639922';
-    return '<div style="position:relative;height:8px;background:#dce8f5;border-radius:3px;width:100px;display:inline-block;">'+
+    return '<div style="position:relative;height:8px;background:#dff0d8;border-radius:3px;width:100px;display:inline-block;">'+
       '<div style="position:absolute;left:0;width:'+pct.toFixed(1)+'%;top:0;bottom:0;background:'+col+';border-radius:2px;"></div>'+
-      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#0f2540;"></div>'+
+      '<div style="position:absolute;left:'+cpct.toFixed(1)+'%;top:-3px;bottom:-3px;width:1.5px;background:#214b1a;"></div>'+
       '</div>';
   }
 
   function renderCL(list) {
     if (!list.length) return '';
     // Estilos comunes
-    var thDark = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:left;border:0.5px solid #555;';
-    var thDarkC = 'font-size:8.5px;font-weight:700;color:#fff;background:#1a3a5c;padding:5px 8px;text-align:center;border:0.5px solid #555;';
+    var thDark = 'font-size:8.5px;font-weight:700;color:#fff;background:#c8dcc0;padding:5px 8px;text-align:left;border:0.5px solid #4a8040;';
+    var thDarkC = 'font-size:8.5px;font-weight:700;color:#fff;background:#c8dcc0;padding:5px 8px;text-align:center;border:0.5px solid #4a8040;';
     var tdR = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;';
     var tdRC = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;text-align:center;font-family:monospace;font-weight:700;';
     var tdRI = 'font-size:10px;padding:4px 8px;border:0.5px solid #ddd;vertical-align:middle;font-weight:700;color:#222;';
 
-    function rowBg(i) { return i%2===0?'#fff':'#f7f7f7'; }
+    function rowBg(i) { return i%2===0?'#fff':'#f5fbf3'; }
 
     function clHeader(title) {
-      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #555;padding-left:6px;">'+title+'</div>';
+      return '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#222;margin:10px 0 0;border-left:3px solid #325c28;padding-left:6px;">'+title+'</div>';
     }
 
     var html = '';
@@ -4978,13 +4978,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         var dimFull = ['som','obs','sen','dep','ans','hos','fob','par','psi'];
         var dimNombres = {som:'Somatizaciones',obs:'Obsesiones y Compulsiones',sen:'Sensitividad Interpersonal',dep:'Depresión',ans:'Ansiedad',hos:'Hostilidad',fob:'Ansiedad Fóbica',par:'Ideación Paranoide',psi:'Psicoticismo'};
         function sclCelBg(t) { if(t==null)return'#f5f5f5';if(t>=80)return'#e74c3c';if(t>=65)return'#f39c12';return'#f5f5f5'; }
-        function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#0f1f30'; }
+        function sclCelColor(t) { if(t==null)return'#aaa';if(t>=65)return'#fff';return'#1a2e16'; }
         html += clHeader('SCL-90-R · Inventario de Síntomas de Derogatis');
         html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;">';
-        html += '<tr><td colspan="3" style="background:#1a3a5c;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Dimensiones primarias</td>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">Ptos brutos</th>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">T</th>'+
-          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#1a3a5c;border:0.5px solid #555;text-align:center;">Estado</th></tr>';
+        html += '<tr><td colspan="3" style="background:#c8dcc0;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #4a8040;">Dimensiones primarias</td>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#c8dcc0;border:0.5px solid #4a8040;text-align:center;">Ptos brutos</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#c8dcc0;border:0.5px solid #4a8040;text-align:center;">T</th>'+
+          '<th style="padding:4px 6px;font-size:8px;font-weight:700;color:#fff;background:#c8dcc0;border:0.5px solid #4a8040;text-align:center;">Estado</th></tr>';
         dimFull.forEach(function(k,i) {
           var t = subs[k] ? subs[k].t : null;
           var bg = sclCelBg(t); var fc = sclCelColor(t);
@@ -4996,7 +4996,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-family:monospace;font-weight:700;background:'+bg+';color:'+fc+';">'+(t!=null?t:'—')+'</td>'+
             '<td style="padding:3px 6px;border:0.5px solid #ddd;text-align:center;font-size:9px;font-weight:700;color:#222;">'+estado+'</td></tr>';
         });
-        html += '<tr><td colspan="6" style="background:#1a3a5c;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #555;">Escalas globales</td></tr>';
+        html += '<tr><td colspan="6" style="background:#c8dcc0;color:#fff;font-size:8px;font-weight:700;padding:3px 8px;text-transform:uppercase;letter-spacing:1px;border:0.5px solid #4a8040;">Escalas globales</td></tr>';
         var igt = d.igt != null ? Math.round(parseFloat(d.igt)) : null;
         [['IGS — Índice de Severidad Global', d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—', igt],
          ['TSP — Total Síntomas Positivos', d.tsp!=null?d.tsp:'—', d.tsp_t!=null?d.tsp_t:null],
@@ -5023,7 +5023,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           {key:'RP',label:'Realización Personal', val:d.RP, cat:d.RP_cat, corte:'≤33', dir:'bajo'}
         ];
         function mbiBg(cat,dir){if(!cat)return'#f5f5f5';var cl=cat.toLowerCase();if(dir==='bajo')return cl==='bajo'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';return cl==='alto'?'#e74c3c':cl==='moderado'?'#f39c12':'#f5f5f5';}
-        function mbiFc(bg){return bg==='#f5f5f5'?'#0f1f30':'#fff';}
+        function mbiFc(bg){return bg==='#f5f5f5'?'#1a2e16':'#fff';}
         html += clHeader('MBI-HSS · Inventario de Burnout de Maslach');
         html += '<table style="border-collapse:collapse;width:100%;font-size:10px;margin-bottom:4px;"><thead><tr>'+
           '<th style="'+thDark+'">Subescala</th>'+
@@ -5116,7 +5116,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Logo SVG ──
-  var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#1a3a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#1a3a5c" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#1a3a5c" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#1a3a5c" opacity="0.65"/></svg>';
+  var logoSVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><circle cx="60" cy="60" r="54" fill="#F5EDE4" stroke="#C4977A" stroke-width="1"/><line x1="60" y1="8" x2="60" y2="112" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><line x1="8" y1="60" x2="112" y2="60" stroke="#C4977A" stroke-width="0.5" opacity="0.25"/><path d="M22 68 L36 68 L42 42 L50 88 L58 48 L66 80 L74 52 L80 68 L98 68" fill="none" stroke="#325c28" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="88" r="2.8" fill="#325c28" opacity="0.65"/><circle cx="66" cy="80" r="2.8" fill="#325c28" opacity="0.65"/><circle cx="42" cy="42" r="2.8" fill="#325c28" opacity="0.65"/></svg>';
 
   // ── Tabla escala de referencia Z ──
   var refZ = '<div style="margin-top:14px;border:0.5px solid #cccccc;border-radius:4px;overflow:hidden;font-family:sans-serif;">'+
@@ -5149,10 +5149,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     '.pg{max-width:900px;margin:0 auto;}'+
     'table{border-collapse:collapse;width:100%;}'+
     '.narrativa{font-family:Arial,sans-serif;font-size:12pt;line-height:1.5;text-align:justify;color:#1a1a1a;margin:0 0 8px 0;}'+
-    '.sec-titulo{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0f2540;border-bottom:1.5px solid #2c5f8a;margin:16px 0 6px;padding-bottom:3px;}'+
+    '.sec-titulo{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#214b1a;border-bottom:1.5px solid #599a4a;margin:16px 0 6px;padding-bottom:3px;}'+
     '.ficha-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;font-family:Arial,sans-serif;font-size:11pt;}'+
     '.ficha-item{display:flex;gap:6px;padding:2px 0;}'+
-    '.ficha-lbl{font-weight:700;white-space:nowrap;color:#0f2540;}'+
+    '.ficha-lbl{font-weight:700;white-space:nowrap;color:#214b1a;}'+
     '@media print{body{padding:0;}@page{margin:15mm 15mm 15mm 20mm;size:A4 portrait;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'+
     '</style></head><body><div class="pg">'+
 
@@ -5259,19 +5259,19 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     // ── Secciones ──
     (testsNp.length ?
       '<div style="page-break-before:always;"></div>'+
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #c8dcc0;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
     (testsTd.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">TDAH</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #c8dcc0;margin-bottom:0;margin-top:14px;">TDAH</div>'+
       renderCL(testsTd) : '')+
 
     (testsDo.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #c8dcc0;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
       renderDolor(testsDo) : '')+
 
     (testsCl.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#0f2540;background:#dce8f5;padding:5px 10px;border-left:3px solid #1a3a5c;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #c8dcc0;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
       renderCL(testsCl) : '')+
 
     (testsNp.length ? refZ : '')+
@@ -5307,7 +5307,7 @@ function editarResultado(id) {
   var modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
   modal.innerHTML =
-    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:320px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(26,58,92,0.18);">' +
+    '<div style="background:var(--surface);border-radius:14px;padding:28px 32px;min-width:320px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(45,92,34,0.18);">' +
     '<div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px;">Editar resultado</div>' +
     '<div style="font-size:0.82rem;color:var(--muted);margin-bottom:18px;">' + r.test + ' — ' + (r.psico_pacientes ? r.psico_pacientes.nombre : '') + '</div>' +
     '<div class="field" style="margin-bottom:16px;"><label>Fecha de evaluación</label><input type="date" id="edit-res-fecha" value="' + (r.fecha||'') + '"></div>' +
