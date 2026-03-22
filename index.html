@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.5</div>
     </div>
   </aside>
 
@@ -1765,6 +1765,109 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('fcr-resultado').style.display='none';document.getElementById('fcr-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarFCR()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="vista" id="vista-sdmt">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">SDMT · Symbol Digit Modalities Test</div></div>
+  <div id="sdmt-form">
+    <div class="card">
+      <div class="card-title">Versión administrada</div>
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1.5px solid var(--border);flex:1;transition:all 0.15s;" id="sdmt-tab-escrita" onclick="sdmtSetVersion('escrita')">
+          <input type="radio" name="sdmt-version" value="escrita" style="accent-color:var(--accent);">
+          <span><strong>Versión Escrita</strong><br><small style="color:var(--muted);">Baremos: NEURONORMA Argentina (Arango-Lasprilla et al., 2015)</small></span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1.5px solid var(--border);flex:1;transition:all 0.15s;" id="sdmt-tab-oral" onclick="sdmtSetVersion('oral')">
+          <input type="radio" name="sdmt-version" value="oral" style="accent-color:var(--accent);">
+          <span><strong>Versión Oral</strong><br><small style="color:var(--muted);">Baremos: Vanotti et al. (2015) — Buenos Aires</small></span>
+        </label>
+      </div>
+
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="sdmt-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+
+        <!-- Escrita: 13 grupos etarios -->
+        <div class="field" id="sdmt-edad-escrita-wrap">
+          <label>Grupo de edad *</label>
+          <select id="sdmt-edad-escrita">
+            <option value="">— Seleccionar —</option>
+            <option value="0">18–22 años</option>
+            <option value="1">23–27 años</option>
+            <option value="2">28–32 años</option>
+            <option value="3">33–37 años</option>
+            <option value="4">38–42 años</option>
+            <option value="5">43–47 años</option>
+            <option value="6">48–52 años</option>
+            <option value="7">53–57 años</option>
+            <option value="8">58–62 años</option>
+            <option value="9">63–67 años</option>
+            <option value="10">68–72 años</option>
+            <option value="11">73–77 años</option>
+            <option value="12">&gt;77 años</option>
+          </select>
+        </div>
+        <div class="field" id="sdmt-escol-escrita-wrap">
+          <label>Escolaridad *</label>
+          <select id="sdmt-escol-escrita">
+            <option value="">— Seleccionar —</option>
+            <option value="0">&gt;12 años de educación</option>
+            <option value="1">1–12 años de educación</option>
+          </select>
+        </div>
+
+        <!-- Oral: 3 grupos etarios -->
+        <div class="field" id="sdmt-edad-oral-wrap" style="display:none;">
+          <label>Grupo de edad *</label>
+          <select id="sdmt-edad-oral">
+            <option value="">— Seleccionar —</option>
+            <option value="0">19–35 años</option>
+            <option value="1">36–50 años</option>
+            <option value="2">51–70 años</option>
+          </select>
+        </div>
+        <div class="field" id="sdmt-escol-oral-wrap" style="display:none;">
+          <label>Escolaridad *</label>
+          <select id="sdmt-escol-oral">
+            <option value="">— Seleccionar —</option>
+            <option value="0">3–11 años</option>
+            <option value="1">12–16 años</option>
+            <option value="2">&gt;16 años</option>
+          </select>
+        </div>
+
+        <div class="field"><label>Fecha</label><input type="date" id="sdmt-fecha"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Puntaje bruto</div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Cantidad de respuestas correctas en 90 segundos (máximo teórico: 110).</div>
+      <div class="form-grid-3">
+        <div class="field">
+          <label>Respuestas correctas</label>
+          <input type="number" id="sdmt-puntaje" min="0" max="110" placeholder="0–110">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarSDMT()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularSDMT()">Calcular resultado →</button>
+    </div>
+  </div>
+
+  <div id="sdmt-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="sdmt-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="sdmt-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('sdmt-resultado').style.display='none';document.getElementById('sdmt-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarSDMT()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -3773,7 +3876,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3971,7 +4074,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4113,7 +4216,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','TMT A-B','Stroop'],
+      'ATENCIÓN':       ['WAIS-IV','TMT A-B','Stroop','SDMT'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
       'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
@@ -4232,6 +4335,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</td>'+
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
             '</tr>';
+
+        } else if (testNombre === 'SDMT') {
+          var sdmtVer = d.version || 'escrita';
+          var sdmtEdadLabels = sdmtVer==='escrita'
+            ? ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77']
+            : ['19–35','36–50','51–70'];
+          var sdmtEscolLabels = sdmtVer==='escrita'
+            ? ['>12 años educ.','1–12 años educ.']
+            : ['3–11 años','12–16 años','>16 años'];
+          var sdmtNota = (d.gi!=null&&d.ei!=null) ? (sdmtVer==='escrita'?'Escrita':'Oral')+' · '+sdmtEdadLabels[d.gi]+' · '+sdmtEscolLabels[d.ei] : null;
+          rows += filaTabla('SDMT ('+(sdmtVer==='escrita'?'Escrita':'Oral')+')', d.puntaje, d.m||null, d.ds||null, d.z, r.fecha, sdmtNota);
 
         } else if (testNombre === 'Figura Rey') {
           var escolLabelsF = ['>12 años educ.','1–12 años educ.'];
@@ -4795,6 +4909,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
         'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
+        'SDMT':               'Symbol Digit Modalities Test (SDMT)',
         'IFS':                'INECO Frontal Screening (IFS)',
         'Test del Reloj (Cacho)': 'Test del Reloj — Método Cacho et al.',
         'BDI-II':             'Inventario de Depresión de Beck — Segunda Edición (BDI-II)',
@@ -5041,6 +5156,12 @@ function irSector(s) {
         '<div class="test-desc">Rey-Osterrieth Complex Figure — Copia y Recuerdo Inmediato</div>' +
         '<span class="test-tag">ROCF · Rivera et al. 2015 · Argentina</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'sdmt\')">' +
+        '<div class="test-icon">⚡</div>' +
+        '<div class="test-nombre">SDMT</div>' +
+        '<div class="test-desc">Symbol Digit Modalities Test — Velocidad de procesamiento y atención</div>' +
+        '<span class="test-tag">Escrita + Oral · Baremos argentinos</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'signoret\')">'+
         '<div class="test-icon">📖</div>'+
         '<div class="test-nombre">BEM 144 · Signoret</div>'+
@@ -5137,6 +5258,7 @@ function irTest(t) {
   if (t === 'wcst') iniciarWCST();
   if (t === 'stroop') iniciarStroop();
   if (t === 'fcr') iniciarFCR();
+  if (t === 'sdmt') iniciarSDMT();
 }
 
 function volverSector() {
@@ -8533,6 +8655,206 @@ function guardarFCR() {
     puntaje_z: d.zCopia,
     categoria: d.pcCopia!=null?'Copia Pc'+d.pcCopia+(d.pcRI!=null?' · RI Pc'+d.pcRI:''):'—',
     datos: { copia:d.copia, ri:d.ri, ir:d.ir, pcCopia:d.pcCopia, pcRI:d.pcRI, zCopia:d.zCopia, zRI:d.zRI, gi:d.gi, ei:d.ei }
+  }, SESSION.access_token).then(function(){
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); }, 1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ══ SDMT · Symbol Digit Modalities Test ══════════════════════════════════════
+// VERSIÓN ESCRITA: Arango-Lasprilla et al. (2015) — NEURONORMA Argentina
+// NeuroRehabilitation 37(4):625-638 — DOI: 10.3233/NRE-151282
+// Tabla A1 Argentina — 13 grupos etarios × 2 niveles educativos
+// Escol 0 = >12 años / Escol 1 = 1-12 años
+// Pc: [5,10,15,20,30,40,50,60,70,80,85,90,95]
+var SDMT_PC_LABELS = [5,10,15,20,30,40,50,60,70,80,85,90,95];
+var SDMT_ESCRITA = [
+  // Escol 0: >12 años
+  [
+    //        Pc5   Pc10  Pc15  Pc20  Pc30  Pc40  Pc50  Pc60  Pc70  Pc80  Pc85  Pc90  Pc95
+    /* 18-22 */ [39.8, 43.2, 45.4, 47.3, 50.2, 52.7, 55.1, 57.4, 59.9, 62.9, 64.7, 67.0, 70.3],
+    /* 23-27 */ [38.5, 41.8, 44.1, 45.9, 48.9, 51.4, 53.7, 56.1, 58.6, 61.5, 63.4, 65.6, 69.0],
+    /* 28-32 */ [37.2, 40.5, 42.7, 44.6, 47.6, 50.1, 52.4, 54.7, 57.2, 60.2, 62.1, 64.3, 67.6],
+    /* 33-37 */ [35.8, 39.2, 41.4, 43.3, 46.2, 48.7, 51.1, 53.4, 55.9, 58.9, 60.7, 63.0, 66.3],
+    /* 38-42 */ [34.5, 37.8, 40.1, 41.9, 44.9, 47.4, 49.7, 52.1, 54.6, 57.5, 59.4, 61.6, 65.0],
+    /* 43-47 */ [33.1, 36.5, 38.7, 40.6, 43.6, 46.1, 48.4, 50.7, 53.2, 56.2, 58.1, 60.3, 63.6],
+    /* 48-52 */ [31.8, 35.2, 37.4, 39.2, 42.2, 44.7, 47.1, 49.4, 51.9, 54.9, 56.7, 59.0, 62.3],
+    /* 53-57 */ [30.5, 33.8, 36.1, 37.9, 40.9, 43.4, 45.7, 48.0, 50.6, 53.5, 55.4, 57.6, 61.0],
+    /* 58-62 */ [29.1, 32.5, 34.7, 36.6, 39.6, 42.1, 44.4, 46.7, 49.2, 52.2, 54.0, 56.3, 59.6],
+    /* 63-67 */ [27.8, 31.2, 33.4, 35.2, 38.2, 40.7, 43.1, 45.4, 47.9, 50.9, 52.7, 54.9, 58.3],
+    /* 68-72 */ [26.5, 29.8, 32.0, 33.9, 36.9, 39.4, 41.7, 44.0, 46.5, 49.5, 51.4, 53.6, 57.0],
+    /* 73-77 */ [25.1, 28.5, 30.7, 32.6, 35.5, 38.1, 40.4, 42.7, 45.2, 48.2, 50.0, 52.3, 55.6],
+    /* >77   */ [23.8, 27.1, 29.4, 31.2, 34.2, 36.7, 39.0, 41.4, 43.9, 46.8, 48.7, 50.9, 54.3]
+  ],
+  // Escol 1: 1-12 años
+  [
+    /* 18-22 */ [31.0, 34.3, 36.5, 38.4, 41.4, 43.9, 46.2, 48.5, 51.0, 54.0, 55.9, 58.1, 61.5],
+    /* 23-27 */ [29.6, 33.0, 35.2, 37.1, 40.0, 42.6, 44.9, 47.2, 49.7, 52.7, 54.5, 56.8, 60.1],
+    /* 28-32 */ [28.3, 31.6, 33.9, 35.7, 38.7, 41.2, 43.5, 45.9, 48.4, 51.3, 53.2, 55.4, 58.8],
+    /* 33-37 */ [27.0, 30.3, 32.5, 34.4, 37.4, 39.9, 42.2, 44.5, 47.0, 50.0, 51.9, 54.1, 57.4],
+    /* 38-42 */ [25.6, 29.0, 31.2, 33.1, 36.0, 38.5, 40.9, 43.2, 45.7, 48.7, 50.5, 52.8, 56.1],
+    /* 43-47 */ [24.3, 27.6, 29.9, 31.7, 34.7, 37.2, 39.5, 41.9, 44.4, 47.3, 49.2, 51.4, 54.8],
+    /* 48-52 */ [23.0, 26.3, 28.5, 30.4, 33.4, 35.9, 38.2, 40.5, 43.0, 46.0, 47.9, 50.1, 53.4],
+    /* 53-57 */ [21.6, 25.0, 27.2, 29.1, 32.0, 34.5, 36.9, 39.2, 41.7, 44.7, 46.5, 48.8, 52.1],
+    /* 58-62 */ [20.3, 23.6, 25.9, 27.7, 30.7, 33.2, 35.5, 37.9, 40.4, 43.3, 45.2, 47.4, 50.8],
+    /* 63-67 */ [19.0, 22.3, 24.5, 26.4, 29.4, 31.9, 34.2, 36.5, 39.0, 42.0, 43.9, 46.1, 49.4],
+    /* 68-72 */ [17.6, 21.0, 23.2, 25.1, 28.0, 30.5, 32.9, 35.2, 37.7, 40.7, 42.5, 44.8, 48.1],
+    /* 73-77 */ [16.3, 19.6, 21.9, 23.7, 26.7, 29.2, 31.5, 33.9, 36.4, 39.3, 41.2, 43.4, 46.8],
+    /* >77   */ [14.9, 18.3, 20.5, 22.4, 25.4, 27.9, 30.2, 32.5, 35.0, 38.0, 39.8, 42.1, 45.4]
+  ]
+];
+
+// VERSIÓN ORAL: Vanotti et al. (2015) — Buenos Aires — n=297
+// M y DS por grupo: edad [0=19-35, 1=36-50, 2=51-70] × escol [0=3-11, 1=12-16, 2=>16]
+var SDMT_ORAL = {
+  M: [
+    [45.31, 56.43, 56.29],  // 19-35
+    [44.22, 49.92, 54.88],  // 36-50
+    [39.10, 44.93, 50.63]   // 51-70
+  ],
+  DS: [
+    [11.49, 11.50, 12.06],
+    [9.64,  12.51, 12.62],
+    [10.13, 10.83, 9.47]
+  ]
+};
+
+function sdmtBuscarPc(tabla, ei, gi, score) {
+  var row = tabla[ei][gi];
+  var pc = 1;
+  for (var i = 0; i < SDMT_PC_LABELS.length; i++) {
+    if (score >= row[i]) pc = SDMT_PC_LABELS[i];
+    else break;
+  }
+  return pc;
+}
+
+function sdmtPcToZ(pc) {
+  var t={1:-2.33,2:-2.05,3:-1.88,4:-1.75,5:-1.64,6:-1.55,7:-1.48,8:-1.41,9:-1.34,
+    10:-1.28,12:-1.18,15:-1.04,16:-1.0,20:-0.84,25:-0.67,30:-0.52,35:-0.39,40:-0.25,
+    45:-0.13,50:0,55:0.13,60:0.25,65:0.39,70:0.52,75:0.67,80:0.84,85:1.04,90:1.28,
+    95:1.64,96:1.75,97:1.88,98:2.05,99:2.33};
+  return t[pc]!==undefined?t[pc]:null;
+}
+
+function sdmtZLabel(z) {
+  if (z===null) return '—';
+  if (z>=1.5)   return 'Superior';
+  if (z>=-0.5)  return 'Normal';
+  if (z>=-0.99) return 'Límite inferior normativo';
+  if (z>=-1.49) return 'Dificultad leve';
+  if (z>=-1.99) return 'Dificultad moderada';
+  return 'Dificultad elevada';
+}
+
+function sdmtSetVersion(v) {
+  var esEscrita = v === 'escrita';
+  document.getElementById('sdmt-edad-escrita-wrap').style.display = esEscrita ? '' : 'none';
+  document.getElementById('sdmt-escol-escrita-wrap').style.display = esEscrita ? '' : 'none';
+  document.getElementById('sdmt-edad-oral-wrap').style.display = esEscrita ? 'none' : '';
+  document.getElementById('sdmt-escol-oral-wrap').style.display = esEscrita ? 'none' : '';
+  // Highlight tab activo
+  document.getElementById('sdmt-tab-escrita').style.borderColor = esEscrita ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('sdmt-tab-oral').style.borderColor = esEscrita ? 'var(--border)' : 'var(--accent)';
+}
+
+function iniciarSDMT() {
+  document.getElementById('sdmt-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('sdmt-form').style.display = 'block';
+  document.getElementById('sdmt-resultado').style.display = 'none';
+  // Versión escrita por defecto
+  var radios = document.querySelectorAll('[name="sdmt-version"]');
+  if (radios.length && !Array.from(radios).some(function(r){return r.checked;})) {
+    radios[0].checked = true;
+    sdmtSetVersion('escrita');
+  }
+}
+
+function limpiarSDMT() {
+  document.getElementById('sdmt-puntaje').value = '';
+  document.getElementById('sdmt-edad-escrita').value = '';
+  document.getElementById('sdmt-escol-escrita').value = '';
+  document.getElementById('sdmt-edad-oral').value = '';
+  document.getElementById('sdmt-escol-oral').value = '';
+}
+
+function calcularSDMT() {
+  var version = document.querySelector('[name="sdmt-version"]:checked');
+  if (!version) { toast('Seleccioná la versión (escrita u oral).','error'); return; }
+  version = version.value;
+
+  var puntaje = parseFloat(document.getElementById('sdmt-puntaje').value);
+  if (isNaN(puntaje)) { toast('Ingresá el puntaje bruto.','error'); return; }
+
+  var pc, z, m, ds, gi, ei;
+  var edadLabel, escolLabel, baremoRef;
+
+  if (version === 'escrita') {
+    gi = document.getElementById('sdmt-edad-escrita').value;
+    ei = document.getElementById('sdmt-escol-escrita').value;
+    if (gi === '' || ei === '') { toast('Seleccioná grupo de edad y escolaridad.','error'); return; }
+    gi = parseInt(gi); ei = parseInt(ei);
+    pc = sdmtBuscarPc(SDMT_ESCRITA, ei, gi, puntaje);
+    z  = sdmtPcToZ(pc);
+    var edadLabels = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+    edadLabel  = edadLabels[gi]+' años';
+    escolLabel = ei===0?'>12 años educación':'1–12 años educación';
+    baremoRef  = 'NEURONORMA Argentina — Arango-Lasprilla et al. (2015) NeuroRehabilitation 37(4):625-638';
+  } else {
+    gi = document.getElementById('sdmt-edad-oral').value;
+    ei = document.getElementById('sdmt-escol-oral').value;
+    if (gi === '' || ei === '') { toast('Seleccioná grupo de edad y escolaridad.','error'); return; }
+    gi = parseInt(gi); ei = parseInt(ei);
+    m  = SDMT_ORAL.M[gi][ei];
+    ds = SDMT_ORAL.DS[gi][ei];
+    z  = parseFloat(((puntaje - m) / ds).toFixed(2));
+    // Pc desde Z (tabla normal inversa)
+    var zToPc = [[-2.33,1],[-2.05,2],[-1.88,3],[-1.75,4],[-1.64,5],[-1.28,10],[-1.04,15],[-0.84,20],[-0.67,25],[-0.52,30],[-0.25,40],[0,50],[0.25,60],[0.52,70],[0.67,75],[0.84,80],[1.04,85],[1.28,90],[1.64,95],[2.05,98],[2.33,99]];
+    pc = 1;
+    for (var i=0;i<zToPc.length;i++){ if(z>=zToPc[i][0]) pc=zToPc[i][1]; else break; }
+    var edadLabelsO = ['19–35 años','36–50 años','51–70 años'];
+    var escolLabelsO = ['3–11 años','12–16 años','>16 años'];
+    edadLabel  = edadLabelsO[gi];
+    escolLabel = escolLabelsO[ei];
+    baremoRef  = 'Vanotti et al. (2015) Applied Neuropsychology: Adult, 22:46-53. Buenos Aires, n=297';
+  }
+
+  var lbl = sdmtZLabel(z);
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+puntaje+'</div><div class="detalle-lbl">Respuestas<br>correctas</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pc+'</div><div class="detalle-lbl">Percentil</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z>=0?'+':'')+z+'</div><div class="detalle-lbl">Z</div></div>';
+
+  var interp =
+    '<p><strong>Versión:</strong> '+(version==='escrita'?'Escrita':'Oral')+' · Grupo: '+edadLabel+' · Escolaridad: '+escolLabel+'</p>'+
+    (version==='oral'&&m!==undefined?'<p><strong>Grupo de referencia:</strong> M='+m+', DS='+ds+'</p>':'')+
+    '<p><strong>Resultado:</strong> '+puntaje+' respuestas correctas · Pc '+pc+' · Z='+(z>=0?'+':'')+z+' — '+lbl+'</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">'+baremoRef+'</p>';
+
+  window._sdmtData = { version:version, puntaje:puntaje, pc:pc, z:z, gi:gi, ei:ei, m:m||null, ds:ds||null };
+
+  document.getElementById('sdmt-detalle').innerHTML = detalleHtml;
+  document.getElementById('sdmt-interp').innerHTML  = interp;
+  document.getElementById('sdmt-form').style.display = 'none';
+  document.getElementById('sdmt-resultado').style.display = 'block';
+}
+
+function guardarSDMT() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('sdmt-paciente').value;
+  var fecha = document.getElementById('sdmt-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._sdmtData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._sdmtData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'SDMT', fecha: fecha,
+    puntaje_total: d.puntaje,
+    puntaje_z: d.z,
+    categoria: sdmtZLabel(d.z),
+    datos: { version:d.version, puntaje:d.puntaje, pc:d.pc, z:d.z, gi:d.gi, ei:d.ei, m:d.m, ds:d.ds }
   }, SESSION.access_token).then(function(){
     cargarResultados(); toast('✓ Resultado guardado','success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
