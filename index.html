@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.2</div>
     </div>
   </aside>
 
@@ -5768,6 +5768,12 @@ function irSector(s) {
         '<div class="test-nombre">BTA</div>' +
         '<div class="test-desc">Brief Test of Attention — Atención dividida auditiva. Series N y P</div>' +
         '<span class="test-tag">NEURONORMA Argentina · 0–20 pts</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'hotel\')">' +
+        '<div class="test-icon">🏨</div>' +
+        '<div class="test-nombre">Test del Hotel</div>' +
+        '<div class="test-desc">Multitasking y memoria prospectiva en escenario ecológico</div>' +
+        '<span class="test-tag">Pinasco et al. 2023 · Buenos Aires</span>' +
       '</div>' +
       '<div class="test-card" onclick="irTest(\'sdmt\')">' +
         '<div class="test-icon">⚡</div>' +
