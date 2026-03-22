@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.4</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.5</div>
     </div>
   </aside>
 
@@ -5532,19 +5532,19 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     // ── Secciones ──
     (testsNp.length ?
       '<div style="page-break-before:always;"></div>'+
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #325c28;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
     (testsTd.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #325c28;margin-bottom:0;margin-top:14px;">TDAH</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:14px;">TDAH</div>'+
       renderCL(testsTd) : '')+
 
     (testsDo.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #325c28;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:14px;">Evaluación del Dolor</div>'+
       renderDolor(testsDo) : '')+
 
     (testsCl.length ?
-      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#325c28;background:#e8f5e4;padding:5px 10px;border-left:3px solid #325c28;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
+      '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:14px;">Psicología Clínica</div>'+
       renderCL(testsCl) : '')+
 
     (testsNp.length ? refZ : '')+
