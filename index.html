@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.3</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.4</div>
     </div>
   </aside>
 
@@ -1697,6 +1697,74 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('csi-resultado').style.display='none';document.getElementById('csi-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarCSI()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="vista" id="vista-fcr">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">Figura Compleja de Rey · ROCF</div></div>
+  <div id="fcr-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="fcr-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="fcr-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">18–22 años</option>
+            <option value="1">23–27 años</option>
+            <option value="2">28–32 años</option>
+            <option value="3">33–37 años</option>
+            <option value="4">38–42 años</option>
+            <option value="5">43–47 años</option>
+            <option value="6">48–52 años</option>
+            <option value="7">53–57 años</option>
+            <option value="8">58–62 años</option>
+            <option value="9">63–67 años</option>
+            <option value="10">68–72 años</option>
+            <option value="11">73–77 años</option>
+            <option value="12">&gt;77 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Escolaridad *</label>
+          <select id="fcr-escol">
+            <option value="">— Seleccionar —</option>
+            <option value="0">&gt;12 años de educación</option>
+            <option value="1">1–12 años de educación</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="fcr-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Puntajes brutos</div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Puntuación según criterios de Taylor (1959). Máximo 36 puntos por condición.</div>
+      <div class="form-grid-3">
+        <div class="field">
+          <label>Copia</label>
+          <input type="number" id="fcr-copia" min="0" max="36" step="0.5" placeholder="0–36" oninput="fcrActualizar()">
+        </div>
+        <div class="field">
+          <label>Recuerdo Inmediato</label>
+          <input type="number" id="fcr-ri" min="0" max="36" step="0.5" placeholder="0–36" oninput="fcrActualizar()">
+        </div>
+      </div>
+      <div id="fcr-live" style="margin-top:10px;padding:8px 14px;background:var(--bg);border-radius:8px;font-size:0.85rem;min-height:28px;"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarFCR()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularFCR()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="fcr-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="fcr-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="fcr-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('fcr-resultado').style.display='none';document.getElementById('fcr-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarFCR()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -3705,7 +3773,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -3903,7 +3971,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4044,6 +4112,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var dominios = {
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
+      'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
       'ATENCIÓN':       ['WAIS-IV','TMT A-B','Stroop'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
@@ -4163,6 +4232,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</td>'+
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#9a7a60;">'+(r.fecha||'')+'</td>'+
             '</tr>';
+
+        } else if (testNombre === 'Figura Rey') {
+          var escolLabelsF = ['>12 años educ.','1–12 años educ.'];
+          var edadLabelsF  = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+          var gi2F = d.gi != null ? d.gi : null;
+          var ei2F = d.ei != null ? d.ei : null;
+          var notaF = gi2F!==null && ei2F!==null ? edadLabelsF[gi2F]+' · '+escolLabelsF[ei2F] : null;
+          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#9a7a60;border-bottom:0.5px solid #e8ddd0;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
+          if (d.copia != null) rows += filaTabla('Copia', d.copia, null, null, d.zCopia, r.fecha, 'Pc '+(d.pcCopia||'—'));
+          if (d.ri    != null) rows += filaTabla('Recuerdo Inmediato', d.ri, null, null, d.zRI, r.fecha, 'Pc '+(d.pcRI||'—'));
+          if (d.ir    != null) rows += filaTabla('Índice de Retención', d.ir+'%', null, null, null, r.fecha, d.ir+'%');
 
         } else if (testNombre === 'Stroop') {
           var escolLabelsS = ['Baja','Media','Alta'];
@@ -4714,6 +4794,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'BEM 144 Signoret':   'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
+        'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
         'IFS':                'INECO Frontal Screening (IFS)',
         'Test del Reloj (Cacho)': 'Test del Reloj — Método Cacho et al.',
         'BDI-II':             'Inventario de Depresión de Beck — Segunda Edición (BDI-II)',
@@ -4954,6 +5035,12 @@ function irSector(s) {
         '<div class="test-desc">Test de Colores y Palabras — Atención selectiva, inhibición e interferencia</div>' +
         '<span class="test-tag">3 láminas · Galaverna et al. 2018</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'fcr\')">' +
+        '<div class="test-icon">🖼</div>' +
+        '<div class="test-nombre">Figura de Rey</div>' +
+        '<div class="test-desc">Rey-Osterrieth Complex Figure — Copia y Recuerdo Inmediato</div>' +
+        '<span class="test-tag">ROCF · Rivera et al. 2015 · Argentina</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'signoret\')">'+
         '<div class="test-icon">📖</div>'+
         '<div class="test-nombre">BEM 144 · Signoret</div>'+
@@ -5049,6 +5136,7 @@ function irTest(t) {
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
   if (t === 'stroop') iniciarStroop();
+  if (t === 'fcr') iniciarFCR();
 }
 
 function volverSector() {
@@ -8243,6 +8331,208 @@ function guardarCSI() {
       EVP:{score:d.EVP.score,z:d.EVP.z,pc:d.EVP.pc},
       RES:{score:d.RES.score,z:d.RES.z,pc:d.RES.pc}
     }
+  }, SESSION.access_token).then(function(){
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); }, 1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ══ FIGURA COMPLEJA DE REY · ROCF ════════════════════════════════════════════
+// Rivera et al. (2015) — NeuroRehabilitation 37(4):677-698
+// Baremos Argentina — por grupo etario (13) × escolaridad (2)
+// Escol 0 = >12 años educación / Escol 1 = 1-12 años educación
+// Grupos edad: 0=18-22, 1=23-27, 2=28-32, 3=33-37, 4=38-42, 5=43-47,
+//              6=48-52, 7=53-57, 8=58-62, 9=63-67, 10=68-72, 11=73-77, 12=>77
+
+// Tabla de percentiles COPIA — [escol][edad_idx][pc_idx]
+// pc_idx: 0=Pc5, 1=Pc10, 2=Pc15, 3=Pc20, 4=Pc30, 5=Pc40, 6=Pc50, 7=Pc60, 8=Pc70, 9=Pc80, 10=Pc85, 11=Pc90, 12=Pc95
+// null = no especificado (ceiling)
+var FCR_PC_LABELS = [5,10,15,20,30,40,50,60,70,80,85,90,95];
+
+var FCR_COPIA = [
+  // Escol 0: >12 años educación
+  [
+    //        Pc5   Pc10  Pc15  Pc20  Pc30  Pc40  Pc50  Pc60  Pc70  Pc80  Pc85  Pc90  Pc95
+    /* 18-22 */ [31.6, 32.5, 33.2, 33.7, 34.5, 35.2, 35.8, 36.0, null, null, null, null, null],
+    /* 23-27 */ [31.5, 32.4, 33.1, 33.6, 34.4, 35.1, 35.7, 36.0, null, null, null, null, null],
+    /* 28-32 */ [31.4, 32.4, 33.0, 33.5, 34.3, 35.0, 35.6, 36.0, null, null, null, null, null],
+    /* 33-37 */ [31.3, 32.3, 32.9, 33.4, 34.2, 34.9, 35.6, 36.0, null, null, null, null, null],
+    /* 38-42 */ [31.2, 32.2, 32.8, 33.3, 34.1, 34.8, 35.5, 36.0, null, null, null, null, null],
+    /* 43-47 */ [31.2, 32.1, 32.7, 33.2, 34.0, 34.7, 35.4, 36.0, 36.0, null, null, null, null],
+    /* 48-52 */ [31.1, 31.9, 32.5, 33.1, 33.9, 34.6, 35.3, 35.9, 36.0, 36.0, null, null, null],
+    /* 53-57 */ [31.0, 31.9, 32.5, 33.0, 33.9, 34.5, 35.2, 35.8, 36.0, 36.0, null, null, null],
+    /* 58-62 */ [30.9, 31.8, 32.4, 32.9, 33.8, 34.5, 35.1, 35.7, 36.0, 36.0, null, null, null],
+    /* 63-67 */ [30.8, 31.7, 32.3, 32.8, 33.7, 34.4, 35.0, 35.6, 36.0, 36.0, null, null, null],
+    /* 68-72 */ [30.7, 31.6, 32.2, 32.8, 33.6, 34.3, 34.9, 35.6, 36.0, 36.0, null, null, null],
+    /* 73-77 */ [30.6, 31.5, 32.1, 32.7, 33.5, 34.2, 34.8, 35.5, 36.0, 36.0, null, null, null],
+    /* >77   */ [30.5, 31.4, 32.1, 32.6, 33.4, 34.1, 34.7, 35.4, 36.0, 36.0, null, null, null]
+  ],
+  // Escol 1: 1-12 años educación
+  [
+    /* 18-22 */ [30.4, 31.4, 32.0, 32.5, 33.3, 34.0, 34.7, 35.3, 36.0, null, null, null, null],
+    /* 23-27 */ [30.4, 31.3, 31.9, 32.4, 33.2, 33.9, 35.2, 35.9, 36.0, 36.0, null, null, null],
+    /* 28-32 */ [30.3, 31.2, 31.8, 32.3, 33.1, 33.8, 34.5, 35.1, 35.8, 36.0, 36.0, null, null],
+    /* 33-37 */ [30.2, 31.1, 31.6, 32.2, 33.0, 33.7, 34.4, 35.0, 35.7, 36.0, 36.0, null, null],
+    /* 38-42 */ [30.1, 31.0, 31.6, 32.1, 33.0, 33.7, 34.3, 35.0, 35.6, 36.0, 36.0, null, null],
+    /* 43-47 */ [30.0, 30.9, 31.5, 32.0, 32.9, 33.6, 34.2, 34.8, 35.5, 36.0, 36.0, null, null],
+    /* 48-52 */ [30.0, 30.8, 31.4, 32.0, 32.8, 33.5, 34.1, 34.8, 35.4, 36.0, 36.0, null, null],
+    /* 53-57 */ [29.8, 30.8, 31.3, 31.9, 32.8, 33.4, 34.1, 34.7, 35.4, 36.0, 36.0, null, null],
+    /* 58-62 */ [29.7, 30.6, 31.3, 31.8, 32.6, 33.3, 33.9, 34.6, 35.3, 36.0, 36.0, null, null],
+    /* 63-67 */ [29.6, 30.5, 31.2, 31.7, 32.5, 33.2, 33.8, 34.5, 35.2, 36.0, 36.0, null, null],
+    /* 68-72 */ [29.5, 30.5, 31.2, 31.6, 32.4, 33.1, 33.7, 35.9, 36.0, 36.0, null, null, null],
+    /* 73-77 */ [29.4, 30.4, 31.0, 31.5, 32.3, 35.0, 35.8, 36.0, 36.0, null, null, null, null],
+    /* >77   */ [29.3, 30.3, 30.9, 31.4, 32.2, 32.9, 34.9, 35.7, 36.0, 36.0, null, null, null]
+  ]
+];
+
+// Tabla percentiles RECUERDO INMEDIATO
+var FCR_RI = [
+  // Escol 0: >12 años
+  [
+    /* 18-22 */ [17.7, 20.1, 21.7, 23.0, 25.1, 26.8, 28.5, 30.1, 31.8, 33.9, 35.2, 36.0, null],
+    /* 23-27 */ [17.0, 19.3, 20.9, 22.2, 24.3, 26.0, 27.7, 29.3, 31.1, 33.1, 34.4, 36.0, null],
+    /* 28-32 */ [16.2, 18.5, 20.1, 21.4, 23.5, 25.2, 26.9, 28.5, 30.3, 32.3, 33.7, 35.2, 36.0],
+    /* 33-37 */ [15.4, 17.7, 19.3, 20.6, 22.7, 24.4, 26.1, 27.7, 29.5, 31.6, 32.9, 34.4, 36.0],
+    /* 38-42 */ [14.6, 16.9, 18.5, 19.8, 21.9, 23.6, 25.3, 26.9, 28.7, 30.8, 32.1, 33.6, 36.0],
+    /* 43-47 */ [13.8, 16.1, 17.7, 19.0, 21.1, 22.9, 24.5, 26.1, 27.9, 30.0, 31.3, 32.8, 35.2],
+    /* 48-52 */ [13.0, 15.3, 16.9, 18.2, 20.3, 22.1, 23.7, 25.3, 27.1, 29.2, 30.5, 32.0, 34.4],
+    /* 53-57 */ [12.2, 14.6, 16.1, 17.4, 19.5, 21.3, 22.9, 24.5, 26.3, 28.4, 29.7, 31.3, 33.6],
+    /* 58-62 */ [11.4, 13.8, 15.3, 16.6, 18.7, 20.5, 22.1, 23.7, 25.5, 27.6, 28.9, 30.5, 32.8],
+    /* 63-67 */ [10.6, 13.0, 14.5, 15.8, 17.9, 19.7, 21.3, 23.0, 24.7, 26.8, 28.1, 29.7, 32.0],
+    /* 68-72 */ [9.8,  12.2, 13.7, 15.0, 17.1, 18.9, 20.5, 22.2, 23.9, 26.0, 27.3, 28.9, 31.2],
+    /* 73-77 */ [9.0,  11.4, 12.9, 14.3, 16.3, 18.1, 19.7, 21.4, 23.1, 25.2, 26.5, 28.1, 30.4],
+    /* >77   */ [8.2,  10.6, 12.2, 13.5, 15.5, 17.3, 18.9, 20.6, 22.3, 24.4, 25.7, 27.3, 29.6]
+  ],
+  // Escol 1: 1-12 años
+  [
+    /* 18-22 */ [14.1, 16.4, 18.0, 19.3, 21.4, 23.1, 24.8, 26.4, 28.2, 30.2, 31.6, 33.1, 35.5],
+    /* 23-27 */ [13.3, 15.6, 17.2, 18.5, 20.6, 22.3, 24.0, 25.6, 27.4, 29.5, 30.8, 32.3, 34.7],
+    /* 28-32 */ [12.5, 14.8, 16.4, 17.7, 19.8, 21.5, 23.2, 24.8, 26.6, 28.7, 30.0, 31.5, 33.9],
+    /* 33-37 */ [11.7, 14.0, 15.6, 16.9, 19.0, 20.8, 22.4, 24.0, 25.8, 27.9, 29.2, 30.7, 33.1],
+    /* 38-42 */ [10.9, 13.2, 14.8, 16.1, 18.2, 20.0, 21.6, 23.2, 25.0, 27.1, 28.4, 29.9, 32.3],
+    /* 43-47 */ [10.1, 12.5, 14.0, 15.3, 17.4, 19.2, 20.8, 22.4, 24.2, 26.3, 27.6, 29.2, 31.5],
+    /* 48-52 */ [9.3,  11.7, 13.2, 14.5, 16.6, 18.4, 20.0, 21.6, 23.4, 25.5, 26.8, 28.4, 30.7],
+    /* 53-57 */ [8.5,  10.9, 12.4, 13.7, 15.8, 17.6, 19.2, 20.9, 22.6, 24.7, 26.0, 27.6, 29.9],
+    /* 58-62 */ [7.7,  10.1, 11.6, 12.9, 15.0, 16.8, 18.4, 20.1, 21.8, 23.9, 25.2, 26.8, 29.1],
+    /* 63-67 */ [6.9,  9.3,  10.8, 12.2, 14.2, 16.0, 17.6, 19.3, 21.0, 23.1, 24.4, 26.0, 28.3],
+    /* 68-72 */ [6.1,  8.5,  10.1, 11.4, 13.4, 15.2, 16.8, 18.5, 20.2, 22.3, 23.6, 25.2, 27.5],
+    /* 73-77 */ [5.3,  7.7,  9.3,  10.6, 12.7, 14.4, 16.0, 17.7, 19.4, 21.5, 22.8, 24.4, 26.8],
+    /* >77   */ [4.6,  6.9,  8.5,  9.8,  11.9, 13.6, 15.3, 16.9, 18.7, 20.7, 22.0, 23.6, 26.0]
+  ]
+];
+
+// Buscar percentil en tabla FCR
+function fcrBuscarPc(tabla, ei, gi, score) {
+  var row = tabla[ei][gi];
+  var pc = 1;
+  for (var i = 0; i < FCR_PC_LABELS.length; i++) {
+    if (row[i] !== null && score >= row[i]) pc = FCR_PC_LABELS[i];
+    else if (row[i] !== null && score < row[i]) break;
+  }
+  return pc;
+}
+
+// Pc → Z (tabla normal inversa aproximada)
+function fcrPcToZ(pc) {
+  var table = {1:-2.33,2:-2.05,3:-1.88,4:-1.75,5:-1.64,6:-1.55,7:-1.48,8:-1.41,9:-1.34,
+    10:-1.28,12:-1.18,15:-1.04,16:-1.0,20:-0.84,25:-0.67,30:-0.52,35:-0.39,40:-0.25,
+    45:-0.13,50:0,55:0.13,60:0.25,65:0.39,70:0.52,75:0.67,80:0.84,85:1.04,90:1.28,
+    95:1.64,96:1.75,97:1.88,98:2.05,99:2.33};
+  return table[pc] !== undefined ? table[pc] : null;
+}
+
+function fcrZLabel(z) {
+  if (z === null) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad elevada';
+}
+
+function fcrActualizar() {
+  var copia = parseFloat(document.getElementById('fcr-copia').value);
+  var ri    = parseFloat(document.getElementById('fcr-ri').value);
+  var el    = document.getElementById('fcr-live');
+  if (!el) return;
+  if (!isNaN(copia) && !isNaN(ri) && copia > 0) {
+    var ir = parseFloat((ri / copia * 100).toFixed(1));
+    el.innerHTML = 'Índice de Retención: <strong>'+ir+'%</strong> (RI/Copia × 100)';
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+function iniciarFCR() {
+  document.getElementById('fcr-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fcr-form').style.display = 'block';
+  document.getElementById('fcr-resultado').style.display = 'none';
+}
+
+function limpiarFCR() {
+  document.getElementById('fcr-copia').value = '';
+  document.getElementById('fcr-ri').value = '';
+  document.getElementById('fcr-live').innerHTML = '';
+}
+
+function calcularFCR() {
+  var gi = document.getElementById('fcr-edad').value;
+  var ei = document.getElementById('fcr-escol').value;
+  if (gi === '' || ei === '') { toast('Seleccioná grupo de edad y escolaridad.','error'); return; }
+  gi = parseInt(gi); ei = parseInt(ei);
+
+  var copaVal = document.getElementById('fcr-copia').value;
+  var riVal   = document.getElementById('fcr-ri').value;
+  if (copaVal === '' && riVal === '') { toast('Ingresá al menos un puntaje.','error'); return; }
+
+  var copia = copaVal !== '' ? parseFloat(copaVal) : null;
+  var ri    = riVal   !== '' ? parseFloat(riVal)   : null;
+
+  var pcCopia = copia !== null ? fcrBuscarPc(FCR_COPIA, ei, gi, copia) : null;
+  var pcRI    = ri    !== null ? fcrBuscarPc(FCR_RI,    ei, gi, ri)    : null;
+  var zCopia  = pcCopia !== null ? fcrPcToZ(pcCopia) : null;
+  var zRI     = pcRI    !== null ? fcrPcToZ(pcRI)    : null;
+  var ir      = (copia !== null && ri !== null && copia > 0) ? parseFloat((ri / copia * 100).toFixed(1)) : null;
+
+  var escolLabel = ei === 0 ? '>12 años educación' : '1–12 años educación';
+  var edadLabels = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+
+  var detalleHtml = '';
+  if (pcCopia !== null) detalleHtml += '<div class="detalle-item"><div class="detalle-num">Pc '+pcCopia+'</div><div class="detalle-lbl">Copia<br><small>'+(copia)+'/36</small></div></div>';
+  if (pcRI    !== null) detalleHtml += '<div class="detalle-item"><div class="detalle-num">Pc '+pcRI+'</div><div class="detalle-lbl">Rec. Inmediato<br><small>'+(ri)+'/36</small></div></div>';
+  if (ir      !== null) detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+ir+'%</div><div class="detalle-lbl">Índice<br>Retención</div></div>';
+
+  var interp = '<p><strong>Grupo:</strong> '+edadLabels[gi]+' años · '+escolLabel+'</p>';
+  if (copia !== null) interp += '<p><strong>Copia ('+copia+'/36):</strong> Pc '+pcCopia+' · Z='+(zCopia!==null?(zCopia>=0?'+':'')+zCopia:'—')+' — '+fcrZLabel(zCopia)+'</p>';
+  if (ri !== null)    interp += '<p><strong>Recuerdo Inmediato ('+ri+'/36):</strong> Pc '+pcRI+' · Z='+(zRI!==null?(zRI>=0?'+':'')+zRI:'—')+' — '+fcrZLabel(zRI)+'</p>';
+  if (ir !== null)    interp += '<p><strong>Índice de Retención:</strong> '+ir+'% — '+(ir>=70?'Retención adecuada':ir>=50?'Retención parcial':'Dificultad en retención visuoespacial')+'</p>';
+  interp += '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Rivera et al. (2015) — NeuroRehabilitation 37(4):677-698. NEURONORMA Latinoamérica — Argentina. Recuerdo diferido: pendiente.</p>';
+
+  window._fcrData = { copia:copia, ri:ri, ir:ir, pcCopia:pcCopia, pcRI:pcRI, zCopia:zCopia, zRI:zRI, gi:gi, ei:ei };
+
+  document.getElementById('fcr-detalle').innerHTML = detalleHtml;
+  document.getElementById('fcr-interp').innerHTML  = interp;
+  document.getElementById('fcr-form').style.display = 'none';
+  document.getElementById('fcr-resultado').style.display = 'block';
+}
+
+function guardarFCR() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('fcr-paciente').value;
+  var fecha = document.getElementById('fcr-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._fcrData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._fcrData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'Figura Rey', fecha: fecha,
+    puntaje_total: d.copia,
+    puntaje_z: d.zCopia,
+    categoria: d.pcCopia!=null?'Copia Pc'+d.pcCopia+(d.pcRI!=null?' · RI Pc'+d.pcRI:''):'—',
+    datos: { copia:d.copia, ri:d.ri, ir:d.ir, pcCopia:d.pcCopia, pcRI:d.pcRI, zCopia:d.zCopia, zRI:d.zRI, gi:d.gi, ei:d.ei }
   }, SESSION.access_token).then(function(){
     cargarResultados(); toast('✓ Resultado guardado','success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
