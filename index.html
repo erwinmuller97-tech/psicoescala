@@ -439,7 +439,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.5</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.7.6</div>
     </div>
   </aside>
 
@@ -4216,7 +4216,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','TMT A-B','Stroop','SDMT'],
+      'ATENCIÓN':       ['WAIS-IV','SDMT','TMT A-B','Stroop'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal','ACE-R'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B'],
       'COGNITIVO GLOBAL':['MoCA','Test del Reloj (Cacho)']
@@ -4230,13 +4230,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var procesados = {};
 
     Object.keys(dominios).forEach(function(dominio) {
-      var testsDelDominio = dominios[dominio].filter(function(t){ return byTest[t] && !procesados[t]; });
+      var testsDelDominio = dominios[dominio].filter(function(t){
+        // TMT A-B puede aparecer en ATENCIÓN y en FUNC. EJECUTIVAS (A y B por separado)
+        if (t === 'TMT A-B') return byTest[t] != null;
+        return byTest[t] && !procesados[t];
+      });
       if (!testsDelDominio.length) return;
 
       rows += domHeader(dominio);
 
       testsDelDominio.forEach(function(testNombre) {
-        procesados[testNombre] = true;
+        if (testNombre !== 'TMT A-B') procesados[testNombre] = true;
         var r = byTest[testNombre];
         var d = r.datos || {};
 
@@ -4282,8 +4286,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         } else if (testNombre === 'TMT A-B') {
           var pb_a = d.tmt_a_seg != null ? d.tmt_a_seg : null;
           var pb_b = d.tmt_b_seg != null ? d.tmt_b_seg : null;
-          rows += filaTabla('TMT A (segundos)', pb_a, d.tmt_a_m||null, d.tmt_a_ds||null, d.tmt_a_z||r.puntaje_z, r.fecha);
-          if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, d.tmt_b_m||null, d.tmt_b_ds||null, d.tmt_b_z||null, r.fecha);
+          var esEjec = dominio.indexOf('EJECUTIV') !== -1;
+          if (!esEjec) {
+            // Dominio ATENCIÓN: solo TMT-A
+            rows += filaTabla('TMT A (segundos)', pb_a, d.tmt_a_m||null, d.tmt_a_ds||null, d.tmt_a_z||r.puntaje_z, r.fecha);
+          } else {
+            // Dominio FUNC. EJECUTIVAS: solo TMT-B
+            if (pb_b !== null) rows += filaTabla('TMT B (segundos)', pb_b, d.tmt_b_m||null, d.tmt_b_ds||null, d.tmt_b_z||null, r.fecha);
+          }
 
         } else if (testNombre === 'BNT-60' || testNombre === 'BNT-12') {
           var bntMax = testNombre==='BNT-60' ? 60 : 12;
@@ -4378,6 +4388,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // Tests NP que no cayeron en ningún dominio
     list.forEach(function(r) {
+      if (r.test === 'TMT A-B') return; // ya aparece distribuido en ATENCIÓN y FUNC. EJECUTIVAS
       if (!procesados[r.test]) {
         rows += domHeader(r.test.toUpperCase());
         rows += filaTabla(r.test, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
