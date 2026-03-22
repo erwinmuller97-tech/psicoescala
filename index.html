@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.7</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.0</div>
     </div>
   </aside>
 
@@ -1856,6 +1856,130 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('fcr-resultado').style.display='none';document.getElementById('fcr-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarFCR()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="vista" id="vista-bta">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">BTA · Brief Test of Attention</div></div>
+  <div id="bta-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="bta-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="bta-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">18–22 años</option>
+            <option value="1">23–27 años</option>
+            <option value="2">28–32 años</option>
+            <option value="3">33–37 años</option>
+            <option value="4">38–42 años</option>
+            <option value="5">43–47 años</option>
+            <option value="6">48–52 años</option>
+            <option value="7">53–57 años</option>
+            <option value="8">58–62 años</option>
+            <option value="9">63–67 años</option>
+            <option value="10">68–72 años</option>
+            <option value="11">73–77 años</option>
+            <option value="12">&gt;77 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Escolaridad *</label>
+          <select id="bta-escol">
+            <option value="">— Seleccionar —</option>
+            <option value="0">&gt;12 años de educación</option>
+            <option value="1">1–12 años de educación</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="bta-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Puntaje bruto</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Cantidad de respuestas correctas (máximo 20). Administrar Forma N y Forma L; registrar el total correcto de ambas.</p>
+      <div class="form-grid-3">
+        <div class="field">
+          <label>Respuestas correctas (0–20)</label>
+          <input type="number" id="bta-puntaje" min="0" max="20" placeholder="0–20">
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarBTA()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularBTA()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="bta-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="bta-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="bta-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('bta-resultado').style.display='none';document.getElementById('bta-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarBTA()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TEST BTA ── -->
+<div class="vista" id="vista-bta">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">BTA · Brief Test of Attention</div></div>
+  <div id="bta-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="bta-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Fecha</label><input type="date" id="bta-fecha"></div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="bta-gi">
+            <option value="">— Seleccionar —</option>
+            <option value="0">18–22 años</option>
+            <option value="1">23–27 años</option>
+            <option value="2">28–32 años</option>
+            <option value="3">33–37 años</option>
+            <option value="4">38–42 años</option>
+            <option value="5">43–47 años</option>
+            <option value="6">48–52 años</option>
+            <option value="7">53–57 años</option>
+            <option value="8">58–62 años</option>
+            <option value="9">63–67 años</option>
+            <option value="10">68–72 años</option>
+            <option value="11">73–77 años</option>
+            <option value="12">&gt;77 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Nivel educativo *</label>
+          <select id="bta-ei">
+            <option value="">— Seleccionar —</option>
+            <option value="0">&gt;12 años de educación</option>
+            <option value="1">1 a 12 años de educación</option>
+          </select>
+        </div>
+        <div class="field"><label>Puntaje total (0–20)</label><input type="number" id="bta-pb" min="0" max="20" placeholder="0–20"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Descripción</div>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">El BTA evalúa la atención dividida mediante dos series de 10 ensayos (letras N y P intercaladas con dígitos). El paciente debe contar solo las letras N en la primera serie y solo las P en la segunda. Rango: 0–20 aciertos.</p>
+      <p style="font-size:0.82rem;color:var(--muted);">Baremo: NEURONORMA Argentina · Arango-Lasprilla et al. (2015) · NeuroRehabilitation 37(4)</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarBTA()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularBTA()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="bta-resultado" style="display:none;">
+    <div class="card">
+      <div class="card-title">Resultado BTA</div>
+      <div id="bta-res-content"></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('bta-resultado').style.display='none';document.getElementById('bta-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarBTA()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -4034,7 +4158,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -4328,7 +4452,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4479,6 +4603,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var ORDEN = [
       { dom: 'ATENCIÓN', tests: [
         { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
+        { t:'BTA',         fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
+        { t:'BTA',        fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
         { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
         { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
       ]},
@@ -4611,7 +4737,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','TMT A-B'],
+      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','TMT A-B'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop'],
     };
@@ -4713,6 +4839,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
+        } else if (testNombre === 'BTA') {
+          var btaEi = d.ei != null ? d.ei : null;
+          var btaGi = d.gi != null ? d.gi : null;
+          var btaEdadLabels = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+          var btaEscolLabels = ['>12 años educ.','1–12 años educ.'];
+          var btaNota = (btaGi!=null&&btaEi!=null) ? btaEdadLabels[btaGi]+' · '+btaEscolLabels[btaEi] : null;
+          rows += filaTabla('BTA', d.puntaje, null, null, d.z, r.fecha, btaNota ? ('Pc '+(d.pc||'—')+' · '+btaNota) : null);
+
         } else if (testNombre === 'WCST-64') {
           rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
           if (d.categorias != null)
@@ -4739,6 +4873,11 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</td>'+
             '<td style="'+tdBase+'text-align:center;font-size:9px;color:#4a7040;">'+(r.fecha||'')+'</td>'+
             '</tr>';
+
+        } else if (testNombre === 'BTA') {
+          var btaEd = BTA_EDAD_LABELS[d.gi] || '—';
+          var btaEs = BTA_ESCOL_LABELS[d.ei] || '—';
+          rows += filaTabla('BTA', d.pb, null, null, d.z, r.fecha, 'Pc '+(d.pc||'—')+' · '+btaEd+' · '+btaEs);
 
         } else if (testNombre === 'SDMT-escrita' || testNombre === 'SDMT-oral') {
           var sdmtVer = testNombre === 'SDMT-oral' ? 'oral' : 'escrita';
@@ -5214,6 +5353,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
         'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
+        'BTA':                'Brief Test of Attention (BTA)',
+        'BTA':                'Brief Test of Attention (BTA)',
         'SDMT-escrita':       'Symbol Digit Modalities Test — Versión Escrita (SDMT)',
         'SDMT-oral':          'Symbol Digit Modalities Test — Versión Oral (SDMT)',
         'IFS':                'INECO Frontal Screening (IFS)',
@@ -5235,7 +5376,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       };
       var DOMINIOS = [
         {label:'Screening cognitivo global',      tests:['MoCA','ACE-R']},
-        {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral']},
+        {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral','BTA']},
         {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
         {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
         {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop']},
@@ -5495,6 +5636,12 @@ function irSector(s) {
         '<div class="test-desc">Rey-Osterrieth Complex Figure — Copia y Recuerdo Inmediato</div>' +
         '<span class="test-tag">ROCF · Rivera et al. 2015 · Argentina</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'bta\')">' +
+        '<div class="test-icon">🎯</div>' +
+        '<div class="test-nombre">BTA</div>' +
+        '<div class="test-desc">Brief Test of Attention — Atención dividida auditiva. Series N y P</div>' +
+        '<span class="test-tag">NEURONORMA Argentina · 0–20 pts</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'sdmt\')">' +
         '<div class="test-icon">⚡</div>' +
         '<div class="test-nombre">SDMT</div>' +
@@ -5597,6 +5744,7 @@ function irTest(t) {
   if (t === 'wcst') iniciarWCST();
   if (t === 'stroop') iniciarStroop();
   if (t === 'fcr') iniciarFCR();
+  if (t === 'bta') iniciarBTA();
   if (t === 'sdmt') iniciarSDMT();
 }
 
@@ -7665,6 +7813,156 @@ function guardarAsrs() {
     if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
   }).catch(function(){toast('Error al guardar','error');});
 }
+
+// ══ BTA — Brief Test of Attention ══════════════════════════════════════════
+var BTA_EDAD_LABELS = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+var BTA_ESCOL_LABELS = ['>12 años de educación','1 a 12 años de educación'];
+var BTA_PCS = [5,10,15,20,30,40,50,60,70,80,85,90,95];
+
+// Percentiles por grupo [ei][gi][pc_idx]
+var BTA_BAR = [
+  // ei=0: >12 años
+  [
+    [null,null,20.0,19.8,18.9,16.9,17.5,18.2,18.9,19.8,20.0,null,null],  // 18-22
+    [13.0,13.9,14.6,15.1,16.0,16.7,17.3,18.0,18.7,19.6,20.0,null,null],  // 23-27
+    [12.8,13.8,14.4,14.9,15.8,16.5,17.2,17.8,18.5,19.4,19.9,20.0,null],  // 28-32
+    [12.6,13.6,14.2,14.7,15.6,16.3,17.0,17.6,18.4,19.2,19.7,20.0,null],  // 33-37
+    [12.4,13.4,14.0,14.6,15.4,16.1,16.8,17.5,18.2,19.0,19.6,20.0,null],  // 38-42
+    [12.3,13.2,13.9,14.4,15.2,16.0,16.6,17.3,18.0,18.9,19.4,20.0,null],  // 43-47
+    [11.9,12.9,13.7,13.5,15.1,15.8,16.4,17.1,17.8,18.7,19.2,19.8,20.0],  // 48-52
+    [11.9,12.9,13.7,14.2,15.1,15.8,16.3,16.9,17.6,18.5,19.0,19.7,20.0],  // 53-57
+    [11.7,12.7,13.3,13.9,14.7,15.4,15.9,16.7,17.5,18.3,18.8,19.5,20.0],  // 58-62
+    [11.7,12.7,13.3,13.9,14.7,15.4,15.9,16.7,17.5,18.3,18.7,19.3,20.0],  // 63-67
+    [11.5,12.5,13.1,13.7,14.5,15.2,15.9,16.6,17.3,18.1,18.5,19.1,20.0],  // 68-72
+    [11.4,12.3,13.0,13.5,14.3,15.1,15.7,16.4,17.1,18.0,18.5,19.0,20.0],  // 73-77
+    [11.1,12.0,12.6,13.1,14.0,14.9,15.4,16.0,16.8,17.6,18.1,18.8,19.8],  // >77
+  ],
+  // ei=1: 1-12 años
+  [
+    [11.7,12.7,13.3,13.8,14.7,15.4,16.1,16.7,17.5,18.3,18.8,19.5,20.0],  // 18-22
+    [11.5,12.5,13.1,13.7,14.5,15.2,15.9,16.6,17.3,18.1,18.7,19.3,20.0],  // 23-27
+    [11.4,12.3,13.0,13.5,14.3,15.0,15.7,16.4,17.1,18.0,18.5,19.1,20.0],  // 28-32
+    [11.2,12.1,12.8,13.3,14.2,14.9,15.5,16.2,16.9,17.8,18.3,18.8,19.9],  // 33-37
+    [11.0,12.0,12.6,13.1,14.0,14.7,15.4,16.0,16.7,17.6,18.1,18.8,19.7],  // 38-42
+    [10.8,11.8,12.4,13.0,13.8,14.5,15.2,15.8,16.6,17.4,17.9,18.6,19.5],  // 43-47
+    [10.8,11.6,12.2,12.8,13.6,14.3,15.0,15.7,16.4,17.2,17.8,18.4,19.4],  // 48-52
+    [10.5,11.4,12.1,12.6,13.4,14.2,14.8,15.5,16.2,17.1,17.6,18.2,19.2],  // 53-57
+    [10.5,11.2,11.9,12.4,13.3,14.0,14.6,15.3,16.0,16.9,17.4,18.1,19.0],  // 58-62
+    [10.3,11.1,11.7,12.2,13.1,13.8,14.5,15.1,15.9,16.9,17.4,17.9,18.8],  // 63-67
+    [10.1,10.9,11.5,12.1,12.9,13.6,14.3,15.0,15.7,16.5,17.1,17.7,18.6],  // 68-72
+    [9.8,10.7,11.5,12.1,12.9,13.6,14.3,15.0,15.7,16.5,16.9,17.5,18.5],   // 73-77
+    [9.6,10.5,11.1,10.5,12.5,13.1,13.9,14.6,15.3,16.2,16.9,17.3,18.3],   // >77
+  ]
+];
+
+function btaBuscarPc(pb, gi, ei) {
+  var tabla = BTA_BAR[ei][gi];
+  // Interpolar percentil dado el puntaje bruto
+  for (var i = 0; i < BTA_PCS.length; i++) {
+    if (tabla[i] === null) continue;
+    if (pb <= tabla[i]) {
+      if (i === 0) return BTA_PCS[0];
+      // Interpolar entre pc[i-1] y pc[i]
+      var pcLo = BTA_PCS[i-1], pcHi = BTA_PCS[i];
+      var vLo = tabla[i-1], vHi = tabla[i];
+      if (vLo === null) return pcHi;
+      if (vHi === vLo) return pcHi;
+      return Math.round(pcLo + (pb - vLo) / (vHi - vLo) * (pcHi - pcLo));
+    }
+  }
+  return 95;
+}
+
+function btaZLabel(z) {
+  if (z === null || z === undefined) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad severa';
+}
+
+function btaPcToZ(pc) {
+  // Conversión percentil → Z aproximado
+  var tabla = {1:-2.33,2:-2.05,3:-1.88,4:-1.75,5:-1.65,7:-1.48,10:-1.28,
+    15:-1.04,16:-0.99,20:-0.84,25:-0.67,30:-0.52,35:-0.39,40:-0.25,
+    45:-0.13,50:0,55:0.13,60:0.25,65:0.39,70:0.52,75:0.67,80:0.84,
+    85:1.04,90:1.28,93:1.48,95:1.65,97:1.88,98:2.05,99:2.33};
+  if (tabla[pc] !== undefined) return tabla[pc];
+  // Interpolación lineal entre percentiles cercanos
+  var keys = Object.keys(tabla).map(Number).sort(function(a,b){return a-b;});
+  for (var i = 0; i < keys.length-1; i++) {
+    if (pc >= keys[i] && pc <= keys[i+1]) {
+      var z0 = tabla[keys[i]], z1 = tabla[keys[i+1]];
+      return parseFloat((z0 + (pc - keys[i]) / (keys[i+1] - keys[i]) * (z1 - z0)).toFixed(2));
+    }
+  }
+  return pc < 50 ? -2.33 : 2.33;
+}
+
+function iniciarBTA() {
+  document.getElementById('bta-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bta-form').style.display = 'block';
+  document.getElementById('bta-resultado').style.display = 'none';
+}
+
+function limpiarBTA() {
+  ['bta-pb'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('bta-gi').value = '';
+  document.getElementById('bta-ei').value = '';
+}
+
+function calcularBTA() {
+  var gi = parseInt(document.getElementById('bta-gi').value);
+  var ei = parseInt(document.getElementById('bta-ei').value);
+  var pb = parseFloat(document.getElementById('bta-pb').value);
+  if (isNaN(gi) || isNaN(ei)) { toast('Seleccioná grupo de edad y nivel educativo.','error'); return; }
+  if (isNaN(pb) || pb < 0 || pb > 20) { toast('Ingresá un puntaje válido (0–20).','error'); return; }
+
+  var pc = btaBuscarPc(pb, gi, ei);
+  var z  = parseFloat(btaPcToZ(pc).toFixed(2));
+  var interp = btaZLabel(z);
+
+  window._btaData = { pb:pb, pc:pc, z:z, gi:gi, ei:ei, interp:interp };
+
+  var html = '<div class="result-grid">' +
+    '<div class="result-item"><div class="result-label">Puntaje bruto</div><div class="result-value">' + pb + '/20</div></div>' +
+    '<div class="result-item"><div class="result-label">Percentil</div><div class="result-value">Pc ' + pc + '</div></div>' +
+    '<div class="result-item"><div class="result-label">Z</div><div class="result-value">' + (z>=0?'+':'') + z + '</div></div>' +
+    '</div>' +
+    '<div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div>' +
+    '<div class="interp-texto">' + interp + '</div></div>' +
+    '<p style="font-size:0.78rem;color:var(--muted);margin-top:10px;">' +
+    BTA_EDAD_LABELS[gi] + ' · ' + BTA_ESCOL_LABELS[ei] + ' · Pc ' + pc + ' estimado por interpolación</p>';
+
+  document.getElementById('bta-res-content').innerHTML = html;
+  document.getElementById('bta-form').style.display = 'none';
+  document.getElementById('bta-resultado').style.display = 'block';
+}
+
+function guardarBTA() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('bta-paciente').value;
+  var fecha = document.getElementById('bta-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._btaData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._btaData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'BTA', fecha: fecha,
+    puntaje_total: d.pb, puntaje_z: d.z,
+    categoria: d.interp,
+    datos: { pb:d.pb, pc:d.pc, z:d.z, gi:d.gi, ei:d.ei }
+  }, SESSION.access_token).then(function(){
+    window._btaData = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btn = document.querySelectorAll('.vista.active .btn-primary');
+    if (btn.length) { btn[btn.length-1].classList.add('btn-saved'); setTimeout(function(){ btn[btn.length-1].classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+// ══ fin BTA ══════════════════════════════════════════════════════════════════
+
 // ══ WURS-25 ══// ══ WURS-25 ════════════════════════════════════════════════════════════════
 var WURS_ITEMS_LIST = [
   'Activo/a, no paraba nunca','Problemas de concentración, me distraía con facilidad',
@@ -9420,6 +9718,143 @@ function guardarFCR() {
   }).catch(function(){ toast('Error al guardar','error'); });
 }
 
+// ══ BTA · Brief Test of Attention ════════════════════════════════════════════
+// Baremos: Arango-Lasprilla et al. (2015) — NEURONORMA Argentina
+// NeuroRehabilitation 37(4) — DOI: 10.3233/NRE-151283
+// Tabla A1 Argentina — 13 grupos etarios × 2 niveles educativos
+// Escol 0 = >12 años / Escol 1 = 1–12 años
+// Pc: [5,10,15,20,30,40,50,60,70,80,85,90,95]
+var BTA_PC_LABELS = [5,10,15,20,30,40,50,60,70,80,85,90,95];
+var BTA_TABLA = [
+  // Escol 0: >12 años de educación
+  [
+    //       Pc5  Pc10 Pc15 Pc20 Pc30 Pc40 Pc50 Pc60 Pc70 Pc80 Pc85 Pc90 Pc95
+    /* 18-22 */ [13.2,14.1,14.8,15.3,16.1,16.9,17.5,18.2,18.9,19.8,20.0,20.0,20.0],
+    /* 23-27 */ [13.0,13.9,14.6,15.1,16.0,16.7,17.3,18.0,18.7,19.6,20.0,20.0,20.0],
+    /* 28-32 */ [12.8,13.8,14.4,14.9,15.8,16.5,17.2,17.8,18.5,19.4,19.9,20.0,20.0],
+    /* 33-37 */ [12.6,13.6,14.2,14.7,15.6,16.3,17.0,17.6,18.4,19.2,19.7,20.0,20.0],
+    /* 38-42 */ [12.4,13.4,14.0,14.6,15.4,16.1,16.8,17.5,18.2,19.0,19.6,20.0,20.0],
+    /* 43-47 */ [12.3,13.2,13.9,14.4,15.2,16.0,16.8,17.3,18.0,18.9,19.4,20.0,20.0],
+    /* 48-52 */ [12.1,13.0,13.7,14.2,15.1,15.8,16.6,17.1,17.8,18.7,19.2,19.8,20.0],
+    /* 53-57 */ [11.9,12.9,13.5,14.2,14.9,15.6,16.4,16.9,17.6,18.5,19.0,19.7,20.0],
+    /* 58-62 */ [11.7,12.7,13.3,13.9,14.7,15.4,16.1,16.7,17.5,18.3,18.8,19.5,20.0],
+    /* 63-67 */ [11.5,12.5,13.1,13.7,14.5,15.2,15.9,16.6,17.3,18.1,18.7,19.3,20.0],
+    /* 68-72 */ [11.5,12.3,13.0,13.5,14.3,15.1,15.9,16.6,17.3,18.0,18.5,19.1,20.0],
+    /* 73-77 */ [11.4,12.3,13.0,13.5,14.3,15.1,15.7,16.4,17.1,18.0,18.5,19.1,19.9],
+    /* >77    */ [11.0,12.1,12.8,13.1,14.0,14.9,15.5,16.2,16.9,17.6,18.1,19.0,19.7]
+  ],
+  // Escol 1: 1–12 años de educación
+  [
+    /* 18-22 */ [11.7,12.7,13.3,13.8,14.7,15.4,16.1,16.7,17.5,18.3,18.8,19.5,20.0],
+    /* 23-27 */ [11.5,12.5,13.1,13.7,14.5,15.2,15.9,16.6,17.3,18.1,18.7,19.3,20.0],
+    /* 28-32 */ [11.4,12.3,12.9,13.5,14.3,15.1,15.7,16.4,17.1,18.0,18.5,19.1,20.0],
+    /* 33-37 */ [11.2,12.1,12.8,13.3,14.2,14.9,15.6,16.2,16.9,17.8,18.3,18.9,19.9],
+    /* 38-42 */ [11.0,12.0,12.6,13.1,14.0,14.7,15.4,16.0,16.7,17.6,18.1,18.8,19.7],
+    /* 43-47 */ [10.8,11.8,12.4,12.9,13.8,14.5,15.2,15.8,16.6,17.4,17.9,18.6,19.5],
+    /* 48-52 */ [10.8,11.6,12.2,12.8,13.6,14.3,15.0,15.7,16.4,17.2,17.8,18.4,19.4],
+    /* 53-57 */ [10.5,11.4,12.1,12.6,13.4,14.2,14.8,15.5,16.2,17.1,17.6,18.2,19.2],
+    /* 58-62 */ [10.3,11.2,11.9,12.4,13.3,14.0,14.6,15.3,16.0,16.9,17.4,18.1,19.0],
+    /* 63-67 */ [10.1,11.0,11.7,12.2,13.1,13.8,14.5,15.1,15.9,16.7,17.2,17.9,18.8],
+    /* 68-72 */ [10.1,10.9,11.5,12.1,12.9,13.6,14.3,15.0,15.7,16.5,17.1,17.7,18.6],
+    /* 73-77 */ [10.1,10.9,11.5,12.0,12.9,13.5,14.1,14.8,15.6,16.3,16.9,17.5,18.5],
+    /* >77    */ [9.8, 10.5,11.1,11.7,12.5,13.3,13.9,14.6,15.3,16.2,16.9,17.3,18.3]
+  ]
+];
+
+function btaBuscarPc(ei, gi, score) {
+  var row = BTA_TABLA[ei][gi];
+  var pc = 1;
+  for (var i = 0; i < BTA_PC_LABELS.length; i++) {
+    if (score >= row[i]) pc = BTA_PC_LABELS[i];
+    else break;
+  }
+  return pc;
+}
+
+function btaPcToZ(pc) {
+  var t={1:-2.33,2:-2.05,3:-1.88,4:-1.75,5:-1.64,6:-1.55,7:-1.48,8:-1.41,9:-1.34,
+    10:-1.28,12:-1.18,15:-1.04,16:-1.0,20:-0.84,25:-0.67,30:-0.52,35:-0.39,40:-0.25,
+    45:-0.13,50:0,55:0.13,60:0.25,65:0.39,70:0.52,75:0.67,80:0.84,85:1.04,90:1.28,
+    95:1.64,96:1.75,97:1.88,98:2.05,99:2.33};
+  return t[pc] !== undefined ? t[pc] : null;
+}
+
+function btaZLabel(z) {
+  if (z === null) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad elevada';
+}
+
+function iniciarBTA() {
+  document.getElementById('bta-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bta-form').style.display = 'block';
+  document.getElementById('bta-resultado').style.display = 'none';
+}
+
+function limpiarBTA() {
+  document.getElementById('bta-puntaje').value = '';
+  document.getElementById('bta-edad').value = '';
+  document.getElementById('bta-escol').value = '';
+}
+
+function calcularBTA() {
+  var gi = document.getElementById('bta-edad').value;
+  var ei = document.getElementById('bta-escol').value;
+  var puntaje = document.getElementById('bta-puntaje').value;
+  if (gi === '' || ei === '') { toast('Seleccioná grupo de edad y escolaridad.','error'); return; }
+  if (puntaje === '') { toast('Ingresá el puntaje bruto.','error'); return; }
+  gi = parseInt(gi); ei = parseInt(ei);
+  puntaje = parseFloat(puntaje);
+
+  var pc = btaBuscarPc(ei, gi, puntaje);
+  var z  = btaPcToZ(pc);
+  var lbl = btaZLabel(z);
+
+  var edadLabels = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
+  var escolLabel = ei === 0 ? '>12 años educación' : '1–12 años educación';
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+puntaje+'</div><div class="detalle-lbl">Puntaje<br>bruto</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pc+'</div><div class="detalle-lbl">Percentil</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z>=0?'+':'')+z+'</div><div class="detalle-lbl">Z</div></div>';
+
+  var interp =
+    '<p><strong>Grupo:</strong> '+edadLabels[gi]+' años · '+escolLabel+'</p>'+
+    '<p><strong>Resultado:</strong> '+puntaje+'/20 · Pc '+pc+' · Z='+(z>=0?'+':'')+z+' — '+lbl+'</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Arango-Lasprilla et al. (2015) — NEURONORMA Argentina · NeuroRehabilitation 37(4)</p>';
+
+  window._btaData = { puntaje:puntaje, pc:pc, z:z, gi:gi, ei:ei };
+
+  document.getElementById('bta-detalle').innerHTML = detalleHtml;
+  document.getElementById('bta-interp').innerHTML  = interp;
+  document.getElementById('bta-form').style.display = 'none';
+  document.getElementById('bta-resultado').style.display = 'block';
+}
+
+function guardarBTA() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('bta-paciente').value;
+  var fecha = document.getElementById('bta-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._btaData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._btaData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'BTA', fecha: fecha,
+    puntaje_total: d.puntaje,
+    puntaje_z: d.z,
+    categoria: btaZLabel(d.z),
+    datos: { puntaje:d.puntaje, pc:d.pc, z:d.z, gi:d.gi, ei:d.ei }
+  }, SESSION.access_token).then(function(){
+    window._btaData = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
 // ══ SDMT · Symbol Digit Modalities Test ══════════════════════════════════════
 // VERSIÓN ESCRITA: Arango-Lasprilla et al. (2015) — NEURONORMA Argentina
 // NeuroRehabilitation 37(4):625-638 — DOI: 10.3233/NRE-151282
@@ -9600,7 +10035,8 @@ function calcularSDMT() {
 
 function guardarSDMT() {
   if (!SESSION) return;
-  var pacId = document.getElementById('sdmt-paciente').value;
+  var pacId = document.getElementById('bta-paciente')
+    document.getElementById('sdmt-paciente').value;
   var fecha = document.getElementById('sdmt-fecha').value;
   if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
   if (!window._sdmtData) { toast('Calculá el resultado antes de guardar.','error'); return; }
