@@ -199,7 +199,13 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 }
 .btn-xs-primary { background: var(--accent); color: white; }
 .btn-xs-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+.btn-xs-danger  { background: #a82828; color: white; }
 .btn-xs:hover { opacity: 0.8; }
+.modo-toggle { display:flex; gap:0; margin-bottom:16px; border-radius:8px; overflow:hidden; border:1.5px solid var(--border); }
+.modo-btn { flex:1; padding:9px 12px; text-align:center; cursor:pointer; font-size:0.84rem; font-weight:500; color:var(--muted); background:var(--surface2); border:none; font-family:'Outfit',sans-serif; transition:all 0.15s; }
+.modo-btn.active { background:var(--accent); color:#fff; font-weight:600; }
+.manual-fields { display:none; }
+.manual-fields.visible { display:block; }
 
 .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
 .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
@@ -439,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.3</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.8.4</div>
     </div>
   </aside>
 
@@ -871,7 +877,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             </div>
             <div class="field"><label>Fecha</label><input type="date" id="bdi-fecha"></div>
           </div>
-        </div>
+<div class="modo-toggle"><button class="modo-btn active" id="modo-auto-bdi" onclick="setModo('bdi','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-bdi" onclick="setModo('bdi','manual')">✏ Carga manual</button></div>
+        <div id="man-area-bdi" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–63)</label><input type="number" id="man-bdi-total" min="0" max="63" placeholder="0–63"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('bdi')">Calcular resultado →</button></div></div>
+        <div id="auto-area-bdi">
+                </div>
 
         <div class="card">
           <div class="card-title">Ítems del inventario</div>
@@ -883,6 +892,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
 
+      </div>
       <div id="bdi-resultado" style="display:none;">
         <div class="resultado-box">
           <div class="resultado-puntaje">
@@ -917,6 +927,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       </div></div>
 
       <div id="stai-form">
+        <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-stai" onclick="setModo('stai','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-stai" onclick="setModo('stai','manual')">✏ Carga manual</button></div>
+        <div id="man-area-stai" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Ansiedad Estado (0–60)</label><input type="number" id="man-stai-e" min="0" max="60" placeholder="0–60"></div><div class="field"><label>Ansiedad Rasgo (0–60)</label><input type="number" id="man-stai-r" min="0" max="60" placeholder="0–60"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('stai')">Calcular resultado →</button></div></div>
+        <div id="auto-area-stai">
         <div class="card">
           <div class="card-title">Datos de la evaluación</div>
           <div class="form-grid-3">
@@ -950,6 +963,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
 
+      </div>
       <div id="stai-resultado" style="display:none;">
         <div class="resultado-box">
           <div class="resultado-puntaje">
@@ -1279,6 +1293,12 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <div class="field"><label>Fecha</label><input type="date" id="phq-fecha"></div>
           </div>
         </div>
+        <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-phq" onclick="setModo('phq','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-phq" onclick="setModo('phq','manual')">✏ Carga manual</button></div>
+        <div id="man-area-phq" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–27)</label><input type="number" id="man-phq-total" min="0" max="27" placeholder="0–27"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('phq')">Calcular resultado →</button></div></div>
+        <div id="auto-area-phq">
+        <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-gad" onclick="setModo('gad','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-gad" onclick="setModo('gad','manual')">✏ Carga manual</button></div>
+        <div id="man-area-gad" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–21)</label><input type="number" id="man-gad-total" min="0" max="21" placeholder="0–21"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('gad')">Calcular resultado →</button></div></div>
+        <div id="auto-area-gad">
         <div class="card">
           <div class="card-title">Ítems del cuestionario</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</p>
@@ -1288,6 +1308,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <button class="btn-primary" onclick="calcularPHQ()">Calcular resultado →</button>
           </div>
         </div>
+      </div>
       </div>
       <div id="phq-resultado" style="display:none;">
         <div class="resultado-box">
@@ -1335,6 +1356,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <button class="btn-primary" onclick="calcularGAD()">Calcular resultado →</button>
           </div>
         </div>
+      </div>
       </div>
       <div id="gad-resultado" style="display:none;">
         <div class="resultado-box">
@@ -1387,7 +1409,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           </div>
           <div class="field"><label>Fecha</label><input type="date" id="spaib-fecha"></div>
         </div>
-        <div class="card">
+<div class="modo-toggle"><button class="modo-btn active" id="modo-auto-spaib" onclick="setModo('spaib','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-spaib" onclick="setModo('spaib','manual')">✏ Carga manual</button></div>
+                <div id="man-area-spaib" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–90)</label><input type="number" id="man-spaib-total" min="0" max="90" placeholder="0–90"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('spaib')">Calcular resultado →</button></div></div>
+        <div id="auto-area-spaib">
+                <div class="card">
           <div class="card-title">Ítems del inventario</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Indicá con qué frecuencia experimentás lo siguiente: <strong>1=Nunca · 2=Raramente · 3=A veces · 4=A menudo · 5=Siempre</strong></p>
           <div id="spaib-items-container"></div>
@@ -1396,6 +1421,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <button class="btn-primary" onclick="calcularSPAIB()">Calcular resultado →</button>
           </div>
         </div>
+      </div>
       </div>
       <div id="spaib-resultado" style="display:none;">
         <div class="resultado-box">
@@ -1740,7 +1766,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div class="field"><label>Fecha</label><input type="date" id="csi-fecha"></div>
       </div>
     </div>
-    <div class="card">
+<div class="modo-toggle"><button class="modo-btn active" id="modo-auto-csi" onclick="setModo('csi','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-csi" onclick="setModo('csi','manual')">✏ Carga manual</button></div>
+            <div id="man-area-csi" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Resolución de Problemas</label><input type="number" id="man-csi-rep" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Autocrítica</label><input type="number" id="man-csi-auc" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Expresión Emocional</label><input type="number" id="man-csi-eem" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Pensamiento Desiderativo</label><input type="number" id="man-csi-psd" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Apoyo Social</label><input type="number" id="man-csi-aps" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Reestructuración Cognitiva</label><input type="number" id="man-csi-rec" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Evitación de Problemas</label><input type="number" id="man-csi-evp" min="0" max="16" placeholder="0–16"></div><div class="field"><label>Retirada Social</label><input type="number" id="man-csi-res" min="0" max="16" placeholder="0–16"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('csi')">Calcular resultado →</button></div></div>
+    <div id="auto-area-csi">
+        <div class="card">
       <div class="card-title">Ítems</div>
       <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Piense en una situación estresante del último mes. Indique en qué medida realizó cada una de las siguientes acciones: <strong>0 = En absoluto · 1 = Un poco · 2 = Bastante · 3 = Mucho · 4 = Totalmente</strong></p>
       <div id="csi-items-wrap"></div>
@@ -1749,6 +1778,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <button class="btn-secondary" onclick="limpiarCSI()">🗑 Limpiar</button>
       <button class="btn-primary" onclick="calcularCSI()">Calcular resultado →</button>
     </div>
+  </div>
   </div>
   <div id="csi-resultado" style="display:none;">
     <div class="resultado-box">
@@ -3263,6 +3293,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <div class="field"><label>Fecha</label><input type="date" id="asrs-fecha"></div>
           </div>
         </div>
+        <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-asrs" onclick="setModo('asrs','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-asrs" onclick="setModo('asrs','manual')">✏ Carga manual</button></div>
+        <div id="man-area-asrs" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Sección A positivos (0–6)</label><input type="number" id="man-asrs-a" min="0" max="6" placeholder="0–6"></div><div class="field"><label>ASRS-I Inatención (0–48)</label><input type="number" id="man-asrs-i" min="0" max="48" placeholder="0–48"></div><div class="field"><label>ASRS-H Hiperactividad (0–36)</label><input type="number" id="man-asrs-h" min="0" max="36" placeholder="0–36"></div><div class="field"><label>ASRS-T Total (0–72)</label><input type="number" id="man-asrs-t" min="0" max="72" placeholder="0–72"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('asrs')">Calcular resultado →</button></div></div>
+        <div id="auto-area-asrs">
         <div class="card">
           <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
             <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
@@ -3279,6 +3312,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           <button class="btn-secondary" onclick="limpiarAsrs()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularAsrs()">Calcular resultado →</button>
         </div>
+      </div>
       </div>
       <div id="asrs-resultado" style="display:none;">
         <div class="resultado-box">
@@ -3324,6 +3358,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <div class="field"><label>Fecha</label><input type="date" id="wurs-fecha"></div>
           </div>
         </div>
+        <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-wurs" onclick="setModo('wurs','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-wurs" onclick="setModo('wurs','manual')">✏ Carga manual</button></div>
+        <div id="man-area-wurs" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Puntaje total (0–100)</label><input type="number" id="man-wurs-total" min="0" max="100" placeholder="0–100"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('wurs')">Calcular resultado →</button></div></div>
+        <div id="auto-area-wurs">
         <div class="card">
           <div style="background:#fff8f0;border:1.5px solid #e07b3a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;">
             <div style="font-weight:700;color:#8B3A00;margin-bottom:6px;">⚠ Punto de corte utilizado en este sistema</div>
@@ -3340,6 +3377,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
           <button class="btn-secondary" onclick="limpiarWurs()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularWurs()">Calcular resultado →</button>
         </div>
+      </div>
       </div>
       <div id="wurs-resultado" style="display:none;">
         <div class="resultado-box">
@@ -3389,7 +3427,10 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 
         <div class="card">
           <div class="card-title">Ítems</div>
-          <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;padding:6px 0;border-bottom:2px solid var(--accent);margin-bottom:4px;">
+          <div class="modo-toggle"><button class="modo-btn active" id="modo-auto-mbi" onclick="setModo('mbi','auto')">📋 Ítem por ítem</button><button class="modo-btn" id="modo-man-mbi" onclick="setModo('mbi','manual')">✏ Carga manual</button></div>
+        <div id="man-area-mbi" style="display:none;"><div class="card"><div class="card-title">Carga manual de puntajes</div><p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Ingresá los puntajes brutos. El sistema calcula Z, Pc e interpretación automáticamente.</p><div class="form-grid-3"><div class="field"><label>Cansancio emocional (0–54)</label><input type="number" id="man-mbi-ce" min="0" max="54" placeholder="0–54"></div><div class="field"><label>Despersonalización (0–30)</label><input type="number" id="man-mbi-dp" min="0" max="30" placeholder="0–30"></div><div class="field"><label>Realización personal (0–48)</label><input type="number" id="man-mbi-rp" min="0" max="48" placeholder="0–48"></div></div></div><div class="btn-row" style="margin-top:8px;"><button class="btn-primary" onclick="calcularManual('mbi')">Calcular resultado →</button></div></div>
+        <div id="auto-area-mbi">
+        <div style="display:grid;grid-template-columns:1.5rem auto 1fr;gap:10px;padding:6px 0;border-bottom:2px solid var(--accent);margin-bottom:4px;">
             <div></div><div style="font-size:0.75rem;font-weight:600;color:var(--muted);">Ítem</div>
             <div style="display:flex;gap:8px;justify-content:flex-end;"><span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">0</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">1</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">2</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">3</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">4</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">5</span> <span style="font-size:0.75rem;color:var(--muted);width:24px;text-align:center;">6</span></div>
           </div>
@@ -3577,6 +3618,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
 
+      </div>
       <div id="mbi-resultado" style="display:none;">
         <div class="resultado-box">
           <div id="mbi-resumen" style="margin-bottom:16px;"></div>
@@ -5585,6 +5627,301 @@ var BDI_ITEMS = [
   {n:'Pérdida de interés en el sexo', ops:['No he notado ningún cambio reciente en mi interés por el sexo.','Estoy menos interesado/a por el sexo que antes.','Estoy mucho menos interesado/a por el sexo.','He perdido completamente el interés por el sexo.']}
 ];
 
+// ══ SISTEMA MODO MANUAL ══════════════════════════════════════════════════════
+// Configuración de campos manuales por test
+var MANUAL_CAMPOS = {
+  'bdi': [
+    { id:'man-bdi-total', label:'Puntaje total (0–63)', min:0, max:63 }
+  ],
+  'stai': [
+    { id:'man-stai-e', label:'Ansiedad Estado (0–60)', min:0, max:60 },
+    { id:'man-stai-r', label:'Ansiedad Rasgo (0–60)',  min:0, max:60 }
+  ],
+  'phq': [
+    { id:'man-phq-total', label:'Puntaje total (0–27)', min:0, max:27 }
+  ],
+  'gad': [
+    { id:'man-gad-total', label:'Puntaje total (0–21)', min:0, max:21 }
+  ],
+  'spaib': [
+    { id:'man-spaib-total', label:'Puntaje total (0–90)', min:0, max:90 }
+  ],
+  'asrs': [
+    { id:'man-asrs-a',  label:'Sección A — ítems positivos (0–6)', min:0, max:6 },
+    { id:'man-asrs-i',  label:'ASRS-I Inatención (0–48)',          min:0, max:48 },
+    { id:'man-asrs-h',  label:'ASRS-H Hiperactividad (0–36)',      min:0, max:36 },
+    { id:'man-asrs-t',  label:'ASRS-T Total (0–72)',               min:0, max:72 }
+  ],
+  'wurs': [
+    { id:'man-wurs-total', label:'Puntaje total (0–100)', min:0, max:100 }
+  ],
+  'mbi': [
+    { id:'man-mbi-ce',  label:'Cansancio emocional (0–54)',   min:0, max:54 },
+    { id:'man-mbi-dp',  label:'Despersonalización (0–30)',    min:0, max:30 },
+    { id:'man-mbi-rp',  label:'Realización personal (0–48)', min:0, max:48 }
+  ],
+  'csi': [
+    { id:'man-csi-rep', label:'Resolución de Problemas (0–16)',     min:0, max:16 },
+    { id:'man-csi-auc', label:'Autocrítica (0–16)',                  min:0, max:16 },
+    { id:'man-csi-eem', label:'Expresión Emocional (0–16)',          min:0, max:16 },
+    { id:'man-csi-psd', label:'Pensamiento Desiderativo (0–16)',     min:0, max:16 },
+    { id:'man-csi-aps', label:'Apoyo Social (0–16)',                 min:0, max:16 },
+    { id:'man-csi-rec', label:'Reestructuración Cognitiva (0–16)',   min:0, max:16 },
+    { id:'man-csi-evp', label:'Evitación de Problemas (0–16)',       min:0, max:16 },
+    { id:'man-csi-res', label:'Retirada Social (0–16)',              min:0, max:16 }
+  ]
+};
+
+function setModo(testId, modo) {
+  var btnAuto = document.getElementById('modo-auto-'+testId);
+  var btnMan  = document.getElementById('modo-man-'+testId);
+  var autoArea = document.getElementById('auto-area-'+testId);
+  var manArea  = document.getElementById('man-area-'+testId);
+  if (!btnAuto || !btnMan) return;
+  if (modo === 'manual') {
+    btnAuto.classList.remove('active'); btnMan.classList.add('active');
+    if (autoArea) autoArea.style.display = 'none';
+    if (manArea)  manArea.style.display  = 'block';
+  } else {
+    btnMan.classList.remove('active'); btnAuto.classList.add('active');
+    if (autoArea) autoArea.style.display = 'block';
+    if (manArea)  manArea.style.display  = 'none';
+  }
+}
+
+function calcularManual(testId) {
+  var campos = MANUAL_CAMPOS[testId];
+  if (!campos) return;
+  // Validar que todos los campos tengan valor
+  for (var i = 0; i < campos.length; i++) {
+    var v = document.getElementById(campos[i].id);
+    if (!v || v.value === '') { toast('Completá todos los campos','error'); return; }
+  }
+  // Inyectar valores en los campos del formulario automático según test
+  if (testId === 'bdi') {
+    var total = parseInt(document.getElementById('man-bdi-total').value);
+    // Distribuir en ítems: item 0 = total, resto en 0
+    for (var j = 0; j < 21; j++) {
+      var opts = document.querySelectorAll('[name="bdi_'+j+'"]');
+      opts.forEach(function(o){ o.checked = false; });
+      var opt0 = document.querySelector('[name="bdi_'+j+'"][value="0"]');
+      if (opt0) opt0.checked = true;
+    }
+    // Sobreescribir cálculo directo
+    _calcularBDIManual(total);
+    return;
+  }
+  if (testId === 'stai') {
+    var ptsE = parseInt(document.getElementById('man-stai-e').value);
+    var ptsR = parseInt(document.getElementById('man-stai-r').value);
+    var sexo = document.getElementById('stai-sexo').value;
+    if (!sexo) { toast('Seleccioná el sexo','error'); return; }
+    _calcularSTAIManual(ptsE, ptsR, sexo);
+    return;
+  }
+  if (testId === 'phq') { _calcularPHQManual(parseInt(document.getElementById('man-phq-total').value)); return; }
+  if (testId === 'gad') { _calcularGADManual(parseInt(document.getElementById('man-gad-total').value)); return; }
+  if (testId === 'spaib') { _calcularSPAIBManual(parseInt(document.getElementById('man-spaib-total').value)); return; }
+  if (testId === 'asrs') {
+    var secA = parseInt(document.getElementById('man-asrs-a').value);
+    var sI   = parseInt(document.getElementById('man-asrs-i').value);
+    var sH   = parseInt(document.getElementById('man-asrs-h').value);
+    var sT   = parseInt(document.getElementById('man-asrs-t').value);
+    var gr   = document.getElementById('asrs-grupo').value;
+    if (!gr) { toast('Seleccioná el grupo etario','error'); return; }
+    _calcularASRSManual(secA, sI, sH, sT, gr);
+    return;
+  }
+  if (testId === 'wurs') { _calcularWURSManual(parseInt(document.getElementById('man-wurs-total').value)); return; }
+  if (testId === 'mbi') {
+    var ce = parseInt(document.getElementById('man-mbi-ce').value);
+    var dp = parseInt(document.getElementById('man-mbi-dp').value);
+    var rp = parseInt(document.getElementById('man-mbi-rp').value);
+    _calcularMBIManual(ce, dp, rp);
+    return;
+  }
+  if (testId === 'csi') {
+    var vals = {};
+    ['REP','AUC','EEM','PSD','APS','REC','EVP','RES'].forEach(function(k,i){
+      vals[k] = parseInt(document.getElementById('man-csi-'+k.toLowerCase()).value)||0;
+    });
+    _calcularCSIManual(vals);
+    return;
+  }
+}
+
+// ── Funciones de cálculo manual por test ──────────────────────────────────
+
+function _calcularBDIManual(total) {
+  var cat, rango, badge;
+  if (total <= 13)      { cat='Mínima';   rango='0–13';  badge='bg-minima';   }
+  else if (total <= 19) { cat='Leve';     rango='14–19'; badge='bg-leve';     }
+  else if (total <= 28) { cat='Moderada'; rango='20–28'; badge='bg-moderada'; }
+  else                  { cat='Grave';    rango='29–63'; badge='bg-grave';    }
+  document.getElementById('bdi-pts').textContent = total;
+  document.getElementById('bdi-cat').textContent = 'Depresión ' + cat;
+  document.getElementById('bdi-rango').textContent = 'Rango: ' + rango + ' puntos';
+  document.getElementById('bdi-badge').className = 'badge-grande ' + badge;
+  document.getElementById('bdi-badge').textContent = 'Depresión ' + cat;
+  var interp = '';
+  if (total <= 13) interp = '<p>Puntaje ('+total+') en rango de <strong>depresión mínima</strong>. Sin indicadores clínicamente significativos.</p>';
+  else if (total <= 19) interp = '<p>Puntaje ('+total+'): <strong>depresión leve</strong>. Se recomienda monitorear evolución.</p>';
+  else if (total <= 28) interp = '<p>Puntaje ('+total+'): <strong>depresión moderada</strong>. Impacto en funcionamiento cotidiano. Se recomienda intervención.</p>';
+  else interp = '<p>Puntaje ('+total+'): <strong>depresión grave</strong>. Requiere atención clínica inmediata.</p>';
+  interp += '<p><em>Carga manual. Integrar con evaluación clínica completa.</em></p>';
+  document.getElementById('bdi-interp').innerHTML = interp;
+  window._bdiTotal = total;
+  document.getElementById('bdi-form').style.display = 'none';
+  document.getElementById('bdi-resultado').style.display = 'block';
+}
+
+function _calcularSTAIManual(ptsE, ptsR, sexo) {
+  var clfE = clasificarSTAI(ptsE, 'e', sexo);
+  var clfR = clasificarSTAI(ptsR, 'r', sexo);
+  var sexoNom = sexo === 'v' ? 'varones' : 'mujeres';
+  document.getElementById('stai-pts-e').textContent = ptsE;
+  document.getElementById('stai-pts-r').textContent = ptsR;
+  document.getElementById('stai-badge-e').textContent = 'Estado: ' + clfE.cat;
+  document.getElementById('stai-badge-e').className = 'badge-grande ' + clfE.badge;
+  document.getElementById('stai-badge-r').textContent = 'Rasgo: ' + clfR.cat;
+  document.getElementById('stai-badge-r').className = 'badge-grande ' + clfR.badge;
+  document.getElementById('stai-percentiles').innerHTML =
+    '<div class="detalle-item"><div class="detalle-num">'+ptsE+'</div><div class="detalle-lbl">PD Estado</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+clfE.perc+'</div><div class="detalle-lbl">Percentil Estado</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+ptsR+'</div><div class="detalle-lbl">PD Rasgo</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+clfR.perc+'</div><div class="detalle-lbl">Percentil Rasgo</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+sexoNom+'</div><div class="detalle-lbl">Baremo</div></div>';
+  document.getElementById('stai-interp').innerHTML = '<p>Estado: '+ptsE+' — '+clfE.cat+' (Pc '+clfE.perc+'). Rasgo: '+ptsR+' — '+clfR.cat+' (Pc '+clfR.perc+'). <em>Carga manual.</em></p>';
+  window._staiE = ptsE; window._staiR = ptsR;
+  document.getElementById('stai-form').style.display = 'none';
+  document.getElementById('stai-resultado').style.display = 'block';
+}
+
+function _calcularPHQManual(total) {
+  var cat, badge;
+  if (total <= 4)       { cat='Mínima';              badge='bg-minima';  }
+  else if (total <= 9)  { cat='Leve';                badge='bg-leve';    }
+  else if (total <= 14) { cat='Moderada';             badge='bg-moderada';}
+  else if (total <= 19) { cat='Moderadamente grave';  badge='bg-grave';   }
+  else                  { cat='Grave';               badge='bg-grave';   }
+  document.getElementById('phq-pts').textContent = total;
+  document.getElementById('phq-cat').textContent = cat;
+  document.getElementById('phq-badge').textContent = cat;
+  document.getElementById('phq-badge').className = 'badge-grande ' + badge;
+  document.getElementById('phq-interp').innerHTML = '<p>Puntaje PHQ-9: '+total+'/27 — '+cat+'. <em>Carga manual.</em></p>';
+  window._phqTotal = total;
+  document.getElementById('phq-form').style.display = 'none';
+  document.getElementById('phq-resultado').style.display = 'block';
+}
+
+function _calcularGADManual(total) {
+  var cat, badge;
+  if (total <= 4)       { cat='Mínima'; badge='bg-minima'; }
+  else if (total <= 9)  { cat='Leve';   badge='bg-leve';   }
+  else if (total <= 14) { cat='Moderada'; badge='bg-moderada'; }
+  else                  { cat='Grave';  badge='bg-grave';  }
+  document.getElementById('gad-pts').textContent = total;
+  document.getElementById('gad-cat').textContent = cat;
+  document.getElementById('gad-badge').textContent = cat;
+  document.getElementById('gad-badge').className = 'badge-grande ' + badge;
+  document.getElementById('gad-interp').innerHTML = '<p>Puntaje GAD-7: '+total+'/21 — '+cat+'. <em>Carga manual.</em></p>';
+  window._gadTotal = total;
+  document.getElementById('gad-form').style.display = 'none';
+  document.getElementById('gad-resultado').style.display = 'block';
+}
+
+function _calcularSPAIBManual(total) {
+  var corte = 40;
+  var cat = total >= corte ? 'Clínicamente significativo' : 'Sin significación clínica';
+  var badge = total >= corte ? 'bg-grave' : 'bg-minima';
+  document.getElementById('spaib-pts').textContent = total;
+  document.getElementById('spaib-cat').textContent = cat;
+  document.getElementById('spaib-badge').textContent = cat;
+  document.getElementById('spaib-badge').className = 'badge-grande ' + badge;
+  document.getElementById('spaib-interp').innerHTML = '<p>Puntaje SPAI-B: '+total+'/90 — '+cat+' (corte ≥40). <em>Carga manual.</em></p>';
+  window._spaibTotal = total;
+  document.getElementById('spaib-form').style.display = 'none';
+  document.getElementById('spaib-resultado').style.display = 'block';
+}
+
+function _calcularASRSManual(secA, sI, sH, sT, grupo) {
+  var positivo = secA >= 4;
+  var bar = ASRS_BAR[grupo];
+  var pcI = asrsBuscarPc(sI, bar.I), pcH = asrsBuscarPc(sH, bar.H), pcT = asrsBuscarPc(sT, bar.T);
+  var zI = parseFloat(((sI-bar.I.M)/bar.I.DS).toFixed(2));
+  var zH = parseFloat(((sH-bar.H.M)/bar.H.DS).toFixed(2));
+  var zT = parseFloat(((sT-bar.T.M)/bar.T.DS).toFixed(2));
+  function pcLbl(pc){return pc>=90?'Muy elevado':pc>=75?'Elevado':pc>=40?'Promedio':'Bajo';}
+  document.getElementById('asrs-detalle').innerHTML =
+    '<div class="detalle-item"><div class="detalle-num">'+(positivo?'✓ Positivo':'✗ Negativo')+'</div><div class="detalle-lbl">Sección A ('+secA+'/6)</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pcI+'</div><div class="detalle-lbl">ASRS-I ('+sI+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pcH+'</div><div class="detalle-lbl">ASRS-H ('+sH+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pcT+'</div><div class="detalle-lbl">ASRS-T ('+sT+')</div></div>';
+  document.getElementById('asrs-interp').innerHTML =
+    '<p>Sección A: '+secA+'/6 — '+(positivo?'Screening positivo (≥4)':'Screening negativo')+'. Inatención: '+sI+' (Z='+zI+', Pc'+pcI+'). Hiperactividad: '+sH+' (Z='+zH+', Pc'+pcH+'). Total: '+sT+' (Z='+zT+', Pc'+pcT+'). <em>Carga manual.</em></p>';
+  window._asrsData = { secA:secA, sI:sI, sH:sH, sT:sT, pcI:pcI, pcH:pcH, pcT:pcT, zI:zI, zH:zH, zT:zT, grupo:grupo };
+  document.getElementById('asrs-form').style.display = 'none';
+  document.getElementById('asrs-resultado').style.display = 'block';
+}
+
+function _calcularWURSManual(total) {
+  var M=23.5, DS=13.16;
+  var z = parseFloat(((total-M)/DS).toFixed(2));
+  var pc = Math.max(1,Math.min(99,Math.round(50+28.57*z)));
+  var cat = total >= 46 ? 'Compatible con TDAH retrospectivo (≥46)' : 'Sin indicadores retrospectivos de TDAH';
+  document.getElementById('wurs-detalle').innerHTML =
+    '<div class="detalle-item"><div class="detalle-num">'+total+'</div><div class="detalle-lbl">Puntaje total</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z>=0?'+':'')+z+'</div><div class="detalle-lbl">Z</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">Pc '+pc+'</div><div class="detalle-lbl">Percentil</div></div>';
+  document.getElementById('wurs-interp').innerHTML = '<p>'+cat+'. Puntaje: '+total+'/100 (Z='+z+', Pc'+pc+'). <em>Carga manual.</em></p>';
+  window._wursTotal = total; window._wursZ = z; window._wursPc = pc;
+  document.getElementById('wurs-form').style.display = 'none';
+  document.getElementById('wurs-resultado').style.display = 'block';
+}
+
+function _calcularMBIManual(ce, dp, rp) {
+  function catCE(v){return v>=27?'Alto':v>=17?'Moderado':'Bajo';}
+  function catDP(v){return v>=10?'Alto':v>=7?'Moderado':'Bajo';}
+  function catRP(v){return v<=33?'Bajo':v<=39?'Moderado':'Alto';}
+  var cats = { CE:catCE(ce), DP:catDP(dp), RP:catRP(rp) };
+  var burnout = cats.CE==='Alto'||cats.DP==='Alto'||cats.RP==='Bajo';
+  document.getElementById('mbi-detalle').innerHTML =
+    '<div class="detalle-item"><div class="detalle-num">'+ce+'</div><div class="detalle-lbl">CE ('+cats.CE+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+dp+'</div><div class="detalle-lbl">DP ('+cats.DP+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+rp+'</div><div class="detalle-lbl">RP ('+cats.RP+')</div></div>';
+  document.getElementById('mbi-interp').innerHTML =
+    '<p>CE: '+ce+'/54 ('+cats.CE+') · DP: '+dp+'/30 ('+cats.DP+') · RP: '+rp+'/48 ('+cats.RP+'). '+(burnout?'<strong>Indicadores de burnout presentes.</strong>':'Sin indicadores significativos de burnout.')+' <em>Carga manual.</em></p>';
+  window._mbiData = { ce:ce, dp:dp, rp:rp, cats:cats };
+  document.getElementById('mbi-form').style.display = 'none';
+  document.getElementById('mbi-resultado').style.display = 'block';
+}
+
+function _calcularCSIManual(vals) {
+  // Usar la misma lógica que calcularCSI pero con valores directos
+  var CSI_BAREMOS_MAN = {
+    REP:{M:13.6,DS:5.2},AUC:{M:7.9,DS:5.3},EEM:{M:11.9,DS:5.6},
+    PSD:{M:10.5,DS:5.4},APS:{M:11.4,DS:5.7},REC:{M:12.3,DS:5.0},
+    EVP:{M:10.8,DS:4.9},RES:{M:7.2,DS:4.8}
+  };
+  var LABELS = {REP:'Resolución de Problemas',AUC:'Autocrítica',EEM:'Expresión Emocional',
+    PSD:'Pensamiento Desiderativo',APS:'Apoyo Social',REC:'Reestructuración Cognitiva',
+    EVP:'Evitación de Problemas',RES:'Retirada Social'};
+  var detalleHtml = '', interpHtml = '<ul>';
+  Object.keys(vals).forEach(function(k){
+    var v=vals[k], b=CSI_BAREMOS_MAN[k];
+    var z=b?parseFloat(((v-b.M)/b.DS).toFixed(2)):null;
+    var pc=z!==null?Math.max(1,Math.min(99,Math.round(50+28.57*z))):null;
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+(pc!==null?'Pc '+pc:'—')+'</div><div class="detalle-lbl">'+LABELS[k]+' ('+v+')</div></div>';
+    interpHtml += '<li>'+LABELS[k]+': '+v+'/16'+(z!==null?' · Z='+(z>=0?'+':'')+z:'')+' (Pc'+(pc||'—')+')</li>';
+  });
+  interpHtml += '</ul><p><em>Carga manual.</em></p>';
+  document.getElementById('csi-detalle').innerHTML = detalleHtml;
+  document.getElementById('csi-interp').innerHTML = interpHtml;
+  window._csiVals = vals;
+  document.getElementById('csi-form').style.display = 'none';
+  document.getElementById('csi-resultado').style.display = 'block';
+}
+
 function iniciarBDI() {
   var c = document.getElementById('bdi-items-container');
   c.innerHTML = BDI_ITEMS.map(function(item, i) {
@@ -7299,25 +7636,27 @@ function guardarAsrs() {
   var grupo=document.getElementById('asrs-grupo').value;
   if(!pacId){alert('Seleccioná un paciente.');return;}
   if(!grupo){alert('Seleccioná el grupo etario.');return;}
-  var sel=document.querySelector('input[name="asrs_1"]:checked');
-  if(!sel){alert('Calculá el resultado antes de guardar.');return;}
-  var positivos=0,scoreI=0,scoreH=0,scoreT=0;
-  for(var i=1;i<=6;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s&&parseInt(s.value)>=(i<=3?2:3))positivos++;}
-  ASRS_ITEMS.forEach(function(it){
-    var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked');
-    if(!s)return; var v=parseInt(s.value); scoreT+=v;
-    if(ASRS_INATENCION.indexOf(it.n)!==-1)scoreI+=v;
-    if(ASRS_HIPERACTIVIDAD.indexOf(it.n)!==-1)scoreH+=v;
-  });
-  var bar=ASRS_BAR[grupo];
-  var pcI=asrsBuscarPc(scoreI,bar.I),pcH=asrsBuscarPc(scoreH,bar.H),pcT=asrsBuscarPc(scoreT,bar.T);
-  var zT=parseFloat(((scoreT-bar.T.M)/bar.T.DS).toFixed(2));
+  var positivos,scoreI,scoreH,scoreT,pcI,pcH,pcT,zT;
+  if (window._asrsData) {
+    positivos=window._asrsData.secA; scoreI=window._asrsData.sI; scoreH=window._asrsData.sH; scoreT=window._asrsData.sT;
+    pcI=window._asrsData.pcI; pcH=window._asrsData.pcH; pcT=window._asrsData.pcT; zT=window._asrsData.zT;
+  } else {
+    var sel=document.querySelector('input[name="asrs_1"]:checked');
+    if(!sel){alert('Calculá el resultado antes de guardar.');return;}
+    positivos=0;scoreI=0;scoreH=0;scoreT=0;
+    for(var i=1;i<=6;i++){var s=document.querySelector('input[name="asrs_'+i+'"]:checked');if(s&&parseInt(s.value)>=(i<=3?2:3))positivos++;}
+    ASRS_ITEMS.forEach(function(it){var s=document.querySelector('input[name="asrs_'+it.n+'"]:checked');if(!s)return;var v=parseInt(s.value);scoreT+=v;if(ASRS_INATENCION.indexOf(it.n)!==-1)scoreI+=v;if(ASRS_HIPERACTIVIDAD.indexOf(it.n)!==-1)scoreH+=v;});
+    var bar=ASRS_BAR[grupo];
+    pcI=asrsBuscarPc(scoreI,bar.I);pcH=asrsBuscarPc(scoreH,bar.H);pcT=asrsBuscarPc(scoreT,bar.T);
+    zT=parseFloat(((scoreT-bar.T.M)/bar.T.DS).toFixed(2));
+  }
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id,paciente_id:pacId,test:'ASRS-V1.1',fecha:fecha,
     puntaje_total:scoreT,puntaje_z:zT,
     categoria:positivos>=4?'Positivo para TDAH':'Negativo para TDAH',
     datos:{parte_a_positivos:positivos,total_18:scoreT,scoreI:scoreI,scoreH:scoreH,scoreT:scoreT,pcI:pcI,pcH:pcH,pcT:pcT,grupo:grupo}
   },SESSION.access_token).then(function(){
+    window._asrsData=null;
     cargarResultados();toast('✓ Resultado guardado','success');
     var btnAll=document.querySelectorAll('.vista.active .btn-primary');
     var btn=btnAll.length?btnAll[btnAll.length-1]:null;
