@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.2</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.4</div>
     </div>
   </aside>
 
@@ -4681,7 +4681,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+mStr+'</td>'+
       '<td style="'+tdBase+'text-align:center;font-family:monospace;font-size:9px;">'+dsStr+'</td>'+
       '<td style="'+tdBase+'padding:3px 5px;">'+zGrilla(z)+'</td>'+
-      '<td style="'+tdBase+'font-size:9px;color:#111;font-weight:700;">'+((nota!=null&&nota!=undefined&&(z==null||z==undefined))?'<em style="color:#4a7040;font-weight:400;">'+nota+'</em>':lbl)+'</td>'+
+      '<td style="'+tdBase+'font-size:9px;color:#111;font-weight:700;">'+
+        (z!=null&&z!=undefined ? lbl : (nota!=null&&nota!=undefined ? '<em style="color:#4a7040;font-weight:400;">'+nota+'</em>' : '—'))+
+        (nota!=null&&nota!=undefined&&z!=null&&z!=undefined ? '<br><em style="color:#4a7040;font-weight:400;font-size:8px;">'+nota+'</em>' : '')+
+      '</td>'+
       '</tr>';
   }
 
@@ -4955,9 +4958,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'Test del Hotel') {
-          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, null, null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
-          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, null, null, d.zTiempo, r.fecha, 'Multitasking');
-          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, null, null, d.zBotones, r.fecha, 'Mem. prospectiva');
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, d.mTareas||null, d.dsTareas||null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, d.mTiempo||null, d.dsTiempo||null, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, d.mBotones||null, d.dsBotones||null, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BTA') {
           var btaEi = d.ei != null ? d.ei : null;
@@ -4995,9 +4998,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '</tr>';
 
         } else if (testNombre === 'Test del Hotel') {
-          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, null, null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
-          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, null, null, d.zTiempo, r.fecha, 'Multitasking');
-          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, null, null, d.zBotones, r.fecha, 'Mem. prospectiva');
+          rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, d.mTareas||null, d.dsTareas||null, d.zTareas, r.fecha, 'Iniciativa/Planificación');
+          if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, d.mTiempo||null, d.dsTiempo||null, d.zTiempo, r.fecha, 'Multitasking');
+          if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, d.mBotones||null, d.dsBotones||null, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BTA') {
           var btaEd = BTA_EDAD_LABELS[d.gi] || '—';
@@ -8143,9 +8146,12 @@ function calcularHotel() {
   if (hotelGetDesvioBoton(2) !== HOTEL_PENALIZACION) botonesCorrectos++;
 
   // Z scores (desvíos: invertir signo — menos desvío = mejor)
-  var zTareas  = parseFloat(((intentadas - bar.tareas[gi][0]) / bar.tareas[gi][1]).toFixed(2));
-  var zTiempo  = parseFloat((-(desvioTiempoTotal - bar.tiempo[gi][0]) / bar.tiempo[gi][1]).toFixed(2));
-  var zBotones = parseFloat((-(desvBotones - bar.botones[gi][0]) / bar.botones[gi][1]).toFixed(2));
+  var mTareas  = bar.tareas[gi][0];  var dsTareas  = bar.tareas[gi][1];
+  var mTiempo  = bar.tiempo[gi][0];  var dsTiempo  = bar.tiempo[gi][1];
+  var mBotones = bar.botones[gi][0]; var dsBotones = bar.botones[gi][1];
+  var zTareas  = parseFloat(((intentadas - mTareas) / dsTareas).toFixed(2));
+  var zTiempo  = parseFloat((-(desvioTiempoTotal - mTiempo) / dsTiempo).toFixed(2));
+  var zBotones = parseFloat((-(desvBotones - mBotones) / dsBotones).toFixed(2));
 
   var edadLabels = ['19–29','30–39','40–49','50–59'];
   var sexoLabel  = sexo === 'f' ? 'Femenino' : 'Masculino';
@@ -8175,6 +8181,9 @@ function calcularHotel() {
     desvioTiempo: desvioTiempoTotal, desvBotones: desvBotones,
     botonesCorrectos: botonesCorrectos,
     zTareas: zTareas, zTiempo: zTiempo, zBotones: zBotones,
+    mTareas: mTareas, dsTareas: dsTareas,
+    mTiempo: mTiempo, dsTiempo: dsTiempo,
+    mBotones: mBotones, dsBotones: dsBotones,
     sexo: sexo, gi: gi
   };
 
@@ -10426,8 +10435,7 @@ function calcularSDMT() {
 
 function guardarSDMT() {
   if (!SESSION) return;
-  var pacId = document.getElementById('bta-paciente')
-    document.getElementById('sdmt-paciente').value;
+  var pacId = document.getElementById('sdmt-paciente').value;
   var fecha = document.getElementById('sdmt-fecha').value;
   if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
   if (!window._sdmtData) { toast('Calculá el resultado antes de guardar.','error'); return; }
