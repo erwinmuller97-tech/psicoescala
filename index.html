@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.0</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.1</div>
     </div>
   </aside>
 
@@ -2038,18 +2038,26 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <option value="4">Postgrado</option>
           </select>
         </div>
+        <div class="field"><label>Versiones administradas *</label>
+          <select id="zoo-versiones" onchange="zooToggleVersiones()">
+            <option value="">— Seleccionar —</option>
+            <option value="v1">Solo Versión 1</option>
+            <option value="v2">Solo Versión 2</option>
+            <option value="ambas">Ambas versiones</option>
+          </select>
+        </div>
         <div class="field"><label>Fecha</label><input type="date" id="zoo-fecha"></div>
       </div>
     </div>
 
     <!-- Versión 1 -->
-    <div class="card">
+    <div class="card" id="zoo-card-v1" style="display:none;">
       <div class="card-title">Versión 1 — Alta demanda (planificación espontánea)</div>
       <div class="form-grid-3">
-        <div class="field"><label>Puntuación secuencia (0–8)</label><input type="number" id="zoo-v1-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
+        <div class="field"><label>Pje Secuencia (0–8)</label><input type="number" id="zoo-v1-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
         <div class="field"><label>Errores</label><input type="number" id="zoo-v1-err" min="0" placeholder="0" oninput="zooActualizar()"></div>
-        <div class="field"><label>Tiempo planificación (seg)</label><input type="number" id="zoo-v1-tplan" min="0" placeholder="seg"></div>
-        <div class="field"><label>Tiempo total (seg)</label><input type="number" id="zoo-v1-ttot" min="0" placeholder="seg"></div>
+        <div class="field"><label>Tiempo planificación (seg)</label><input type="number" id="zoo-v1-tplan" min="0" placeholder="seg" oninput="zooActualizar()"></div>
+        <div class="field"><label>Tiempo total (seg)</label><input type="number" id="zoo-v1-ttot" min="0" placeholder="seg" oninput="zooActualizar()"></div>
       </div>
       <div style="padding:8px 12px;background:var(--surface2);border-radius:6px;margin-top:8px;font-size:0.82rem;">
         Puntaje V1: <strong id="zoo-v1-pje">—</strong> <span style="color:var(--muted);">(secuencia − errores, mín. 0)</span>
@@ -2057,27 +2065,28 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     </div>
 
     <!-- Versión 2 -->
-    <div class="card">
+    <div class="card" id="zoo-card-v2" style="display:none;">
       <div class="card-title">Versión 2 — Baja demanda (seguir instrucciones)</div>
       <div style="background:#fff8e1;border:1px solid #f57f17;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:0.8rem;">
         <strong style="color:#e65100;">⚠ Descuentos automáticos:</strong> −1 si tiempo planificación &gt;15 seg · −1 si tiempo total &gt;123 seg
       </div>
       <div class="form-grid-3">
-        <div class="field"><label>Puntuación secuencia (0–8)</label><input type="number" id="zoo-v2-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
+        <div class="field"><label>Pje Secuencia (0–8)</label><input type="number" id="zoo-v2-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
         <div class="field"><label>Errores</label><input type="number" id="zoo-v2-err" min="0" placeholder="0" oninput="zooActualizar()"></div>
         <div class="field"><label>Tiempo planificación (seg)</label><input type="number" id="zoo-v2-tplan" min="0" placeholder="seg" oninput="zooActualizar()"></div>
         <div class="field"><label>Tiempo total (seg)</label><input type="number" id="zoo-v2-ttot" min="0" placeholder="seg" oninput="zooActualizar()"></div>
       </div>
       <div style="padding:8px 12px;background:var(--surface2);border-radius:6px;margin-top:8px;font-size:0.82rem;">
-        Puntaje V2: <strong id="zoo-v2-pje">—</strong> <span style="color:var(--muted);">(secuencia − errores − descuentos tiempo, mín. 0)</span>
+        Puntaje V2: <strong id="zoo-v2-pje">—</strong>
+        <span style="color:var(--muted);">(secuencia − errores − descuentos tiempo, mín. 0)</span>
       </div>
     </div>
 
-    <div style="padding:10px 16px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:16px;font-size:0.9rem;">
-      <strong>Puntaje total bruto:</strong> <span id="zoo-total-bruto" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
-      <span style="color:var(--muted);font-size:0.8rem;margin-left:8px;">(V1 + V2)</span>
+    <!-- Total solo si ambas -->
+    <div id="zoo-card-total" style="display:none;padding:10px 16px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:16px;font-size:0.9rem;">
+      <strong>Total bruto (V1+V2):</strong> <span id="zoo-total-bruto" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
       &nbsp;→&nbsp;
-      <strong>Puntuación convertida:</strong> <span id="zoo-total-conv" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
+      <strong>Pje convertido:</strong> <span id="zoo-total-conv" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
     </div>
 
     <div class="btn-row">
@@ -2096,6 +2105,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     </div>
   </div>
 </div>
+
 
 <!-- ── TEST DEL HOTEL ── -->
 <div class="vista" id="vista-hotel">
@@ -5235,9 +5245,23 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += filaTabla('Juicio Temporal', d.conv!=null?d.conv:null, d.m||null, d.ds||null, d.z, r.fecha, null);
 
         } else if (testNombre === 'BADS-Zoo') {
-          rows += filaTabla('Zoo V1', d.pje1!=null?d.pje1:null, null, null, null, r.fecha, 'Sec='+d.v1s+' Err='+d.v1e);
-          rows += filaTabla('Zoo V2', d.pje2!=null?d.pje2:null, null, null, null, r.fecha, 'Sec='+d.v2s+' Err='+d.v2e+(d.desc2?' Desc='+d.desc2:''));
-          rows += filaTabla('Zoo Total', d.bruto!=null?d.bruto:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
+          var ver = d.ver||'ambas';
+          if (ver==='v1'||ver==='ambas') {
+            rows += filaTabla('Zoo V1 — Secuencia', d.v1s!=null?d.v1s:null, null, null, d.z_v1sec!=null?d.z_v1sec:null, r.fecha, null);
+            rows += filaTabla('Zoo V1 — Errores', d.v1e!=null?d.v1e:null, null, null, d.z_v1err!=null?d.z_v1err:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V1 — T. Planif. (seg)', d.v1tp!=null?d.v1tp:null, null, null, d.z_v1tp!=null?d.z_v1tp:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V1 — T. Total (seg)', d.v1tt!=null?d.v1tt:null, null, null, d.z_v1tt!=null?d.z_v1tt:null, r.fecha, 'Z invertido');
+          }
+          if (ver==='v2'||ver==='ambas') {
+            rows += filaTabla('Zoo V2 — Secuencia', d.v2s!=null?d.v2s:null, null, null, d.z_v2sec!=null?d.z_v2sec:null, r.fecha, null);
+            rows += filaTabla('Zoo V2 — Errores', d.v2e!=null?d.v2e:null, null, null, d.z_v2err!=null?d.z_v2err:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V2 — T. Planif. (seg)', d.v2tp!=null?d.v2tp:null, null, null, d.z_v2tp!=null?d.z_v2tp:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V2 — T. Total (seg)', d.v2tt!=null?d.v2tt:null, null, null, d.z_v2tt!=null?d.z_v2tt:null, r.fecha, 'Z invertido');
+          }
+          if (ver==='ambas') {
+            rows += filaTabla('Zoo Total Bruto', d.bruto!=null?d.bruto:null, null, null, d.z_bruto!=null?d.z_bruto:null, r.fecha, null);
+            rows += filaTabla('Zoo Total Convertido', d.conv!=null?d.conv:null, null, null, d.z_conv!=null?d.z_conv:null, r.fecha, 'Pje conv. '+d.conv);
+          }
 
         } else if (testNombre === 'BTA') {
           var btaEi = d.ei != null ? d.ei : null;
@@ -8590,6 +8614,15 @@ function guardarJuicio() {
 }
 
 // ── Mapa del Zoo ─────────────────────────────────────────────────────────────
+// Baremos: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48
+// 10 variables con M y DS — Edad × Sexo × Educación
+// Dirección Z: Secuencia/Total → más=mejor (normal) | Errores/Tiempos → menos=mejor (invertido)
+// Estructura baremo: [gi][sexo][ei] → objeto con todas las variables
+// gi: 0=20-29, 1=30-39, 2=40-49, 3=50-59
+// sexo: f/m
+// ei: 0=Prim, 1=Sec, 2=Ter, 3=Univ, 4=Post
+// Cada celda: [M,DS] o null (sin variabilidad o sin dato)
+
 function zooPBtoConv(pb) {
   if (pb >= 16) return 4;
   if (pb >= 11) return 3;
@@ -8598,48 +8631,120 @@ function zooPBtoConv(pb) {
   return 0;
 }
 
-// Baremos Zoo: [M, DS] de Pje Convertido por [edad][sexo][educ]
-var ZOO_BAR = {
-  f: [
-    // 20-29: Sec=null, Ter=[3.14,0.9], Univ=[2.87,1.2], Post=[2,2.82]
-    [null, null, [3.14,0.9], [2.87,1.2], [2,2.82]],
-    // 30-39: Sec=[2,1.41], Ter=[3,1.41], Univ=[3.18,1.25], Post=[3.25,1.5]
-    [null, [2,1.41], [3,1.41], [3.18,1.25], [3.25,1.5]],
-    // 40-49: Prim=[1,1.41], Sec=[2.36,1.12], Ter=[2.5,1], Univ=[2.57,1.2], Post=[1,null]
-    [[1,1.41], [2.36,1.12], [2.5,1], [2.57,1.2], [1,null]],
-    // 50-59: Prim=[1.3,1.15], Sec=[3,1.26], Ter=[3.2,1.09], Univ=[3.14,1.21], Post=[2.75,0.95]
-    [[1.3,1.15], [3,1.26], [3.2,1.09], [3.14,1.21], [2.75,0.95]]
-  ],
-  m: [
-    // 20-29: Sec=[2.6,1.53], Ter=[3,1.41], Univ=[3.23,1.25]
-    [null, [2.6,1.53], [3,1.41], [3.23,1.25], null],
-    // 30-39: Sec=[2,0.57], Ter=[2.6,1.15], Univ=[2.3,1.6], Post=[2.5,0.7]
-    [null, [2,0.57], [2.6,1.15], [2.3,1.6], [2.5,0.7]],
-    // 40-49: Sec=[2.83,1.17], Ter=[1,1.41], Univ=[2.43,1.27], Post=[4,null]
-    [null, [2.83,1.17], [1,1.41], [2.43,1.27], [4,null]],
-    // 50-59: Prim=[1.6,0.57], Sec=[3,0.81], Ter=[2.5,2.12], Univ=[2,null]
-    [[1.6,0.57], [3,0.81], [2.5,2.12], [2,null], null]
-  ]
+// Baremo completo — [v1sec, v1err, v1tplan, v1ttot, v2sec, v2err, v2tplan, v2ttot, totBruto, totConv]
+// Cada campo: [M, DS] o null
+var ZOO_BAR_FULL = {
+  f: {
+    0: { // 20-29
+      2: [[5,2.45],[1.3,1.8],[91.57,84.9],[185.57,91.7],[8,null],[0,null],[20.7,19.9],[75.6,32.1],[12.86,3.07],[3.14,0.9]],   // Ter
+      3: [[5.31,2.75],[1.12,1.4],[56.7,47.2],[157,61.21],[7.93,0.25],[0,null],[11.31,16.61],[69.44,24.13],[11.75,4.49],[2.87,1.2]], // Univ
+      4: [[4.5,4.9],[3,4.24],[46.5,37.47],[222,121.6],[8,null],[0,null],[9,5.6],[49.5,50.2],[9.5,9.19],[2,2.82]]  // Post
+    },
+    1: { // 30-39
+      1: [[4.25,2.63],[2.5,2.64],[49.25,34.24],[175.25,105.67],[8,null],[0,null],[25,32.54],[121,35.52],[9.75,4.5],[2,1.41]], // Sec
+      2: [[5.5,3.5],[1,1.41],[67.5,67.1],[201.5,65.8],[8,null],[0,0],[17.5,26.5],[54.5,7.7],[12.5,4.9],[3,1.41]], // Ter
+      3: [[6.27,3.45],[0.54,0.68],[82.27,52.08],[185.36,90.07],[8,null],[0,null],[13.63,18.16],[74.27,28.15],[13.81,2.96],[3.18,1.25]], // Univ
+      4: [[7,2],[0.25,0.5],[54,59.39],[141.25,111.55],[8,null],[0,null],[18.75,22.24],[61.25,47.52],[14.75,2.5],[3.25,1.5]]  // Post
+    },
+    2: { // 40-49
+      0: [[2,1.41],[3.5,3.5],[70,79.19],[260,19.79],[8,null],[0.5,0.7],[1.5,2.12],[57.5,31.81],[6,4.24],[1,1.41]], // Prim
+      1: [[4.27,2.57],[1.54,1.36],[69.54,56.37],[212.63,104.86],[7.9,0.3],[0.18,0.4],[5.36,4.4],[76.18,28.69],[10.36,4.2],[2.36,1.12]], // Sec
+      2: [[4.5,0],[0.5,2.6],[34.5,20.68],[167.25,19.88],[8,null],[0.5,0.6],[5.75,4.57],[74.5,15.84],[11.5,3],[2.5,1]], // Ter
+      3: [[5,3],[1.43,1.81],[46.57,54.5],[142.14,61.45],[8,null],[0,null],[17.85,30.55],[71.42,47.89],[11.43,4.75],[2.57,1.2]], // Univ
+      4: null  // Post N=1
+    },
+    3: { // 50-59
+      0: [[2.6,1.15],[2.6,2.08],[14,11],[77.6,22.74],[8,null],[0.3,0.57],[8,9.53],[89.3,71.84],[7.3,4.04],[1.3,1.15]], // Prim
+      1: [[6,2.28],[1.16,1.6],[57.83,47.93],[169.5,28.46],[8,null],[0,null],[6,7.37],[61,10.8],[12.83,3.54],[3,1.26]], // Sec
+      2: [[5.8,3.19],[1,1.41],[54.8,47.73],[165.4,72.35],[8,null],[0,null],[8.2,10.13],[81.4,25.82],[13.2,3.83],[3.2,1.09]], // Ter
+      3: [[6.14,2.34],[1,1.41],[53.57,43.19],[148.43,61.56],[8,0],[0.14,0.37],[11.14,13.84],[79.57,21.56],[13,3.46],[3.14,1.21]], // Univ
+      4: [[5.25,2.75],[1,0.81],[136.75,126.29],[209,85.65],[8,0],[0,0],[26.25,38.68],[98,55.61],[12,3.16],[2.75,0.95]]  // Post
+    }
+  },
+  m: {
+    0: { // 20-29
+      1: [[5,2.64],[0.6,0.57],[57.3,18.01],[149.6,66.58],[8,null],[0,null],[21,20],[69,17.3],[12.3,2.8],[2.6,1.53]], // Sec
+      2: [[5.5,3.53],[0.5,0.7],[59.5,72.83],[192.5,28.9],[8,null],[0,null],[2,2.8],[78,53.74],[13,4.24],[3,1.41]], // Ter
+      3: [[6.41,2.52],[0.47,0.87],[63.12,50.05],[149.18,50.53],[7.9,0.48],[0.06,0.24],[11.12,12.51],[64.29,26.93],[13.75,3.31],[3.23,1.25]] // Univ
+    },
+    1: { // 30-39
+      1: [[5.43,2.51],[1.86,2.11],[65.57,67.63],[171.43,70.22],[7.57,0.78],[0.14,0.37],[17.86,17.22],[95.57,36.7],[10.43,3.55],[2,0.57]], // Sec
+      2: [[5,2.64],[1.6,2.08],[59.6,55.89],[156.6,49.32],[7.3,1.15],[0,null],[10.6,4.04],[92,58.3],[11.6,3.8],[2.6,1.15]], // Ter
+      3: [[5.5,2.9],[1.6,2.06],[72.8,85.53],[160.6,82.9],[7.4,0.88],[0.3,0.5],[15,15.3],[80.5,38.2],[9.75,6.68],[2.3,1.6]], // Univ
+      4: [[4,null],[1.5,0.7],[154,67.8],[216.5,61.5],[8,null],[0,null],[14.5,16.26],[77.5,3.5],[10.5,0.7],[2.5,0.7]]  // Post
+    },
+    2: { // 40-49
+      1: [[5.16,2.2],[1.16,1.47],[74.6,58.22],[146.3,87.2],[8,null],[0,null],[9.16,4.9],[65.6,23.23],[12,3.46],[2.83,1.17]], // Sec
+      2: [[4,null],[1.5,0.7],[32,24.04],[117.5,34.64],[7,1.4],[0.5,0.7],[21.5,23.33],[73.5,9.19],[8.5,2.12],[1,1.41]], // Ter
+      3: [[4.28,2.69],[1,0.57],[22.28,18.02],[127.71,65.88],[7.57,1.13],[0.28,0.75],[7.71,6.04],[53.7,16.4],[10.57,3.95],[2.43,1.27]], // Univ
+      4: [[8,null],[0,null],[103.5,1.82],[193,175.36],[8,null],[0,null],[2,1.41],[34.5,4.95],[16,null],[4,null]]  // Post
+    },
+    3: { // 50-59
+      0: [[3.3,1.53],[2.6,1.53],[62.3,58.82],[293,86.01],[8,null],[0,null],[14,11.53],[114,73.9],[8.6,1.52],[1.6,0.57]], // Prim
+      1: [[5.7,2.45],[0.6,0.7],[38,29.3],[169.2,67.6],[8,0],[0,0],[12,10.89],[78.4,27.53],[13.1,3.1],[3,0.81]], // Sec
+      2: [[5,4.24],[0.5,0.7],[100,110.3],[171,107.48],[8,null],[0,null],[19.5,3.53],[78.5,14.84],[12,4.2],[2.5,2.12]], // Ter
+      3: [[2,null],[0.5,0.7],[67,65.05],[189,16.97],[8,null],[0,null],[39,41.01],[130,33.94],[9.5,0.7],[2,null]]  // Univ
+    }
+  }
 };
 
+function zooGetBar(sexo, gi, ei) {
+  var s = ZOO_BAR_FULL[sexo];
+  if (!s) return null;
+  var g = s[gi];
+  if (!g) return null;
+  return g[ei] || null;
+}
+
+function zooCalcZ(val, bar_idx, invertir) {
+  // bar_idx: índice en el array de 10 variables
+  // Se necesita la fila del baremo completo
+  // Esto se llama con la fila ya recuperada
+  return null; // placeholder — se usa directo en calcularZoo
+}
+
+function zooZ(val, mds, invertir) {
+  if (val === null || val === undefined || !mds || mds[1] === null || mds[1] === 0) return null;
+  var z = (val - mds[0]) / mds[1];
+  if (invertir) z = -z;
+  return parseFloat(z.toFixed(2));
+}
+
+function zooToggleVersiones() {
+  var ver = document.getElementById('zoo-versiones').value;
+  var c1 = document.getElementById('zoo-card-v1');
+  var c2 = document.getElementById('zoo-card-v2');
+  var ct = document.getElementById('zoo-card-total');
+  if (c1) c1.style.display = (ver==='v1'||ver==='ambas') ? 'block' : 'none';
+  if (c2) c2.style.display = (ver==='v2'||ver==='ambas') ? 'block' : 'none';
+  if (ct) ct.style.display = (ver==='ambas') ? 'block' : 'none';
+}
+
 function zooActualizar() {
-  var v1s = parseFloat(document.getElementById('zoo-v1-sec').value) || 0;
-  var v1e = parseFloat(document.getElementById('zoo-v1-err').value) || 0;
-  var pje1 = Math.max(0, v1s - v1e);
-  var el1 = document.getElementById('zoo-v1-pje'); if(el1) el1.textContent = pje1;
-
-  var v2s = parseFloat(document.getElementById('zoo-v2-sec').value) || 0;
-  var v2e = parseFloat(document.getElementById('zoo-v2-err').value) || 0;
-  var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value) || 0;
-  var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value) || 0;
-  var desc2 = (v2tp > 15 ? 1 : 0) + (v2tt > 123 ? 1 : 0);
-  var pje2 = Math.max(0, v2s - v2e - desc2);
-  var el2 = document.getElementById('zoo-v2-pje'); if(el2) el2.textContent = pje2 + (desc2 ? ' (−'+desc2+' desc.)' : '');
-
-  var bruto = pje1 + pje2;
-  var conv  = zooPBtoConv(bruto);
-  var elB = document.getElementById('zoo-total-bruto'); if(elB) elB.textContent = bruto;
-  var elC = document.getElementById('zoo-total-conv');  if(elC) elC.textContent = conv;
+  var ver = document.getElementById('zoo-versiones').value;
+  if (ver==='v1'||ver==='ambas') {
+    var v1s = parseFloat(document.getElementById('zoo-v1-sec').value)||0;
+    var v1e = parseFloat(document.getElementById('zoo-v1-err').value)||0;
+    var pje1 = Math.max(0, v1s-v1e);
+    var el1 = document.getElementById('zoo-v1-pje'); if(el1) el1.textContent=pje1;
+  }
+  if (ver==='v2'||ver==='ambas') {
+    var v2s  = parseFloat(document.getElementById('zoo-v2-sec').value)||0;
+    var v2e  = parseFloat(document.getElementById('zoo-v2-err').value)||0;
+    var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value)||0;
+    var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value)||0;
+    var desc2 = (v2tp>15?1:0)+(v2tt>123?1:0);
+    var pje2 = Math.max(0,v2s-v2e-desc2);
+    var el2 = document.getElementById('zoo-v2-pje');
+    if(el2) el2.textContent = pje2+(desc2?' (−'+desc2+' desc.)':'');
+  }
+  if (ver==='ambas') {
+    var bruto = (parseFloat(document.getElementById('zoo-v1-pje').textContent)||0)
+              + (parseFloat((document.getElementById('zoo-v2-pje').textContent||'').replace(/\s.*/,''))||0);
+    var conv  = zooPBtoConv(bruto);
+    var elB = document.getElementById('zoo-total-bruto'); if(elB) elB.textContent=bruto;
+    var elC = document.getElementById('zoo-total-conv');  if(elC) elC.textContent=conv;
+  }
 }
 
 function iniciarZoo() {
@@ -8653,57 +8758,93 @@ function limpiarZoo() {
    'zoo-v2-sec','zoo-v2-err','zoo-v2-tplan','zoo-v2-ttot'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
-  ['zoo-v1-pje','zoo-v2-pje'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent='—'; });
-  var b=document.getElementById('zoo-total-bruto'); if(b) b.textContent='—';
-  var c=document.getElementById('zoo-total-conv');  if(c) c.textContent='—';
+  ['zoo-v1-pje','zoo-v2-pje'].forEach(function(id){var el=document.getElementById(id);if(el) el.textContent='—';});
+  ['zoo-total-bruto','zoo-total-conv'].forEach(function(id){var el=document.getElementById(id);if(el) el.textContent='—';});
+  var vs=document.getElementById('zoo-versiones'); if(vs) vs.value='';
+  zooToggleVersiones();
 }
 
 function calcularZoo() {
   var sexo = document.getElementById('zoo-sexo').value;
   var gi   = document.getElementById('zoo-edad').value;
   var ei   = document.getElementById('zoo-educ').value;
-  if (!sexo || gi==='' || ei==='') { toast('Completá sexo, edad y educación.','error'); return; }
-  gi = parseInt(gi); ei = parseInt(ei);
+  var ver  = document.getElementById('zoo-versiones').value;
+  if (!sexo||gi===''||ei==='') { toast('Completá sexo, edad y educación.','error'); return; }
+  if (!ver) { toast('Seleccioná las versiones administradas.','error'); return; }
+  gi=parseInt(gi); ei=parseInt(ei);
 
-  var v1s  = parseFloat(document.getElementById('zoo-v1-sec').value)   || 0;
-  var v1e  = parseFloat(document.getElementById('zoo-v1-err').value)   || 0;
-  var v2s  = parseFloat(document.getElementById('zoo-v2-sec').value)   || 0;
-  var v2e  = parseFloat(document.getElementById('zoo-v2-err').value)   || 0;
-  var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value) || 0;
-  var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value)  || 0;
+  var bar = zooGetBar(sexo, gi, ei);
+  var edadLbls=['20–29','30–39','40–49','50–59'];
+  var educLbls=['Primario','Secundario','Terciario','Universitario','Postgrado'];
 
-  var pje1 = Math.max(0, v1s - v1e);
-  var desc2 = (v2tp > 15 ? 1 : 0) + (v2tt > 123 ? 1 : 0);
-  var pje2  = Math.max(0, v2s - v2e - desc2);
-  var bruto = pje1 + pje2;
-  var conv  = zooPBtoConv(bruto);
+  function zStr(z) { return z!==null?(z>=0?'+':'')+z:'—'; }
 
-  var bar = badsGetBar(ZOO_BAR, sexo, gi, ei);
-  var m  = bar ? bar[0] : null;
-  var ds = bar ? bar[1] : null;
-  var z  = (m !== null && ds !== null && ds > 0) ? parseFloat(((conv - m) / ds).toFixed(2)) : null;
+  var datos = { sexo:sexo, gi:gi, ei:ei, ver:ver };
+  var detalleHtml = '';
+  var interpHtml = '<p><strong>Grupo:</strong> '+(sexo==='f'?'Femenino':'Masculino')+' · '+edadLbls[gi]+' · '+educLbls[ei]+'</p>';
 
-  var edadLbls = ['20–29','30–39','40–49','50–59'];
-  var educLbls = ['Primario','Secundario','Terciario','Universitario','Postgrado'];
+  // Variables índice en bar: [v1sec=0, v1err=1, v1tplan=2, v1ttot=3, v2sec=4, v2err=5, v2tplan=6, v2ttot=7, totBruto=8, totConv=9]
+  if (ver==='v1'||ver==='ambas') {
+    var v1s  = parseFloat(document.getElementById('zoo-v1-sec').value)||0;
+    var v1e  = parseFloat(document.getElementById('zoo-v1-err').value)||0;
+    var v1tp = parseFloat(document.getElementById('zoo-v1-tplan').value)||0;
+    var v1tt = parseFloat(document.getElementById('zoo-v1-ttot').value)||0;
+    var pje1 = Math.max(0,v1s-v1e);
+    var z_v1sec  = bar ? zooZ(v1s,  bar[0], false) : null;
+    var z_v1err  = bar ? zooZ(v1e,  bar[1], true)  : null;
+    var z_v1tp   = bar ? zooZ(v1tp, bar[2], true)  : null;
+    var z_v1tt   = bar ? zooZ(v1tt, bar[3], true)  : null;
+    datos.v1s=v1s; datos.v1e=v1e; datos.v1tp=v1tp; datos.v1tt=v1tt; datos.pje1=pje1;
+    datos.z_v1sec=z_v1sec; datos.z_v1err=z_v1err; datos.z_v1tp=z_v1tp; datos.z_v1tt=z_v1tt;
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v1s+'</div><div class="detalle-lbl">Secuencia<br>V1</div></div>';
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v1e+'</div><div class="detalle-lbl">Errores<br>V1</div></div>';
+    interpHtml += '<p><strong>V1 — Secuencia:</strong> '+v1s+(bar&&bar[0]?' (M='+bar[0][0]+', DS='+bar[0][1]+')':'')+' · Z='+zStr(z_v1sec)+' — '+badsZLabel(z_v1sec)+'</p>';
+    interpHtml += '<p><strong>V1 — Errores:</strong> '+v1e+(bar&&bar[1]?' (M='+bar[1][0]+', DS='+bar[1][1]+')':'')+' · Z='+zStr(z_v1err)+' — '+badsZLabel(z_v1err)+'</p>';
+    interpHtml += '<p><strong>V1 — T.Planif.:</strong> '+v1tp+'seg'+(bar&&bar[2]?' (M='+bar[2][0]+', DS='+bar[2][1]+')':'')+' · Z='+zStr(z_v1tp)+' — '+badsZLabel(z_v1tp)+'</p>';
+    interpHtml += '<p><strong>V1 — T.Total:</strong> '+v1tt+'seg'+(bar&&bar[3]?' (M='+bar[3][0]+', DS='+bar[3][1]+')':'')+' · Z='+zStr(z_v1tt)+' — '+badsZLabel(z_v1tt)+'</p>';
+  }
+  if (ver==='v2'||ver==='ambas') {
+    var v2s  = parseFloat(document.getElementById('zoo-v2-sec').value)||0;
+    var v2e  = parseFloat(document.getElementById('zoo-v2-err').value)||0;
+    var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value)||0;
+    var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value)||0;
+    var desc2=(v2tp>15?1:0)+(v2tt>123?1:0);
+    var pje2=Math.max(0,v2s-v2e-desc2);
+    var z_v2sec = bar ? zooZ(v2s,  bar[4], false) : null;
+    var z_v2err = bar ? zooZ(v2e,  bar[5], true)  : null;
+    var z_v2tp  = bar ? zooZ(v2tp, bar[6], true)  : null;
+    var z_v2tt  = bar ? zooZ(v2tt, bar[7], true)  : null;
+    datos.v2s=v2s; datos.v2e=v2e; datos.v2tp=v2tp; datos.v2tt=v2tt; datos.pje2=pje2; datos.desc2=desc2;
+    datos.z_v2sec=z_v2sec; datos.z_v2err=z_v2err; datos.z_v2tp=z_v2tp; datos.z_v2tt=z_v2tt;
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v2s+'</div><div class="detalle-lbl">Secuencia<br>V2</div></div>';
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v2e+'</div><div class="detalle-lbl">Errores<br>V2</div></div>';
+    interpHtml += '<p><strong>V2 — Secuencia:</strong> '+v2s+(bar&&bar[4]?' (M='+bar[4][0]+', DS='+bar[4][1]+')':'')+' · Z='+zStr(z_v2sec)+' — '+badsZLabel(z_v2sec)+'</p>';
+    interpHtml += '<p><strong>V2 — Errores:</strong> '+v2e+(bar&&bar[5]?' (M='+bar[5][0]+', DS='+bar[5][1]+')':'')+' · Z='+zStr(z_v2err)+' — '+badsZLabel(z_v2err)+'</p>';
+    interpHtml += '<p><strong>V2 — T.Planif.:</strong> '+v2tp+'seg'+(bar&&bar[6]?' (M='+bar[6][0]+', DS='+bar[6][1]+')':'')+' · Z='+zStr(z_v2tp)+' — '+badsZLabel(z_v2tp)+'</p>';
+    interpHtml += '<p><strong>V2 — T.Total:</strong> '+v2tt+'seg'+(bar&&bar[7]?' (M='+bar[7][0]+', DS='+bar[7][1]+')':'')+' · Z='+zStr(z_v2tt)+' — '+badsZLabel(z_v2tt)+'</p>';
+  }
+  if (ver==='ambas') {
+    var bruto = (datos.pje1||0)+(datos.pje2||0);
+    var conv  = zooPBtoConv(bruto);
+    var z_bruto = bar ? zooZ(bruto,bar[8],false) : null;
+    var z_conv  = bar ? zooZ(conv, bar[9],false) : null;
+    datos.bruto=bruto; datos.conv=conv; datos.z_bruto=z_bruto; datos.z_conv=z_conv;
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+bruto+'</div><div class="detalle-lbl">Total<br>bruto</div></div>';
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+conv+'</div><div class="detalle-lbl">Pje<br>convertido</div></div>';
+    detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+zStr(z_conv)+'</div><div class="detalle-lbl">Z<br>convertido</div></div>';
+    interpHtml += '<p><strong>Total bruto:</strong> '+bruto+(bar&&bar[8]?' (M='+bar[8][0]+', DS='+bar[8][1]+')':'')+' · Z='+zStr(z_bruto)+'</p>';
+    interpHtml += '<p><strong>Pje convertido:</strong> '+conv+'/4'+(bar&&bar[9]?' (M='+bar[9][0]+', DS='+bar[9][1]+')':'')+' · Z='+zStr(z_conv)+' — <strong>'+badsZLabel(z_conv)+'</strong></p>';
+    datos.z = z_conv;
+  } else {
+    // Z principal para guardar = secuencia de la versión administrada
+    datos.z = ver==='v1' ? datos.z_v1sec : datos.z_v2sec;
+    datos.conv = null; datos.bruto = null;
+  }
 
-  var detalleHtml =
-    '<div class="detalle-item"><div class="detalle-num">'+pje1+'</div><div class="detalle-lbl">Puntaje<br>V1</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+pje2+'</div><div class="detalle-lbl">Puntaje<br>V2</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+bruto+'</div><div class="detalle-lbl">Total<br>bruto</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+conv+'</div><div class="detalle-lbl">Pje<br>convertido</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+(z!==null?(z>=0?'+':'')+z:'—')+'</div><div class="detalle-lbl">Z</div></div>';
+  if (!bar) interpHtml += '<p style="color:#c62828;font-size:0.8rem;">⚠ Sin baremo para este grupo. Datos normativos no disponibles.</p>';
+  interpHtml += '<p style="font-size:0.78rem;color:var(--muted);">Fuente: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48.</p>';
 
-  var interpHtml =
-    '<p><strong>Grupo:</strong> '+(sexo==='f'?'Femenino':'Masculino')+' · '+edadLbls[gi]+' · '+educLbls[ei]+'</p>'+
-    '<p><strong>V1:</strong> Secuencia '+v1s+' − Errores '+v1e+' = '+pje1+
-    ' &nbsp;|&nbsp; <strong>V2:</strong> Secuencia '+v2s+' − Errores '+v2e+(desc2?' − Descuento '+desc2:'')+'  = '+pje2+'</p>'+
-    '<p><strong>Total bruto:</strong> '+bruto+' → Pje convertido: '+conv+'/4</p>'+
-    '<p><strong>Z:</strong> '+(z!==null?(z>=0?'+':'')+z:'No calculable (sin variabilidad en este grupo)')+
-    (m!==null?' (M='+m+', DS='+(ds||'0')+')' : '')+' — <strong>'+badsZLabel(z)+'</strong></p>'+
-    '<p style="font-size:0.78rem;color:var(--muted);">Fuente: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48.</p>';
-
-  window._zooData = { pje1:pje1, pje2:pje2, bruto:bruto, conv:conv, z:z, m:m, ds:ds,
-    gi:gi, ei:ei, sexo:sexo, v1s:v1s, v1e:v1e, v2s:v2s, v2e:v2e, v2tp:v2tp, v2tt:v2tt, desc2:desc2 };
+  window._zooData = datos;
   document.getElementById('zoo-detalle').innerHTML = detalleHtml;
   document.getElementById('zoo-interp').innerHTML  = interpHtml;
   document.getElementById('zoo-form').style.display = 'none';
@@ -8717,9 +8858,10 @@ function guardarZoo() {
   if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
   if (!window._zooData) { toast('Calculá el resultado antes de guardar.','error'); return; }
   var d = window._zooData;
+  var pjeGuardar = d.conv!==null?d.conv:(d.v1s||d.v2s||0);
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id:SESSION.user.id, paciente_id:pacId, test:'BADS-Zoo', fecha:fecha,
-    puntaje_total:d.conv, puntaje_z:d.z, categoria:badsZLabel(d.z), datos:d
+    puntaje_total:pjeGuardar, puntaje_z:d.z, categoria:badsZLabel(d.z), datos:d
   }, SESSION.access_token).then(function(){
     window._zooData=null; cargarResultados(); toast('✓ Resultado guardado','success');
   }).catch(function(){ toast('Error al guardar','error'); });
