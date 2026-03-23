@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.20</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.22</div>
     </div>
   </aside>
 
@@ -4040,7 +4040,307 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       </div>
     </div>
 
-    
+    <!-- ── TEST DEX ── -->
+    <div class="vista" id="vista-dex">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">DEX · Cuestionario Disejecutivo</div></div>
+      <div id="dex-form">
+        <div class="card">
+          <div class="card-titulo">Datos del paciente</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label><select id="dex-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="dex-fecha"></div>
+            <div class="field"><label>Versión</label>
+              <select id="dex-version">
+                <option value="auto">Autoadministrado (paciente)</option>
+                <option value="hetero">Heteroadministrado (familiar/cuidador)</option>
+              </select>
+            </div>
+          </div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-top:10px;line-height:1.5;">
+            Indicá con qué frecuencia te suceden estas situaciones.<br>
+            <strong>D/A</strong> = Desorganización/Apatía &nbsp;·&nbsp; <strong>D/I</strong> = Desinhibición/Impulsividad
+          </p>
+        </div>
+        
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>1.</strong> Tengo problemas para entender lo que otros quieren decir, aunque digan las cosas claramente.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex1" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex1" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex1" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex1" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex1" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>2.</strong> Actúo sin pensar, haciendo lo primero que me pasa por la cabeza.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex2" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex2" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex2" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex2" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex2" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>3.</strong> A veces hablo sobre cosas que no han ocurrido en realidad, aunque yo creo que sí han pasado.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex3" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex3" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex3" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex3" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex3" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>4.</strong> Tengo dificultad para pensar cosas con antelación o para planificar el futuro.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex4" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex4" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex4" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex4" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex4" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>5.</strong> A veces me pongo demasiado exaltado con ciertas cosas y en esos momentos me paso un poco de la raya.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex5" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex5" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex5" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex5" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex5" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>6.</strong> Mezclo algunos episodios con otros, y me confundo al intentar ponerlos por orden.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex6" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex6" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex6" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex6" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex6" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>7.</strong> Tengo dificultades para ser consciente de la magnitud de mis problemas y soy poco realista respecto a mi futuro.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex7" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex7" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex7" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex7" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex7" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>8.</strong> Estoy como aletargado, o no me entusiasmo con las cosas.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex8" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex8" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex8" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex8" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex8" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>9.</strong> Hago o digo cosas vergonzosas cuando estoy con otras personas.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex9" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex9" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex9" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex9" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex9" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>10.</strong> Tengo muchas ganas de hacer ciertas cosas en un momento dado, pero al momento ni me preocupo de ellas.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex10" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex10" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex10" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex10" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex10" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>11.</strong> Tengo dificultad para mostrar mis emociones.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex11" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex11" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex11" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex11" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex11" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>12.</strong> Me enfado mucho por cosas insignificantes.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex12" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex12" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex12" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex12" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex12" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>13.</strong> No me preocupo sobre cómo tengo que comportarme en ciertas situaciones.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex13" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex13" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex13" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex13" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex13" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>14.</strong> Me resulta difícil dejar de decir o hacer repetidamente ciertas cosas, una vez que he empezado a hacerlas.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex14" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex14" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex14" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex14" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex14" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>15.</strong> Tiendo a ser bastante activo, y no puedo quedarme quieto por mucho tiempo.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex15" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex15" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex15" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex15" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex15" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>16.</strong> Me resulta difícil dejar de hacer algo incluso aunque sepa que no debería hacerlo.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex16" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex16" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex16" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex16" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex16" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>17.</strong> Digo una cosa pero después no actúo en consecuencia, no la cumplo.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex17" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex17" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex17" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex17" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex17" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>18.</strong> Me resulta difícil centrarme en algo, y me distraigo con facilidad.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex18" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex18" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex18" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex18" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex18" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>19.</strong> Tengo dificultades para tomar decisiones, o decidir lo que quiero hacer.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/A</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex19" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex19" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex19" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex19" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex19" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+            <span style="font-size:0.85rem;color:var(--text);flex:1;"><strong>20.</strong> No me interesa lo que opinen otros sobre mi comportamiento.</span>
+            <span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;margin-top:2px;">D/I</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex20" value="0" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">0<br>Nunca</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex20" value="1" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">1<br>Pocas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex20" value="2" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">2<br>Algunas veces</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex20" value="3" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">3<br>Frecuentemente</span></label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"><input type="radio" name="dex20" value="4" style="accent-color:var(--accent);"><span style="font-size:0.68rem;color:var(--muted);text-align:center;">4<br>Con mucha frecuencia</span></label>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="limpiarDEX()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularDEX()">Calcular resultado →</button>
+        </div>
+      </div>
+      <div id="dex-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="dex-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="dex-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('dex-resultado').style.display='none';document.getElementById('dex-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarDEX()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
+
     <!-- ── TEST WURS-25 ── -->
 
 <div class="vista" id="vista-wurs">
@@ -4745,7 +5045,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
+   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
    'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
@@ -5042,7 +5342,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   // ── Clasificación de tests ──
   var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
-  var TD = ['ASRS-V1.1','WURS-25'];
+  var TD = ['ASRS-V1.1','WURS-25','DEX'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td': DO.indexOf(t)!==-1?'do':'cl'; }
 
@@ -5482,6 +5782,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var btaEscolLabels = ['>12 años educ.','1–12 años educ.'];
           var btaNota = (btaGi!=null&&btaEi!=null) ? btaEdadLabels[btaGi]+' · '+btaEscolLabels[btaEi] : null;
           rows += filaTabla('BTA', d.puntaje, null, null, d.z, r.fecha, btaNota ? ('Pc '+(d.pc||'—')+' · '+btaNota) : null);
+
+        } else if (testNombre === 'DEX') {
+          var dexVer = d.version === 'hetero' ? 'Heteroadministrado' : 'Autoadministrado';
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">DEX · Cuestionario Disejecutivo · '+dexVer+' · Querejeta et al. (2015) · Adaptación argentina</td></tr>';
+          rows += filaTabla('DEX — Desorg./Apatía', d.desorg, 8.60, 5.79, d.zDesorg, r.fecha, 'Ítems 1,4,6,7,8,10,11,17,18,19');
+          rows += filaTabla('DEX — Desinhi./Impuls.', d.desinhi, 9.69, 5.19, d.zDesinhi, r.fecha, 'Ítems 2,3,5,9,12,13,14,15,16,20');
+          rows += filaTabla('DEX Total', d.total, d.version==='hetero'?20.68:22.25, d.version==='hetero'?14.77:10.10, d.zTotal, r.fecha, 'Puntaje /80');
 
         } else if (testNombre === 'WCST-64') {
           rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
@@ -6396,6 +6703,11 @@ function irSector(s) {
         '<div class="test-nombre">WURS-25</div>'+
         '<div class="test-desc">Escala de Wender-Utah — Síntomas retrospectivos de TDAH en la infancia</div>'+
         '<span class="test-tag">Ward et al. 1993 · Scandar 2021 Argentina</span>'+
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'dex\')">'+
+        '<div class="test-nombre">DEX</div>'+
+        '<div class="test-desc">Cuestionario Disejecutivo · Síntomas del síndrome disejecutivo · Autoadministrado o informante</div>'+
+        '<span class="test-tag">Wilson et al. 1999 · Querejeta et al. 2015 · Argentina</span>'+
       '</div>';
   }
 }
@@ -6429,6 +6741,7 @@ function irTest(t) {
   if (t === 'acer') iniciarACER();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
+  if (t === 'dex') iniciarDEX();
   if (t === 'waisiv') iniciarWaisiv();
   if (t === 'asrs') iniciarAsrs();
   if (t === 'wurs') iniciarWurs();
@@ -9840,6 +10153,126 @@ var WURS_FACTORES = {
   'Problemas escolares': [14,15,16,17,21,23,24],
   'Problemas conductuales': [18,19,22,25]
 };
+// ══ DEX · Cuestionario Disejecutivo ═════════════════════════════════════════
+// Baremos: Querejeta et al. (2015) Adaptación Argentina BADS · n=120
+// Auto: Total M=22.25 DS=10.10 | Desorg/Apatía M=8.60 DS=5.79 | Desinhi/Impuls M=9.69 DS=5.19
+// Hetero (familiar): Total M=20.68 DS=14.77
+var DEX_DESORG  = [1,4,6,7,8,10,11,17,18,19];
+var DEX_DESINHI = [2,3,5,9,12,13,14,15,16,20];
+var DEX_BAR = {
+  auto:   { total:{M:22.25,DS:10.10}, desorg:{M:8.60,DS:5.79}, desinhi:{M:9.69,DS:5.19} },
+  hetero: { total:{M:20.68,DS:14.77}, desorg:{M:8.60,DS:5.79}, desinhi:{M:9.69,DS:5.19} }
+};
+
+function iniciarDEX() {
+  document.getElementById('dex-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('dex-form').style.display = 'block';
+  document.getElementById('dex-resultado').style.display = 'none';
+}
+
+function limpiarDEX() {
+  for (var i = 1; i <= 20; i++) {
+    document.querySelectorAll('input[name="dex'+i+'"]').forEach(function(r){ r.checked = false; });
+  }
+}
+
+function dexZLabel(z) {
+  if (z === null || z === undefined) return '—';
+  if (z >= 2.0)  return 'Muy elevado (síntomas marcados)';
+  if (z >= 1.0)  return 'Elevado';
+  if (z >= 0.5)  return 'Límite superior normativo';
+  if (z >= -0.5) return 'Normal';
+  return 'Por debajo del promedio';
+}
+
+function dexZColor(z) {
+  if (z === null) return '#888';
+  if (z >= 2.0)  return '#E24B4A';
+  if (z >= 1.0)  return '#D85A30';
+  if (z >= 0.5)  return '#BA7517';
+  return '#639922';
+}
+
+function calcularDEX() {
+  var scores = [];
+  for (var i = 1; i <= 20; i++) {
+    var sel = document.querySelector('input[name="dex'+i+'"]:checked');
+    if (!sel) { toast('Completá todos los ítems (1 al 20).','error'); return; }
+    scores.push(parseInt(sel.value));
+  }
+  var version = document.getElementById('dex-version').value;
+  var bar = DEX_BAR[version];
+  var total   = scores.reduce(function(a,b){ return a+b; }, 0);
+  var desorg  = DEX_DESORG.reduce(function(a,i){ return a + scores[i-1]; }, 0);
+  var desinhi = DEX_DESINHI.reduce(function(a,i){ return a + scores[i-1]; }, 0);
+  function calcZ(val, b) { return parseFloat(((val - b.M) / b.DS).toFixed(2)); }
+  var zTotal   = calcZ(total,   bar.total);
+  var zDesorg  = calcZ(desorg,  bar.desorg);
+  var zDesinhi = calcZ(desinhi, bar.desinhi);
+  var rows = [
+    { label:'Desorganización / Apatía',     score:desorg,  max:40, bar:bar.desorg,  z:zDesorg  },
+    { label:'Desinhibición / Impulsividad', score:desinhi, max:40, bar:bar.desinhi, z:zDesinhi },
+    { label:'Total DEX',                    score:total,   max:80, bar:bar.total,   z:zTotal   }
+  ];
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:12px;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Escala</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Puntaje</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">M</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">DS</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Z</th>' +
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Categoría</th>' +
+    '</tr></thead><tbody>';
+  rows.forEach(function(r) {
+    var col = dexZColor(r.z); var lbl = dexZLabel(r.z);
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:8px 10px;font-weight:500;">' + r.label + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;">' + r.score + '/' + r.max + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;color:var(--muted);font-size:0.8rem;">' + r.bar.M.toFixed(2) + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;color:var(--muted);font-size:0.8rem;">' + r.bar.DS.toFixed(2) + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;font-weight:600;color:' + col + ';">' + (r.z >= 0 ? '+' : '') + r.z + '</td>' +
+      '<td style="padding:8px 10px;color:' + col + ';">' + lbl + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<p style="font-size:0.75rem;color:var(--muted);">Versión: '+(version==='hetero'?'Heteroadministrado':'Autoadministrado')+' · Querejeta et al. (2015) · Adaptación argentina BADS · n=120</p>';
+  html += '<p style="font-size:0.75rem;color:var(--muted);">Nota: Z positivo = más síntomas que el promedio normativo (clínicamente relevante).</p>';
+  var narrative = 'En el DEX (versión '+(version==='hetero'?'heteroadministrada':'autoadministrada')+'), el puntaje total ('+total+'/80) ';
+  if (zTotal >= 2.0) narrative += 'indica presencia marcada de síntomas disejecutivos, significativamente por encima del promedio normativo. ';
+  else if (zTotal >= 1.0) narrative += 'indica síntomas disejecutivos por encima del rango esperado. ';
+  else if (zTotal >= 0.5) narrative += 'se ubica en el límite superior del rango normativo. ';
+  else narrative += 'se encuentra dentro del rango normativo esperado. ';
+  if (zDesorg >= 1.0 && zDesinhi < 1.0) narrative += 'Predominan síntomas de desorganización y apatía (planificación, motivación, memoria ejecutiva). ';
+  else if (zDesinhi >= 1.0 && zDesorg < 1.0) narrative += 'Predominan síntomas de desinhibición e impulsividad (control inhibitorio, regulación conductual). ';
+  else if (zDesorg >= 1.0 && zDesinhi >= 1.0) narrative += 'Ambas subescalas muestran elevación, con síntomas en desorganización/apatía y desinhibición/impulsividad. ';
+  document.getElementById('dex-detalle').innerHTML = html;
+  document.getElementById('dex-interp').textContent = narrative;
+  document.getElementById('dex-form').style.display = 'none';
+  document.getElementById('dex-resultado').style.display = 'block';
+  window._dexData = { version:version, total:total, desorg:desorg, desinhi:desinhi, zTotal:zTotal, zDesorg:zDesorg, zDesinhi:zDesinhi, scores:scores };
+}
+
+function guardarDEX() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('dex-paciente').value;
+  var fecha = document.getElementById('dex-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._dexData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._dexData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'DEX', fecha: fecha,
+    puntaje_total: d.total, puntaje_z: d.zTotal,
+    categoria: dexZLabel(d.zTotal), datos: d
+  }, SESSION.access_token).then(function(){
+    window._dexData = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btns = document.querySelectorAll('.vista.active .btn-primary');
+    if (btns.length) { btns[btns.length-1].classList.add('btn-saved'); setTimeout(function(){ btns[btns.length-1].classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+// ══ fin DEX ══════════════════════════════════════════════════════════════════
+
 function iniciarWurs() {
   document.getElementById('wurs-fecha').value = new Date().toISOString().split('T')[0];
   var div=document.getElementById('wurs-items');
