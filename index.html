@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.14</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.15</div>
     </div>
   </aside>
 
@@ -5078,6 +5078,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         { t:'BTA',        fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
         { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
         { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
+        { t:'D2',           fn: function(r){ var d=r.datos||{}; var idx=d.indices||{}; addPunto('d2 CON',idx.CON&&idx.CON.z,'ATENCIÓN'); addPunto('d2 TOT',idx.TOT&&idx.TOT.z,'ATENCIÓN'); } },
       ]},
       { dom: 'TMT', tests: [
         { t:'TMT A-B',   fn: function(r){ var d=r.datos||{}; addPunto('TMT-A',d.tmt_a_z||r.puntaje_z,'TMT'); addPunto('TMT-B',d.tmt_b_z,'TMT'); } },
@@ -5208,7 +5209,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
       'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','TMT A-B'],
+      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','D2','TMT A-B'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
       'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'],
     };
@@ -9390,6 +9391,8 @@ function calcularD2() {
     '<thead><tr>' +
     '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Índice</th>' +
     '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Bruto</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">M</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">DS</th>' +
     '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Z</th>' +
     '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Categoría</th>' +
     '</tr></thead><tbody>';
@@ -9401,6 +9404,8 @@ function calcularD2() {
     html += '<tr style="border-bottom:1px solid var(--border);">' +
       '<td style="padding:8px 10px;font-weight:500;">' + idx.label + '</td>' +
       '<td style="text-align:center;padding:8px 10px;">' + idx.bruto + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;color:var(--muted);font-size:0.8rem;">' + idx.bar.M.toFixed(1) + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;color:var(--muted);font-size:0.8rem;">' + idx.bar.DS.toFixed(1) + '</td>' +
       '<td style="text-align:center;padding:8px 10px;font-weight:600;color:' + col + ';">' + (z !== null ? (z >= 0 ? '+' : '') + z : '—') + '</td>' +
       '<td style="padding:8px 10px;color:' + col + ';">' + lbl + '</td>' +
       '</tr>';
