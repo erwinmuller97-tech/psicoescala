@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.13</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.14</div>
     </div>
   </aside>
 
@@ -2369,6 +2369,81 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('bta-resultado').style.display='none';document.getElementById('bta-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarBTA()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEST D2 ── -->
+<div class="vista" id="vista-d2">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">d2 · Test de Atención</div></div>
+  <div id="d2-form">
+    <div class="card">
+      <div class="card-titulo">Datos del paciente</div>
+      <div class="form-grid">
+        <div class="field"><label>Paciente *</label><select id="d2-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Fecha</label><input type="date" id="d2-fecha"></div>
+        <div class="field"><label>Edad (años) *</label><input type="number" id="d2-edad" min="15" max="99" placeholder="Ej: 34"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Puntajes brutos</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+        Completá los valores que se leen directamente del protocolo corregido (segunda hoja del ejemplar autocorregible, luego de separar las dos hojas).
+      </p>
+      <div class="form-grid">
+        <div class="field">
+          <label>TR · Total de respuestas *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">Suma de todos los elementos intentados en las 14 filas</span>
+          </label>
+          <input type="number" id="d2-tr" min="0" max="658" placeholder="0–658" oninput="d2Live()">
+        </div>
+        <div class="field">
+          <label>TA · Total de aciertos *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">Letras "d" con dos rayitas correctamente marcadas</span>
+          </label>
+          <input type="number" id="d2-ta" min="0" max="299" placeholder="0–299" oninput="d2Live()">
+        </div>
+        <div class="field">
+          <label>O · Omisiones *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">Letras "d" con dos rayitas que NO fueron marcadas</span>
+          </label>
+          <input type="number" id="d2-o" min="0" max="299" placeholder="0–299" oninput="d2Live()">
+        </div>
+        <div class="field">
+          <label>C · Comisiones *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">Letras irrelevantes ("p" o "d" sin dos rayitas) que SÍ fueron marcadas</span>
+          </label>
+          <input type="number" id="d2-c" min="0" max="299" placeholder="0–299" oninput="d2Live()">
+        </div>
+        <div class="field">
+          <label>TR+ · Línea con más intentos *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">N° de elementos intentados en la fila donde el paciente llegó más lejos</span>
+          </label>
+          <input type="number" id="d2-trmas" min="0" max="47" placeholder="0–47" oninput="d2Live()">
+        </div>
+        <div class="field">
+          <label>TR− · Línea con menos intentos *
+            <span style="font-size:0.72rem;color:var(--muted);font-weight:400;display:block;margin-top:2px;">N° de elementos intentados en la fila donde el paciente llegó menos lejos</span>
+          </label>
+          <input type="number" id="d2-trmenos" min="0" max="47" placeholder="0–47" oninput="d2Live()">
+        </div>
+      </div>
+      <div id="d2-live" style="margin-top:14px;padding:12px 16px;background:var(--bg);border-radius:8px;font-size:0.85rem;min-height:36px;line-height:1.8;"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarD2()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularD2()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="d2-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="d2-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="d2-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('d2-resultado').style.display='none';document.getElementById('d2-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarD2()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -4547,7 +4622,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -5979,6 +6054,7 @@ var NP_TESTS = [
   {id:'moca',     n:'MoCA',              d:'Montreal Cognitive Assessment',              t:'Cognitivo global',   dom:'global'},
   {id:'acer',     n:'ACE-R',             d:"Addenbrooke's Cognitive Examination",        t:'Cognitivo global',   dom:'global'},
   {id:'reloj',    n:'Test del Reloj',    d:'Cribado cognitivo · Cacho et al. 1999',      t:'Cognitivo global',   dom:'global'},
+  {id:'d2',       n:'d2',               d:'Test de Atención · Atención selectiva y concentración', t:'Atención',           dom:'atencion'},
   {id:'bta',      n:'BTA',               d:'Brief Test of Attention · Series N y P',     t:'Atención',           dom:'atencion'},
   {id:'tmt',      n:'TMT A y B',         d:'Trail Making Test · atención y flexibilidad', t:'Atención',          dom:'atencion'},
   {id:'sdmt',     n:'SDMT',              d:'Symbol Digit Modalities · escrita + oral',   t:'Atención',           dom:'atencion'},
@@ -6198,6 +6274,7 @@ function irTest(t) {
   if (t === 'stroop') iniciarStroop();
   if (t === 'fcr') iniciarFCR();
   if (t === 'bta') iniciarBTA();
+  if (t === 'd2') iniciarD2();
   if (t === 'hotel') iniciarHotel();
   if (t === 'llaves') iniciarLlaves();
   if (t === 'juicio') iniciarJuicio();
@@ -9203,6 +9280,175 @@ function btaPcToZ(pc) {
   }
   return pc < 50 ? -2.33 : 2.33;
 }
+
+// ══ D2 TEST DE ATENCIÓN ══════════════════════════════════════════════════════
+// Baremos TEA Ediciones (Brickenkamp). M y DS por grupo etario
+// Grupos: 0=15-16, 1=17-18, 2=19-23, 3=24-29, 4=30-39, 5=40-88
+var D2_GRUPOS = ['15–16 años','17–18 años','19–23 años','24–29 años','30–39 años','40–88 años'];
+
+var D2_BAR = {
+  0: { TR:{M:412.45,DS:71.43}, TA:{M:154.13,DS:29.64}, O:{M:20.00,DS:21.79,inv:true}, C:{M:4.01,DS:10.49,inv:true}, TOT:{M:388.44,DS:68.31}, CON:{M:150.12,DS:33.71}, VAR:{M:18.67,DS:8.35} },
+  1: { TR:{M:426.77,DS:74.15}, TA:{M:164.44,DS:32.38}, O:{M:16.40,DS:17.14,inv:true}, C:{M:2.42,DS:5.08,inv:true},  TOT:{M:407.93,DS:71.33}, CON:{M:162.01,DS:33.49}, VAR:{M:16.13,DS:6.18} },
+  2: { TR:{M:462.20,DS:79.32}, TA:{M:181.90,DS:38.30}, O:{M:14.59,DS:16.70,inv:true}, C:{M:1.51,DS:7.41,inv:true},  TOT:{M:446.09,DS:81.11}, CON:{M:180.39,DS:40.53}, VAR:{M:14.25,DS:6.49} },
+  3: { TR:{M:472.45,DS:91.49}, TA:{M:185.40,DS:43.16}, O:{M:17.16,DS:16.40,inv:true}, C:{M:1.95,DS:8.41,inv:true},  TOT:{M:453.33,DS:90.38}, CON:{M:183.44,DS:44.91}, VAR:{M:14.04,DS:5.55} },
+  4: { TR:{M:462.66,DS:83.64}, TA:{M:180.08,DS:40.40}, O:{M:17.32,DS:15.68,inv:true}, C:{M:1.64,DS:3.40,inv:true},  TOT:{M:443.69,DS:85.25}, CON:{M:178.44,DS:41.17}, VAR:{M:15.17,DS:6.02} },
+  5: { TR:{M:366.33,DS:130.90},TA:{M:133.52,DS:55.53}, O:{M:21.83,DS:27.09,inv:true}, C:{M:5.31,DS:11.46,inv:true}, TOT:{M:339.18,DS:126.84},CON:{M:128.21,DS:57.72}, VAR:{M:15.50,DS:5.74} }
+};
+
+function d2GrupoFromEdad(edad) {
+  if (edad < 15) return null;
+  if (edad <= 16) return 0;
+  if (edad <= 18) return 1;
+  if (edad <= 23) return 2;
+  if (edad <= 29) return 3;
+  if (edad <= 39) return 4;
+  return 5;
+}
+
+function d2CalcZ(bruto, bar) {
+  if (!bar || bar.DS === 0) return null;
+  var z = (bruto - bar.M) / bar.DS;
+  if (bar.inv) z = -z;
+  return parseFloat(z.toFixed(2));
+}
+
+function d2ZLabel(z) {
+  if (z === null || z === undefined) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= 0.5)   return 'Normal alto';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad severa';
+}
+
+function d2ZColor(z) {
+  if (z === null) return '#888';
+  if (z >= 0.5)   return '#639922';
+  if (z >= -0.5)  return 'var(--muted)';
+  if (z >= -0.99) return '#888780';
+  if (z >= -1.49) return '#BA7517';
+  if (z >= -1.99) return '#D85A30';
+  return '#E24B4A';
+}
+
+function d2Live() {
+  var tr  = parseFloat(document.getElementById('d2-tr').value);
+  var ta  = parseFloat(document.getElementById('d2-ta').value);
+  var o   = parseFloat(document.getElementById('d2-o').value);
+  var c   = parseFloat(document.getElementById('d2-c').value);
+  var trm = parseFloat(document.getElementById('d2-trmas').value);
+  var trn = parseFloat(document.getElementById('d2-trmenos').value);
+  var el  = document.getElementById('d2-live');
+  if (!el) return;
+  var parts = [];
+  if (!isNaN(tr) && !isNaN(o) && !isNaN(c))  parts.push('<b>TOT</b> = ' + (tr - o - c));
+  if (!isNaN(ta) && !isNaN(c))                parts.push('<b>CON</b> = ' + (ta - c));
+  if (!isNaN(trm) && !isNaN(trn))             parts.push('<b>VAR</b> = ' + (trm - trn));
+  el.innerHTML = parts.length ? parts.join(' &nbsp;·&nbsp; ') : '';
+}
+
+function limpiarD2() {
+  ['d2-tr','d2-ta','d2-o','d2-c','d2-trmas','d2-trmenos','d2-edad'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  var lv = document.getElementById('d2-live'); if (lv) lv.innerHTML = '';
+}
+
+function iniciarD2() {
+  document.getElementById('d2-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('d2-form').style.display = 'block';
+  document.getElementById('d2-resultado').style.display = 'none';
+}
+
+function calcularD2() {
+  var edad = parseInt(document.getElementById('d2-edad').value);
+  if (isNaN(edad) || edad < 15) { toast('Ingresá la edad del paciente (mín. 15 años).','error'); return; }
+  var gi = d2GrupoFromEdad(edad);
+  var bar = D2_BAR[gi];
+  var tr  = parseFloat(document.getElementById('d2-tr').value);
+  var ta  = parseFloat(document.getElementById('d2-ta').value);
+  var o   = parseFloat(document.getElementById('d2-o').value);
+  var c   = parseFloat(document.getElementById('d2-c').value);
+  var trm = parseFloat(document.getElementById('d2-trmas').value);
+  var trn = parseFloat(document.getElementById('d2-trmenos').value);
+  if ([tr,ta,o,c,trm,trn].some(isNaN)) { toast('Completá todos los puntajes brutos.','error'); return; }
+  var tot = tr - o - c;
+  var con = ta - c;
+  var vari = trm - trn;
+  var indices = [
+    { label:'TR · Total de respuestas', bruto:tr,   bar:bar.TR,  key:'TR'  },
+    { label:'TA · Total de aciertos',   bruto:ta,   bar:bar.TA,  key:'TA'  },
+    { label:'O · Omisiones',            bruto:o,    bar:bar.O,   key:'O'   },
+    { label:'C · Comisiones',           bruto:c,    bar:bar.C,   key:'C'   },
+    { label:'TOT · Efectividad total',  bruto:tot,  bar:bar.TOT, key:'TOT' },
+    { label:'CON · Concentración',      bruto:con,  bar:bar.CON, key:'CON' },
+    { label:'VAR · Variación',          bruto:vari, bar:bar.VAR, key:'VAR' }
+  ];
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Índice</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Bruto</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Z</th>' +
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Categoría</th>' +
+    '</tr></thead><tbody>';
+  var datos = { gi:gi, edad:edad, tr:tr, ta:ta, o:o, c:c, trmas:trm, trmenos:trn, tot:tot, con:con, vari:vari, indices:{} };
+  indices.forEach(function(idx) {
+    var z = d2CalcZ(idx.bruto, idx.bar);
+    var lbl = d2ZLabel(z); var col = d2ZColor(z);
+    datos.indices[idx.key] = { bruto:idx.bruto, z:z, label:lbl };
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:8px 10px;font-weight:500;">' + idx.label + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;">' + idx.bruto + '</td>' +
+      '<td style="text-align:center;padding:8px 10px;font-weight:600;color:' + col + ';">' + (z !== null ? (z >= 0 ? '+' : '') + z : '—') + '</td>' +
+      '<td style="padding:8px 10px;color:' + col + ';">' + lbl + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<p style="font-size:0.75rem;color:var(--muted);margin-top:10px;">' + D2_GRUPOS[gi] + ' · Baremos TEA Ediciones · Z = (bruto − M) / DS</p>';
+  var zCon = datos.indices['CON'].z;
+  var zO   = datos.indices['O'].z;
+  var zC   = datos.indices['C'].z;
+  var zVar = datos.indices['VAR'].z;
+  var interp = 'El rendimiento en el d2 sugiere ';
+  if (zCon >= 0.5) interp += 'una concentración dentro del rango normal alto a superior para su grupo etario. ';
+  else if (zCon >= -0.5) interp += 'una concentración dentro del rango normativo esperado. ';
+  else if (zCon >= -1.49) interp += 'una concentración por debajo del rango esperado, con dificultades leves en la atención selectiva. ';
+  else interp += 'una concentración significativamente por debajo del rango normativo, compatible con dificultades atencionales. ';
+  if (zO !== null && zC !== null) {
+    if (zO < -1 && zC < -1) interp += 'Se observa un patrón mixto de errores (omisiones y comisiones elevadas), lo que puede reflejar impulsividad y/o fatiga atencional. ';
+    else if (zO < -1) interp += 'Las omisiones elevadas sugieren dificultad en el procesamiento de estímulos relevantes (patrón de lentitud o hipoactivación). ';
+    else if (zC < -1) interp += 'Las comisiones elevadas sugieren dificultad en la inhibición de respuestas (patrón impulsivo). ';
+  }
+  if (zVar !== null && zVar < -1) interp += 'El índice de variación elevado indica inconsistencia en el ritmo de trabajo entre filas, compatible con fluctuaciones atencionales.';
+  document.getElementById('d2-detalle').innerHTML = html;
+  document.getElementById('d2-interp').textContent = interp;
+  document.getElementById('d2-form').style.display = 'none';
+  document.getElementById('d2-resultado').style.display = 'block';
+  window._d2Data = datos;
+}
+
+function guardarD2() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('d2-paciente').value;
+  var fecha = document.getElementById('d2-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._d2Data) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._d2Data;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'D2', fecha: fecha,
+    puntaje_total: d.tot, puntaje_z: d.indices['CON'].z,
+    categoria: d.indices['CON'].label, datos: d
+  }, SESSION.access_token).then(function(){
+    window._d2Data = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btns = document.querySelectorAll('.vista.active .btn-primary');
+    if (btns.length) { btns[btns.length-1].classList.add('btn-saved'); setTimeout(function(){ btns[btns.length-1].classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+// ══ fin D2 ═══════════════════════════════════════════════════════════════════
 
 function iniciarBTA() {
   document.getElementById('bta-fecha').value = new Date().toISOString().split('T')[0];
