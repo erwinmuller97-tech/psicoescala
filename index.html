@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.9.7</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.0</div>
     </div>
   </aside>
 
@@ -1856,6 +1856,243 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="btn-row" style="margin-top:16px;">
       <button class="btn-secondary" onclick="document.getElementById('fcr-resultado').style.display='none';document.getElementById('fcr-form').style.display='block';">← Modificar</button>
       <button class="btn-primary" onclick="guardarFCR()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BADS · BÚSQUEDA DE LLAVES ── -->
+<div class="vista" id="vista-llaves">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">BADS · Búsqueda de Llaves</div></div>
+  <div id="llaves-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="llaves-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Sexo *</label>
+          <select id="llaves-sexo">
+            <option value="">— Seleccionar —</option>
+            <option value="f">Femenino</option>
+            <option value="m">Masculino</option>
+          </select>
+        </div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="llaves-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">20–29 años</option>
+            <option value="1">30–39 años</option>
+            <option value="2">40–49 años</option>
+            <option value="3">50–59 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Educación *</label>
+          <select id="llaves-educ">
+            <option value="">— Seleccionar —</option>
+            <option value="0">Primario</option>
+            <option value="1">Secundario</option>
+            <option value="2">Terciario</option>
+            <option value="3">Universitario</option>
+            <option value="4">Postgrado</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="llaves-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Indicadores (puntaje máximo: 16)</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px;">
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);">Indicador</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);text-align:center;">Máx.</div>
+        <div style="font-weight:700;font-size:0.82rem;color:var(--text);text-align:center;">Obtenido</div>
+      </div>
+      <div id="llaves-indicadores-wrap"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;align-items:center;padding:8px 0;border-top:2px solid var(--accent);margin-top:4px;">
+        <div style="font-weight:700;color:var(--text);">Total bruto</div>
+        <div style="text-align:center;font-weight:700;">16</div>
+        <div id="llaves-total-display" style="text-align:center;font-weight:700;font-family:monospace;color:var(--accent);">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tiempo</div>
+      <div class="form-grid-3">
+        <div class="field">
+          <label>Tiempo total (segundos)</label>
+          <input type="number" id="llaves-tiempo" min="0" placeholder="seg" oninput="llavesActualizar()">
+          <span style="font-size:0.75rem;color:#c62828;">⚠ Si tardó más de 95 seg se resta 1 punto automáticamente</span>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarLlaves()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularLlaves()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="llaves-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="llaves-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="llaves-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('llaves-resultado').style.display='none';document.getElementById('llaves-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarLlaves()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BADS · JUICIO TEMPORAL ── -->
+<div class="vista" id="vista-juicio">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">BADS · Juicio Temporal</div></div>
+  <div id="juicio-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="juicio-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Sexo *</label>
+          <select id="juicio-sexo">
+            <option value="">— Seleccionar —</option>
+            <option value="f">Femenino</option>
+            <option value="m">Masculino</option>
+          </select>
+        </div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="juicio-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">20–29 años</option>
+            <option value="1">30–39 años</option>
+            <option value="2">40–49 años</option>
+            <option value="3">50–59 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Educación *</label>
+          <select id="juicio-educ">
+            <option value="">— Seleccionar —</option>
+            <option value="0">Primario</option>
+            <option value="1">Secundario</option>
+            <option value="2">Terciario</option>
+            <option value="3">Universitario</option>
+            <option value="4">Postgrado</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="juicio-fecha"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Preguntas (respuesta correcta = 1 punto)</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Lea cada pregunta al paciente y registrá su respuesta. El sistema evalúa si cae en rango correcto.</p>
+      <div style="display:grid;gap:14px;" id="juicio-preguntas-wrap"></div>
+      <div style="margin-top:16px;padding:10px 14px;background:var(--surface2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:0.9rem;">Total:</span>
+        <span id="juicio-total-display" style="font-weight:700;font-family:monospace;font-size:1.1rem;color:var(--accent);">—/4</span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarJuicio()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularJuicio()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="juicio-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="juicio-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="juicio-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('juicio-resultado').style.display='none';document.getElementById('juicio-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarJuicio()">💾 Guardar resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BADS · MAPA DEL ZOO ── -->
+<div class="vista" id="vista-zoo">
+  <div class="back-btn" onclick="volverSector()">← Volver</div>
+  <div class="vista-header"><div class="vista-titulo">BADS · Mapa del Zoo</div></div>
+  <div id="zoo-form">
+    <div class="card">
+      <div class="card-title">Datos de la evaluación</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Paciente *</label><select id="zoo-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+        <div class="field"><label>Sexo *</label>
+          <select id="zoo-sexo">
+            <option value="">— Seleccionar —</option>
+            <option value="f">Femenino</option>
+            <option value="m">Masculino</option>
+          </select>
+        </div>
+        <div class="field"><label>Grupo de edad *</label>
+          <select id="zoo-edad">
+            <option value="">— Seleccionar —</option>
+            <option value="0">20–29 años</option>
+            <option value="1">30–39 años</option>
+            <option value="2">40–49 años</option>
+            <option value="3">50–59 años</option>
+          </select>
+        </div>
+        <div class="field"><label>Educación *</label>
+          <select id="zoo-educ">
+            <option value="">— Seleccionar —</option>
+            <option value="0">Primario</option>
+            <option value="1">Secundario</option>
+            <option value="2">Terciario</option>
+            <option value="3">Universitario</option>
+            <option value="4">Postgrado</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha</label><input type="date" id="zoo-fecha"></div>
+      </div>
+    </div>
+
+    <!-- Versión 1 -->
+    <div class="card">
+      <div class="card-title">Versión 1 — Alta demanda (planificación espontánea)</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Puntuación secuencia (0–8)</label><input type="number" id="zoo-v1-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
+        <div class="field"><label>Errores</label><input type="number" id="zoo-v1-err" min="0" placeholder="0" oninput="zooActualizar()"></div>
+        <div class="field"><label>Tiempo planificación (seg)</label><input type="number" id="zoo-v1-tplan" min="0" placeholder="seg"></div>
+        <div class="field"><label>Tiempo total (seg)</label><input type="number" id="zoo-v1-ttot" min="0" placeholder="seg"></div>
+      </div>
+      <div style="padding:8px 12px;background:var(--surface2);border-radius:6px;margin-top:8px;font-size:0.82rem;">
+        Puntaje V1: <strong id="zoo-v1-pje">—</strong> <span style="color:var(--muted);">(secuencia − errores, mín. 0)</span>
+      </div>
+    </div>
+
+    <!-- Versión 2 -->
+    <div class="card">
+      <div class="card-title">Versión 2 — Baja demanda (seguir instrucciones)</div>
+      <div style="background:#fff8e1;border:1px solid #f57f17;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:0.8rem;">
+        <strong style="color:#e65100;">⚠ Descuentos automáticos:</strong> −1 si tiempo planificación &gt;15 seg · −1 si tiempo total &gt;123 seg
+      </div>
+      <div class="form-grid-3">
+        <div class="field"><label>Puntuación secuencia (0–8)</label><input type="number" id="zoo-v2-sec" min="0" max="8" placeholder="0–8" oninput="zooActualizar()"></div>
+        <div class="field"><label>Errores</label><input type="number" id="zoo-v2-err" min="0" placeholder="0" oninput="zooActualizar()"></div>
+        <div class="field"><label>Tiempo planificación (seg)</label><input type="number" id="zoo-v2-tplan" min="0" placeholder="seg" oninput="zooActualizar()"></div>
+        <div class="field"><label>Tiempo total (seg)</label><input type="number" id="zoo-v2-ttot" min="0" placeholder="seg" oninput="zooActualizar()"></div>
+      </div>
+      <div style="padding:8px 12px;background:var(--surface2);border-radius:6px;margin-top:8px;font-size:0.82rem;">
+        Puntaje V2: <strong id="zoo-v2-pje">—</strong> <span style="color:var(--muted);">(secuencia − errores − descuentos tiempo, mín. 0)</span>
+      </div>
+    </div>
+
+    <div style="padding:10px 16px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:16px;font-size:0.9rem;">
+      <strong>Puntaje total bruto:</strong> <span id="zoo-total-bruto" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
+      <span style="color:var(--muted);font-size:0.8rem;margin-left:8px;">(V1 + V2)</span>
+      &nbsp;→&nbsp;
+      <strong>Puntuación convertida:</strong> <span id="zoo-total-conv" style="font-family:monospace;font-weight:700;color:var(--accent);">—</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="limpiarZoo()">🗑 Limpiar</button>
+      <button class="btn-primary" onclick="calcularZoo()">Calcular resultado →</button>
+    </div>
+  </div>
+  <div id="zoo-resultado" style="display:none;">
+    <div class="resultado-box">
+      <div class="resultado-detalle" id="zoo-detalle"></div>
+      <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="zoo-interp"></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="document.getElementById('zoo-resultado').style.display='none';document.getElementById('zoo-form').style.display='block';">← Modificar</button>
+      <button class="btn-primary" onclick="guardarZoo()">💾 Guardar resultado</button>
     </div>
   </div>
 </div>
@@ -4293,7 +4530,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -4587,7 +4824,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','Test del Hotel'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -4742,6 +4979,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       { dom: 'ATENCIÓN', tests: [
         { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
         { t:'BTA',         fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
+        { t:'BADS-Llaves', fn: function(r){ var d=r.datos||{}; addPunto('Llaves',d.z,'FUNC. EJEC.'); } },
+        { t:'BADS-Juicio', fn: function(r){ var d=r.datos||{}; addPunto('Juicio T.',d.z,'FUNC. EJEC.'); } },
+        { t:'BADS-Zoo',    fn: function(r){ var d=r.datos||{}; addPunto('Zoo',d.z,'FUNC. EJEC.'); } },
         { t:'Test del Hotel', fn: function(r){ var d=r.datos||{}; addPunto('Hotel Tareas',d.zTareas,'FUNC. EJEC.'); addPunto('Hotel Tiempo',d.zTiempo,'FUNC. EJEC.'); addPunto('Hotel Botones',d.zBotones,'FUNC. EJEC.'); } },
         { t:'BTA',        fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
         { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
@@ -4878,7 +5118,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
       'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','TMT A-B'],
       'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
-      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop','Test del Hotel'],
+      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'],
     };
 
     // Construir mapa test → resultado
@@ -4988,6 +5228,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, hMTi, hDSTi, d.zTiempo, r.fecha, 'Multitasking');
           if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, hMB, hDSB, d.zBotones, r.fecha, 'Mem. prospectiva');
 
+        } else if (testNombre === 'BADS-Llaves') {
+          rows += filaTabla('Búsqueda de Llaves', d.pb!=null?d.pb:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
+
+        } else if (testNombre === 'BADS-Juicio') {
+          rows += filaTabla('Juicio Temporal', d.conv!=null?d.conv:null, d.m||null, d.ds||null, d.z, r.fecha, null);
+
+        } else if (testNombre === 'BADS-Zoo') {
+          rows += filaTabla('Zoo V1', d.pje1!=null?d.pje1:null, null, null, null, r.fecha, 'Sec='+d.v1s+' Err='+d.v1e);
+          rows += filaTabla('Zoo V2', d.pje2!=null?d.pje2:null, null, null, null, r.fecha, 'Sec='+d.v2s+' Err='+d.v2e+(d.desc2?' Desc='+d.desc2:''));
+          rows += filaTabla('Zoo Total', d.bruto!=null?d.bruto:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
+
         } else if (testNombre === 'BTA') {
           var btaEi = d.ei != null ? d.ei : null;
           var btaGi = d.gi != null ? d.gi : null;
@@ -5032,6 +5283,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += filaTabla('Hotel — Tareas', d.intentadas!=null?d.intentadas+'/5':null, hMT, hDST, d.zTareas, r.fecha, 'Iniciativa/Planificación');
           if (d.zTiempo != null) rows += filaTabla('Hotel — Desvío tiempo', d.desvioTiempo!=null?d.desvioTiempo+' seg':null, hMTi, hDSTi, d.zTiempo, r.fecha, 'Multitasking');
           if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, hMB, hDSB, d.zBotones, r.fecha, 'Mem. prospectiva');
+
+        } else if (testNombre === 'BADS-Llaves') {
+          rows += filaTabla('Búsqueda de Llaves', d.pb!=null?d.pb:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
+
+        } else if (testNombre === 'BADS-Juicio') {
+          rows += filaTabla('Juicio Temporal', d.conv!=null?d.conv:null, d.m||null, d.ds||null, d.z, r.fecha, null);
+
+        } else if (testNombre === 'BADS-Zoo') {
+          rows += filaTabla('Zoo V1', d.pje1!=null?d.pje1:null, null, null, null, r.fecha, 'Sec='+d.v1s+' Err='+d.v1e);
+          rows += filaTabla('Zoo V2', d.pje2!=null?d.pje2:null, null, null, null, r.fecha, 'Sec='+d.v2s+' Err='+d.v2e+(d.desc2?' Desc='+d.desc2:''));
+          rows += filaTabla('Zoo Total', d.bruto!=null?d.bruto:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
 
         } else if (testNombre === 'BTA') {
           var btaEd = BTA_EDAD_LABELS[d.gi] || '—';
@@ -5514,8 +5776,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         'Figura Rey':         'Figura Compleja de Rey-Osterrieth (ROCF)',
         'BTA':                'Brief Test of Attention (BTA)',
         'Test del Hotel':     'Test del Hotel (Pinasco et al., 2023)',
+        'BADS-Llaves':        'BADS · Búsqueda de Llaves (Farías Sarquís et al., 2021)',
+        'BADS-Juicio':        'BADS · Juicio Temporal (Farías Sarquís et al., 2021)',
+        'BADS-Zoo':           'BADS · Mapa del Zoo (Farías Sarquís et al., 2021)',
         'BTA':                'Brief Test of Attention (BTA)',
         'Test del Hotel':     'Test del Hotel (Pinasco et al., 2023)',
+        'BADS-Llaves':        'BADS · Búsqueda de Llaves (Farías Sarquís et al., 2021)',
+        'BADS-Juicio':        'BADS · Juicio Temporal (Farías Sarquís et al., 2021)',
+        'BADS-Zoo':           'BADS · Mapa del Zoo (Farías Sarquís et al., 2021)',
         'SDMT-escrita':       'Symbol Digit Modalities Test — Versión Escrita (SDMT)',
         'SDMT-oral':          'Symbol Digit Modalities Test — Versión Oral (SDMT)',
         'IFS':                'INECO Frontal Screening (IFS)',
@@ -5540,7 +5808,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
         {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral','BTA']},
         {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
         {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
-        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop','Test del Hotel']},
+        {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo']},
         {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
         {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
         {label:'TDAH',                             tests:['ASRS-V1.1','WURS-25']},
@@ -5809,6 +6077,24 @@ function irSector(s) {
         '<div class="test-desc">Multitasking y memoria prospectiva en escenario ecológico</div>' +
         '<span class="test-tag">Pinasco et al. 2023 · Buenos Aires</span>' +
       '</div>' +
+      '<div class="test-card" onclick="irTest(\'llaves\')">' +
+        '<div class="test-icon">🗝</div>' +
+        '<div class="test-nombre">BADS · Búsqueda de Llaves</div>' +
+        '<div class="test-desc">Planificación de ruta de búsqueda eficiente — BADS</div>' +
+        '<span class="test-tag">Farías Sarquís et al. 2021 · Argentina</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'juicio\')">' +
+        '<div class="test-icon">⏱</div>' +
+        '<div class="test-nombre">BADS · Juicio Temporal</div>' +
+        '<div class="test-desc">Estimación de duraciones de eventos cotidianos — BADS</div>' +
+        '<span class="test-tag">Farías Sarquís et al. 2021 · Argentina</span>' +
+      '</div>' +
+      '<div class="test-card" onclick="irTest(\'zoo\')">' +
+        '<div class="test-icon">🦁</div>' +
+        '<div class="test-nombre">BADS · Mapa del Zoo</div>' +
+        '<div class="test-desc">Planificación espontánea vs. seguimiento de instrucciones — BADS</div>' +
+        '<span class="test-tag">Farías Sarquís et al. 2021 · Argentina</span>' +
+      '</div>' +
       '<div class="test-card" onclick="irTest(\'sdmt\')">' +
         '<div class="test-icon">⚡</div>' +
         '<div class="test-nombre">SDMT</div>' +
@@ -5913,6 +6199,9 @@ function irTest(t) {
   if (t === 'fcr') iniciarFCR();
   if (t === 'bta') iniciarBTA();
   if (t === 'hotel') iniciarHotel();
+  if (t === 'llaves') iniciarLlaves();
+  if (t === 'juicio') iniciarJuicio();
+  if (t === 'zoo') iniciarZoo();
   if (t === 'sdmt') iniciarSDMT();
 }
 
@@ -7980,6 +8269,460 @@ function guardarAsrs() {
     var btn=btnAll.length?btnAll[btnAll.length-1]:null;
     if(btn){btn.classList.add('btn-saved');setTimeout(function(){btn.classList.remove('btn-saved');},1500);}
   }).catch(function(){toast('Error al guardar','error');});
+}
+
+// ══ BADS · Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48 ═══
+// Baremos Argentina — Edad × Sexo × Educación
+// Educación: 0=Primario, 1=Secundario, 2=Terciario, 3=Universitario, 4=Postgrado
+// Edad: 0=20-29, 1=30-39, 2=40-49, 3=50-59
+// Grupos sin variabilidad (DS=0) se marcan con null → Z no calculable
+// ── Búsqueda de Llaves ──────────────────────────────────────────────────────
+// Indicadores
+var LLAVES_INDICADORES = [
+  { id:'ent',   label:'Entrada',           max:3 },
+  { id:'fin',   label:'Finalización',      max:3 },
+  { id:'con',   label:'Continuidad',       max:1 },
+  { id:'par',   label:'Paralelas',         max:1 },
+  { id:'vh',    label:'Vert/Horiz',        max:1 },
+  { id:'pat',   label:'Patrones',          max:5 },
+  { id:'tod',   label:'Todo el campo',     max:1 },
+  { id:'enc',   label:'Encontrar las llaves', max:1 },
+];
+
+// Tabla PB → Pje Convertido
+function llavesPBtoConv(pb) {
+  if (pb >= 14) return 4;
+  if (pb >= 11) return 3;
+  if (pb >= 8)  return 2;
+  if (pb >= 5)  return 1;
+  return 0;
+}
+
+// Baremos [M, DS] para Pje Convertido por [edad][sexo][educ]
+// null = sin variabilidad (DS=0), no se calcula Z
+// f=femenino, m=masculino
+// educ: 0=Primario,1=Secundario,2=Terciario,3=Universitario,4=Postgrado
+var LLAVES_BAR = {
+  f: [
+    // 20-29
+    [null, [2.42,1.13], [2.18,1.42], [3,1.41], null],
+    // 30-39
+    [[2,1.41], [2,1.41], [2.6,1.3], [2.5,0.5], null],
+    // 40-49
+    [[1.5,2.12], [2.3,1.25], [2,1.41], [3,0.81], [4,null]],
+    // 50-59
+    [[2.3,1.15], [3.16,1.47], [2.4,1.14], [2.28,1.8], [2.25,0.96]]
+  ],
+  m: [
+    // 20-29
+    [null, [3.33,0.57], [2.5,0.7], [3.06,1.08], null],
+    // 30-39
+    [[2.85,0.69], [2.6,1.52], [2.6,1.5], [3,null], null],
+    // 40-49
+    [[3.2,0.83], [4,null], [3.28,0.75], [4,null], null],
+    // 50-59
+    [[0.6,0.5], [2.8,1.4], [2,null], [4,null], null]
+  ]
+};
+
+function badsZLabel(z) {
+  if (z === null) return '—';
+  if (z >= 1.5)   return 'Superior';
+  if (z >= -0.5)  return 'Normal';
+  if (z >= -0.99) return 'Límite inferior normativo';
+  if (z >= -1.49) return 'Dificultad leve';
+  if (z >= -1.99) return 'Dificultad moderada';
+  return 'Dificultad elevada';
+}
+
+function badsGetBar(tabla, sexo, gi, ei) {
+  var s = tabla[sexo];
+  if (!s) return null;
+  var g = s[gi];
+  if (!g) return null;
+  return g[ei] || null;
+}
+
+function llavesActualizar() {
+  var total = 0;
+  LLAVES_INDICADORES.forEach(function(ind) {
+    var el = document.getElementById('llaves-ind-'+ind.id);
+    if (el) total += parseFloat(el.value) || 0;
+  });
+  var tiempoEl = document.getElementById('llaves-tiempo');
+  var tiempo = tiempoEl ? (parseFloat(tiempoEl.value) || 0) : 0;
+  if (tiempo > 95) total = Math.max(0, total - 1);
+  var el = document.getElementById('llaves-total-display');
+  if (el) el.textContent = total;
+  return total;
+}
+
+function llavesBuildIndicadores() {
+  var wrap = document.getElementById('llaves-indicadores-wrap');
+  if (!wrap) return;
+  var html = '';
+  LLAVES_INDICADORES.forEach(function(ind) {
+    html += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);">';
+    html += '<div style="font-size:0.85rem;color:var(--text);">'+ind.label+'</div>';
+    html += '<div style="text-align:center;font-size:0.85rem;color:var(--muted);">'+ind.max+'</div>';
+    html += '<input type="number" id="llaves-ind-'+ind.id+'" min="0" max="'+ind.max+'" style="text-align:center;" oninput="llavesActualizar()">';
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+function iniciarLlaves() {
+  document.getElementById('llaves-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('llaves-form').style.display = 'block';
+  document.getElementById('llaves-resultado').style.display = 'none';
+  llavesBuildIndicadores();
+}
+
+function limpiarLlaves() {
+  LLAVES_INDICADORES.forEach(function(ind) {
+    var el = document.getElementById('llaves-ind-'+ind.id);
+    if (el) el.value = '';
+  });
+  var t = document.getElementById('llaves-tiempo'); if(t) t.value = '';
+  var d = document.getElementById('llaves-total-display'); if(d) d.textContent = '—';
+}
+
+function calcularLlaves() {
+  var sexo = document.getElementById('llaves-sexo').value;
+  var gi   = document.getElementById('llaves-edad').value;
+  var ei   = document.getElementById('llaves-educ').value;
+  if (!sexo || gi==='' || ei==='') { toast('Completá sexo, edad y educación.','error'); return; }
+  gi = parseInt(gi); ei = parseInt(ei);
+
+  var pbSum = 0;
+  LLAVES_INDICADORES.forEach(function(ind) {
+    var el = document.getElementById('llaves-ind-'+ind.id);
+    pbSum += parseFloat(el.value) || 0;
+  });
+  var tiempo = parseFloat(document.getElementById('llaves-tiempo').value) || 0;
+  var descTiempo = tiempo > 95 ? 1 : 0;
+  var pb = Math.max(0, pbSum - descTiempo);
+  var conv = llavesPBtoConv(pb);
+
+  var bar = badsGetBar(LLAVES_BAR, sexo, gi, ei);
+  var m = bar ? bar[0] : null;
+  var ds = bar ? bar[1] : null;
+  var z = (m !== null && ds !== null && ds > 0) ? parseFloat(((conv - m) / ds).toFixed(2)) : null;
+
+  var edadLbls = ['20–29','30–39','40–49','50–59'];
+  var educLbls = ['Primario','Secundario','Terciario','Universitario','Postgrado'];
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+pbSum+'</div><div class="detalle-lbl">PB bruto</div></div>'+
+    (descTiempo ? '<div class="detalle-item"><div class="detalle-num" style="color:#c62828;">−1</div><div class="detalle-lbl">Descuento<br>tiempo >95s</div></div>' : '')+
+    '<div class="detalle-item"><div class="detalle-num">'+pb+'</div><div class="detalle-lbl">PB ajustado</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+conv+'</div><div class="detalle-lbl">Pje convertido</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z!==null?(z>=0?'+':'')+z:'—')+'</div><div class="detalle-lbl">Z</div></div>';
+
+  var interpHtml =
+    '<p><strong>Grupo:</strong> '+(sexo==='f'?'Femenino':'Masculino')+' · '+edadLbls[gi]+' · '+educLbls[ei]+'</p>'+
+    '<p><strong>PB:</strong> '+pbSum+' → ajustado '+pb+' → Pje convertido '+conv+'/4</p>'+
+    '<p><strong>Z:</strong> '+(z!==null?(z>=0?'+':'')+z:'No calculable (sin variabilidad en este grupo)')+
+    (m!==null?' (M='+m+', DS='+(ds||'0')+')' : '')+' — <strong>'+badsZLabel(z)+'</strong></p>'+
+    '<p style="font-size:0.78rem;color:var(--muted);">Fuente: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48. BADS adaptación Argentina.</p>';
+
+  window._llavesData = { pb:pb, pbBruto:pbSum, conv:conv, z:z, m:m, ds:ds, gi:gi, ei:ei, sexo:sexo, tiempo:tiempo, descTiempo:descTiempo };
+  document.getElementById('llaves-detalle').innerHTML = detalleHtml;
+  document.getElementById('llaves-interp').innerHTML  = interpHtml;
+  document.getElementById('llaves-form').style.display = 'none';
+  document.getElementById('llaves-resultado').style.display = 'block';
+}
+
+function guardarLlaves() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('llaves-paciente').value;
+  var fecha = document.getElementById('llaves-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._llavesData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._llavesData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'BADS-Llaves', fecha:fecha,
+    puntaje_total:d.conv, puntaje_z:d.z, categoria:badsZLabel(d.z),
+    datos:d
+  }, SESSION.access_token).then(function(){
+    window._llavesData=null; cargarResultados(); toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ── Juicio Temporal ──────────────────────────────────────────────────────────
+var JUICIO_PREGUNTAS = [
+  { id:'perros',  pregunta:'¿Cuánto tiempo viven la mayoría de los perros?',                   rango:'Entre 9 y 15 años',     unidad:'años',     min:9,  max:15 },
+  { id:'globo',   pregunta:'¿Cuánto tiempo le lleva inflar un globo hasta que reviente?',       rango:'Entre 50 y 70 segundos', unidad:'segundos', min:50, max:70 },
+  { id:'dientes', pregunta:'¿Cuánto tiempo tarda en lavarse los dientes por la mañana?',        rango:'Entre 1 y 7 minutos',   unidad:'minutos',  min:1,  max:7  },
+  { id:'platos',  pregunta:'¿Cuánto tiempo emplea en lavar los platos de una familia tipo (4 integrantes)?', rango:'Entre 6 y 26 minutos', unidad:'minutos', min:6, max:26 },
+];
+
+// Baremos Juicio Temporal [M, DS] por [edad][sexo][educ]
+var JUICIO_BAR = {
+  f: [
+    // 20-29: Prim=null, Sec=null, Ter=[2,1], Univ=[2.94,0.7], Post=[3,null]
+    [null, null, [2,1], [2.94,0.7], [3,null]],
+    // 30-39: Sec=[2.75,0.95], Ter=[2,null], Univ=[2.92,0.67], Post=[2.75,0.5]
+    [null, [2.75,0.95], [2,null], [2.92,0.67], [2.75,0.5]],
+    // 40-49: Prim=[2.5,0.7], Sec=[3.5,0.68], Ter=[2.5,1], Univ=[2.7,0.75], Post=[2,null]
+    [[2.5,0.7], [3.5,0.68], [2.5,1], [2.7,0.75], [2,null]],
+    // 50-59: Prim=[3.3,0.57], Sec=[3.16,0.98], Ter=[2.8,0.4], Univ=[2.28,0.95], Post=[2.75,0.95]
+    [[3.3,0.57], [3.16,0.98], [2.8,0.4], [2.28,0.95], [2.75,0.95]]
+  ],
+  m: [
+    // 20-29: Sec=[2.6,0.57], Ter=[3,1.41], Univ=[2.76,0.83]
+    [null, [2.6,0.57], [3,1.41], [2.76,0.83], null],
+    // 30-39: Sec=[2.57,1.13], Ter=[2.3,0.57], Univ=[2.8,0.92], Post=[3,1.41]
+    [null, [2.57,1.13], [2.3,0.57], [2.8,0.92], [3,1.41]],
+    // 40-49: Sec=[2.6,10.03], Ter=[4,null], Univ=[2.86,0.69], Post=[3.5,0.7]
+    [null, [2.6,10.03], [4,null], [2.86,0.69], [3.5,0.7]],
+    // 50-59: Prim=[2.6,0.57], Sec=[2.8,1.2], Ter=[2,null], Univ=[3,null]
+    [[2.6,0.57], [2.8,1.2], [2,null], [3,null], null]
+  ]
+};
+
+function juicioBuildPreguntas() {
+  var wrap = document.getElementById('juicio-preguntas-wrap');
+  if (!wrap) return;
+  var html = '';
+  JUICIO_PREGUNTAS.forEach(function(p) {
+    html += '<div style="border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;">';
+    html += '<div style="font-weight:600;font-size:0.88rem;color:var(--text);margin-bottom:6px;">'+p.pregunta+'</div>';
+    html += '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;">Rango correcto: <strong>'+p.rango+'</strong></div>';
+    html += '<div style="display:flex;gap:10px;align-items:center;">';
+    html += '<input type="number" id="juicio-resp-'+p.id+'" placeholder="Respuesta del paciente" style="flex:1;" oninput="juicioActualizar()">';
+    html += '<span style="font-size:0.8rem;color:var(--muted);">'+p.unidad+'</span>';
+    html += '<div id="juicio-ok-'+p.id+'" style="font-size:1rem;min-width:24px;text-align:center;"></div>';
+    html += '</div></div>';
+  });
+  wrap.innerHTML = html;
+}
+
+function juicioActualizar() {
+  var total = 0;
+  JUICIO_PREGUNTAS.forEach(function(p) {
+    var el = document.getElementById('juicio-resp-'+p.id);
+    var ok = document.getElementById('juicio-ok-'+p.id);
+    if (!el || el.value === '') { if(ok) ok.textContent = ''; return; }
+    var v = parseFloat(el.value);
+    var correcto = (v >= p.min && v <= p.max);
+    if (ok) ok.textContent = correcto ? '✅' : '❌';
+    if (correcto) total++;
+  });
+  var el = document.getElementById('juicio-total-display');
+  if (el) el.textContent = total + '/4';
+  return total;
+}
+
+function iniciarJuicio() {
+  document.getElementById('juicio-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('juicio-form').style.display = 'block';
+  document.getElementById('juicio-resultado').style.display = 'none';
+  juicioBuildPreguntas();
+}
+
+function limpiarJuicio() {
+  JUICIO_PREGUNTAS.forEach(function(p) {
+    var el = document.getElementById('juicio-resp-'+p.id); if(el) el.value = '';
+    var ok = document.getElementById('juicio-ok-'+p.id); if(ok) ok.textContent = '';
+  });
+  var el = document.getElementById('juicio-total-display'); if(el) el.textContent = '—/4';
+}
+
+function calcularJuicio() {
+  var sexo = document.getElementById('juicio-sexo').value;
+  var gi   = document.getElementById('juicio-edad').value;
+  var ei   = document.getElementById('juicio-educ').value;
+  if (!sexo || gi==='' || ei==='') { toast('Completá sexo, edad y educación.','error'); return; }
+  gi = parseInt(gi); ei = parseInt(ei);
+
+  var total = 0;
+  var respuestas = {};
+  JUICIO_PREGUNTAS.forEach(function(p) {
+    var el = document.getElementById('juicio-resp-'+p.id);
+    var v = el ? parseFloat(el.value) : null;
+    var correcto = (v !== null && !isNaN(v) && v >= p.min && v <= p.max);
+    if (correcto) total++;
+    respuestas[p.id] = { resp: v, correcto: correcto };
+  });
+
+  // Juicio Temporal: PB ya es el convertido (0–4)
+  var conv = total;
+  var bar = badsGetBar(JUICIO_BAR, sexo, gi, ei);
+  var m  = bar ? bar[0] : null;
+  var ds = bar ? bar[1] : null;
+  var z  = (m !== null && ds !== null && ds > 0) ? parseFloat(((conv - m) / ds).toFixed(2)) : null;
+
+  var edadLbls = ['20–29','30–39','40–49','50–59'];
+  var educLbls = ['Primario','Secundario','Terciario','Universitario','Postgrado'];
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+total+'/4</div><div class="detalle-lbl">Puntaje<br>convertido</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z!==null?(z>=0?'+':'')+z:'—')+'</div><div class="detalle-lbl">Z</div></div>';
+
+  var interpHtml =
+    '<p><strong>Grupo:</strong> '+(sexo==='f'?'Femenino':'Masculino')+' · '+edadLbls[gi]+' · '+educLbls[ei]+'</p>'+
+    '<p><strong>Puntaje convertido:</strong> '+conv+'/4</p>'+
+    '<p><strong>Z:</strong> '+(z!==null?(z>=0?'+':'')+z:'No calculable (sin variabilidad en este grupo)')+
+    (m!==null?' (M='+m+', DS='+(ds||'0')+')' : '')+' — <strong>'+badsZLabel(z)+'</strong></p>'+
+    '<p style="font-size:0.78rem;color:var(--muted);">Fuente: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48.</p>';
+
+  window._juicioData = { conv:conv, z:z, m:m, ds:ds, gi:gi, ei:ei, sexo:sexo, respuestas:respuestas };
+  document.getElementById('juicio-detalle').innerHTML = detalleHtml;
+  document.getElementById('juicio-interp').innerHTML  = interpHtml;
+  document.getElementById('juicio-form').style.display = 'none';
+  document.getElementById('juicio-resultado').style.display = 'block';
+}
+
+function guardarJuicio() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('juicio-paciente').value;
+  var fecha = document.getElementById('juicio-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._juicioData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._juicioData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'BADS-Juicio', fecha:fecha,
+    puntaje_total:d.conv, puntaje_z:d.z, categoria:badsZLabel(d.z), datos:d
+  }, SESSION.access_token).then(function(){
+    window._juicioData=null; cargarResultados(); toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ── Mapa del Zoo ─────────────────────────────────────────────────────────────
+function zooPBtoConv(pb) {
+  if (pb >= 16) return 4;
+  if (pb >= 11) return 3;
+  if (pb >= 6)  return 2;
+  if (pb >= 1)  return 1;
+  return 0;
+}
+
+// Baremos Zoo: [M, DS] de Pje Convertido por [edad][sexo][educ]
+var ZOO_BAR = {
+  f: [
+    // 20-29: Sec=null, Ter=[3.14,0.9], Univ=[2.87,1.2], Post=[2,2.82]
+    [null, null, [3.14,0.9], [2.87,1.2], [2,2.82]],
+    // 30-39: Sec=[2,1.41], Ter=[3,1.41], Univ=[3.18,1.25], Post=[3.25,1.5]
+    [null, [2,1.41], [3,1.41], [3.18,1.25], [3.25,1.5]],
+    // 40-49: Prim=[1,1.41], Sec=[2.36,1.12], Ter=[2.5,1], Univ=[2.57,1.2], Post=[1,null]
+    [[1,1.41], [2.36,1.12], [2.5,1], [2.57,1.2], [1,null]],
+    // 50-59: Prim=[1.3,1.15], Sec=[3,1.26], Ter=[3.2,1.09], Univ=[3.14,1.21], Post=[2.75,0.95]
+    [[1.3,1.15], [3,1.26], [3.2,1.09], [3.14,1.21], [2.75,0.95]]
+  ],
+  m: [
+    // 20-29: Sec=[2.6,1.53], Ter=[3,1.41], Univ=[3.23,1.25]
+    [null, [2.6,1.53], [3,1.41], [3.23,1.25], null],
+    // 30-39: Sec=[2,0.57], Ter=[2.6,1.15], Univ=[2.3,1.6], Post=[2.5,0.7]
+    [null, [2,0.57], [2.6,1.15], [2.3,1.6], [2.5,0.7]],
+    // 40-49: Sec=[2.83,1.17], Ter=[1,1.41], Univ=[2.43,1.27], Post=[4,null]
+    [null, [2.83,1.17], [1,1.41], [2.43,1.27], [4,null]],
+    // 50-59: Prim=[1.6,0.57], Sec=[3,0.81], Ter=[2.5,2.12], Univ=[2,null]
+    [[1.6,0.57], [3,0.81], [2.5,2.12], [2,null], null]
+  ]
+};
+
+function zooActualizar() {
+  var v1s = parseFloat(document.getElementById('zoo-v1-sec').value) || 0;
+  var v1e = parseFloat(document.getElementById('zoo-v1-err').value) || 0;
+  var pje1 = Math.max(0, v1s - v1e);
+  var el1 = document.getElementById('zoo-v1-pje'); if(el1) el1.textContent = pje1;
+
+  var v2s = parseFloat(document.getElementById('zoo-v2-sec').value) || 0;
+  var v2e = parseFloat(document.getElementById('zoo-v2-err').value) || 0;
+  var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value) || 0;
+  var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value) || 0;
+  var desc2 = (v2tp > 15 ? 1 : 0) + (v2tt > 123 ? 1 : 0);
+  var pje2 = Math.max(0, v2s - v2e - desc2);
+  var el2 = document.getElementById('zoo-v2-pje'); if(el2) el2.textContent = pje2 + (desc2 ? ' (−'+desc2+' desc.)' : '');
+
+  var bruto = pje1 + pje2;
+  var conv  = zooPBtoConv(bruto);
+  var elB = document.getElementById('zoo-total-bruto'); if(elB) elB.textContent = bruto;
+  var elC = document.getElementById('zoo-total-conv');  if(elC) elC.textContent = conv;
+}
+
+function iniciarZoo() {
+  document.getElementById('zoo-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('zoo-form').style.display = 'block';
+  document.getElementById('zoo-resultado').style.display = 'none';
+}
+
+function limpiarZoo() {
+  ['zoo-v1-sec','zoo-v1-err','zoo-v1-tplan','zoo-v1-ttot',
+   'zoo-v2-sec','zoo-v2-err','zoo-v2-tplan','zoo-v2-ttot'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  ['zoo-v1-pje','zoo-v2-pje'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent='—'; });
+  var b=document.getElementById('zoo-total-bruto'); if(b) b.textContent='—';
+  var c=document.getElementById('zoo-total-conv');  if(c) c.textContent='—';
+}
+
+function calcularZoo() {
+  var sexo = document.getElementById('zoo-sexo').value;
+  var gi   = document.getElementById('zoo-edad').value;
+  var ei   = document.getElementById('zoo-educ').value;
+  if (!sexo || gi==='' || ei==='') { toast('Completá sexo, edad y educación.','error'); return; }
+  gi = parseInt(gi); ei = parseInt(ei);
+
+  var v1s  = parseFloat(document.getElementById('zoo-v1-sec').value)   || 0;
+  var v1e  = parseFloat(document.getElementById('zoo-v1-err').value)   || 0;
+  var v2s  = parseFloat(document.getElementById('zoo-v2-sec').value)   || 0;
+  var v2e  = parseFloat(document.getElementById('zoo-v2-err').value)   || 0;
+  var v2tp = parseFloat(document.getElementById('zoo-v2-tplan').value) || 0;
+  var v2tt = parseFloat(document.getElementById('zoo-v2-ttot').value)  || 0;
+
+  var pje1 = Math.max(0, v1s - v1e);
+  var desc2 = (v2tp > 15 ? 1 : 0) + (v2tt > 123 ? 1 : 0);
+  var pje2  = Math.max(0, v2s - v2e - desc2);
+  var bruto = pje1 + pje2;
+  var conv  = zooPBtoConv(bruto);
+
+  var bar = badsGetBar(ZOO_BAR, sexo, gi, ei);
+  var m  = bar ? bar[0] : null;
+  var ds = bar ? bar[1] : null;
+  var z  = (m !== null && ds !== null && ds > 0) ? parseFloat(((conv - m) / ds).toFixed(2)) : null;
+
+  var edadLbls = ['20–29','30–39','40–49','50–59'];
+  var educLbls = ['Primario','Secundario','Terciario','Universitario','Postgrado'];
+
+  var detalleHtml =
+    '<div class="detalle-item"><div class="detalle-num">'+pje1+'</div><div class="detalle-lbl">Puntaje<br>V1</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+pje2+'</div><div class="detalle-lbl">Puntaje<br>V2</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+bruto+'</div><div class="detalle-lbl">Total<br>bruto</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+conv+'</div><div class="detalle-lbl">Pje<br>convertido</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(z!==null?(z>=0?'+':'')+z:'—')+'</div><div class="detalle-lbl">Z</div></div>';
+
+  var interpHtml =
+    '<p><strong>Grupo:</strong> '+(sexo==='f'?'Femenino':'Masculino')+' · '+edadLbls[gi]+' · '+educLbls[ei]+'</p>'+
+    '<p><strong>V1:</strong> Secuencia '+v1s+' − Errores '+v1e+' = '+pje1+
+    ' &nbsp;|&nbsp; <strong>V2:</strong> Secuencia '+v2s+' − Errores '+v2e+(desc2?' − Descuento '+desc2:'')+'  = '+pje2+'</p>'+
+    '<p><strong>Total bruto:</strong> '+bruto+' → Pje convertido: '+conv+'/4</p>'+
+    '<p><strong>Z:</strong> '+(z!==null?(z>=0?'+':'')+z:'No calculable (sin variabilidad en este grupo)')+
+    (m!==null?' (M='+m+', DS='+(ds||'0')+')' : '')+' — <strong>'+badsZLabel(z)+'</strong></p>'+
+    '<p style="font-size:0.78rem;color:var(--muted);">Fuente: Farías Sarquís et al. (2021) — Cuadernos de Neuropsicología 15(1):25-48.</p>';
+
+  window._zooData = { pje1:pje1, pje2:pje2, bruto:bruto, conv:conv, z:z, m:m, ds:ds,
+    gi:gi, ei:ei, sexo:sexo, v1s:v1s, v1e:v1e, v2s:v2s, v2e:v2e, v2tp:v2tp, v2tt:v2tt, desc2:desc2 };
+  document.getElementById('zoo-detalle').innerHTML = detalleHtml;
+  document.getElementById('zoo-interp').innerHTML  = interpHtml;
+  document.getElementById('zoo-form').style.display = 'none';
+  document.getElementById('zoo-resultado').style.display = 'block';
+}
+
+function guardarZoo() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('zoo-paciente').value;
+  var fecha = document.getElementById('zoo-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._zooData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._zooData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id, paciente_id:pacId, test:'BADS-Zoo', fecha:fecha,
+    puntaje_total:d.conv, puntaje_z:d.z, categoria:badsZLabel(d.z), datos:d
+  }, SESSION.access_token).then(function(){
+    window._zooData=null; cargarResultados(); toast('✓ Resultado guardado','success');
+  }).catch(function(){ toast('Error al guardar','error'); });
 }
 
 // ══ TEST DEL HOTEL ═══════════════════════════════════════════════════════════
