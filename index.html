@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.19</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.20</div>
     </div>
   </aside>
 
@@ -6207,22 +6207,29 @@ function irVista(v) {
 }
 
 var NP_TESTS = [
-  {id:'moca',     n:'MoCA',              d:'Montreal Cognitive Assessment',              t:'Cognitivo global',   dom:'global'},
-  {id:'acer',     n:'ACE-R',             d:"Addenbrooke's Cognitive Examination",        t:'Cognitivo global',   dom:'global'},
-  {id:'reloj',    n:'Test del Reloj',    d:'Cribado cognitivo · Cacho et al. 1999',      t:'Cognitivo global',   dom:'global'},
-  {id:'d2',       n:'d2',               d:'Test de Atención · Atención selectiva y concentración', t:'Atención',           dom:'atencion'},
-  {id:'bta',      n:'BTA',               d:'Brief Test of Attention · Series N y P',     t:'Atención',           dom:'atencion'},
-  {id:'tmt',      n:'TMT A y B',         d:'Trail Making Test · atención y flexibilidad', t:'Atención',          dom:'atencion'},
-  {id:'sdmt',     n:'SDMT',              d:'Symbol Digit Modalities · escrita + oral',   t:'Atención',           dom:'atencion'},
-  {id:'stroop',   n:'Stroop',            d:'P · C · PC · Interferencia',                 t:'Atención',           dom:'atencion'},
-  {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',        t:'Memoria',            dom:'memoria'},
-  {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',      t:'Memoria',            dom:'memoria'},
-  {id:'waisiv',   n:'WAIS-IV',           d:'Dígitos · Claves · SLN',                     t:'Memoria de trabajo', dom:'memoria'},
-  {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                     t:'Lenguaje',           dom:'lenguaje'},
-  {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',  t:'Lenguaje',           dom:'lenguaje'},
-  {id:'fcr',      n:'Figura de Rey',     d:'Copia y Recuerdo Inmediato · ROCF',          t:'Visoconstructivo',   dom:'visoc'},
-  {id:'fab',       n:'FAB',               d:'Frontal Assessment Battery · Aceiro 2018 · Argentina', t:'Ejecutivas', dom:'ejecutivas'},
+  // Cognitivo global
+  {id:'moca',     n:'MoCA',              d:'Montreal Cognitive Assessment',               t:'Cognitivo global',   dom:'global'},
+  {id:'acer',     n:'ACE-R',             d:"Addenbrooke's Cognitive Examination",         t:'Cognitivo global',   dom:'global'},
+  {id:'reloj',    n:'Test del Reloj',    d:'Cribado cognitivo · Cacho et al. 1999',       t:'Cognitivo global',   dom:'global'},
+  // Atención
+  {id:'d2',       n:'d2',               d:'Test de Atención · Atención selectiva y concentración', t:'Atención', dom:'atencion'},
+  {id:'bta',      n:'BTA',               d:'Brief Test of Attention · Series N y P',      t:'Atención',           dom:'atencion'},
+  {id:'tmt',      n:'TMT A y B',         d:'Trail Making Test · atención y flexibilidad',  t:'Atención',           dom:'atencion'},
+  {id:'sdmt',     n:'SDMT',              d:'Symbol Digit Modalities · escrita + oral',    t:'Atención',           dom:'atencion'},
+  {id:'stroop',   n:'Stroop',            d:'P · C · PC · Interferencia',                  t:'Atención',           dom:'atencion'},
+  {id:'waisiv',   n:'WAIS-IV',           d:'Dígitos · Claves · SLN',                      t:'Atención / Mem. trabajo', dom:'atencion'},
+  // Memoria
+  {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',         t:'Memoria',            dom:'memoria'},
+  {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',       t:'Memoria',            dom:'memoria'},
+  // Lenguaje
+  {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                      t:'Lenguaje',           dom:'lenguaje'},
+  {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',   t:'Lenguaje',           dom:'lenguaje'},
+  // Visoconstructivo
+  {id:'fcr',      n:'Figura de Rey',     d:'Copia y Recuerdo Inmediato · ROCF',           t:'Visoconstructivo',   dom:'visoc'},
+  // Ejecutivas
+  {id:'fab',      n:'FAB',               d:'Frontal Assessment Battery · Aceiro 2018',    t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'ifs',      n:'IFS',               d:'INECO Frontal Screening',                    t:'Ejecutivas',         dom:'ejecutivas'},
+  {id:'tmt',      n:'TMT A y B',         d:'Trail Making Test · también en Atención',    t:'Ejecutivas / Atención', dom:'ejecutivas'},
   {id:'wcst',     n:'WCST-64',           d:'Wisconsin Card Sorting Test · 64 cartas',    t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'hotel',    n:'Test del Hotel',    d:'Multitasking y memoria prospectiva',         t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'llaves',   n:'BADS — Llaves',     d:'Búsqueda de Llaves · BADS',                 t:'Ejecutivas',         dom:'ejecutivas'},
