@@ -446,7 +446,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.9</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.11</div>
     </div>
   </aside>
 
@@ -4266,6 +4266,25 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 
 <script>
 
+function calcularEdad(fechaNac) {
+  if (!fechaNac) return '';
+  var hoy = new Date();
+  var nac = new Date(fechaNac);
+  var edad = hoy.getFullYear() - nac.getFullYear();
+  var m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
+
+function actualizarSaludo() {
+  var el = document.getElementById('saludo-usuario');
+  if (!el) return;
+  var hora = new Date().getHours();
+  var saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
+  var email = SESSION && SESSION.user ? SESSION.user.email : '';
+  el.textContent = saludo + (email ? ', ' + email.split('@')[0] : '') + '.';
+}
+
 function verificarGate(){
   var input=document.getElementById('gate-input').value;
   if(input==='Sigrid1109'){
@@ -5998,30 +6017,6 @@ var NP_TESTS=[
 
 
 var _npChipActivo='todos';
-function npChip(el,dom){
-  document.querySelectorAll('.np-chip').forEach(function(c){c.classList.remove('active');});
-  el.classList.add('active');
-  _npChipActivo=dom;
-  npRender();
-}
-function npRender(){
-  var qEl=document.getElementById('np-q');
-  var q=qEl?qEl.value.toLowerCase():'';
-  var r=NP_TESTS.filter(function(t){
-    var dok=_npChipActivo==='todos'||t.dom===_npChipActivo;
-    var tok=!q||(t.n+' '+t.d+' '+t.t).toLowerCase().includes(q);
-    return dok&&tok;
-  });
-  var grid=document.getElementById('np-grid');
-  if(!grid)return;
-  grid.innerHTML=r.map(function(t){
-    return '<div class="test-card" onclick="irTest(\''+t.id+'\')">'+
-      '<div class="test-nombre">'+t.n+'</div>'+
-      '<div class="test-desc">'+t.d+'</div>'+
-      '<span class="test-tag">'+t.t+'</span>'+
-    '</div>';
-  }).join('') || '<div style="padding:20px;text-align:center;font-size:12px;color:var(--muted);">Sin resultados</div>';
-}
 
 function irSector(s) {
   sectorActual = s;
