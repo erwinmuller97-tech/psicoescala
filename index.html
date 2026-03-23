@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.15</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.16</div>
     </div>
   </aside>
 
@@ -5423,6 +5423,25 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             : ['3–11 años','12–16 años','>16 años'];
           var sdmtNota = (d.gi!=null&&d.ei!=null) ? (sdmtVer==='escrita'?'Escrita':'Oral')+' · '+sdmtEdadLabels[d.gi]+' · '+sdmtEscolLabels[d.ei] : null;
           rows += filaTabla('SDMT ('+(sdmtVer==='escrita'?'Escrita':'Oral')+')', d.puntaje, d.m||null, d.ds||null, d.z, r.fecha, sdmtNota);
+
+        } else if (testNombre === 'D2') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">d2 · Test de Atención (Brickenkamp) · Baremos TEA Ediciones · ' + (D2_GRUPOS[d.gi]||'') + '</td></tr>';
+          var d2Indices = [
+            { key:'TR',  label:'TR · Total respuestas'  },
+            { key:'TA',  label:'TA · Total aciertos'    },
+            { key:'O',   label:'O · Omisiones'          },
+            { key:'C',   label:'C · Comisiones'         },
+            { key:'TOT', label:'TOT · Efectividad total'},
+            { key:'CON', label:'CON · Concentración'    },
+            { key:'VAR', label:'VAR · Variación'        }
+          ];
+          var idx2 = d.indices || {};
+          var bar2 = D2_BAR[d.gi] || {};
+          d2Indices.forEach(function(di) {
+            var iv = idx2[di.key]; if (!iv) return;
+            var b = bar2[di.key];
+            rows += filaTabla(di.label, iv.bruto, b?b.M:null, b?b.DS:null, iv.z, r.fecha, null);
+          });
 
         } else if (testNombre === 'Figura Rey') {
           var escolLabelsF = ['>12 años educ.','1–12 años educ.'];
