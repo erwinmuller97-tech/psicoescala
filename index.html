@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.17</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.18</div>
     </div>
   </aside>
 
@@ -1510,6 +1510,131 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
     </div>
+
+    <!-- ── TEST FAB ── -->
+    <div class="vista" id="vista-fab">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">FAB · Frontal Assessment Battery</div></div>
+      <div id="fab-form">
+        <div class="card">
+          <div class="card-titulo">Datos del paciente</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label><select id="fab-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="fab-fecha"></div>
+            <div class="field"><label>Sexo *</label>
+              <select id="fab-sexo">
+                <option value="">— Seleccionar —</option>
+                <option value="0">Masculino</option>
+                <option value="1">Femenino</option>
+              </select>
+            </div>
+            <div class="field"><label>Edad (años) *</label><input type="number" id="fab-edad" min="18" max="120" placeholder="Ej: 72"></div>
+            <div class="field"><label>Nivel educativo *</label>
+              <select id="fab-escol">
+                <option value="">— Seleccionar —</option>
+                <option value="0">Primario</option>
+                <option value="1">Secundario</option>
+                <option value="2">Terciario / Universitario</option>
+              </select>
+            </div>
+            <div class="field"><label>Baremo para Z *</label>
+              <select id="fab-baremo">
+                <option value="escol">Nivel educativo (Aceiro 2018)</option>
+                <option value="edad">Edad (≤75 / >75)</option>
+                <option value="sexo">Sexo</option>
+                <option value="total">Total muestra</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">1. Semejanzas — Conceptualización</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Consigna: <em>"¿En qué se parecen...?"</em><br>
+          · Una banana y una naranja &nbsp;·&nbsp; Una mesa y una silla &nbsp;·&nbsp; Un clavel, una rosa y una margarita.<br>
+          Respuestas de categoría (frutas, muebles, flores) son correctas. Ayudar solo en el 1er ítem si falla totalmente.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab1" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>Ninguna</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab1" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>1 correcta</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab1" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>2 correctas</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab1" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>3 correctas</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">2. Fluidez Verbal</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Consigna: <em>"Diga todas las palabras que pueda, por ejemplo animales, plantas y objetos, pero no nombres propios ni apellidos, que comiencen con A."</em><br>Tiempo: 60 segundos. No cuentan perseveraciones, derivaciones ni nombres propios.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab2" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>Menos de 3</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab2" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>3 a 5</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab2" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>6 a 9</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab2" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>10 o más</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">3. Secuencias Motoras (Series de Luria)</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Consigna: <em>"Mire atentamente lo que estoy haciendo."</em> Realiza la serie Puño-Canto-Palma 3 veces con el paciente, luego: <em>"Ahora haga lo mismo con su mano derecha, primero conmigo y después solo."</em><br>Luego solo: <em>"Ahora hágalo usted solo."</em></p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab3" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>No logra 3 series con examinador</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab3" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>Falla en 1 pero logra 3 con examinador</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab3" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>Al menos 3 series consecutivas solo</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab3" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>6 series consecutivas solo</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">4. Instrucciones Conflictivas</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Consigna: <em>"Golpee dos veces cuando yo golpee una vez."</em> Prueba con 1-1-1. Luego: <em>"Golpee una vez cuando yo golpee dos veces."</em> Prueba con 2-2-2. Serie: 1-1-2-1-2-2-2-1-1-2.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab4" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>Golpea como el examinador ≥4 veces consecutivas</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab4" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>Más de 2 errores</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab4" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>1 o 2 errores</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab4" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>Sin error</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">5. Go-No Go — Control Inhibitorio Motor</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Consigna: <em>"Golpee una vez cuando yo golpee una vez."</em> Prueba con 1-1-1. Luego: <em>"No golpee cuando yo golpee dos veces."</em> Prueba con 2-2-2. Serie: 1-1-2-1-2-2-2-1-1-2.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab5" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>Golpea como el examinador ≥4 veces consecutivas</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab5" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>Más de 2 errores</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab5" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>1 o 2 errores</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab5" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>Sin error</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo">6. Conducta de Prensión</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">El examinador, sentado frente al paciente, coloca sus manos sobre las rodillas del paciente con las palmas hacia arriba y las mueve lentamente hasta tocar las del paciente para ver si las toma espontáneamente. Si lo hace, dice: <em>"Ahora, no me tome las manos"</em> y repite.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab6" value="0" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">0<br>Las toma aún después de decirle que no</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab6" value="1" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">1<br>Las toma sin vacilar</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab6" value="2" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">2<br>Duda o pregunta qué tiene que hacer</span></label>
+            <label style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><input type="radio" name="fab6" value="3" style="accent-color:var(--accent);"><span style="font-size:0.75rem;color:var(--muted);">3<br>No la toma</span></label>
+          </div>
+        </div>
+
+      </div><!-- end cards -->
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="limpiarFAB()">🗑 Limpiar</button>
+        <button class="btn-primary" onclick="calcularFAB()">Calcular resultado →</button>
+      </div>
+    </div><!-- end fab-form -->
+
+    <div id="fab-resultado" style="display:none;">
+      <div class="resultado-box">
+        <div class="resultado-detalle" id="fab-detalle"></div>
+        <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="fab-interp"></div></div>
+      </div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-secondary" onclick="document.getElementById('fab-resultado').style.display='none';document.getElementById('fab-form').style.display='block';">← Modificar</button>
+        <button class="btn-primary" onclick="guardarFAB()">💾 Guardar resultado</button>
+      </div>
+    </div>
+  </div><!-- end vista-fab -->
+
 
     <!-- ── TEST IFS ── -->
     <div class="vista" id="vista-ifs">
@@ -4622,7 +4747,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -4916,7 +5041,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25'];
   var DO = ['PCS','CSQ','PBQ','BPI'];
@@ -5423,6 +5548,18 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             : ['3–11 años','12–16 años','>16 años'];
           var sdmtNota = (d.gi!=null&&d.ei!=null) ? (sdmtVer==='escrita'?'Escrita':'Oral')+' · '+sdmtEdadLabels[d.gi]+' · '+sdmtEscolLabels[d.ei] : null;
           rows += filaTabla('SDMT ('+(sdmtVer==='escrita'?'Escrita':'Oral')+')', d.puntaje, d.m||null, d.ds||null, d.z, r.fecha, sdmtNota);
+
+        } else if (testNombre === 'FAB') {
+          var fabBarLabels = {escol:'Nivel educativo',edad:'Edad',sexo:'Sexo',total:'Total muestra'};
+          var fabEscolL = ['Primario','Secundario','Terciario/Universitario'];
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">FAB · Frontal Assessment Battery (Dubois et al. 2000) · Baremos Aceiro et al. (2018) · Argentina · Baremo: '+(fabBarLabels[d.baremo]||'—')+(d.barLabel?' — '+d.barLabel:'')+'</td></tr>';
+          rows += filaTabla('FAB Total', d.total, d.M||null, d.DS||null, d.z, r.fecha, 'Puntaje /18');
+          if (d.scores && d.scores.length) {
+            var fabNombres = ['Semejanzas','Fluidez verbal','Secuencias motoras','Instr. conflictivas','Go-No Go','Prensión'];
+            d.scores.forEach(function(s,i){
+              rows += filaTabla('FAB — '+fabNombres[i], s, null, null, null, null, null);
+            });
+          }
 
         } else if (testNombre === 'D2') {
           rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">d2 · Test de Atención (Brickenkamp) · Baremos TEA Ediciones · ' + (D2_GRUPOS[d.gi]||'') + '</td></tr>';
@@ -6085,6 +6222,7 @@ var NP_TESTS = [
   {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                     t:'Lenguaje',           dom:'lenguaje'},
   {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',  t:'Lenguaje',           dom:'lenguaje'},
   {id:'fcr',      n:'Figura de Rey',     d:'Copia y Recuerdo Inmediato · ROCF',          t:'Visoconstructivo',   dom:'visoc'},
+  {id:'fab',       n:'FAB',               d:'Frontal Assessment Battery · Aceiro 2018 · Argentina', t:'Ejecutivas', dom:'ejecutivas'},
   {id:'ifs',      n:'IFS',               d:'INECO Frontal Screening',                    t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'wcst',     n:'WCST-64',           d:'Wisconsin Card Sorting Test · 64 cartas',    t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'hotel',    n:'Test del Hotel',    d:'Multitasking y memoria prospectiva',         t:'Ejecutivas',         dom:'ejecutivas'},
@@ -6271,6 +6409,7 @@ function irTest(t) {
   if (t === 'csi') iniciarCSI();
   if (t === 'moca') iniciarMoCA();
   if (t === 'ifs') iniciarIFS();
+  if (t === 'fab') iniciarFAB();
   if (t === 'pcs') iniciarPCS();
   if (t === 'csq') iniciarCSQ();
   if (t === 'pbq') iniciarPBQ();
@@ -7957,6 +8096,146 @@ var IFS_SUBTESTS=[
   {id:'ifs-refranes',label:'Refranes',                 max:3},
   {id:'ifs-hayling', label:'Hayling modificado',       max:6}
 ];
+// ══ FAB · Frontal Assessment Battery ════════════════════════════════════════
+// Baremos: Aceiro et al. (2018) Rev Neurol 72(3) — n=1.173, Argentina
+// Baremos por nivel educativo, edad, sexo y total muestra
+var FAB_BAR = {
+  escol:  [ {M:14.67, DS:2.42}, {M:16.01, DS:1.89}, {M:16.69, DS:1.06} ], // 0=Primario 1=Secundario 2=Terciario
+  edad:   [ {M:16.14, DS:1.95}, {M:16.15, DS:1.38} ],                       // 0=≤75 1=>75
+  sexo:   [ {M:16.63, DS:1.32}, {M:15.88, DS:1.84} ],                       // 0=Masc 1=Fem
+  total:  {M:16.14, DS:1.72}
+};
+
+var FAB_SUBTESTS = [
+  'Semejanzas (conceptualización)',
+  'Fluidez verbal',
+  'Secuencias motoras (Luria)',
+  'Instrucciones conflictivas',
+  'Go-No Go',
+  'Conducta de prensión'
+];
+
+function iniciarFAB() {
+  document.getElementById('fab-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fab-form').style.display = 'block';
+  document.getElementById('fab-resultado').style.display = 'none';
+}
+
+function limpiarFAB() {
+  for (var i = 1; i <= 6; i++) {
+    var radios = document.querySelectorAll('input[name="fab'+i+'"]');
+    radios.forEach(function(r){ r.checked = false; });
+  }
+  ['fab-sexo','fab-edad','fab-escol'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+function calcularFAB() {
+  var scores = [];
+  for (var i = 1; i <= 6; i++) {
+    var sel = document.querySelector('input[name="fab'+i+'"]:checked');
+    if (!sel) { toast('Completá todos los subtests (1 al 6).','error'); return; }
+    scores.push(parseInt(sel.value));
+  }
+  var total = scores.reduce(function(a,b){ return a+b; }, 0);
+  var baremo = document.getElementById('fab-baremo').value;
+  var edad   = parseInt(document.getElementById('fab-edad').value);
+  var escol  = parseInt(document.getElementById('fab-escol').value);
+  var sexo   = parseInt(document.getElementById('fab-sexo').value);
+
+  var bar = null;
+  var barLabel = '';
+  if (baremo === 'escol') {
+    if (isNaN(escol)) { toast('Seleccioná el nivel educativo.','error'); return; }
+    bar = FAB_BAR.escol[escol];
+    barLabel = ['Primario','Secundario','Terciario/Universitario'][escol];
+  } else if (baremo === 'edad') {
+    if (isNaN(edad)) { toast('Ingresá la edad del paciente.','error'); return; }
+    bar = FAB_BAR.edad[edad > 75 ? 1 : 0];
+    barLabel = edad > 75 ? '>75 años' : '≤75 años';
+  } else if (baremo === 'sexo') {
+    if (isNaN(sexo)) { toast('Seleccioná el sexo.','error'); return; }
+    bar = FAB_BAR.sexo[sexo];
+    barLabel = sexo === 0 ? 'Masculino' : 'Femenino';
+  } else {
+    bar = FAB_BAR.total;
+    barLabel = 'Total muestra';
+  }
+
+  var z = parseFloat(((total - bar.M) / bar.DS).toFixed(2));
+
+  var interp;
+  if (z >= 1.0)        interp = 'Superior';
+  else if (z >= -0.5)  interp = 'Normal';
+  else if (z >= -1.0)  interp = 'Límite inferior normativo';
+  else if (z >= -1.5)  interp = 'Dificultad leve';
+  else if (z >= -2.0)  interp = 'Dificultad moderada';
+  else                 interp = 'Dificultad severa';
+
+  var color = z >= -0.5 ? '#639922' : z >= -1.0 ? '#888780' : z >= -1.5 ? '#BA7517' : z >= -2.0 ? '#D85A30' : '#E24B4A';
+
+  // Tabla de subtests
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:12px;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Subtest</th>' +
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Puntaje</th>' +
+    '</tr></thead><tbody>';
+
+  for (var j = 0; j < 6; j++) {
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:7px 10px;">' + (j+1) + '. ' + FAB_SUBTESTS[j] + '</td>' +
+      '<td style="text-align:center;padding:7px 10px;font-weight:600;">' + scores[j] + '/3</td>' +
+      '</tr>';
+  }
+  html += '</tbody></table>';
+
+  // Total + Z
+  html += '<div class="result-grid">' +
+    '<div class="result-item"><div class="result-label">Total FAB</div><div class="result-value">' + total + '/18</div></div>' +
+    '<div class="result-item"><div class="result-label">M (baremo)</div><div class="result-value">' + bar.M.toFixed(2) + '</div></div>' +
+    '<div class="result-item"><div class="result-label">DS (baremo)</div><div class="result-value">' + bar.DS.toFixed(2) + '</div></div>' +
+    '<div class="result-item"><div class="result-label">Z</div><div class="result-value" style="color:' + color + ';">' + (z >= 0 ? '+' : '') + z + '</div></div>' +
+    '</div>';
+  html += '<p style="font-size:0.75rem;color:var(--muted);margin-top:8px;">Baremo: ' + barLabel + ' · Aceiro et al. (2018) Rev Neurol 72(3) · n=1.173 · Argentina</p>';
+
+  // Interpretación narrativa
+  var narrative = 'El rendimiento en la FAB (total = ' + total + '/18) es compatible con un nivel ' + interp.toLowerCase() + ' del funcionamiento ejecutivo frontal';
+  if (z < -1.5) narrative += ', con compromiso significativo en las funciones de planificación, inhibición y control motor';
+  narrative += '. ';
+
+  var bajos = scores.map(function(s,i){ return s < 2 ? FAB_SUBTESTS[i] : null; }).filter(Boolean);
+  if (bajos.length) narrative += 'Se observan dificultades particulares en: ' + bajos.join(', ') + '. ';
+
+  document.getElementById('fab-detalle').innerHTML = html;
+  document.getElementById('fab-interp').textContent = narrative;
+  document.getElementById('fab-form').style.display = 'none';
+  document.getElementById('fab-resultado').style.display = 'block';
+
+  window._fabData = { total:total, z:z, baremo:baremo, barLabel:barLabel, escol:escol, sexo:sexo, edad:edad, scores:scores, interp:interp, M:bar.M, DS:bar.DS };
+}
+
+function guardarFAB() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('fab-paciente').value;
+  var fecha = document.getElementById('fab-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._fabData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._fabData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'FAB', fecha: fecha,
+    puntaje_total: d.total, puntaje_z: d.z,
+    categoria: d.interp, datos: d
+  }, SESSION.access_token).then(function(){
+    window._fabData = null;
+    cargarResultados(); toast('✓ Resultado guardado','success');
+    var btns = document.querySelectorAll('.vista.active .btn-primary');
+    if (btns.length) { btns[btns.length-1].classList.add('btn-saved'); setTimeout(function(){ btns[btns.length-1].classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
+}
+// ══ fin FAB ══════════════════════════════════════════════════════════════════
+
 function iniciarIFS(){
   document.getElementById('ifs-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('ifs-form').style.display='block';
