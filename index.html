@@ -445,7 +445,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.1</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.2</div>
     </div>
   </aside>
 
@@ -5223,12 +5223,13 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           }
 
         } else if (testNombre === 'WAIS-IV') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">WAIS-IV · Retención de Dígitos, Claves, Sec. Número-Letra</td></tr>';
           if (d.rd_pb != null) rows += filaTabla('Retención de Dígitos', d.rd_pb, 10, 3, d.rd_z, r.fecha);
           if (d.cla_pb != null) rows += filaTabla('Claves', d.cla_pb, 10, 3, d.cla_z, r.fecha);
           if (d.sln_pb != null) rows += filaTabla('Sec. Número-Letra', d.sln_pb, 10, 3, d.sln_z, r.fecha);
 
         } else if (testNombre === 'Test del Hotel') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">Test del Hotel (Pinasco et al., 2023)</td></tr>';
           var hSexo = d.sexo||'f'; var hGi = d.gi!=null?d.gi:0;
           var hBar = (typeof HOTEL_BAR !== 'undefined') ? HOTEL_BAR[hSexo] : null;
           var hMT=d.mTareas||(hBar?hBar.tareas[hGi][0]:null), hDST=d.dsTareas||(hBar?hBar.tareas[hGi][1]:null);
@@ -5239,24 +5240,27 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           if (d.zBotones != null) rows += filaTabla('Hotel — Desvío botones', d.desvBotones!=null?d.desvBotones+' seg':null, hMB, hDSB, d.zBotones, r.fecha, 'Mem. prospectiva');
 
         } else if (testNombre === 'BADS-Llaves') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">BADS · Búsqueda de Llaves (Farías Sarquís et al., 2021)</td></tr>';
           rows += filaTabla('Búsqueda de Llaves', d.pb!=null?d.pb:null, d.m||null, d.ds||null, d.z, r.fecha, 'Pje conv. '+(d.conv!=null?d.conv:'—'));
 
         } else if (testNombre === 'BADS-Juicio') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">BADS · Juicio Temporal (Farías Sarquís et al., 2021)</td></tr>';
           rows += filaTabla('Juicio Temporal', d.conv!=null?d.conv:null, d.m||null, d.ds||null, d.z, r.fecha, null);
 
         } else if (testNombre === 'BADS-Zoo') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">BADS · Mapa del Zoo (Farías Sarquís et al., 2021)</td></tr>';
           var ver = d.ver||'ambas';
           if (ver==='v1'||ver==='ambas') {
-            rows += filaTabla('Zoo V1 — Secuencia', d.v1s!=null?d.v1s:null, null, null, d.z_v1sec!=null?d.z_v1sec:null, r.fecha, null);
-            rows += filaTabla('Zoo V1 — Errores', d.v1e!=null?d.v1e:null, null, null, d.z_v1err!=null?d.z_v1err:null, r.fecha, 'Z invertido');
-            rows += filaTabla('Zoo V1 — T. Planif. (seg)', d.v1tp!=null?d.v1tp:null, null, null, d.z_v1tp!=null?d.z_v1tp:null, r.fecha, 'Z invertido');
-            rows += filaTabla('Zoo V1 — T. Total (seg)', d.v1tt!=null?d.v1tt:null, null, null, d.z_v1tt!=null?d.z_v1tt:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V1 — Secuencia', d.v1s!=null?d.v1s:null, d.m_v1sec?d.m_v1sec[0]:null, d.m_v1sec?d.m_v1sec[1]:null, d.z_v1sec!=null?d.z_v1sec:null, r.fecha, null);
+            rows += filaTabla('Zoo V1 — Errores', d.v1e!=null?d.v1e:null, d.m_v1err?d.m_v1err[0]:null, d.m_v1err?d.m_v1err[1]:null, d.z_v1err!=null?d.z_v1err:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V1 — T. Planif. (seg)', d.v1tp!=null?d.v1tp:null, d.m_v1tp?d.m_v1tp[0]:null, d.m_v1tp?d.m_v1tp[1]:null, d.z_v1tp!=null?d.z_v1tp:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V1 — T. Total (seg)', d.v1tt!=null?d.v1tt:null, d.m_v1tt?d.m_v1tt[0]:null, d.m_v1tt?d.m_v1tt[1]:null, d.z_v1tt!=null?d.z_v1tt:null, r.fecha, 'Z invertido');
           }
           if (ver==='v2'||ver==='ambas') {
-            rows += filaTabla('Zoo V2 — Secuencia', d.v2s!=null?d.v2s:null, null, null, d.z_v2sec!=null?d.z_v2sec:null, r.fecha, null);
-            rows += filaTabla('Zoo V2 — Errores', d.v2e!=null?d.v2e:null, null, null, d.z_v2err!=null?d.z_v2err:null, r.fecha, 'Z invertido');
-            rows += filaTabla('Zoo V2 — T. Planif. (seg)', d.v2tp!=null?d.v2tp:null, null, null, d.z_v2tp!=null?d.z_v2tp:null, r.fecha, 'Z invertido');
-            rows += filaTabla('Zoo V2 — T. Total (seg)', d.v2tt!=null?d.v2tt:null, null, null, d.z_v2tt!=null?d.z_v2tt:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V2 — Secuencia', d.v2s!=null?d.v2s:null, d.m_v2sec?d.m_v2sec[0]:null, d.m_v2sec?d.m_v2sec[1]:null, d.z_v2sec!=null?d.z_v2sec:null, r.fecha, null);
+            rows += filaTabla('Zoo V2 — Errores', d.v2e!=null?d.v2e:null, d.m_v2err?d.m_v2err[0]:null, d.m_v2err?d.m_v2err[1]:null, d.z_v2err!=null?d.z_v2err:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V2 — T. Planif. (seg)', d.v2tp!=null?d.v2tp:null, d.m_v2tp?d.m_v2tp[0]:null, d.m_v2tp?d.m_v2tp[1]:null, d.z_v2tp!=null?d.z_v2tp:null, r.fecha, 'Z invertido');
+            rows += filaTabla('Zoo V2 — T. Total (seg)', d.v2tt!=null?d.v2tt:null, d.m_v2tt?d.m_v2tt[0]:null, d.m_v2tt?d.m_v2tt[1]:null, d.z_v2tt!=null?d.z_v2tt:null, r.fecha, 'Z invertido');
           }
           if (ver==='ambas') {
             rows += filaTabla('Zoo Total Bruto', d.bruto!=null?d.bruto:null, null, null, d.z_bruto!=null?d.z_bruto:null, r.fecha, null);
@@ -5264,6 +5268,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           }
 
         } else if (testNombre === 'BTA') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">BTA · Brief Test of Attention (Arango-Lasprilla et al., 2015)</td></tr>';
           var btaEi = d.ei != null ? d.ei : null;
           var btaGi = d.gi != null ? d.gi : null;
           var btaEdadLabels = ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77'];
@@ -5272,7 +5277,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += filaTabla('BTA', d.puntaje, null, null, d.z, r.fecha, btaNota ? ('Pc '+(d.pc||'—')+' · '+btaNota) : null);
 
         } else if (testNombre === 'WCST-64') {
-          rows += '<tr><td colspan="9" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">WCST-64 · Wisconsin Card Sorting Test</td></tr>';
           if (d.categorias != null)
             rows += filaTabla('Categorías completadas', d.categorias+'/6', d.cat_m||null, d.cat_ds||null, d.cat_z!=null?d.cat_z:null, r.fecha);
           if (d.perse_pct != null)
@@ -5325,6 +5330,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           rows += filaTabla('BTA', d.pb, null, null, d.z, r.fecha, 'Pc '+(d.pc||'—')+' · '+btaEd+' · '+btaEs);
 
         } else if (testNombre === 'SDMT-escrita' || testNombre === 'SDMT-oral') {
+          rows += '<tr><td colspan="9" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">SDMT · Symbol Digit Modalities Test ('+(sdmtVer==='escrita'?'Versión Escrita — Arango-Lasprilla et al., 2015':'Versión Oral — Vanotti et al., 2015')+')</td></tr>';
           var sdmtVer = testNombre === 'SDMT-oral' ? 'oral' : 'escrita';
           var sdmtEdadLabels = sdmtVer==='escrita'
             ? ['18–22','23–27','28–32','33–37','38–42','43–47','48–52','53–57','58–62','63–67','68–72','73–77','>77']
@@ -5341,7 +5347,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2F = d.gi != null ? d.gi : null;
           var ei2F = d.ei != null ? d.ei : null;
           var notaF = gi2F!==null && ei2F!==null ? edadLabelsF[gi2F]+' · '+escolLabelsF[ei2F] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">Figura Compleja de Rey-Osterrieth · ROCF (Rivera et al., 2015)</td></tr>';
           if (d.copia != null) rows += filaTabla('Copia', d.copia, null, null, d.zCopia, r.fecha, 'Pc '+(d.pcCopia||'—'));
           if (d.ri    != null) rows += filaTabla('Recuerdo Inmediato', d.ri, null, null, d.zRI, r.fecha, 'Pc '+(d.pcRI||'—'));
           if (d.ir    != null) rows += filaTabla('Índice de Retención', d.ir+'%', null, null, null, r.fecha, d.ir+'%');
@@ -5352,7 +5358,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           var gi2 = d.gi != null ? d.gi : null;
           var ei2 = d.ei != null ? d.ei : null;
           var notaS = gi2!==null && ei2!==null ? 'Grupo: '+edadLabelsS[gi2]+' · Escol. '+escolLabelsS[ei2] : null;
-          rows += '<tr><td colspan="8" style="padding:2px 8px;font-size:8px;font-style:italic;color:#4a7040;border-bottom:0.5px solid #b8ddb0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
+          rows += '<tr><td colspan="8" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
           if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,      gi2!==null?STROOP_BAR.P.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.P.DS[gi2][ei2]:null,   d.zP,   r.fecha, notaS);
           if (d.c    != null) rows += filaTabla('Color (C)',               d.c,      gi2!==null?STROOP_BAR.C.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.C.DS[gi2][ei2]:null,   d.zC,   r.fecha, notaS);
           if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,     gi2!==null?STROOP_BAR.PC.M[gi2][ei2]:null,  gi2!==null?STROOP_BAR.PC.DS[gi2][ei2]:null,  d.zPC,  r.fecha, notaS);
@@ -8796,6 +8802,7 @@ function calcularZoo() {
     var z_v1tt   = bar ? zooZ(v1tt, bar[3], true)  : null;
     datos.v1s=v1s; datos.v1e=v1e; datos.v1tp=v1tp; datos.v1tt=v1tt; datos.pje1=pje1;
     datos.z_v1sec=z_v1sec; datos.z_v1err=z_v1err; datos.z_v1tp=z_v1tp; datos.z_v1tt=z_v1tt;
+    datos.m_v1sec=bar?bar[0]:null; datos.m_v1err=bar?bar[1]:null; datos.m_v1tp=bar?bar[2]:null; datos.m_v1tt=bar?bar[3]:null;
     detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v1s+'</div><div class="detalle-lbl">Secuencia<br>V1</div></div>';
     detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v1e+'</div><div class="detalle-lbl">Errores<br>V1</div></div>';
     interpHtml += '<p><strong>V1 — Secuencia:</strong> '+v1s+(bar&&bar[0]?' (M='+bar[0][0]+', DS='+bar[0][1]+')':'')+' · Z='+zStr(z_v1sec)+' — '+badsZLabel(z_v1sec)+'</p>';
@@ -8816,6 +8823,7 @@ function calcularZoo() {
     var z_v2tt  = bar ? zooZ(v2tt, bar[7], true)  : null;
     datos.v2s=v2s; datos.v2e=v2e; datos.v2tp=v2tp; datos.v2tt=v2tt; datos.pje2=pje2; datos.desc2=desc2;
     datos.z_v2sec=z_v2sec; datos.z_v2err=z_v2err; datos.z_v2tp=z_v2tp; datos.z_v2tt=z_v2tt;
+    datos.m_v2sec=bar?bar[4]:null; datos.m_v2err=bar?bar[5]:null; datos.m_v2tp=bar?bar[6]:null; datos.m_v2tt=bar?bar[7]:null;
     detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v2s+'</div><div class="detalle-lbl">Secuencia<br>V2</div></div>';
     detalleHtml += '<div class="detalle-item"><div class="detalle-num">'+v2e+'</div><div class="detalle-lbl">Errores<br>V2</div></div>';
     interpHtml += '<p><strong>V2 — Secuencia:</strong> '+v2s+(bar&&bar[4]?' (M='+bar[4][0]+', DS='+bar[4][1]+')':'')+' · Z='+zStr(z_v2sec)+' — '+badsZLabel(z_v2sec)+'</p>';
