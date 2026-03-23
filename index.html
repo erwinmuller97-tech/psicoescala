@@ -446,7 +446,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.8</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.9</div>
     </div>
   </aside>
 
@@ -6056,15 +6056,15 @@ function irSector(s) {
   } else if (s === 'dolor') {
     document.getElementById('sector-titulo').textContent = 'Evaluación del Dolor';
     document.getElementById('tests-grid').innerHTML =
-      '<div class="test-card" onclick="irTest(\'pcs\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M8 3l1.5 3 3.5.5-2.5 2.5.5 3.5L8 11l-3 1.5.5-3.5L3 6.5l3.5-.5z" stroke="#325c28" stroke-width="1.2" stroke-linejoin="round"/></svg></div><div class="test-nombre">PCS</div><div class="test-desc">Escala de Catastrofización del Dolor</div><span class="test-tag">Sullivan et al. 1995 · 13 ítems</span></div>' +
-      '<div class="test-card" onclick="irTest(\'csq\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="#325c28" stroke-width="1.2"/><path d="M6 6.5a2 2 0 014 0c0 2-4 2-4 4h4" stroke="#325c28" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="test-nombre">CSQ</div><div class="test-desc">Cuestionario de Estrategias de Afrontamiento al Dolor</div><span class="test-tag">Rosenstiel & Keefe 1983 · 39 ítems</span></div>' +
-      '<div class="test-card" onclick="irTest(\'pbq\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 12V5a4 4 0 018 0v7" stroke="#325c28" stroke-width="1.2" stroke-linecap="round"/><path d="M2 9h2M12 9h2" stroke="#325c28" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="test-nombre">PBQ</div><div class="test-desc">Cuestionario de Conductas de Dolor</div><span class="test-tag">Appelbaum et al. 1988 · 16 ítems</span></div>' +
-      '<div class="test-card" onclick="irTest(\'bpi\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 11l4-6 2 3 2-2 4 5" stroke="#325c28" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="test-nombre">BPI</div><div class="test-desc">Inventario Breve de Dolor — Intensidad e Interferencia</div><span class="test-tag">Cleeland & Ryan 1994</span></div>';
+      '<div class="test-card" onclick="irTest(\'pcs\')"><div class="test-nombre">PCS</div><div class="test-desc">Escala de Catastrofización del Dolor</div><span class="test-tag">Sullivan et al. 1995 · 13 ítems</span></div>' +
+      '<div class="test-card" onclick="irTest(\'csq\')"><div class="test-nombre">CSQ</div><div class="test-desc">Cuestionario de Estrategias de Afrontamiento al Dolor</div><span class="test-tag">Rosenstiel & Keefe 1983 · 39 ítems</span></div>' +
+      '<div class="test-card" onclick="irTest(\'pbq\')"><div class="test-nombre">PBQ</div><div class="test-desc">Cuestionario de Conductas de Dolor</div><span class="test-tag">Appelbaum et al. 1988 · 16 ítems</span></div>' +
+      '<div class="test-card" onclick="irTest(\'bpi\')"><div class="test-nombre">BPI</div><div class="test-desc">Inventario Breve de Dolor — Intensidad e Interferencia</div><span class="test-tag">Cleeland & Ryan 1994</span></div>';
   } else if (s === 'tdah') {
     document.getElementById('sector-titulo').textContent = 'TDAH';
     document.getElementById('tests-grid').innerHTML =
-      '<div class="test-card" onclick="irTest(\'asrs\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M3 8h2l1.5-4 3 8 1.5-4H13" stroke="#325c28" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="test-nombre">ASRS-V1.1</div><div class="test-desc">Escala de Autodetección de TDAH en Adultos — Sección A + B</div><span class="test-tag">Kessler et al. 2005 · Scandar 2021</span></div>' +
-      '<div class="test-card" onclick="irTest(\'wurs\')"><div class="test-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M3 13V6l2-3h6l2 3v7M6 13V9h4v4" stroke="#325c28" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="test-nombre">WURS-25</div><div class="test-desc">Escala de Wender-Utah — Síntomas retrospectivos de TDAH</div><span class="test-tag">Ward et al. 1993 · Scandar 2021</span></div>';
+      '<div class="test-card" onclick="irTest(\'asrs\')"><div class="test-nombre">ASRS-V1.1</div><div class="test-desc">Escala de Autodetección de TDAH en Adultos</div><span class="test-tag">Kessler et al. 2005 · Scandar 2021</span></div>' +
+      '<div class="test-card" onclick="irTest(\'wurs\')"><div class="test-nombre">WURS-25</div><div class="test-desc">Escala de Wender-Utah — Síntomas retrospectivos</div><span class="test-tag">Ward et al. 1993 · Scandar 2021</span></div>';
   }
 }
 
@@ -6086,12 +6086,12 @@ function npRender() {
   var grid = document.getElementById('np-grid');
   if (!grid) return;
   grid.innerHTML = r.map(function(t) {
-    return '<div class="test-card" onclick="irTest(\'' + t.id + '\')">' +
-      '<div class="test-nombre">' + t.n + '</div>' +
-      '<div class="test-desc">' + t.d + '</div>' +
-      '<span class="test-tag">' + t.t + '</span>' +
-      '</div>';
-  }).join('') || '<div style="padding:20px;text-align:center;font-size:12px;color:var(--muted);">Sin resultados</div>';
+    return "<div class='test-card' onclick='irTest(" + JSON.stringify(t.id) + ")'>" +
+      "<div class='test-nombre'>" + t.n + "</div>" +
+      "<div class='test-desc'>" + t.d + "</div>" +
+      "<span class='test-tag'>" + t.t + "</span>" +
+      "</div>";
+  }).join("") || "<div style='padding:20px;text-align:center;font-size:12px;color:var(--muted);'>Sin resultados</div>"
 }
 
 function irTest(t) {
@@ -6137,115 +6137,6 @@ function volverSector() {
   document.querySelectorAll('.vista').forEach(function(el){ el.classList.remove('active'); });
   document.getElementById('vista-sector').classList.add('active');
   if (sectorActual) irSector(sectorActual);
-}
-
-function verificarGate() {
-  var input = document.getElementById('gate-input').value;
-  if (input === 'Sigrid1109') {
-    document.getElementById('screen-gate').style.display = 'none';
-    document.getElementById('screen-login').style.display = 'flex';
-  } else {
-    document.getElementById('gate-error').style.display = 'block';
-    document.getElementById('gate-input').value = '';
-  }
-}
-
-function doLogin() {
-  var email = document.getElementById('login-email').value.trim();
-  var pass  = document.getElementById('login-pass').value;
-  if (!email || !pass) { loginError('Completá email y contraseña.'); return; }
-  supaAuth('token?grant_type=password', { email: email, password: pass }).then(function(data) {
-    if (data.access_token) {
-      SESSION = data;
-      ['screen-gate','screen-login'].forEach(function(id){
-        var el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-      document.getElementById('app').style.display = 'flex';
-      cargarPacientes();
-      cargarResultados();
-    } else {
-      loginError(data.error_description || 'Error de autenticación.');
-    }
-  }).catch(function(){ loginError('Error de conexión.'); });
-}
-
-function loginError(msg) {
-  var el = document.getElementById('login-error');
-  if (el) { el.textContent = msg; el.style.display = 'block'; }
-}
-
-function doLogout() {
-  SESSION = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('screen-gate').style.display = 'flex';
-  document.getElementById('gate-input').value = '';
-  document.getElementById('gate-error').style.display = 'none';
-}
-
-function supaFetch(path, method, body, token) {
-  var opts = {
-    method: method,
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + (token || SUPA_KEY),
-      'Prefer': method === 'POST' ? 'return=representation' : ''
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  return fetch(SUPA_URL + path, opts).then(function(r){ return r.json(); });
-}
-
-function supaAuth(path, body) {
-  return fetch(SUPA_URL + '/auth/v1/' + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
-    body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); });
-}
-
-function llenarSelectPacientes() {
-  var selects = ['rey-paciente','tmt-paciente','flv-paciente','moca-paciente',
-    'ifs-paciente','acer-paciente','wcst-paciente','bnt-paciente','waisiv-paciente',
-    'fcr-paciente','bta-paciente','sdmt-paciente','signoret-paciente','reloj-paciente',
-    'stroop-paciente','bdi-paciente','stai-paciente','phq-paciente','gad-paciente',
-    'spaib-paciente','csi-paciente','scl90-paciente','mbi-paciente',
-    'asrs-paciente','wurs-paciente','pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente',
-    'hotel-paciente','llaves-paciente','juicio-paciente','zoo-paciente'];
-  selects.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var current = el.value;
-    el.innerHTML = '<option value="">— Seleccionar paciente —</option>';
-    if (PACIENTES && PACIENTES.length) {
-      PACIENTES.forEach(function(p) {
-        var opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = p.apellido + ', ' + p.nombre;
-        if (p.id === current) opt.selected = true;
-        el.appendChild(opt);
-      });
-    }
-  });
-}
-
-function cargarPacientes() {
-  if (!SESSION) return;
-  supaFetch('/rest/v1/psico_pacientes?user_id=eq.' + SESSION.user.id + '&order=apellido.asc', 'GET', null, SESSION.access_token)
-    .then(function(data) {
-      PACIENTES = Array.isArray(data) ? data : [];
-      renderPacientes();
-    }).catch(function(){ toast('Error al cargar pacientes','error'); });
-}
-
-function cargarResultados() {
-  if (!SESSION) return;
-  supaFetch('/rest/v1/psico_resultados?user_id=eq.' + SESSION.user.id + '&order=fecha.desc&limit=200', 'GET', null, SESSION.access_token)
-    .then(function(data) {
-      RESULTADOS = Array.isArray(data) ? data : [];
-      renderHistorial();
-    }).catch(function(){ toast('Error al cargar resultados','error'); });
 }
 
 function toast(msg, tipo) {
