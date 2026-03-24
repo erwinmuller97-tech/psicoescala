@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.26</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.27</div>
     </div>
   </aside>
 
@@ -6248,17 +6248,17 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
           { label:'Desinhibición / Impulsividad', score:d.desinhi, max:40, M:9.69,  DS:5.19,  z:d.zDesinhi },
           { label:'Total DEX',                    score:d.total,   max:80, M:d.version==='hetero'?20.68:22.25, DS:d.version==='hetero'?14.77:10.10, z:d.zTotal }
         ];
-        dexRows.forEach(function(dr) {
+        dexRows.forEach(function(dr, ri) {
           var zStr = dr.z !== null && dr.z !== undefined ? (dr.z >= 0 ? '+' : '') + dr.z : '—';
           var cat = dr.z >= 2.0 ? 'Muy elevado' : dr.z >= 1.0 ? 'Elevado' : dr.z >= 0.5 ? 'Límite superior' : dr.z >= -0.5 ? 'Normal' : 'Bajo';
           var col = dr.z >= 2.0 ? '#E24B4A' : dr.z >= 1.0 ? '#D85A30' : dr.z >= 0.5 ? '#BA7517' : '#333';
-          html += '<tr style="background:#fff;">'+
-            '<td style="'+tdR+'font-weight:500;">'+dr.label+'</td>'+
+          html += '<tr style="background:'+(ri%2===0?'#fff':'#f5fbf3')+';">'+
+            '<td style="'+tdR+'font-weight:700;">'+dr.label+'</td>'+
             '<td style="'+tdRC+'">'+dr.score+'/'+dr.max+'</td>'+
-            '<td style="'+tdRC+'font-size:8px;color:#666;">'+dr.M.toFixed(2)+'</td>'+
-            '<td style="'+tdRC+'font-size:8px;color:#666;">'+dr.DS.toFixed(2)+'</td>'+
-            '<td style="'+tdRC+'font-weight:700;color:'+col+';">'+zStr+'</td>'+
-            '<td style="'+tdRI+'color:'+col+';font-weight:600;">'+cat+'</td>'+
+            '<td style="'+tdRC+'">'+dr.M.toFixed(2)+'</td>'+
+            '<td style="'+tdRC+'">'+dr.DS.toFixed(2)+'</td>'+
+            '<td style="'+tdRC+'color:'+col+';">'+zStr+'</td>'+
+            '<td style="'+tdRI+'color:'+col+';">'+cat+'</td>'+
             '</tr>';
         });
         html += '</tbody></table>';
