@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.27</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.29</div>
     </div>
   </aside>
 
@@ -5343,14 +5343,14 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25','DEX'];
-  var DO = ['PCS','CSQ','PBQ','BPI'];
+  var DO = ['PCS','PBQ','CSQ','BPI'];
   function tipo(t){ return NP.indexOf(t)!==-1?'np': CL.indexOf(t)!==-1?'cl': TD.indexOf(t)!==-1?'td': DO.indexOf(t)!==-1?'do':'cl'; }
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
   var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
   // Orden fijo para clínica: BDI → STAI → GAD-7 → PHQ-9 → SPAI-B → SCL-90-R → MBI-HSS
-  var CL_ORDEN = ['BDI-II','STAI','GAD-7','PHQ-9','SPAI-B','CSI','SCL-90-R','MBI-HSS'];
+  var CL_ORDEN = ['BDI-II','STAI','SPAI-B','PHQ-9','GAD-7','CSI','MBI-HSS','SCL-90-R'];
   var clRaw = datos.filter(function(r){ return tipo(r.test)==='cl'; });
   var testsCl = CL_ORDEN.map(function(nombre){
     return clRaw.filter(function(r){ return r.test===nombre; });
@@ -5492,37 +5492,40 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // Orden fijo por dominio — igual que en la imagen de referencia
     var ORDEN = [
-      { dom: 'ATENCIÓN', tests: [
-        { t:'WAIS-IV',   fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,  'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
-        { t:'BTA',         fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
-        { t:'BADS-Llaves', fn: function(r){ var d=r.datos||{}; addPunto('Llaves',d.z,'FUNC. EJEC.'); } },
-        { t:'BADS-Juicio', fn: function(r){ var d=r.datos||{}; addPunto('Juicio T.',d.z,'FUNC. EJEC.'); } },
-        { t:'BADS-Zoo',    fn: function(r){ var d=r.datos||{}; addPunto('Zoo',d.z,'FUNC. EJEC.'); } },
-        { t:'Test del Hotel', fn: function(r){ var d=r.datos||{}; addPunto('Hotel Tareas',d.zTareas,'FUNC. EJEC.'); addPunto('Hotel Tiempo',d.zTiempo,'FUNC. EJEC.'); addPunto('Hotel Botones',d.zBotones,'FUNC. EJEC.'); } },
-        { t:'BTA',        fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
-        { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
-        { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
-        { t:'D2',           fn: function(r){ var d=r.datos||{}; var idx=d.indices||{}; addPunto('d2 CON',idx.CON&&idx.CON.z,'ATENCIÓN'); addPunto('d2 TOT',idx.TOT&&idx.TOT.z,'ATENCIÓN'); } },
-      ]},
-      { dom: 'TMT', tests: [
-        { t:'TMT A-B',   fn: function(r){ var d=r.datos||{}; addPunto('TMT-A',d.tmt_a_z||r.puntaje_z,'TMT'); addPunto('TMT-B',d.tmt_b_z,'TMT'); } },
-      ]},
-      { dom: 'STROOP', tests: [
-        { t:'Stroop',    fn: function(r){ var d=r.datos||{}; addPunto('Stroop P',d.zP,'FUNC. EJEC.'); addPunto('Stroop C',d.zC,'FUNC. EJEC.'); addPunto('Stroop PC',d.zPC,'FUNC. EJEC.'); addPunto('Stroop Int.',d.zInt,'FUNC. EJEC.'); } },
-      ]},
-      { dom: 'LENGUAJE', tests: [
-        { t:'Fluencia Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){addPunto(v.label.replace('Fluencia ','Fl. '),v.z,'LENGUAJE');});}else{addPunto('Fluencia',r.puntaje_z,'LENGUAJE');} } },
-        { t:'BNT-60',  fn: function(r){ addPunto('BNT-60', r.puntaje_z, 'LENGUAJE'); } },
-        { t:'BNT-12',  fn: function(r){ addPunto('BNT-12', r.puntaje_z, 'LENGUAJE'); } },
+      { dom: 'COGNITIVO GLOBAL', tests: [
+        { t:'MoCA',               fn: function(r){ addPunto('MoCA', r.puntaje_z, 'COG. GLOBAL'); } },
+        { t:'ACE-R',              fn: function(r){ addPunto('ACE-R', r.puntaje_z, 'COG. GLOBAL'); } },
+        { t:'Test del Reloj (Cacho)', fn: function(r){ addPunto('Reloj', r.puntaje_z, 'COG. GLOBAL'); } },
       ]},
       { dom: 'MEMORIA', tests: [
         { t:'Rey Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){ if(v.z!==null&&v.z!==undefined) addPunto(v.label.replace('Ensayo ','A').replace('Recuerdo ','Rec. '),v.z,'MEMORIA'); });}else{addPunto('Rey Verbal',r.puntaje_z,'MEMORIA');} } },
-        { t:'Figura Rey', fn: function(r){ var d=r.datos||{}; addPunto('Fig.Rey Copia',d.zCopia,'MEMORIA'); addPunto('Fig.Rey RI',d.zRI,'MEMORIA'); } },
         { t:'BEM 144 Signoret', fn: function(r){ addPunto('BEM', r.puntaje_z, 'MEMORIA'); } },
       ]},
+      { dom: 'ATENCIÓN', tests: [
+        { t:'D2',           fn: function(r){ var d=r.datos||{}; var idx=d.indices||{}; addPunto('d2 CON',idx.CON&&idx.CON.z,'ATENCIÓN'); addPunto('d2 TOT',idx.TOT&&idx.TOT.z,'ATENCIÓN'); } },
+        { t:'WAIS-IV',      fn: function(r){ var d=r.datos||{}; addPunto('Dígitos',d.rd_z,'ATENCIÓN'); addPunto('SLN',d.sln_z,'ATENCIÓN'); addPunto('Claves',d.cla_z,'ATENCIÓN'); } },
+        { t:'SDMT-escrita', fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Esc.)',d.z,'ATENCIÓN'); } },
+        { t:'SDMT-oral',    fn: function(r){ var d=r.datos||{}; addPunto('SDMT (Oral)',d.z,'ATENCIÓN'); } },
+        { t:'BTA',          fn: function(r){ var d=r.datos||{}; addPunto('BTA',d.z,'ATENCIÓN'); } },
+      ]},
       { dom: 'FUNC. EJEC.', tests: [
-        { t:'WCST-64',  fn: function(r){ var d=r.datos||{}; addPunto('WCST Cat.',d.cat_z,'FUNC. EJEC.'); addPunto('WCST Perse.',d.perse_z,'FUNC. EJEC.'); } },
-        { t:'IFS',      fn: function(r){ addPunto('IFS', r.puntaje_z, 'FUNC. EJEC.'); } },
+        { t:'FAB',         fn: function(r){ addPunto('FAB', r.puntaje_z, 'FUNC. EJEC.'); } },
+        { t:'IFS',         fn: function(r){ addPunto('IFS', r.puntaje_z, 'FUNC. EJEC.'); } },
+        { t:'TMT A-B',     fn: function(r){ var d=r.datos||{}; addPunto('TMT-A',d.tmt_a_z||r.puntaje_z,'FUNC. EJEC.'); addPunto('TMT-B',d.tmt_b_z,'FUNC. EJEC.'); } },
+        { t:'Stroop',      fn: function(r){ var d=r.datos||{}; addPunto('Stroop P',d.zP,'FUNC. EJEC.'); addPunto('Stroop C',d.zC,'FUNC. EJEC.'); addPunto('Stroop PC',d.zPC,'FUNC. EJEC.'); addPunto('Stroop Int.',d.zInt,'FUNC. EJEC.'); } },
+        { t:'BADS-Zoo',    fn: function(r){ var d=r.datos||{}; addPunto('Zoo',d.z,'FUNC. EJEC.'); } },
+        { t:'BADS-Llaves', fn: function(r){ var d=r.datos||{}; addPunto('Llaves',d.z,'FUNC. EJEC.'); } },
+        { t:'BADS-Juicio', fn: function(r){ var d=r.datos||{}; addPunto('Juicio T.',d.z,'FUNC. EJEC.'); } },
+        { t:'Test del Hotel', fn: function(r){ var d=r.datos||{}; addPunto('Hotel Tareas',d.zTareas,'FUNC. EJEC.'); addPunto('Hotel Tiempo',d.zTiempo,'FUNC. EJEC.'); addPunto('Hotel Botones',d.zBotones,'FUNC. EJEC.'); } },
+        { t:'WCST-64',     fn: function(r){ var d=r.datos||{}; addPunto('WCST Cat.',d.cat_z,'FUNC. EJEC.'); addPunto('WCST Perse.',d.perse_z,'FUNC. EJEC.'); } },
+      ]},
+      { dom: 'LENGUAJE', tests: [
+        { t:'BNT-60',         fn: function(r){ addPunto('BNT-60', r.puntaje_z, 'LENGUAJE'); } },
+        { t:'BNT-12',         fn: function(r){ addPunto('BNT-12', r.puntaje_z, 'LENGUAJE'); } },
+        { t:'Fluencia Verbal',fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){addPunto(v.label.replace('Fluencia ','Fl. '),v.z,'LENGUAJE');});}else{addPunto('Fluencia',r.puntaje_z,'LENGUAJE');} } },
+      ]},
+      { dom: 'VISOC.', tests: [
+        { t:'Figura Rey', fn: function(r){ var d=r.datos||{}; addPunto('Fig.Rey Copia',d.zCopia,'VISOC.'); addPunto('Fig.Rey RI',d.zRI,'VISOC.'); } },
       ]},
     ];
 
@@ -5629,13 +5632,12 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // Agrupar por dominio
     var dominios = {
-      'COGNITIVO GLOBAL':['MoCA','ACE-R','Test del Reloj (Cacho)'],
-      'MEMORIA — RAVLT · Rey Auditivo Verbal': ['Rey Verbal'],
-      'MEMORIA — BEM 144 Signoret':               ['BEM 144 Signoret'],
-      'MEMORIA — FIGURA DE REY':                  ['Figura Rey'],
-      'ATENCIÓN':       ['WAIS-IV','SDMT-escrita','SDMT-oral','BTA','D2','TMT A-B'],
-      'LENGUAJE':       ['BNT-60','BNT-12','Fluencia Verbal'],
-      'FUNC. EJECUTIVAS':['WCST-64','IFS','TMT A-B','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'],
+      'COGNITIVO GLOBAL':    ['MoCA','ACE-R','Test del Reloj (Cacho)'],
+      'MEMORIA':             ['Rey Verbal','BEM 144 Signoret'],
+      'ATENCIÓN':            ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA'],
+      'FUNC. EJECUTIVAS':    ['FAB','IFS','TMT A-B','Stroop','BADS-Zoo','BADS-Llaves','BADS-Juicio','Test del Hotel','WCST-64'],
+      'LENGUAJE':            ['BNT-60','BNT-12','Fluencia Verbal'],
+      'VISOCONSTRUCTIVO / MEMORIA VISUAL': ['Figura Rey'],
     };
 
     // Construir mapa test → resultado
@@ -5647,7 +5649,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     Object.keys(dominios).forEach(function(dominio) {
       var testsDelDominio = dominios[dominio].filter(function(t){
-        // TMT A-B puede aparecer en ATENCIÓN y en FUNC. EJECUTIVAS (A y B por separado)
+        // TMT A-B aparece solo en FUNC. EJECUTIVAS
         if (t === 'TMT A-B') return byTest[t] != null;
         return byTest[t] && !procesados[t];
       });
