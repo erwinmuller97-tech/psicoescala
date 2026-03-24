@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.24</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.25</div>
     </div>
   </aside>
 
@@ -6258,7 +6258,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
             '<td style="'+tdRC+'font-size:8px;color:#666;">'+dr.M.toFixed(2)+'</td>'+
             '<td style="'+tdRC+'font-size:8px;color:#666;">'+dr.DS.toFixed(2)+'</td>'+
             '<td style="'+tdRC+'font-weight:700;color:'+col+';">'+zStr+'</td>'+
-            '<td style="'+tdRI+'color:'+col+'font-weight:600;">'+cat+'</td>'+
+            '<td style="'+tdRI+'color:'+col+';font-weight:600;">'+cat+'</td>'+
             '</tr>';
         });
         html += '</tbody></table>';
