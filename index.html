@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.29</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.30</div>
     </div>
   </aside>
 
@@ -1185,6 +1185,52 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         </div>
       </div>
     </div>
+
+    <!-- ── TEST TOKEN TEST ── -->
+    <div class="vista" id="vista-token">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Token Test · Versión abreviada (De Renzi &amp; Faglioni, 1978)</div></div>
+      <div id="token-form">
+        <div class="card">
+          <div class="card-titulo">Datos del paciente</div>
+          <div class="form-grid">
+            <div class="field"><label>Paciente *</label><select id="token-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field"><label>Fecha</label><input type="date" id="token-fecha"></div>
+            <div class="field"><label>Años de escolaridad *</label><input type="number" id="token-escol" min="0" max="25" placeholder="Ej: 13"></div>
+          </div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-top:10px;line-height:1.5;">
+            36 ítems · Puntaje máximo: 36 · Partes I–V: se permite repetir (0.5 pts en segundo intento) · Parte VI: sin repetición<br>
+            Baremos: Aranciva et al. (2012) · NEURONORMA jóvenes · España · 18–49 años · n=179
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-titulo">Puntaje bruto</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Ingresá el puntaje total (0–36). Respuesta correcta 1er intento = 1 pt · 2do intento = 0.5 pt · incorrecta = 0.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label>Puntaje total (0–36) *</label>
+              <input type="number" id="token-pb" min="0" max="36" step="0.5" placeholder="0–36" oninput="tokenLive()">
+            </div>
+          </div>
+          <div id="token-live" style="margin-top:10px;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:0.85rem;min-height:32px;"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="limpiarToken()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="calcularToken()">Calcular resultado →</button>
+        </div>
+      </div>
+      <div id="token-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="token-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="token-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('token-resultado').style.display='none';document.getElementById('token-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarToken()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
 
     <!-- ── TEST FLUENCIA VERBAL ── -->
     <div class="vista" id="vista-flv">
@@ -5045,7 +5091,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'bnt-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
+   'bnt-paciente','token-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
    'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
@@ -5340,7 +5386,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+  var NP = ['WAIS-IV','Rey Verbal','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25','DEX'];
   var DO = ['PCS','PBQ','CSQ','BPI'];
@@ -5636,7 +5682,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       'MEMORIA':             ['Rey Verbal','BEM 144 Signoret'],
       'ATENCIÓN':            ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA'],
       'FUNC. EJECUTIVAS':    ['FAB','IFS','TMT A-B','Stroop','BADS-Zoo','BADS-Llaves','BADS-Juicio','Test del Hotel','WCST-64'],
-      'LENGUAJE':            ['BNT-60','BNT-12','Fluencia Verbal'],
+      'LENGUAJE':            ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
       'VISOCONSTRUCTIVO / MEMORIA VISUAL': ['Figura Rey'],
     };
 
@@ -6565,6 +6611,7 @@ var NP_TESTS = [
   {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',         t:'Memoria',            dom:'memoria'},
   {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',       t:'Memoria',            dom:'memoria'},
   // Lenguaje
+  {id:'token',    n:'Token Test',        d:'Comprensión auditiva verbal · De Renzi & Faglioni 1978 · Aranciva et al. 2012', t:'Lenguaje', dom:'lenguaje'},
   {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                      t:'Lenguaje',           dom:'lenguaje'},
   {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',   t:'Lenguaje',           dom:'lenguaje'},
   // Visoconstructivo
@@ -6769,6 +6816,7 @@ function irTest(t) {
   if (t === 'pbq') iniciarPBQ();
   if (t === 'bpi') iniciarBPI();
   if (t === 'bnt') iniciarBNT();
+  if (t === 'token') iniciarToken();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
   if (t === 'reloj') iniciarReloj();
@@ -10734,6 +10782,139 @@ function guardarResultadoScl90(){
 //   SDe = 5.184 — solo ajuste por educación
 // BNT-12: Serrano, Allegri et al. (2001) — Buenos Aires
 //   M=11, DS=1.16, corte ≥9. Sin correcciones demográficas.
+
+// ══ TOKEN TEST ═══════════════════════════════════════════════════════════════
+// Versión abreviada De Renzi & Faglioni (1978) — 36 ítems — Puntaje máximo: 36
+// Baremos: Aranciva et al. (2012) — NEURONORMA jóvenes — España — n=179
+
+var TOKEN_BRUTO_PE = [
+  { max:32,   pe:2  },{ max:32.5, pe:3  },{ max:33,   pe:4  },
+  { max:33.5, pe:5  },{ max:34,   pe:7  },{ max:34.5, pe:8  },
+  { max:35,   pe:9  },{ max:35.5, pe:10 },{ max:36,   pe:18 }
+];
+
+function tokenAjusteEscol(e) {
+  if (e <= 8)  return 2;
+  if (e === 9)  return 1;
+  if (e === 10) return 1;
+  if (e <= 15)  return 0;
+  if (e <= 17)  return -1;
+  if (e <= 19)  return -2;
+  return -3;
+}
+
+function tokenBrutoPE(pb) {
+  for (var i=0;i<TOKEN_BRUTO_PE.length;i++) { if (pb<=TOKEN_BRUTO_PE[i].max) return TOKEN_BRUTO_PE[i].pe; }
+  return 18;
+}
+
+function tokenPELabel(pe) {
+  if (pe>=16) return 'Superior';
+  if (pe>=13) return 'Normal alto';
+  if (pe>=8)  return 'Normal';
+  if (pe>=6)  return 'Límite inferior normativo';
+  if (pe>=4)  return 'Dificultad leve';
+  if (pe>=2)  return 'Dificultad moderada';
+  return 'Dificultad severa';
+}
+
+function tokenPEColor(pe) {
+  if (pe>=13) return '#639922';
+  if (pe>=8)  return '#444';
+  if (pe>=6)  return '#888780';
+  if (pe>=4)  return '#BA7517';
+  if (pe>=2)  return '#D85A30';
+  return '#E24B4A';
+}
+
+function tokenCategoriaBruto(pb) {
+  if (pb>=29) return 'Normal';
+  if (pb>=25) return 'Alteración leve';
+  if (pb>=17) return 'Alteración moderada';
+  if (pb>=9)  return 'Alteración severa';
+  return 'Alteración muy severa';
+}
+
+function tokenLive() {
+  var pb=parseFloat(document.getElementById('token-pb').value);
+  var el=document.getElementById('token-live');
+  if (!el||isNaN(pb)){el.innerHTML='';return;}
+  var pe=tokenBrutoPE(pb); var cat=tokenCategoriaBruto(pb);
+  el.innerHTML='PE bruto: <strong>'+pe+'</strong> &nbsp;·&nbsp; Categoría: <strong>'+cat+'</strong>';
+}
+
+function limpiarToken() {
+  ['token-pb','token-escol'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  var lv=document.getElementById('token-live');if(lv)lv.innerHTML='';
+}
+
+function iniciarToken() {
+  document.getElementById('token-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('token-form').style.display='block';
+  document.getElementById('token-resultado').style.display='none';
+}
+
+function calcularToken() {
+  var pb=parseFloat(document.getElementById('token-pb').value);
+  var escol=parseInt(document.getElementById('token-escol').value);
+  if (isNaN(pb)||pb<0||pb>36){toast('Ingresá un puntaje válido (0–36).','error');return;}
+  if (isNaN(escol)||escol<0){toast('Ingresá los años de escolaridad.','error');return;}
+  var pe=tokenBrutoPE(pb);
+  var ajuste=tokenAjusteEscol(escol);
+  var peAdj=Math.max(2,Math.min(18,pe+ajuste));
+  var label=tokenPELabel(peAdj);
+  var color=tokenPEColor(peAdj);
+  var catBruto=tokenCategoriaBruto(pb);
+  var z=parseFloat(((peAdj-10)/3).toFixed(2));
+  var trS='border-bottom:1px solid var(--border);';
+  var tdL='padding:8px 10px;';
+  var tdC='text-align:center;padding:8px 10px;font-weight:700;';
+  var tdR='padding:8px 10px;color:var(--muted);font-size:0.85rem;';
+  var html='<table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:12px;"><thead><tr>'+
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Variable</th>'+
+    '<th style="text-align:center;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Valor</th>'+
+    '<th style="text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">Referencia</th>'+
+    '</tr></thead><tbody>'+
+    '<tr style="'+trS+'"><td style="'+tdL+'font-weight:500;">Puntaje bruto</td><td style="'+tdC+'">'+pb+'/36</td><td style="'+tdR+'">Máximo = 36</td></tr>'+
+    '<tr style="background:#f5fbf3;'+trS+'"><td style="'+tdL+'font-weight:500;">Categoría (punto de corte)</td><td style="'+tdC+'color:'+(pb>=29?'#639922':'#D85A30')+';">'+catBruto+'</td><td style="'+tdR+'">De Renzi &amp; Faglioni (1978)</td></tr>'+
+    '<tr style="'+trS+'"><td style="'+tdL+'font-weight:500;">PE sin ajuste</td><td style="'+tdC+'">'+pe+'</td><td style="'+tdR+'">Media=10 · DS=3</td></tr>'+
+    '<tr style="background:#f5fbf3;'+trS+'"><td style="'+tdL+'font-weight:500;">Ajuste escolaridad ('+escol+' años)</td><td style="'+tdC+'">'+(ajuste>=0?'+':'')+ajuste+'</td><td style="'+tdR+'">Tabla 3 · Aranciva et al. (2012)</td></tr>'+
+    '<tr style="'+trS+'"><td style="'+tdL+'font-weight:700;">PE ajustada</td><td style="'+tdC+'color:'+color+';">'+peAdj+'</td><td style="'+tdL+'font-weight:600;color:'+color+';">'+label+'</td></tr>'+
+    '<tr style="background:#f5fbf3;"><td style="'+tdL+'font-weight:700;">Z aproximado</td><td style="'+tdC+'color:'+color+';">'+(z>=0?'+':'')+z+'</td><td style="'+tdR+'">Z = (PE − 10) / 3</td></tr>'+
+    '</tbody></table>';
+  html+='<p style="font-size:0.75rem;color:var(--muted);">Aranciva et al. (2012) · NEURONORMA jóvenes · España · 18–49 años · n=179 · Ajuste solo por escolaridad (R²=0.109)</p>';
+  var interp='En el Token Test (versión abreviada, De Renzi & Faglioni 1978), el puntaje bruto de '+pb+'/36 ';
+  if (pb>=29) interp+='se encuentra dentro del rango normal según el punto de corte original. ';
+  else if (pb>=25) interp+='indica una alteración leve de la comprensión auditiva verbal. ';
+  else if (pb>=17) interp+='es compatible con una alteración moderada de la comprensión auditiva verbal. ';
+  else interp+='indica una alteración severa de la comprensión auditiva verbal, compatible con compromiso significativo del lenguaje receptivo. ';
+  interp+='Tras el ajuste por escolaridad ('+escol+' años), la Puntuación Escalar ajustada es '+peAdj+'/18 ('+label+') según los baremos de Aranciva et al. (2012). ';
+  interp+='Estos baremos corresponden a población española adulta joven (18–49 años); aplicar con precaución en pacientes mayores de 50 años.';
+  document.getElementById('token-detalle').innerHTML=html;
+  document.getElementById('token-interp').textContent=interp;
+  document.getElementById('token-form').style.display='none';
+  document.getElementById('token-resultado').style.display='block';
+  window._tokenData={pb:pb,escol:escol,pe:pe,ajuste:ajuste,peAdj:peAdj,z:z,label:label,catBruto:catBruto};
+}
+
+function guardarToken() {
+  if (!SESSION) return;
+  var pacId=document.getElementById('token-paciente').value;
+  var fecha=document.getElementById('token-fecha').value;
+  if (!pacId){toast('Seleccioná un paciente.','error');return;}
+  if (!window._tokenData){toast('Calculá el resultado antes de guardar.','error');return;}
+  var d=window._tokenData;
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id:SESSION.user.id,paciente_id:pacId,
+    test:'Token Test',fecha:fecha,
+    puntaje_total:d.pb,puntaje_z:d.z,
+    categoria:d.label,datos:d
+  },SESSION.access_token).then(function(){
+    window._tokenData=null;
+    cargarResultados();toast('✓ Resultado guardado','success');
+  }).catch(function(){toast('Error al guardar','error');});
+}
+// ══ fin Token Test ════════════════════════════════════════════════════════════
 
 function iniciarBNT() {
   document.getElementById('bnt-fecha').value = new Date().toISOString().split('T')[0];
