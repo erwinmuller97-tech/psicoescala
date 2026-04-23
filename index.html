@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.31</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.32</div>
     </div>
   </aside>
 
@@ -5445,15 +5445,31 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Perfil Z tipo grilla neuropsicológica ──
-  var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
+  var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3]; // extended dynamically per row in zGrilla
   function zGrilla(z) {
-    if (z !== null && z !== undefined) z = Math.max(-3, Math.min(3, z));
-    var hds = COLS.map(function(v){
+    // Build dynamic cols that include z if out of range
+    var zClamped = z;
+    var dynCols = COLS.slice();
+    if (z !== null && z !== undefined) {
+      if (z < -3) {
+        // Add columns down to floor(z) in 0.5 steps
+        var extra = [];
+        for (var ev = -3.5; ev >= Math.floor(z*2)/2; ev -= 0.5) extra.unshift(parseFloat(ev.toFixed(1)));
+        dynCols = extra.concat(dynCols);
+        zClamped = z; // don't clamp
+      } else if (z > 3) {
+        var extra2 = [];
+        for (var ev2 = 3.5; ev2 <= Math.ceil(z*2)/2; ev2 += 0.5) extra2.push(parseFloat(ev2.toFixed(1)));
+        dynCols = dynCols.concat(extra2);
+        zClamped = z;
+      }
+    }
+    var hds = dynCols.map(function(v){
       var lbl = Number.isInteger(v) ? (v>0?'+'+v:String(v)) : '';
       return '<td style="width:16px;font-size:7px;text-align:center;color:#333;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
     }).join('');
-    var cells = COLS.map(function(v){
-      var isX  = z !== null && Math.abs(z - v) < 0.26;
+    var cells = dynCols.map(function(v){
+      var isX  = zClamped !== null && Math.abs(zClamped - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
       var bg = enNormal ? '#b8ddb0' : '#ffffff';
@@ -5589,11 +5605,21 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     // Ancho total: 680, alto total según puntos
     var W = 680, MT = 42, MB = 72, ML = 52, MR = 12;
     var chartW = W - ML - MR;  // 616
-    var chartH = 240;
-    var H = MT + chartH + MB;  // 354
 
-    // Escala Y: Z −3 a +3, 240px → 1Z = 40px, Z=0 → y=MT+120=162
-    function zy(z) { return MT + chartH/2 - z * (chartH/6); }
+    // Eje Y dinámico: detectar Z mín/máx y extender si necesario
+    var allZ = puntos.map(function(p){ return p.z; }).filter(function(z){ return z!==null&&z!==undefined; });
+    var zFloor = allZ.length ? Math.min.apply(null,allZ) : -3;
+    var zCeil  = allZ.length ? Math.max.apply(null,allZ) :  3;
+    var yMin = Math.min(-3, Math.floor(zFloor));
+    var yMax = Math.max( 3, Math.ceil(zCeil));
+    var yRange = yMax - yMin;
+
+    // chartH: 40px por unidad Z, mínimo 240
+    var chartH = Math.max(240, yRange * 40);
+    var H = MT + chartH + MB;
+
+    // Escala Y dinámica
+    function zy(z) { return MT + chartH * (yMax - z) / yRange; }
 
     // Escala X: puntos distribuidos uniformemente
     var n = puntos.length;
@@ -5614,7 +5640,10 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     svg += '<rect x="'+ML+'" y="'+y1+'" width="'+chartW+'" height="'+(ym1-y1)+'" fill="#b8ddb0" opacity="0.85"/>';
 
     // Líneas horizontales Y
-    [-3,-2,-1,0,1,2,3].forEach(function(z){
+    // Generar líneas para cada entero entre yMin y yMax
+    var hlineVals = [];
+    for (var hv = yMin; hv <= yMax; hv++) hlineVals.push(hv);
+    hlineVals.forEach(function(z){
       var y = zy(z);
       var isZero = z === 0;
       var is1 = z === 1 || z === -1;
@@ -6488,7 +6517,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     // ── Secciones ──
     (testsNp.length ?
-      '<div style="page-break-before:always;"></div>'+
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
       renderNP(testsNp) : '')+
 
