@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.34</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.36</div>
     </div>
   </aside>
 
@@ -5638,8 +5638,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var gZmax = allZvals.length ? Math.max.apply(null,allZvals) :  3;
     var gMin = Math.min(-3, Math.floor(gZmin*2)/2);
     var gMax = Math.max( 3, Math.ceil(gZmax*2)/2);
-    COLS_GLOBAL = [];
-    for (var gcv = gMin; gcv <= gMax; gcv = parseFloat((gcv+0.5).toFixed(1))) COLS_GLOBAL.push(gcv);
+    // Grilla tabla siempre fija -3 a +3 (el gráfico SVG usa yMin/yMax dinámico independientemente)
+    COLS_GLOBAL = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
 
     // ── Dimensiones del SVG ──
     // Área gráfico: margen izq=52, der=12, arriba=42, abajo=72
@@ -11463,6 +11463,11 @@ function abrirInforme() {
   // Cargar datos existentes
   cargarInforme(pacId);
   irVista('informe');
+  // Inicializar barras de negrita
+  ['inf-motivo','inf-conducta','inf-perfil-cog','inf-conclusiones','inf-recomendaciones'].forEach(function(tid){
+    var bar = document.getElementById('boldbar-'+tid);
+    if (bar) bar.innerHTML = buildBoldBar(tid);
+  });
 }
 
 function cargarInforme(pacId) {
