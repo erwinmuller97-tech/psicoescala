@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.36</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.38</div>
     </div>
   </aside>
 
@@ -645,27 +645,27 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Motivo de consulta</div>
-        <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-motivo')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B para negrita"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-motivo" rows="4" placeholder="Describa el motivo de consulta..."></textarea></div>
+        <div class="field"><textarea id="inf-motivo" rows="4" placeholder="Describa el motivo de consulta..."></textarea></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Descripción de la conducta durante la evaluación</div>
-        <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-conducta')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B para negrita"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-conducta" rows="4" placeholder="Actitud, colaboración, nivel de esfuerzo, observaciones conductuales..."></textarea></div>
+        <div class="field"><textarea id="inf-conducta" rows="4" placeholder="Actitud, colaboración, nivel de esfuerzo, observaciones conductuales..."></textarea></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Perfil cognitivo</div>
-        <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-perfil-cog')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B para negrita"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-perfil-cog" rows="6" placeholder="Descripción integrativa del perfil neuropsicológico..."></textarea></div>
+        <div class="field"><textarea id="inf-perfil-cog" rows="6" placeholder="Descripción integrativa del perfil neuropsicológico..."></textarea></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Conclusiones</div>
-        <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-conclusiones')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B para negrita"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-conclusiones" rows="5" placeholder="Síntesis diagnóstica y conclusiones clínicas..."></textarea></div>
+        <div class="field"><textarea id="inf-conclusiones" rows="5" placeholder="Síntesis diagnóstica y conclusiones clínicas..."></textarea></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Recomendaciones</div>
-        <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-recomendaciones')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B para negrita"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-recomendaciones" rows="5" placeholder="Intervenciones sugeridas, derivaciones, seguimiento..."></textarea></div>
+        <div class="field"><textarea id="inf-recomendaciones" rows="5" placeholder="Intervenciones sugeridas, derivaciones, seguimiento..."></textarea></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -1228,49 +1228,6 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('token-resultado').style.display='none';document.getElementById('token-form').style.display='block';">← Modificar</button>
           <button class="btn-primary" onclick="guardarToken()">💾 Guardar resultado</button>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ── CUESTIONARIOS FAMILIARES ── -->
-    <div class="vista" id="vista-fam">
-      <div class="back-btn" onclick="volverSector()">← Volver</div>
-      <div class="vista-header"><div class="vista-titulo">Cuestionarios Familiares · Reporte del Acompañante</div></div>
-      <div id="fam-form">
-        <div class="card">
-          <div class="card-titulo">Datos</div>
-          <div class="form-grid">
-            <div class="field"><label>Paciente *</label><select id="fam-paciente"><option value="">— Seleccionar paciente —</option></select></div>
-            <div class="field"><label>Fecha</label><input type="date" id="fam-fecha"></div>
-            <div class="field"><label>Informante</label><input type="text" id="fam-informante" placeholder="Nombre del familiar/cuidador"></div>
-          </div>
-        </div>
-        <div class="card"><div class="card-titulo">NPI-Q · Inventario Neuropsiquiátrico</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Leve=1 · Moderado=2 · Severo=3 · NO=sin síntoma</p>
-          <div id="npiq-items"></div></div>
-        <div class="card"><div class="card-titulo">Escala de AVD Básicas</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente → 3=Dependiente. Significativo: ≥2</p>
-          <div id="avdb-items"></div></div>
-        <div class="card"><div class="card-titulo">Escala de AVD Instrumentales</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente → Mayor puntaje=Mayor dependencia. Significativo: ≥2</p>
-          <div id="avdi-items"></div></div>
-        <div class="card"><div class="card-titulo">Escala de AVD Expansivas</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Sin dificultad → Mayor puntaje=Mayor compromiso. Significativo: ≥2</p>
-          <div id="avde-items"></div></div>
-        <div class="card"><div class="card-titulo">AD8-ARG · Cuestionario del Informante</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Cambios notados en los últimos años. Significativo: ≥3 respuestas SI</p>
-          <div id="ad8-items"></div></div>
-        <div class="btn-row">
-          <button class="btn-secondary" onclick="limpiarFam()">🗑 Limpiar</button>
-          <button class="btn-primary" onclick="calcularFam()">Calcular resultado →</button>
-        </div>
-      </div>
-      <div id="fam-resultado" style="display:none;">
-        <div class="resultado-box"><div class="resultado-detalle" id="fam-detalle"></div></div>
-        <div class="btn-row" style="margin-top:16px;">
-          <button class="btn-secondary" onclick="document.getElementById('fam-resultado').style.display='none';document.getElementById('fam-form').style.display='block';">← Modificar</button>
-          <button class="btn-primary" onclick="guardarFam()">💾 Guardar resultado</button>
         </div>
       </div>
     </div>
@@ -5135,7 +5092,7 @@ function llenarSelectPacientes() {
     PACIENTES.map(function(p){ return '<option value="' + p.id + '">' + p.nombre + '</option>'; }).join('');
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
-   'bnt-paciente','token-paciente','fam-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
+   'bnt-paciente','token-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
    'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
@@ -5288,9 +5245,7 @@ function cutoffBarHTML(val, max, cutoff) {
 // Helper para secciones narrativas del PDF (evita regex inline)
 function pdfSec(titulo, texto) {
   if (!texto) return '';
-  // Parse **bold** markers
-  var t = texto.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  t = t.split('\n').join('<br>');
+  var t = texto.split('\n').join('<br>');
   return '<div class="sec-titulo">'+titulo+'</div><p class="narrativa">'+t+'</p>';
 }
 
@@ -5440,8 +5395,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
-  var famResults2 = datos.filter(function(r){ return r.test === 'Cuestionarios Familiares'; });
-  var famHtml = famResults2.length ? renderCuestionariosFam(famResults2[famResults2.length-1].datos||{}) : '';
   var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
   // Orden fijo para clínica: BDI → STAI → GAD-7 → PHQ-9 → SPAI-B → SCL-90-R → MBI-HSS
   var CL_ORDEN = ['BDI-II','STAI','SPAI-B','PHQ-9','GAD-7','CSI','MBI-HSS','SCL-90-R'];
@@ -5492,16 +5445,31 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Perfil Z tipo grilla neuropsicológica ──
-  var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
-  var COLS_GLOBAL = COLS.slice(); // extended dynamically per row in zGrilla
+  var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3]; // extended dynamically per row in zGrilla
   function zGrilla(z) {
-    var dynCols = COLS_GLOBAL;
+    // Build dynamic cols that include z if out of range
+    var zClamped = z;
+    var dynCols = COLS.slice();
+    if (z !== null && z !== undefined) {
+      if (z < -3) {
+        // Add columns down to floor(z) in 0.5 steps
+        var extra = [];
+        for (var ev = -3.5; ev >= Math.floor(z*2)/2; ev -= 0.5) extra.unshift(parseFloat(ev.toFixed(1)));
+        dynCols = extra.concat(dynCols);
+        zClamped = z; // don't clamp
+      } else if (z > 3) {
+        var extra2 = [];
+        for (var ev2 = 3.5; ev2 <= Math.ceil(z*2)/2; ev2 += 0.5) extra2.push(parseFloat(ev2.toFixed(1)));
+        dynCols = dynCols.concat(extra2);
+        zClamped = z;
+      }
+    }
     var hds = dynCols.map(function(v){
       var lbl = Number.isInteger(v) ? (v>0?'+'+v:String(v)) : '';
       return '<td style="width:16px;font-size:7px;text-align:center;color:#333;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
     }).join('');
     var cells = dynCols.map(function(v){
-      var isX  = z !== null && z !== undefined && Math.abs(z - v) < 0.26;
+      var isX  = zClamped !== null && Math.abs(zClamped - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
       var bg = enNormal ? '#b8ddb0' : '#ffffff';
@@ -5632,15 +5600,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     if (!puntos.length) return '';
 
-    // ── COLS_GLOBAL: grilla uniforme para todas las filas ──
-    var allZvals = puntos.map(function(p){ return p.z; }).filter(function(z){ return z!==null&&z!==undefined; });
-    var gZmin = allZvals.length ? Math.min.apply(null,allZvals) : -3;
-    var gZmax = allZvals.length ? Math.max.apply(null,allZvals) :  3;
-    var gMin = Math.min(-3, Math.floor(gZmin*2)/2);
-    var gMax = Math.max( 3, Math.ceil(gZmax*2)/2);
-    // Grilla tabla siempre fija -3 a +3 (el gráfico SVG usa yMin/yMax dinámico independientemente)
-    COLS_GLOBAL = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
-
     // ── Dimensiones del SVG ──
     // Área gráfico: margen izq=52, der=12, arriba=42, abajo=72
     // Ancho total: 680, alto total según puntos
@@ -5743,59 +5702,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     return svg;
   }
 
-  function renderCuestionariosFam(d) {
-    if (!d || (!d.npiq && !d.avdb && !d.avdi && !d.avde && !d.ad8)) return '';
-    var informante = d.informante ? ' · Informante: '+d.informante : '';
-    var npiqItems = [{id:'delirios',label:'Delirios'},{id:'alucin',label:'Alucinaciones'},{id:'agitacion',label:'Agitación/Agresión'},{id:'depresion',label:'Depresión/Disforia'},{id:'ansiedad',label:'Ansiedad'},{id:'euforia',label:'Euforia'},{id:'apatia',label:'Apatía/Indiferencia'},{id:'desinhib',label:'Desinhibición'},{id:'irritab',label:'Irritabilidad'},{id:'motora',label:'Cond. Motora Anormal'},{id:'sueno',label:'Cambios Sueño'},{id:'apetito',label:'Cambios Apetito'}];
-    var avdbItems = [{id:'identif',label:'Identificación'},{id:'aseo',label:'Aseo'},{id:'vestirse',label:'Vestirse'},{id:'continen',label:'Continencia'}];
-    var avdiItems = [{id:'telefono',label:'Teléfono'},{id:'compras',label:'Compras'},{id:'comida',label:'Preparar comida'},{id:'transp',label:'Transporte'},{id:'medic',label:'Medicación'},{id:'dinero',label:'Dinero'}];
-    var avdeItems = [{id:'inform',label:'Información'},{id:'social',label:'Contacto social'},{id:'recreat',label:'Recreación'},{id:'autono',label:'Autonomía'},{id:'planes',label:'Planes de futuro'},{id:'responsab',label:'Responsabilidad'},{id:'opinion',label:'Expresión opinión'},{id:'aprende',label:'Aprendizaje'}];
-    var ad8Items = [{id:'ad8_1',label:'Juicios/Decisiones'},{id:'ad8_2',label:'Hobbies'},{id:'ad8_3',label:'Repite preguntas'},{id:'ad8_4',label:'Aparatos/Dispositivos'},{id:'ad8_5',label:'Olvida mes/año'},{id:'ad8_6',label:'Finanzas complejas'},{id:'ad8_7',label:'Recordar citas'},{id:'ad8_8',label:'Memoria/Razonamiento'}];
-    var gravLbl = ['','Leve','Moderado','Severo'];
-    var thStyle = 'padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:left;border:0.5px solid #a8c4a0;font-size:9px;';
-    var thCStyle = 'padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:center;border:0.5px solid #a8c4a0;font-size:9px;';
-    var tdStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;font-weight:700;color:#111;vertical-align:top;';
-    var tdCStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;font-weight:700;color:#111;text-align:center;vertical-align:top;';
-    var tdSStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;color:#111;vertical-align:top;';
-
-    var html = '<div style="margin-top:14px;">';
-    html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;">REPORTE DEL ACOMPAÑANTE'+informante+'</div>';
-    html += '<table style="width:100%;border-collapse:collapse;">';
-    html += '<thead><tr>'+
-      '<th style="'+thStyle+'width:28%;">Tests</th>'+
-      '<th style="'+thCStyle+'width:22%;">Significativo / No significativo</th>'+
-      '<th style="'+thStyle+'">Síntomas significativos</th>'+
-      '</tr></thead><tbody>';
-
-    function famRow(nombre, items, data, cutoff, labelFn) {
-      var sig = items.filter(function(i){ return data && (data[i.id]||0) >= cutoff; });
-      var isSig = sig.length > 0;
-      var sigTxt = isSig ? 'Sintomatología significativa' : 'Sin sintomatología significativa';
-      var sintomasStr = isSig ? sig.map(labelFn).join(' ; ') : '—';
-      return '<tr style="vertical-align:top;border-bottom:0.5px solid #d0e8cc;">'+
-        '<td style="'+tdStyle+'">'+nombre+'</td>'+
-        '<td style="'+tdCStyle+'">'+sigTxt+'</td>'+
-        '<td style="'+tdSStyle+'">'+sintomasStr+'</td>'+
-        '</tr>';
-    }
-
-    if (d.npiq) html += famRow('Inventario Neuropsiquiátrico NPI-Q', npiqItems, d.npiq, 1, function(i){ return i.label+(d.npiq[i.id]>0?' ('+gravLbl[d.npiq[i.id]]+')':''); });
-    if (d.avdb) html += famRow('Escala de AVD Básicas', avdbItems, d.avdb, 2, function(i){ return i.label+' ('+d.avdb[i.id]+')'; });
-    if (d.avdi) html += famRow('Escala de AVD Instrumentales', avdiItems, d.avdi, 2, function(i){ return i.label+' ('+d.avdi[i.id]+')'; });
-    if (d.avde) html += famRow('Escala de AVD Expansivas', avdeItems, d.avde, 2, function(i){ return i.label+' ('+d.avde[i.id]+')'; });
-    if (d.ad8) {
-      var ad8Sig = d.ad8Total >= 3;
-      var siItems = ad8Items.filter(function(i){ return d.ad8[i.id]==='si'; });
-      html += '<tr style="vertical-align:top;">'+
-        '<td style="'+tdStyle+'">Cuestionario del informante AD8-ARG</td>'+
-        '<td style="'+tdCStyle+'">'+(ad8Sig?'Sintomatología significativa':'Sin sintomatología significativa')+'</td>'+
-        '<td style="'+tdSStyle+'">'+(siItems.length?siItems.map(function(i){return i.label;}).join(' ; '):'—')+'</td>'+
-        '</tr>';
-    }
-    html += '</tbody></table></div>';
-    return html;
-  }
-
   function renderNP(list) {
     if (!list.length) return '';
     var rows = '';
@@ -5804,7 +5710,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     var dominios = {
       'COGNITIVO GLOBAL':    ['MoCA','ACE-R','Test del Reloj (Cacho)'],
       'MEMORIA':             ['Rey Verbal','BEM 144 Signoret'],
-      'ATENCIÓN':            ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA'],
+      'ATENCIÓN':            ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA','TMT A-B'],
       'FUNC. EJECUTIVAS':    ['FAB','IFS','TMT A-B','Stroop','BADS-Zoo','BADS-Llaves','BADS-Juicio','Test del Hotel','WCST-64'],
       'LENGUAJE':            ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
       'VISOCONSTRUCTIVO / MEMORIA VISUAL': ['Figura Rey'],
@@ -5819,7 +5725,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     Object.keys(dominios).forEach(function(dominio) {
       var testsDelDominio = dominios[dominio].filter(function(t){
-        // TMT A-B aparece solo en FUNC. EJECUTIVAS
+        // TMT A-B aparece en ATENCIÓN (parte A) y FUNC. EJECUTIVAS (parte B)
         if (t === 'TMT A-B') return byTest[t] != null;
         return byTest[t] && !procesados[t];
       });
@@ -6628,9 +6534,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     (testsNp.length ? refZ : '')+
 
-    // ── Reporte del Acompañante (antes de conclusiones) ──
-    (famHtml ? famHtml : '')+
-
     // ── Conclusiones y Recomendaciones ──
     pdfSec('Conclusiones', inf.conclusiones)+
     pdfSec('Recomendaciones', inf.recomendaciones)+
@@ -6737,7 +6640,6 @@ var NP_TESTS = [
   {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',         t:'Memoria',            dom:'memoria'},
   {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',       t:'Memoria',            dom:'memoria'},
   // Lenguaje
-  {id:'fam', n:'Cuestionarios Familiares', d:'NPI-Q · AVD Básicas · AVD Instrumentales · AVD Expansivas · AD8-ARG', t:'Informante familiar', dom:'lenguaje'},
   {id:'token',    n:'Token Test',        d:'Comprensión auditiva verbal · De Renzi & Faglioni 1978 · Aranciva et al. 2012', t:'Lenguaje', dom:'lenguaje'},
   {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                      t:'Lenguaje',           dom:'lenguaje'},
   {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',   t:'Lenguaje',           dom:'lenguaje'},
@@ -6944,7 +6846,6 @@ function irTest(t) {
   if (t === 'bpi') iniciarBPI();
   if (t === 'bnt') iniciarBNT();
   if (t === 'token') iniciarToken();
-  if (t === 'fam') iniciarFam();
   if (t === 'scl90') iniciarScl90();
   if (t === 'signoret') iniciarSignoret();
   if (t === 'reloj') iniciarReloj();
@@ -11161,206 +11062,6 @@ function guardarToken() {
 }
 // ══ fin Token Test ════════════════════════════════════════════════════════════
 
-// ══ CUESTIONARIOS FAMILIARES ══════════════════════════════════════════════════
-var FAM_NPIQ = [
-  {id:'delirios',   label:'Delirios'},
-  {id:'alucin',     label:'Alucinaciones'},
-  {id:'agitacion',  label:'Agitación o Agresión'},
-  {id:'depresion',  label:'Depresión o Disforia'},
-  {id:'ansiedad',   label:'Ansiedad'},
-  {id:'euforia',    label:'Alegría excesiva o Euforia'},
-  {id:'apatia',     label:'Apatía o Indiferencia'},
-  {id:'desinhib',   label:'Desinhibición'},
-  {id:'irritab',    label:'Irritabilidad o Labilidad'},
-  {id:'motora',     label:'Conducta Motora Anormal'},
-  {id:'sueno',      label:'Cambios en el Sueño'},
-  {id:'apetito',    label:'Cambios en el Apetito'}
-];
-var FAM_AVDB = [
-  {id:'identif',   label:'Identificación personal', max:3},
-  {id:'aseo',      label:'Aseo personal', max:3},
-  {id:'vestirse',  label:'Vestirse apropiadamente', max:3},
-  {id:'continen',  label:'Continencia', max:3}
-];
-var FAM_AVDI = [
-  {id:'telefono',  label:'Capacidad para usar el teléfono', max:3},
-  {id:'compras',   label:'Ir de compras', max:3},
-  {id:'comida',    label:'Preparación de la comida', max:3},
-  {id:'transp',    label:'Medio de transporte', max:4},
-  {id:'medic',     label:'Responsabilidad sobre la medicación', max:2},
-  {id:'dinero',    label:'Capacidad de utilizar el dinero', max:2}
-];
-var FAM_AVDE = [
-  {id:'inform',    label:'Se mantiene informado', max:3},
-  {id:'social',    label:'Contactos socioafectivos', max:3},
-  {id:'recreat',   label:'Actividades recreativas', max:3},
-  {id:'autono',    label:'Autonomía e independencia', max:3},
-  {id:'planes',    label:'Formula planes de futuro', max:3},
-  {id:'responsab', label:'Responsabilidad y confianza', max:3},
-  {id:'opinion',   label:'Expresión de opiniones comprometidas', max:3},
-  {id:'aprende',   label:'Aprende cosas nuevas', max:3}
-];
-var FAM_AD8 = [
-  {id:'ad8_1', label:'Dificultad para emitir juicios o tomar decisiones correctas'},
-  {id:'ad8_2', label:'Menor interés en hobbies y pasatiempos'},
-  {id:'ad8_3', label:'Repite preguntas, comentarios o cosas que cuenta'},
-  {id:'ad8_4', label:'Dificultad para aprender a usar aparatos o dispositivos'},
-  {id:'ad8_5', label:'Olvida el mes y el año en que se encuentra'},
-  {id:'ad8_6', label:'Dificultad en el manejo de asuntos financieros complejos'},
-  {id:'ad8_7', label:'Dificultad para recordar citas y cosas que tiene que hacer'},
-  {id:'ad8_8', label:'Problemas recurrentes de memoria y de razonamiento'}
-];
-
-function famRenderNPIQ() {
-  var html = '';
-  FAM_NPIQ.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
-      '<div style="display:flex;gap:8px;align-items:center;">'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="0" checked style="accent-color:var(--accent);"> NO</label>'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="1" style="accent-color:var(--accent);"> Leve</label>'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="2" style="accent-color:var(--accent);"> Mod.</label>'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="3" style="accent-color:var(--accent);"> Severo</label>'+
-      '</div></div>';
-  });
-  document.getElementById('npiq-items').innerHTML = html;
-}
-
-function famRenderScale(containerId, items) {
-  var html = '';
-  items.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
-      '<div style="display:flex;gap:6px;align-items:center;">';
-    for (var v = 0; v <= item.max; v++) {
-      html += '<label style="font-size:0.8rem;display:flex;align-items:center;gap:3px;cursor:pointer;">'+
-        '<input type="radio" name="'+item.id+'" value="'+v+'" '+(v===0?'checked':'')+' style="accent-color:var(--accent);">'+v+'</label>';
-    }
-    html += '</div></div>';
-  });
-  document.getElementById(containerId).innerHTML = html;
-}
-
-function famRenderAD8() {
-  var html = '';
-  FAM_AD8.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
-      '<div style="display:flex;gap:8px;align-items:center;">'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="si" style="accent-color:var(--accent);"> SI</label>'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="no" checked style="accent-color:var(--accent);"> NO</label>'+
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="ns" style="accent-color:var(--accent);"> NS</label>'+
-      '</div></div>';
-  });
-  document.getElementById('ad8-items').innerHTML = html;
-}
-
-function iniciarFam() {
-  document.getElementById('fam-fecha').value = new Date().toISOString().split('T')[0];
-  famRenderNPIQ();
-  famRenderScale('avdb-items', FAM_AVDB);
-  famRenderScale('avdi-items', FAM_AVDI);
-  famRenderScale('avde-items', FAM_AVDE);
-  famRenderAD8();
-  document.getElementById('fam-form').style.display = 'block';
-  document.getElementById('fam-resultado').style.display = 'none';
-}
-
-function limpiarFam() { iniciarFam(); }
-
-function calcularFam() {
-  var npiq = {};
-  FAM_NPIQ.forEach(function(item) {
-    var sel = document.querySelector('input[name="npiq_'+item.id+'"]:checked');
-    npiq[item.id] = sel ? parseInt(sel.value) : 0;
-  });
-  function collectScale(items) {
-    var res = {};
-    items.forEach(function(item) {
-      var sel = document.querySelector('input[name="'+item.id+'"]:checked');
-      res[item.id] = sel ? parseInt(sel.value) : 0;
-    });
-    return res;
-  }
-  var avdb = collectScale(FAM_AVDB);
-  var avdi = collectScale(FAM_AVDI);
-  var avde = collectScale(FAM_AVDE);
-  var ad8 = {};
-  FAM_AD8.forEach(function(item) {
-    var sel = document.querySelector('input[name="'+item.id+'"]:checked');
-    ad8[item.id] = sel ? sel.value : 'no';
-  });
-  var ad8Total = FAM_AD8.filter(function(item){ return ad8[item.id]==='si'; }).length;
-  var gravLbl = ['','Leve','Moderado','Severo'];
-
-  var html = '';
-  function seccion(titulo, items, data, cutoff, labelFn) {
-    var sig = items.filter(function(i){ return (data[i.id]||0) >= cutoff; });
-    var isSig = sig.length > 0;
-    html += '<div style="margin-bottom:14px;">';
-    html += '<div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:4px;">'+titulo+'</div>';
-    html += '<div style="font-size:0.85rem;">';
-    html += '<strong>'+(isSig?'Sintomatología significativa':'Sin sintomatología significativa')+'</strong>';
-    if (isSig) html += '<span style="color:#333;margin-left:8px;">'+sig.map(function(i){return labelFn(i,data);}).join(' · ')+'</span>';
-    html += '</div></div>';
-  }
-  seccion('NPI-Q', FAM_NPIQ, npiq, 1, function(i,d){ return i.label+(d[i.id]>0?' ('+gravLbl[d[i.id]]+')':''); });
-  seccion('AVD Básicas', FAM_AVDB, avdb, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-  seccion('AVD Instrumentales', FAM_AVDI, avdi, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-  seccion('AVD Expansivas', FAM_AVDE, avde, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-  var ad8Sig = ad8Total >= 3;
-  var siAD8 = FAM_AD8.filter(function(i){ return ad8[i.id]==='si'; });
-  html += '<div style="margin-bottom:14px;"><div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:4px;">AD8-ARG ('+ad8Total+'/8)</div>';
-  html += '<div style="font-size:0.85rem;"><strong>'+(ad8Sig?'Sintomatología significativa':'Sin sintomatología significativa')+'</strong>';
-  if (ad8Sig) html += '<span style="color:#333;margin-left:8px;">'+siAD8.map(function(i){return i.label;}).join(' · ')+'</span>';
-  html += '</div></div>';
-
-  document.getElementById('fam-detalle').innerHTML = html;
-  document.getElementById('fam-form').style.display = 'none';
-  document.getElementById('fam-resultado').style.display = 'block';
-  window._famData = { npiq:npiq, avdb:avdb, avdi:avdi, avde:avde, ad8:ad8, ad8Total:ad8Total,
-    informante: document.getElementById('fam-informante').value };
-}
-
-function guardarFam() {
-  if (!SESSION) return;
-  var pacId = document.getElementById('fam-paciente').value;
-  var fecha  = document.getElementById('fam-fecha').value;
-  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
-  if (!window._famData) { toast('Calculá el resultado antes de guardar.','error'); return; }
-  var d = window._famData;
-  supaFetch('/rest/v1/psico_resultados','POST',{
-    user_id:SESSION.user.id, paciente_id:pacId,
-    test:'Cuestionarios Familiares', fecha:fecha,
-    puntaje_total:d.ad8Total,
-    categoria:d.ad8Total>=3?'AD8 Significativo':'AD8 No significativo',
-    datos:d
-  },SESSION.access_token).then(function(){
-    window._famData=null; cargarResultados(); toast('✓ Cuestionarios guardados','success');
-  }).catch(function(){ toast('Error al guardar','error'); });
-}
-// ══ fin Cuestionarios Familiares ══════════════════════════════════════════════
-
-// ══ BOLD TOOLBAR ══════════════════════════════════════════════════════════════
-function boldToolbar(textareaId) {
-  var ta = document.getElementById(textareaId);
-  if (!ta) return;
-  var start = ta.selectionStart, end = ta.selectionEnd;
-  var sel = ta.value.substring(start, end);
-  if (!sel) { toast('Seleccioná texto primero.', 'error'); return; }
-  if (sel.startsWith('**') && sel.endsWith('**') && sel.length > 4) {
-    var inner = sel.slice(2, -2);
-    ta.value = ta.value.substring(0, start) + inner + ta.value.substring(end);
-    ta.setSelectionRange(start, start + inner.length);
-  } else {
-    var wrapped = '**' + sel + '**';
-    ta.value = ta.value.substring(0, start) + wrapped + ta.value.substring(end);
-    ta.setSelectionRange(start, start + wrapped.length);
-  }
-  ta.focus();
-}
-// ══ fin Bold Toolbar ══════════════════════════════════════════════════════════
-
 function iniciarBNT() {
   document.getElementById('bnt-fecha').value = new Date().toISOString().split('T')[0];
   document.getElementById('bnt-form').style.display = 'block';
@@ -11483,11 +11184,6 @@ function abrirInforme() {
   // Cargar datos existentes
   cargarInforme(pacId);
   irVista('informe');
-  // Inicializar barras de negrita
-  ['inf-motivo','inf-conducta','inf-perfil-cog','inf-conclusiones','inf-recomendaciones'].forEach(function(tid){
-    var bar = document.getElementById('boldbar-'+tid);
-    if (bar) bar.innerHTML = buildBoldBar(tid);
-  });
 }
 
 function cargarInforme(pacId) {
