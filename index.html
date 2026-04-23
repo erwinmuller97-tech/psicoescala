@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.33</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.34</div>
     </div>
   </aside>
 
@@ -1246,51 +1246,28 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <div class="field"><label>Informante</label><input type="text" id="fam-informante" placeholder="Nombre del familiar/cuidador"></div>
           </div>
         </div>
-
-        <!-- NPI-Q -->
-        <div class="card">
-          <div class="card-titulo">NPI-Q · Inventario Neuropsiquiátrico</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Marcar SI e indicar gravedad (1=Leve, 2=Moderado, 3=Severo). Dejar en NO si no presenta el síntoma.</p>
-          <div id="npiq-items"></div>
-        </div>
-
-        <!-- AVD Básicas -->
-        <div class="card">
-          <div class="card-titulo">Escala de AVD Básicas</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente · 1=Leve dificultad · 2=Necesita ayuda parcial · 3=Dependiente. Significativo: ≥2</p>
-          <div id="avdb-items"></div>
-        </div>
-
-        <!-- AVD Instrumentales -->
-        <div class="card">
-          <div class="card-titulo">Escala de AVD Instrumentales</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente · Mayor puntaje = Mayor dependencia. Significativo: ≥2</p>
-          <div id="avdi-items"></div>
-        </div>
-
-        <!-- AVD Expansivas -->
-        <div class="card">
-          <div class="card-titulo">Escala de AVD Expansivas</div>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Sin dificultad · Mayor puntaje = Mayor compromiso. Significativo: ≥2</p>
-          <div id="avde-items"></div>
-        </div>
-
-        <!-- AD8-ARG -->
-        <div class="card">
-          <div class="card-titulo">AD8-ARG · Cuestionario del Informante</div>
+        <div class="card"><div class="card-titulo">NPI-Q · Inventario Neuropsiquiátrico</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Leve=1 · Moderado=2 · Severo=3 · NO=sin síntoma</p>
+          <div id="npiq-items"></div></div>
+        <div class="card"><div class="card-titulo">Escala de AVD Básicas</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente → 3=Dependiente. Significativo: ≥2</p>
+          <div id="avdb-items"></div></div>
+        <div class="card"><div class="card-titulo">Escala de AVD Instrumentales</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Independiente → Mayor puntaje=Mayor dependencia. Significativo: ≥2</p>
+          <div id="avdi-items"></div></div>
+        <div class="card"><div class="card-titulo">Escala de AVD Expansivas</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">0=Sin dificultad → Mayor puntaje=Mayor compromiso. Significativo: ≥2</p>
+          <div id="avde-items"></div></div>
+        <div class="card"><div class="card-titulo">AD8-ARG · Cuestionario del Informante</div>
           <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Cambios notados en los últimos años. Significativo: ≥3 respuestas SI</p>
-          <div id="ad8-items"></div>
-        </div>
-
+          <div id="ad8-items"></div></div>
         <div class="btn-row">
           <button class="btn-secondary" onclick="limpiarFam()">🗑 Limpiar</button>
           <button class="btn-primary" onclick="calcularFam()">Calcular resultado →</button>
         </div>
       </div>
       <div id="fam-resultado" style="display:none;">
-        <div class="resultado-box">
-          <div class="resultado-detalle" id="fam-detalle"></div>
-        </div>
+        <div class="resultado-box"><div class="resultado-detalle" id="fam-detalle"></div></div>
         <div class="btn-row" style="margin-top:16px;">
           <button class="btn-secondary" onclick="document.getElementById('fam-resultado').style.display='none';document.getElementById('fam-form').style.display='block';">← Modificar</button>
           <button class="btn-primary" onclick="guardarFam()">💾 Guardar resultado</button>
@@ -5311,7 +5288,9 @@ function cutoffBarHTML(val, max, cutoff) {
 // Helper para secciones narrativas del PDF (evita regex inline)
 function pdfSec(titulo, texto) {
   if (!texto) return '';
-  var t = texto.split('\n').join('<br>');
+  // Parse **bold** markers
+  var t = texto.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  t = t.split('\n').join('<br>');
   return '<div class="sec-titulo">'+titulo+'</div><p class="narrativa">'+t+'</p>';
 }
 
@@ -5453,7 +5432,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','Cuestionarios Familiares','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+  var NP = ['WAIS-IV','Rey Verbal','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25','DEX'];
   var DO = ['PCS','PBQ','CSQ','BPI'];
@@ -5461,9 +5440,8 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   var testsNp = datos.filter(function(r){ return tipo(r.test)==='np'; });
   var testsTd = datos.filter(function(r){ return tipo(r.test)==='td'; });
-  // Cuestionarios familiares
   var famResults2 = datos.filter(function(r){ return r.test === 'Cuestionarios Familiares'; });
-  famHtml = famResults2.length ? renderCuestionariosFam(famResults2[famResults2.length-1].datos||{}) : '';
+  var famHtml = famResults2.length ? renderCuestionariosFam(famResults2[famResults2.length-1].datos||{}) : '';
   var testsDo = datos.filter(function(r){ return tipo(r.test)==='do'; });
   // Orden fijo para clínica: BDI → STAI → GAD-7 → PHQ-9 → SPAI-B → SCL-90-R → MBI-HSS
   var CL_ORDEN = ['BDI-II','STAI','SPAI-B','PHQ-9','GAD-7','CSI','MBI-HSS','SCL-90-R'];
@@ -5515,17 +5493,15 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
   // ── Perfil Z tipo grilla neuropsicológica ──
   var COLS = [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
-  var COLS_GLOBAL = COLS.slice(); // will be overridden per PDF with global z range
+  var COLS_GLOBAL = COLS.slice(); // extended dynamically per row in zGrilla
   function zGrilla(z) {
-    // Use COLS_GLOBAL so all rows share the same column width
     var dynCols = COLS_GLOBAL;
-    var zClamped = z;
     var hds = dynCols.map(function(v){
       var lbl = Number.isInteger(v) ? (v>0?'+'+v:String(v)) : '';
       return '<td style="width:16px;font-size:7px;text-align:center;color:#333;padding:1px 0;border:none;font-family:monospace;font-weight:'+(lbl?'700':'400')+';">'+lbl+'</td>';
     }).join('');
     var cells = dynCols.map(function(v){
-      var isX  = zClamped !== null && z !== null && Math.abs(z - v) < 0.26;
+      var isX  = z !== null && z !== undefined && Math.abs(z - v) < 0.26;
       // Zona normativa -1 a +1: gris claro; resto: blanco
       var enNormal = (v >= -1 && v <= 1);
       var bg = enNormal ? '#b8ddb0' : '#ffffff';
@@ -5656,7 +5632,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
 
     if (!puntos.length) return '';
 
-    // ── Establecer COLS_GLOBAL para grilla uniforme ──
+    // ── COLS_GLOBAL: grilla uniforme para todas las filas ──
     var allZvals = puntos.map(function(p){ return p.z; }).filter(function(z){ return z!==null&&z!==undefined; });
     var gZmin = allZvals.length ? Math.min.apply(null,allZvals) : -3;
     var gZmax = allZvals.length ? Math.max.apply(null,allZvals) :  3;
@@ -5770,31 +5746,36 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   function renderCuestionariosFam(d) {
     if (!d || (!d.npiq && !d.avdb && !d.avdi && !d.avde && !d.ad8)) return '';
     var informante = d.informante ? ' · Informante: '+d.informante : '';
-    var html = '<div style="margin-top:14px;">';
-    html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;">REPORTE DEL ACOMPAÑANTE'+informante+'</div>';
-    html += '<table style="width:100%;border-collapse:collapse;font-size:9px;border:0.5px solid #a8c4a0;">';
-    html += '<thead><tr>'+
-      '<th style="padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:left;border:0.5px solid #a8c4a0;width:28%;">Tests</th>'+
-      '<th style="padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:center;border:0.5px solid #a8c4a0;width:18%;">Significativo / No significativo</th>'+
-      '<th style="padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:left;border:0.5px solid #a8c4a0;">Síntomas significativos</th>'+
-      '</tr></thead><tbody>';
-
     var npiqItems = [{id:'delirios',label:'Delirios'},{id:'alucin',label:'Alucinaciones'},{id:'agitacion',label:'Agitación/Agresión'},{id:'depresion',label:'Depresión/Disforia'},{id:'ansiedad',label:'Ansiedad'},{id:'euforia',label:'Euforia'},{id:'apatia',label:'Apatía/Indiferencia'},{id:'desinhib',label:'Desinhibición'},{id:'irritab',label:'Irritabilidad'},{id:'motora',label:'Cond. Motora Anormal'},{id:'sueno',label:'Cambios Sueño'},{id:'apetito',label:'Cambios Apetito'}];
     var avdbItems = [{id:'identif',label:'Identificación'},{id:'aseo',label:'Aseo'},{id:'vestirse',label:'Vestirse'},{id:'continen',label:'Continencia'}];
     var avdiItems = [{id:'telefono',label:'Teléfono'},{id:'compras',label:'Compras'},{id:'comida',label:'Preparar comida'},{id:'transp',label:'Transporte'},{id:'medic',label:'Medicación'},{id:'dinero',label:'Dinero'}];
     var avdeItems = [{id:'inform',label:'Información'},{id:'social',label:'Contacto social'},{id:'recreat',label:'Recreación'},{id:'autono',label:'Autonomía'},{id:'planes',label:'Planes de futuro'},{id:'responsab',label:'Responsabilidad'},{id:'opinion',label:'Expresión opinión'},{id:'aprende',label:'Aprendizaje'}];
     var ad8Items = [{id:'ad8_1',label:'Juicios/Decisiones'},{id:'ad8_2',label:'Hobbies'},{id:'ad8_3',label:'Repite preguntas'},{id:'ad8_4',label:'Aparatos/Dispositivos'},{id:'ad8_5',label:'Olvida mes/año'},{id:'ad8_6',label:'Finanzas complejas'},{id:'ad8_7',label:'Recordar citas'},{id:'ad8_8',label:'Memoria/Razonamiento'}];
     var gravLbl = ['','Leve','Moderado','Severo'];
+    var thStyle = 'padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:left;border:0.5px solid #a8c4a0;font-size:9px;';
+    var thCStyle = 'padding:5px 8px;background:#d8ecd0;color:#214b1a;font-weight:700;text-align:center;border:0.5px solid #a8c4a0;font-size:9px;';
+    var tdStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;font-weight:700;color:#111;vertical-align:top;';
+    var tdCStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;font-weight:700;color:#111;text-align:center;vertical-align:top;';
+    var tdSStyle = 'padding:5px 8px;border:0.5px solid #a8c4a0;font-size:9px;color:#111;vertical-align:top;';
+
+    var html = '<div style="margin-top:14px;">';
+    html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;">REPORTE DEL ACOMPAÑANTE'+informante+'</div>';
+    html += '<table style="width:100%;border-collapse:collapse;">';
+    html += '<thead><tr>'+
+      '<th style="'+thStyle+'width:28%;">Tests</th>'+
+      '<th style="'+thCStyle+'width:22%;">Significativo / No significativo</th>'+
+      '<th style="'+thStyle+'">Síntomas significativos</th>'+
+      '</tr></thead><tbody>';
 
     function famRow(nombre, items, data, cutoff, labelFn) {
       var sig = items.filter(function(i){ return data && (data[i.id]||0) >= cutoff; });
       var isSig = sig.length > 0;
-      var sigColor = isSig ? '#c0392b' : '#2e7d32';
+      var sigTxt = isSig ? 'Sintomatología significativa' : 'Sin sintomatología significativa';
       var sintomasStr = isSig ? sig.map(labelFn).join(' ; ') : '—';
       return '<tr style="vertical-align:top;border-bottom:0.5px solid #d0e8cc;">'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;font-weight:600;">'+nombre+'</td>'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;text-align:center;font-weight:700;color:'+sigColor+';">'+(isSig?'Significativo':'No significativo')+'</td>'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;color:#222;">'+sintomasStr+'</td>'+
+        '<td style="'+tdStyle+'">'+nombre+'</td>'+
+        '<td style="'+tdCStyle+'">'+sigTxt+'</td>'+
+        '<td style="'+tdSStyle+'">'+sintomasStr+'</td>'+
         '</tr>';
     }
 
@@ -5806,9 +5787,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       var ad8Sig = d.ad8Total >= 3;
       var siItems = ad8Items.filter(function(i){ return d.ad8[i.id]==='si'; });
       html += '<tr style="vertical-align:top;">'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;font-weight:600;">Cuestionario del informante AD8-ARG</td>'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;text-align:center;font-weight:700;color:'+(ad8Sig?'#c0392b':'#2e7d32')+';">'+(ad8Sig?'Significativo':'No significativo')+'</td>'+
-        '<td style="padding:5px 8px;border:0.5px solid #a8c4a0;color:#222;">'+(siItems.length?siItems.map(function(i){return i.label;}).join(' ; '):'—')+'</td>'+
+        '<td style="'+tdStyle+'">Cuestionario del informante AD8-ARG</td>'+
+        '<td style="'+tdCStyle+'">'+(ad8Sig?'Sintomatología significativa':'Sin sintomatología significativa')+'</td>'+
+        '<td style="'+tdSStyle+'">'+(siItems.length?siItems.map(function(i){return i.label;}).join(' ; '):'—')+'</td>'+
         '</tr>';
     }
     html += '</tbody></table></div>';
@@ -6142,7 +6123,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
     function bpiLbl(v,t){ if(t==='int'){return v>=7?'Severa':v>=4?'Moderada':v>=1?'Leve':'Sin dolor';}return v>=7?'Severa':v>=4?'Moderada':v>=1?'Leve':'Sin interferencia'; }
 
     var html = '';
-    var famHtml = '';;
     list.forEach(function(r){
       var d = r.datos || {};
 
@@ -6629,9 +6609,6 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       return html;
     })()+
 
-    // ── Cuestionarios familiares (antes de secciones) ──
-    (famHtml ? famHtml : '')+
-
     // ── Secciones ──
     (testsNp.length ?
       '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#eef6ea;background:#214b1a;padding:5px 10px;border-left:3px solid #214b1a;margin-bottom:0;margin-top:0;">Evaluación Neuropsicológica</div>'+
@@ -6650,6 +6627,9 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       renderCL(testsCl) : '')+
 
     (testsNp.length ? refZ : '')+
+
+    // ── Reporte del Acompañante (antes de conclusiones) ──
+    (famHtml ? famHtml : '')+
 
     // ── Conclusiones y Recomendaciones ──
     pdfSec('Conclusiones', inf.conclusiones)+
@@ -6757,7 +6737,7 @@ var NP_TESTS = [
   {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',         t:'Memoria',            dom:'memoria'},
   {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',       t:'Memoria',            dom:'memoria'},
   // Lenguaje
-  {id:'fam',      n:'Cuestionarios Familiares', d:'NPI-Q · AVD Básicas · AVD Instrumentales · AVD Expansivas · AD8-ARG', t:'Informante familiar', dom:'lenguaje'},
+  {id:'fam', n:'Cuestionarios Familiares', d:'NPI-Q · AVD Básicas · AVD Instrumentales · AVD Expansivas · AD8-ARG', t:'Informante familiar', dom:'lenguaje'},
   {id:'token',    n:'Token Test',        d:'Comprensión auditiva verbal · De Renzi & Faglioni 1978 · Aranciva et al. 2012', t:'Lenguaje', dom:'lenguaje'},
   {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                      t:'Lenguaje',           dom:'lenguaje'},
   {id:'bnt',      n:'BNT',               d:'Denominación de Boston · BNT-12 / BNT-60',   t:'Lenguaje',           dom:'lenguaje'},
@@ -11183,7 +11163,7 @@ function guardarToken() {
 
 // ══ CUESTIONARIOS FAMILIARES ══════════════════════════════════════════════════
 var FAM_NPIQ = [
-  {id:'delirios',    label:'Delirios'},
+  {id:'delirios',   label:'Delirios'},
   {id:'alucin',     label:'Alucinaciones'},
   {id:'agitacion',  label:'Agitación o Agresión'},
   {id:'depresion',  label:'Depresión o Disforia'},
@@ -11197,28 +11177,28 @@ var FAM_NPIQ = [
   {id:'apetito',    label:'Cambios en el Apetito'}
 ];
 var FAM_AVDB = [
-  {id:'identif',  label:'Identificación personal', max:3},
-  {id:'aseo',     label:'Aseo personal', max:3},
-  {id:'vestirse', label:'Vestirse apropiadamente', max:3},
-  {id:'continen', label:'Continencia', max:3}
+  {id:'identif',   label:'Identificación personal', max:3},
+  {id:'aseo',      label:'Aseo personal', max:3},
+  {id:'vestirse',  label:'Vestirse apropiadamente', max:3},
+  {id:'continen',  label:'Continencia', max:3}
 ];
 var FAM_AVDI = [
-  {id:'telefono', label:'Capacidad para usar el teléfono', max:3},
-  {id:'compras',  label:'Ir de compras', max:3},
-  {id:'comida',   label:'Preparación de la comida', max:3},
-  {id:'transp',   label:'Medio de transporte', max:4},
-  {id:'medic',    label:'Responsabilidad sobre la medicación', max:2},
-  {id:'dinero',   label:'Capacidad de utilizar el dinero', max:2}
+  {id:'telefono',  label:'Capacidad para usar el teléfono', max:3},
+  {id:'compras',   label:'Ir de compras', max:3},
+  {id:'comida',    label:'Preparación de la comida', max:3},
+  {id:'transp',    label:'Medio de transporte', max:4},
+  {id:'medic',     label:'Responsabilidad sobre la medicación', max:2},
+  {id:'dinero',    label:'Capacidad de utilizar el dinero', max:2}
 ];
 var FAM_AVDE = [
-  {id:'inform',   label:'Se mantiene informado', max:3},
-  {id:'social',   label:'Contactos socioafectivos', max:3},
-  {id:'recreat',  label:'Actividades recreativas', max:3},
-  {id:'autono',   label:'Autonomía e independencia', max:3},
-  {id:'planes',   label:'Formula planes de futuro', max:3},
-  {id:'responsab',label:'Responsabilidad y confianza', max:3},
-  {id:'opinion',  label:'Expresión de opiniones comprometidas', max:3},
-  {id:'aprende',  label:'Aprende cosas nuevas', max:3}
+  {id:'inform',    label:'Se mantiene informado', max:3},
+  {id:'social',    label:'Contactos socioafectivos', max:3},
+  {id:'recreat',   label:'Actividades recreativas', max:3},
+  {id:'autono',    label:'Autonomía e independencia', max:3},
+  {id:'planes',    label:'Formula planes de futuro', max:3},
+  {id:'responsab', label:'Responsabilidad y confianza', max:3},
+  {id:'opinion',   label:'Expresión de opiniones comprometidas', max:3},
+  {id:'aprende',   label:'Aprende cosas nuevas', max:3}
 ];
 var FAM_AD8 = [
   {id:'ad8_1', label:'Dificultad para emitir juicios o tomar decisiones correctas'},
@@ -11234,13 +11214,13 @@ var FAM_AD8 = [
 function famRenderNPIQ() {
   var html = '';
   FAM_NPIQ.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">' +
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>' +
-      '<div style="display:flex;gap:8px;align-items:center;">' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="0" checked style="accent-color:var(--accent);"> NO</label>' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="1" style="accent-color:var(--accent);"> Leve</label>' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="2" style="accent-color:var(--accent);"> Mod.</label>' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="3" style="accent-color:var(--accent);"> Severo</label>' +
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
+      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
+      '<div style="display:flex;gap:8px;align-items:center;">'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="0" checked style="accent-color:var(--accent);"> NO</label>'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="1" style="accent-color:var(--accent);"> Leve</label>'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="2" style="accent-color:var(--accent);"> Mod.</label>'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="npiq_'+item.id+'" value="3" style="accent-color:var(--accent);"> Severo</label>'+
       '</div></div>';
   });
   document.getElementById('npiq-items').innerHTML = html;
@@ -11249,11 +11229,11 @@ function famRenderNPIQ() {
 function famRenderScale(containerId, items) {
   var html = '';
   items.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">' +
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>' +
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
+      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
       '<div style="display:flex;gap:6px;align-items:center;">';
     for (var v = 0; v <= item.max; v++) {
-      html += '<label style="font-size:0.8rem;display:flex;align-items:center;gap:3px;cursor:pointer;">' +
+      html += '<label style="font-size:0.8rem;display:flex;align-items:center;gap:3px;cursor:pointer;">'+
         '<input type="radio" name="'+item.id+'" value="'+v+'" '+(v===0?'checked':'')+' style="accent-color:var(--accent);">'+v+'</label>';
     }
     html += '</div></div>';
@@ -11264,12 +11244,12 @@ function famRenderScale(containerId, items) {
 function famRenderAD8() {
   var html = '';
   FAM_AD8.forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">' +
-      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>' +
-      '<div style="display:flex;gap:8px;align-items:center;">' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="si" style="accent-color:var(--accent);"> SI</label>' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="no" checked style="accent-color:var(--accent);"> NO</label>' +
-      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="ns" style="accent-color:var(--accent);"> NS</label>' +
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">'+
+      '<span style="flex:1;font-size:0.85rem;">'+item.label+'</span>'+
+      '<div style="display:flex;gap:8px;align-items:center;">'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="si" style="accent-color:var(--accent);"> SI</label>'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="no" checked style="accent-color:var(--accent);"> NO</label>'+
+      '<label style="font-size:0.8rem;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="radio" name="'+item.id+'" value="ns" style="accent-color:var(--accent);"> NS</label>'+
       '</div></div>';
   });
   document.getElementById('ad8-items').innerHTML = html;
@@ -11289,13 +11269,11 @@ function iniciarFam() {
 function limpiarFam() { iniciarFam(); }
 
 function calcularFam() {
-  // Collect NPI-Q
   var npiq = {};
   FAM_NPIQ.forEach(function(item) {
     var sel = document.querySelector('input[name="npiq_'+item.id+'"]:checked');
     npiq[item.id] = sel ? parseInt(sel.value) : 0;
   });
-  // Collect AVD scales
   function collectScale(items) {
     var res = {};
     items.forEach(function(item) {
@@ -11307,58 +11285,39 @@ function calcularFam() {
   var avdb = collectScale(FAM_AVDB);
   var avdi = collectScale(FAM_AVDI);
   var avde = collectScale(FAM_AVDE);
-  // Collect AD8
   var ad8 = {};
   FAM_AD8.forEach(function(item) {
     var sel = document.querySelector('input[name="'+item.id+'"]:checked');
     ad8[item.id] = sel ? sel.value : 'no';
   });
   var ad8Total = FAM_AD8.filter(function(item){ return ad8[item.id]==='si'; }).length;
+  var gravLbl = ['','Leve','Moderado','Severo'];
 
-  // Build summary HTML
   var html = '';
   function seccion(titulo, items, data, cutoff, labelFn) {
     var sig = items.filter(function(i){ return (data[i.id]||0) >= cutoff; });
-    var color = sig.length > 0 ? '#E24B4A' : '#639922';
-    var txt = sig.length > 0 ? 'Significativo' : 'No significativo';
-    html += '<div style="margin-bottom:16px;">';
-    html += '<div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:6px;">'+titulo+'</div>';
-    html += '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">';
-    html += '<tr><td style="padding:6px 8px;font-weight:700;color:'+color+';">'+txt+'</td>';
-    if (sig.length > 0) {
-      html += '<td style="padding:6px 8px;color:#333;">'+sig.map(function(i){ return labelFn(i, data); }).join(' · ')+'</td>';
-    } else {
-      html += '<td style="padding:6px 8px;color:var(--muted);">Sin ítems significativos</td>';
-    }
-    html += '</tr></table></div>';
+    var isSig = sig.length > 0;
+    html += '<div style="margin-bottom:14px;">';
+    html += '<div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:4px;">'+titulo+'</div>';
+    html += '<div style="font-size:0.85rem;">';
+    html += '<strong>'+(isSig?'Sintomatología significativa':'Sin sintomatología significativa')+'</strong>';
+    if (isSig) html += '<span style="color:#333;margin-left:8px;">'+sig.map(function(i){return labelFn(i,data);}).join(' · ')+'</span>';
+    html += '</div></div>';
   }
-
-  seccion('NPI-Q · Inventario Neuropsiquiátrico', FAM_NPIQ, npiq, 1, function(i,d){
-    var grav = ['','Leve','Moderado','Severo'];
-    return i.label + ' ('+grav[d[i.id]]+')';
-  });
-  seccion('Escala de AVD Básicas', FAM_AVDB, avdb, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-  seccion('Escala de AVD Instrumentales', FAM_AVDI, avdi, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-  seccion('Escala de AVD Expansivas', FAM_AVDE, avde, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
-
-  // AD8
+  seccion('NPI-Q', FAM_NPIQ, npiq, 1, function(i,d){ return i.label+(d[i.id]>0?' ('+gravLbl[d[i.id]]+')':''); });
+  seccion('AVD Básicas', FAM_AVDB, avdb, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
+  seccion('AVD Instrumentales', FAM_AVDI, avdi, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
+  seccion('AVD Expansivas', FAM_AVDE, avde, 2, function(i,d){ return i.label+' ('+d[i.id]+')'; });
   var ad8Sig = ad8Total >= 3;
-  var ad8Color = ad8Sig ? '#E24B4A' : '#639922';
-  html += '<div style="margin-bottom:16px;"><div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:6px;">AD8-ARG · Cuestionario del Informante</div>';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;"><tr>';
-  html += '<td style="padding:6px 8px;font-weight:700;color:'+ad8Color+';">'+(ad8Sig?'Significativo ('+ad8Total+'/8)':'No significativo ('+ad8Total+'/8)')+'</td>';
-  if (ad8Sig) {
-    var siItems = FAM_AD8.filter(function(i){ return ad8[i.id]==='si'; });
-    html += '<td style="padding:6px 8px;color:#333;">'+siItems.map(function(i){ return i.label; }).join(' · ')+'</td>';
-  } else {
-    html += '<td style="padding:6px 8px;color:var(--muted);">Sin ítems significativos (corte ≥3)</td>';
-  }
-  html += '</tr></table></div>';
+  var siAD8 = FAM_AD8.filter(function(i){ return ad8[i.id]==='si'; });
+  html += '<div style="margin-bottom:14px;"><div style="font-weight:700;font-size:0.9rem;color:#214b1a;margin-bottom:4px;">AD8-ARG ('+ad8Total+'/8)</div>';
+  html += '<div style="font-size:0.85rem;"><strong>'+(ad8Sig?'Sintomatología significativa':'Sin sintomatología significativa')+'</strong>';
+  if (ad8Sig) html += '<span style="color:#333;margin-left:8px;">'+siAD8.map(function(i){return i.label;}).join(' · ')+'</span>';
+  html += '</div></div>';
 
   document.getElementById('fam-detalle').innerHTML = html;
   document.getElementById('fam-form').style.display = 'none';
   document.getElementById('fam-resultado').style.display = 'block';
-
   window._famData = { npiq:npiq, avdb:avdb, avdi:avdi, avde:avde, ad8:ad8, ad8Total:ad8Total,
     informante: document.getElementById('fam-informante').value };
 }
@@ -11370,16 +11329,14 @@ function guardarFam() {
   if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
   if (!window._famData) { toast('Calculá el resultado antes de guardar.','error'); return; }
   var d = window._famData;
-  var ad8Sig = d.ad8Total >= 3;
   supaFetch('/rest/v1/psico_resultados','POST',{
-    user_id: SESSION.user.id, paciente_id: pacId,
-    test: 'Cuestionarios Familiares', fecha: fecha,
-    puntaje_total: d.ad8Total,
-    categoria: ad8Sig ? 'AD8 Significativo' : 'AD8 No significativo',
-    datos: d
-  }, SESSION.access_token).then(function(){
-    window._famData = null;
-    cargarResultados(); toast('✓ Cuestionarios guardados','success');
+    user_id:SESSION.user.id, paciente_id:pacId,
+    test:'Cuestionarios Familiares', fecha:fecha,
+    puntaje_total:d.ad8Total,
+    categoria:d.ad8Total>=3?'AD8 Significativo':'AD8 No significativo',
+    datos:d
+  },SESSION.access_token).then(function(){
+    window._famData=null; cargarResultados(); toast('✓ Cuestionarios guardados','success');
   }).catch(function(){ toast('Error al guardar','error'); });
 }
 // ══ fin Cuestionarios Familiares ══════════════════════════════════════════════
