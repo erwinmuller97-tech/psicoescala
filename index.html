@@ -12973,16 +12973,7 @@ function _zGrillaRows(label, pb, m, ds, z, nota, isEven, isSubhdr) {
   var normZone = ZCOLS.map(function(v){return v>=-1&&v<=1;});
 
   // Color Z
-  var zColor = '888888';
-  if (z!==null&&z!==undefined) {
-    var zv=parseFloat(z);
-    if (zv>=1.0) zColor='1D9E75';
-    else if (zv>=0) zColor='639922';
-    else if (zv>=-0.99) zColor='888780';
-    else if (zv>=-1.49) zColor='BA7517';
-    else if (zv>=-1.99) zColor='D85A30';
-    else zColor='E24B4A';
-  }
+  var zColor = '000000'; // Z siempre negro
 
   // Interpretación
   function zInterp(z) {
@@ -13075,13 +13066,17 @@ function generarWordHistorial() {
 }
 
 function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pacOcup,pacDNI,fechaEval,inf) {
-  // ── Clasificar tests ──
+  // ── Clasificar tests (igual que PDF) ──
   var NP_LIST=['WAIS-IV','Rey Verbal','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL_LIST=['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD_LIST=['ASRS-V1.1','WURS-25','DEX'];
-  function tipoTest(t){return NP_LIST.indexOf(t)!==-1?'np':CL_LIST.indexOf(t)!==-1?'cl':TD_LIST.indexOf(t)!==-1?'td':'cl';}
-  var testsNP   = datos.filter(function(r){return tipoTest(r.test)==='np';});
-  var testsOtros= datos.filter(function(r){return tipoTest(r.test)!=='np';});
+  var DO_LIST=['PCS','PBQ','CSQ','BPI'];
+  function tipoTest(t){return NP_LIST.indexOf(t)!==-1?'np':CL_LIST.indexOf(t)!==-1?'cl':TD_LIST.indexOf(t)!==-1?'td':DO_LIST.indexOf(t)!==-1?'do':'cl';}
+  var testsNP    = datos.filter(function(r){return tipoTest(r.test)==='np';});
+  var testsTD    = datos.filter(function(r){return tipoTest(r.test)==='td';});
+  var testsDO    = datos.filter(function(r){return tipoTest(r.test)==='do';});
+  var testsCL    = datos.filter(function(r){return tipoTest(r.test)==='cl';});
+  var famResults = datos.filter(function(r){return r.test==='Cuestionarios Familiares';});
 
   // Baremos BEM
   var bemGrupo=null;
@@ -13092,8 +13087,63 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     else if(edad<=85)bemGrupo=4;else bemGrupo=5;
   }
 
+  // ── Nombres completos de tests (igual que PDF) ──
+  var NOMBRES_TEST={
+    'MoCA':'Montreal Cognitive Assessment (MoCA)',
+    'ACE-R':'Addenbrooke\'s Cognitive Examination — Revisado (ACE-R)',
+    'WAIS-IV':'Retención de Dígitos, Claves y Sec. Número-Letra — WAIS-IV',
+    'TMT A-B':'Trail Making Test (TMT-A y TMT-B)',
+    'Fluencia Verbal':'Fluencia Verbal Semántica y Fonológica',
+    'Cuestionarios Familiares':'Cuestionarios Familiares (NPI-Q · AVD Básicas · AVD Instrumentales · AVD Expansivas · AD8-ARG)',
+    'BNT-60':'Test de Denominación de Boston — 60 ítems (BNT-60)',
+    'BNT-12':'Test de Denominación de Boston — 12 ítems (BNT-12)',
+    'Rey Verbal':'Test de Aprendizaje Auditivo-Verbal de Rey (RAVLT)',
+    'BEM 144 Signoret':'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
+    'WCST-64':'Wisconsin Card Sorting Test — 64 cartas (WCST-64)',
+    'Stroop':'Test de Colores y Palabras Stroop (Golden, 1978)',
+    'Figura Rey':'Figura Compleja de Rey-Osterrieth (ROCF)',
+    'BTA':'Brief Test of Attention (BTA)',
+    'Test del Hotel':'Test del Hotel (Pinasco et al., 2023)',
+    'BADS-Llaves':'BADS · Búsqueda de Llaves (Farías Sarquís et al., 2021)',
+    'BADS-Juicio':'BADS · Juicio Temporal (Farías Sarquís et al., 2021)',
+    'BADS-Zoo':'BADS · Mapa del Zoo (Farías Sarquís et al., 2021)',
+    'SDMT-escrita':'Symbol Digit Modalities Test — Escrita (SDMT)',
+    'SDMT-oral':'Symbol Digit Modalities Test — Oral (SDMT)',
+    'IFS':'INECO Frontal Screening (IFS)',
+    'FAB':'Frontal Assessment Battery (FAB)',
+    'D2':'Test de Atención d2 (Brickenkamp)',
+    'Test del Reloj (Cacho)':'Test del Reloj — Método Cacho et al.',
+    'BDI-II':'Inventario de Depresión de Beck — 2ª Ed. (BDI-II)',
+    'STAI':'Inventario de Ansiedad Estado-Rasgo (STAI)',
+    'PHQ-9':'Cuestionario de Salud del Paciente (PHQ-9)',
+    'GAD-7':'Escala de Trastorno de Ansiedad Generalizada (GAD-7)',
+    'SPAI-B':'Inventario de Fobia Social — Versión Breve (SPAI-B)',
+    'CSI':'Inventario de Estrategias de Afrontamiento (CSI)',
+    'SCL-90-R':'Inventario de Síntomas SCL-90-R',
+    'MBI-HSS':'Inventario de Burnout de Maslach (MBI-HSS)',
+    'ASRS-V1.1':'Escala de Autodetección de TDAH en Adultos (ASRS-V1.1)',
+    'WURS-25':'Escala de Wender-Utah — 25 ítems (WURS-25)',
+    'DEX':'Cuestionario Disejecutivo (DEX)',
+    'PCS':'Escala de Catastrofización del Dolor (PCS)',
+    'CSQ':'Cuestionario de Estrategias de Afrontamiento al Dolor (CSQ)',
+    'PBQ':'Cuestionario de Conductas de Dolor (PBQ)',
+    'BPI':'Inventario Breve de Dolor (BPI)'
+  };
+  var DOMINIOS_PRUEBAS=[
+    {label:'Screening cognitivo global',           tests:['MoCA','ACE-R']},
+    {label:'Atención y velocidad de procesamiento',tests:['WAIS-IV','TMT A-B','D2','SDMT-escrita','SDMT-oral','BTA']},
+    {label:'Lenguaje',                              tests:['Fluencia Verbal','BNT-60','BNT-12','Token Test']},
+    {label:'Memoria',                               tests:['Rey Verbal','BEM 144 Signoret']},
+    {label:'Funciones ejecutivas',                  tests:['WCST-64','IFS','FAB','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo']},
+    {label:'Habilidades visoconstructivas',         tests:['Figura Rey','Test del Reloj (Cacho)']},
+    {label:'TDAH',                                  tests:['ASRS-V1.1','WURS-25','DEX']},
+    {label:'Psicología clínica',                    tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI']},
+    {label:'Evaluación del dolor',                  tests:['PCS','CSQ','PBQ','BPI']},
+    {label:'Cuestionarios familiares',              tests:['Cuestionarios Familiares']},
+  ];
+
   // ── Construir filas NP ──
-  function buildNPRows(list) {
+  function buildNPRows(list){
     if(!list.length)return[];
     var byTest={};
     list.forEach(function(r){byTest[r.test]=r;});
@@ -13105,21 +13155,18 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
       'LENGUAJE':           ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
       'VISOCONSTRUCTIVO':   ['Figura Rey'],
     };
-    var rows=[], rowCount=0;
-
+    var rows=[],rowCount=0;
     function add(label,pb,m,ds,z,nota){
       rows.push(_zGrillaRows(label,pb,m,ds,z,nota||null,rowCount%2===0,false));
       rowCount++;
     }
     function domHdr(txt){rows.push(_zGrillaRows(txt,null,null,null,null,null,false,true));}
-
     Object.keys(DOMS).forEach(function(dom){
       var tests=DOMS[dom].filter(function(t){return byTest[t];});
       if(!tests.length)return;
       domHdr(dom);
       tests.forEach(function(tn){
-        var r=byTest[tn]; var d=r.datos||{};
-
+        var r=byTest[tn];var d=r.datos||{};
         if(tn==='Rey Verbal'&&d.variables&&d.variables.length){
           d.variables.forEach(function(v){add(v.label,v.bruto,v.m,v.ds,v.z,null);});
         } else if(tn==='BEM 144 Signoret'){
@@ -13149,10 +13196,10 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
           if(d.cla_pb!=null)add('WAIS-IV · Claves',d.cla_pb,10,3,d.cla_z,null);
           if(d.sln_pb!=null)add('WAIS-IV · Sec. Nro-Letra',d.sln_pb,10,3,d.sln_z,null);
         } else if(tn==='Stroop'){
-          if(d.zP!=null)add('Stroop — Palabra',null,null,null,d.zP,null);
-          if(d.zC!=null)add('Stroop — Color',null,null,null,d.zC,null);
-          if(d.zPC!=null)add('Stroop — Palabra/Color',null,null,null,d.zPC,null);
-          if(d.zInt!=null)add('Stroop — Interferencia',null,null,null,d.zInt,null);
+          if(d.zP!=null) add('Stroop — Palabra',null,50,10,d.zP,null);
+          if(d.zC!=null) add('Stroop — Color',null,50,10,d.zC,null);
+          if(d.zPC!=null)add('Stroop — Palabra/Color',null,50,10,d.zPC,null);
+          if(d.zInt!=null)add('Stroop — Interferencia',null,50,10,d.zInt,null);
         } else if(tn==='Figura Rey'){
           if(d.zCopia!=null)add('Fig. Rey — Copia',d.pbCopia,null,null,d.zCopia,null);
           if(d.zRI!=null)add('Fig. Rey — Rec. Inmediato',d.pbRI,null,null,d.zRI,null);
@@ -13169,9 +13216,8 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
         } else if(tn==='DEX'){
           var dv2=d.version==='hetero'?'Heteroadm.':'Autoadm.';
           add('DEX Total ('+dv2+')',d.total,d.version==='hetero'?20.68:22.25,d.version==='hetero'?14.77:10.10,d.zTotal,'Pje /80');
-        } else if(tn==='BNT-60'||tn==='BNT-12'){
-          add(tn+(d.educ_label?' ('+d.educ_label+')':''),d.pb||r.puntaje_total,null,null,r.puntaje_z,null);
-        } else if(tn==='Token Test'){add('Token Test',r.puntaje_total,null,null,r.puntaje_z,null);}
+        } else if(tn==='BNT-60'||tn==='BNT-12'){add(tn+(d.educ_label?' ('+d.educ_label+')':''),d.pb||r.puntaje_total,null,null,r.puntaje_z,null);}
+        else if(tn==='Token Test'){add('Token Test',r.puntaje_total,null,null,r.puntaje_z,null);}
         else if(tn==='IFS'){add('IFS — Total',r.puntaje_total,null,null,r.puntaje_z,null);}
         else if(tn==='FAB'){add('FAB — Total',r.puntaje_total,null,null,r.puntaje_z,null);}
         else if(tn==='MoCA'){add('MoCA',r.puntaje_total,null,null,r.puntaje_z,null);}
@@ -13189,26 +13235,20 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     return rows;
   }
 
-  // ── Construir filas tests clínicos/TDAH (tabla simple 4 col) ──
-  var COL_CL = [3200, 800, 800, 4560]; // Variable | Puntaje | — | Resultado = 9360
-  function clHdr(txt,w){
-    return _wCell(_wPar(_wRun(txt,{sz:14,bold:true,color:'EEF6EA',font:'Arial'}),{align:'center',before:40,after:40}),{w:w,fill:WC.VERDE_MED});
-  }
-  function clCell(txt,w,bg,center){
-    return _wCell(_wPar(_wRun(txt||'—',{sz:18,font:'Arial'}),{align:center?'center':'left',before:40,after:40}),{w:w,fill:bg||WC.BLANCO});
-  }
-  function clDomHdr(txt){
-    return _wRow([_wCell(_wPar(_wRun(txt,{bold:true,sz:16,color:WC.VERDE_OSC,font:'Arial'}),{before:40,after:40,shading:'D8ECD0'}),{w:9360,fill:'D8ECD0',span:4})]);
-  }
-  function buildCLRows(list){
+  // ── Tabla simple para CL/TD/DO (Instrumento | Puntaje | Resultado) ──
+  var COL_CL=[3200,1200,4960];
+  function clHdr(txt,w){return _wCell(_wPar(_wRun(txt,{sz:15,bold:true,color:'EEF6EA',font:'Arial'}),{align:'center',before:40,after:40}),{w:w,fill:'325c28'});}
+  function clCell(txt,w,bg,center){return _wCell(_wPar(_wRun(txt||'—',{sz:18,font:'Arial'}),{align:center?'center':'left',before:40,after:40}),{w:w,fill:bg||'FFFFFF'});}
+  function clDomHdr(txt){return _wRow([_wCell(_wPar(_wRun(txt,{bold:true,sz:16,color:'214b1a',font:'Arial'}),{before:40,after:40,shading:'D8ECD0'}),{w:9360,fill:'D8ECD0',span:3})]);}
+  function buildSimpleRows(list){
     if(!list.length)return[];
     var rows=[],rc=0;
     list.forEach(function(r){
       var d=r.datos||{};
       rows.push(clDomHdr(r.test));
       function addCL(lbl,pb,res){
-        var bg=rc%2===0?'F0F7EE':WC.BLANCO;
-        rows.push(_wRow([clCell(lbl,COL_CL[0],bg),clCell(String(pb!=null?pb:'—'),COL_CL[1],bg,true),clCell('—',COL_CL[2],bg,true),clCell(res||'—',COL_CL[3],bg)]));
+        var bg=rc%2===0?'F0F7EE':'FFFFFF';
+        rows.push(_wRow([clCell(lbl,COL_CL[0],bg),clCell(String(pb!=null?pb:'—'),COL_CL[1],bg,true),clCell(res||'—',COL_CL[2],bg)]));
         rc++;
       }
       if(r.test==='BDI-II'){addCL('BDI-II — Total',r.puntaje_total,r.categoria||'—');}
@@ -13217,108 +13257,191 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
         if(d.rasgo!=null) addCL('STAI — Rasgo', d.rasgo+'/60', d.cat_rasgo||'—');
       } else if(r.test==='PHQ-9'){addCL('PHQ-9 — Total',r.puntaje_total,r.categoria||'—');}
       else if(r.test==='GAD-7'){addCL('GAD-7 — Total',r.puntaje_total,r.categoria||'—');}
-      else if(r.test==='ASRS-V1.1'){
+      else if(r.test==='SPAI-B'){addCL('SPAI-B — Total',r.puntaje_total,r.categoria||'—');}
+      else if(r.test==='SCL-90-R'){addCL('SCL-90-R — IGS',d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—',r.categoria||'—');}
+      else if(r.test==='MBI-HSS'){
+        if(d.CE!=null)addCL('Cansancio Emocional',d.CE,d.CE_cat||'—');
+        if(d.DP!=null)addCL('Despersonalización',d.DP,d.DP_cat||'—');
+        if(d.RP!=null)addCL('Realización Personal',d.RP,d.RP_cat||'—');
+        addCL('Burnout Global','—',r.categoria||'—');
+      } else if(r.test==='CSI'){
+        var csiSubs=['REP','AUC','EEM','PSD','APS','REC','EVP','RES'];
+        var csiLbls={REP:'Resolución de problemas',AUC:'Autocrítica',EEM:'Expresión emocional',PSD:'Pensamiento desiderativo',APS:'Apoyo social',REC:'Reestructuración cognitiva',EVP:'Evitación de problemas',RES:'Retirada social'};
+        csiSubs.forEach(function(sub){var sd=d[sub]||{};addCL('CSI — '+csiLbls[sub],sd.score!=null?sd.score:'—',sd.pc!=null?'Pc '+sd.pc:'—');});
+      } else if(r.test==='ASRS-V1.1'){
         if(d.parte_a_positivos!=null)addCL('ASRS — Secc. A (Kessler)',d.parte_a_positivos+'/6',d.parte_a_positivos>=4?'Screening positivo':'Screening negativo');
         if(d.scoreI!=null)addCL('ASRS — Inatención',d.scoreI,d.pcI?'Pc '+d.pcI:'—');
         if(d.scoreH!=null)addCL('ASRS — Hiper./Impulsividad',d.scoreH,d.pcH?'Pc '+d.pcH:'—');
         if(d.scoreT!=null||d.total_18!=null)addCL('ASRS — Total',d.scoreT||d.total_18,d.pcT?'Pc '+d.pcT:'—');
       } else if(r.test==='WURS-25'){addCL('WURS-25 — Total',r.puntaje_total,r.categoria||'—');}
       else if(r.test==='DEX'){var dv=d.version==='hetero'?'Heteroadm.':'Autoadm.';addCL('DEX Total ('+dv+')',d.total,r.categoria||'—');}
-      else if(r.test==='SPAI-B'){addCL('SPAI-B — Total',r.puntaje_total,r.categoria||'—');}
-      else if(r.test==='SCL-90-R'){addCL('SCL-90-R — IGS',d.igs_avg!=null?parseFloat(d.igs_avg).toFixed(2):'—',r.categoria||'—');}
-      else if(r.test==='MBI-HSS'){addCL('MBI-HSS',r.puntaje_total,r.categoria||'—');}
+      else if(r.test==='PCS'){addCL('PCS — Total',r.puntaje_total,r.categoria||'—');}
+      else if(r.test==='BPI'){
+        if(d.intensidad!=null)addCL('BPI — Índice de Intensidad',parseFloat(d.intensidad).toFixed(2),'—');
+        if(d.interferencia!=null)addCL('BPI — Índice de Interferencia',parseFloat(d.interferencia).toFixed(2),'—');
+      } else if(r.test==='PBQ'){addCL('PBQ — Total',r.puntaje_total,r.categoria||'—');}
+      else if(r.test==='CSQ'){addCL('CSQ — Total',r.puntaje_total,r.categoria||'—');}
       else{addCL(r.test,r.puntaje_total,r.categoria||'—');}
     });
     return rows;
   }
 
   // ── Párrafos narrativos ──
-  function parrafos(campo,campo2){
-    var txt=(inf[campo]||inf[campo2]||'').trim();
+  function parrafos(txt){
+    txt=(txt||'').trim();
     if(!txt)return[_wPar('',{before:0,after:80})];
-    return txt.split('\n').map(function(l){
-      return _wPar(_wRun(l,{sz:20,font:'Arial',color:'1a2e16'}),{align:'both',before:0,after:80});
-    });
+    return txt.split('\n').map(function(l){return _wPar(_wRun(l,{sz:20,font:'Arial',color:'1a2e16'}),{align:'both',before:0,after:80});});
   }
 
   // ── Tabla datos personales ──
   function dpRow(lbl,val){
     return _wRow([
-      _wCell(_wPar(_wRun(lbl,{bold:true,sz:19,font:'Arial',color:WC.VERDE_OSC}),{before:50,after:50}),{w:2400,fill:'F0F7EE'}),
-      _wCell(_wPar(_wRun(val||'—',{sz:19,font:'Arial'}),{before:50,after:50}),{w:6960,fill:WC.BLANCO}),
+      _wCell(_wPar(_wRun(lbl,{bold:true,sz:19,font:'Arial',color:'214b1a'}),{before:50,after:50}),{w:2600,fill:'F0F7EE'}),
+      _wCell(_wPar(_wRun(val||'—',{sz:19,font:'Arial'}),{before:50,after:50}),{w:6760,fill:'FFFFFF'}),
     ]);
   }
-  var dpTable=_wTable([
-    dpRow('Apellido y Nombre',pacNombre),
-    dpRow('Edad',pacEdad),
-    dpRow('Fecha de Nacimiento',pacFnac),
-    dpRow('Fecha de Evaluación',fechaEval),
-    dpRow('Educación',pacEscol),
-    dpRow('Ocupación',pacOcup),
-    dpRow('Sexo',pacSexo),
-  ],[2400,6960]);
 
-  // ── Sección título ──
+  // ── Sección título (línea verde bajo) ──
   function secTit(txt){
-    return _wPar(_wRun(txt,{bold:true,sz:22,color:WC.VERDE_OSC,font:'Arial'}),{before:240,after:60,border_b:WC.VERDE_MED});
+    return _wPar(_wRun(txt,{bold:true,sz:22,color:'214b1a',font:'Arial'}),{before:240,after:60,border_b:'325c28'});
   }
 
-  // ── Construir cuerpo del documento ──
-  var body = '';
+  // ── Construir cuerpo ──
+  var body='';
 
-  // Título
-  body += _wPar(_wRun('INFORME DE EVALUACIÓN NEUROPSICOLÓGICA',{bold:true,sz:28,color:WC.VERDE_OSC,font:'Arial'}),{align:'center',before:0,after:120});
+  // 1. TÍTULO
+  body+=_wPar(_wRun('INFORME DE EVALUACIÓN NEUROPSICOLÓGICA',{bold:true,sz:28,color:'214b1a',font:'Arial'}),{align:'center',before:0,after:120});
 
-  // Datos personales
-  body += secTit('Datos del Paciente');
-  body += dpTable;
-  body += _wPar('',{before:0,after:80});
+  // 2. DATOS DEL PACIENTE
+  body+=secTit('Datos del Paciente');
+  body+=_wTable([
+    dpRow('Apellido y Nombre', pacNombre),
+    dpRow('Edad',              pacEdad),
+    dpRow('Fecha de Nacimiento', pacFnac),
+    dpRow('Fecha de Evaluación', inf.fecha_evaluacion||fechaEval),
+    dpRow('DNI',               inf.dni||pacDNI||'—'),
+    dpRow('Educación',         pacEscol),
+    dpRow('Ocupación',         inf.ocupacion||pacOcup),
+    dpRow('Procedencia',       inf.procedencia||'—'),
+    dpRow('Sexo',              pacSexo),
+    dpRow('Dominancia Manual', inf.dominancia||'—'),
+    dpRow('Datos de Contacto', inf.contacto||'—'),
+    dpRow('Derivado por',      inf.derivado_por||'—'),
+    dpRow('Evaluado por',      inf.evaluado_por||'—'),
+    dpRow('Ant. Clínicos',     inf.ant_clinicos||'—'),
+    dpRow('Ant. Psiq./Psicol.',inf.ant_psiquiatricos||'—'),
+    dpRow('Ant. Familiares',   inf.ant_familiares||'—'),
+    dpRow('Hábitos Tóxicos',   inf.habitos_toxicos||'—'),
+  ],[2600,6760]);
+  body+=_wPar('',{before:0,after:80});
 
-  // Motivo de consulta
-  var motivo=(inf.motivo_consulta||inf.motivo||'').trim();
-  if(motivo){body+=secTit('Motivo de Consulta');parrafos('motivo_consulta','motivo').forEach(function(p){body+=p;});}
+  // 3. MOTIVO DE CONSULTA
+  if((inf.motivo_consulta||'').trim()){
+    body+=secTit('Motivo de Consulta');
+    parrafos(inf.motivo_consulta).forEach(function(p){body+=p;});
+  }
 
-  // Conducta
-  if((inf.conducta||'').trim()){body+=secTit('Descripción de la Conducta');parrafos('conducta','').forEach(function(p){body+=p;});}
+  // 4. DESCRIPCIÓN DE LA CONDUCTA
+  if((inf.descripcion_conducta||'').trim()){
+    body+=secTit('Descripción de la Conducta Durante la Evaluación');
+    parrafos(inf.descripcion_conducta).forEach(function(p){body+=p;});
+  }
 
-  // Tabla NP
+  // 5. PRUEBAS ADMINISTRADAS
+  var testsTomados=datos.map(function(r){return r.test;});
+  var tieneTests=DOMINIOS_PRUEBAS.some(function(dom){return dom.tests.some(function(t){return testsTomados.indexOf(t)!==-1;});});
+  if(tieneTests){
+    body+=secTit('Pruebas Administradas');
+    DOMINIOS_PRUEBAS.forEach(function(dom){
+      var presentes=dom.tests.filter(function(t){return testsTomados.indexOf(t)!==-1;});
+      if(!presentes.length)return;
+      // Subdominio en negrita
+      body+=_wPar(_wRun(dom.label,{bold:true,sz:20,font:'Arial',color:'1a2e16'}),{before:80,after:20});
+      // Lista de tests
+      var listaTexto=presentes.map(function(t){return NOMBRES_TEST[t]||t;}).join(' · ');
+      body+=_wPar(_wRun(listaTexto,{sz:19,font:'Arial',color:'333333'}),{align:'both',before:0,after:60});
+    });
+  }
+
+  // 6. TABLA NEUROPSICOLÓGICA (con grilla Z)
   var npRows=buildNPRows(testsNP);
   if(npRows.length){
-    body+=secTit('Resultados Neuropsicológicos');
-    var totalW=COL_WIDTHS_HDR.reduce(function(a,b){return a+b;},0);
+    body+=secTit('Evaluación Neuropsicológica');
     body+=_wTable([_zHdrRow()].concat(npRows),COL_WIDTHS_HDR);
     body+=_wPar('',{before:0,after:80});
   }
 
-  // Tabla clínica
-  var clRows=buildCLRows(testsOtros);
-  if(clRows.length){
-    body+=secTit('Escalas Conductuales y Emocionales');
+  // 7. TABLA TDAH
+  var tdRows=buildSimpleRows(testsTD);
+  if(tdRows.length){
+    body+=secTit('TDAH');
     body+=_wTable([
-      _wRow([clHdr('Instrumento',COL_CL[0]),clHdr('Puntaje',COL_CL[1]),clHdr('—',COL_CL[2]),clHdr('Resultado',COL_CL[3])],{hdr:true})
+      _wRow([clHdr('Instrumento',COL_CL[0]),clHdr('Puntaje',COL_CL[1]),clHdr('Resultado',COL_CL[2])],{hdr:true})
+    ].concat(tdRows),COL_CL);
+    body+=_wPar('',{before:0,after:80});
+  }
+
+  // 8. TABLA DOLOR
+  var doRows=buildSimpleRows(testsDO);
+  if(doRows.length){
+    body+=secTit('Evaluación del Dolor');
+    body+=_wTable([
+      _wRow([clHdr('Instrumento',COL_CL[0]),clHdr('Puntaje',COL_CL[1]),clHdr('Resultado',COL_CL[2])],{hdr:true})
+    ].concat(doRows),COL_CL);
+    body+=_wPar('',{before:0,after:80});
+  }
+
+  // 9. TABLA PSICOLOGÍA CLÍNICA
+  var clRows=buildSimpleRows(testsCL);
+  if(clRows.length){
+    body+=secTit('Psicología Clínica');
+    body+=_wTable([
+      _wRow([clHdr('Instrumento',COL_CL[0]),clHdr('Puntaje',COL_CL[1]),clHdr('Resultado',COL_CL[2])],{hdr:true})
     ].concat(clRows),COL_CL);
     body+=_wPar('',{before:0,after:80});
   }
 
-  // Perfil
-  var perfil=(inf.perfil||inf.descripcion_perfil||'').trim();
-  if(perfil){body+=secTit('Perfil Cognitivo y Diagnóstico Presuntivo');parrafos('perfil','descripcion_perfil').forEach(function(p){body+=p;});}
+  // 10. CUESTIONARIOS FAMILIARES
+  if(famResults.length){
+    body+=secTit('Cuestionarios Familiares');
+    var fam=famResults[famResults.length-1].datos||{};
+    var famItems=[];
+    if(fam.informante)famItems.push(dpRow('Informante',fam.informante));
+    if(fam.ad8!=null)famItems.push(dpRow('AD8-ARG — Total',String(fam.ad8)+(fam.ad8_cat?' · '+fam.ad8_cat:'')));
+    if(fam.npiq!=null)famItems.push(dpRow('NPI-Q — Total',String(fam.npiq)));
+    if(fam.avdb!=null)famItems.push(dpRow('AVD Básicas',String(fam.avdb)));
+    if(fam.avdi!=null)famItems.push(dpRow('AVD Instrumentales',String(fam.avdi)));
+    if(fam.avde!=null)famItems.push(dpRow('AVD Expansivas',String(fam.avde)));
+    if(famItems.length)body+=_wTable(famItems,[2600,6760]);
+    body+=_wPar('',{before:0,after:80});
+  }
 
-  // Conclusiones
-  var conc=(inf.conclusiones||inf.conclusion||'').trim();
-  if(conc){body+=secTit('Conclusiones');parrafos('conclusiones','conclusion').forEach(function(p){body+=p;});}
+  // 11. PERFIL COGNITIVO
+  if((inf.perfil_cognitivo||'').trim()){
+    body+=secTit('Perfil Cognitivo y Diagnóstico Presuntivo');
+    parrafos(inf.perfil_cognitivo).forEach(function(p){body+=p;});
+  }
 
-  // Sugerencias
-  if((inf.sugerencias||'').trim()){body+=secTit('Sugerencias');parrafos('sugerencias','').forEach(function(p){body+=p;});}
+  // 12. CONCLUSIONES
+  if((inf.conclusiones||'').trim()){
+    body+=secTit('Conclusiones');
+    parrafos(inf.conclusiones).forEach(function(p){body+=p;});
+  }
 
-  // Firma
+  // 13. RECOMENDACIONES
+  if((inf.recomendaciones||'').trim()){
+    body+=secTit('Recomendaciones');
+    parrafos(inf.recomendaciones).forEach(function(p){body+=p;});
+  }
+
+  // 14. FIRMA
   body+=_wPar('',{before:400,after:0});
   body+=_wPar(_wRun('___________________________',{sz:20,color:'888888',font:'Arial'}),{before:0,after:40});
-  body+=_wPar(_wRun('Firma y sello profesional',{sz:18,color:'666666',font:'Arial'}),{before:0,after:80});
+  body+=_wPar(_wRun(inf.evaluado_por||'',{sz:18,font:'Arial',color:'333333'}),{before:0,after:40});
+  body+=_wPar(_wRun(new Date().toLocaleDateString('es-AR'),{sz:17,color:'888888',font:'Arial'}),{before:0,after:80});
 
   // ── Armar XML docx ──
   var enc=new TextEncoder();
-
   var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
     '<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"'+
     ' xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"'+
@@ -13336,8 +13459,7 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     ' xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"'+
     ' xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"'+
     ' mc:Ignorable="w14 wp14">'+
-    '<w:body>'+
-    body+
+    '<w:body>'+body+
     '<w:sectPr>'+
       '<w:pgSz w:w="11906" w:h="16838"/>'+
       '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/>'+
@@ -13348,33 +13470,18 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
     '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'+
     '</Relationships>';
-
   var stylesXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
     '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'+
     '<w:docDefaults><w:rPrDefault><w:rPr>'+
-      '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>'+
-      '<w:sz w:val="20"/><w:szCs w:val="20"/>'+
-    '</w:rPr></w:rPrDefault></w:docDefaults>'+
-    '</w:styles>';
-
-  var appXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
-    '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">'+
-    '<Application>PsicoEscala</Application></Properties>';
-
-  var coreXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
-    '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"'+
-    ' xmlns:dc="http://purl.org/dc/elements/1.1/">'+
-    '<dc:creator>PsicoEscala</dc:creator>'+
-    '<dc:title>Informe Neuropsicológico</dc:title>'+
-    '</cp:coreProperties>';
-
+    '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>'+
+    '<w:sz w:val="20"/><w:szCs w:val="20"/>'+
+    '</w:rPr></w:rPrDefault></w:docDefaults></w:styles>';
   var topRels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
     '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
     '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'+
     '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>'+
     '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>'+
     '</Relationships>';
-
   var contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
     '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
     '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
@@ -13384,15 +13491,20 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>'+
     '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>'+
     '</Types>';
+  var coreXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/">'+
+    '<dc:creator>PsicoEscala</dc:creator><dc:title>Informe Neuropsicológico</dc:title></cp:coreProperties>';
+  var appXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>PsicoEscala</Application></Properties>';
 
   var zipData=_makeZip([
-    {name:'[Content_Types].xml',      data:enc.encode(contentTypes)},
-    {name:'_rels/.rels',              data:enc.encode(topRels)},
-    {name:'word/document.xml',        data:enc.encode(docXml)},
-    {name:'word/_rels/document.xml.rels', data:enc.encode(relsXml)},
-    {name:'word/styles.xml',          data:enc.encode(stylesXml)},
-    {name:'docProps/app.xml',         data:enc.encode(appXml)},
-    {name:'docProps/core.xml',        data:enc.encode(coreXml)},
+    {name:'[Content_Types].xml',         data:enc.encode(contentTypes)},
+    {name:'_rels/.rels',                 data:enc.encode(topRels)},
+    {name:'word/document.xml',           data:enc.encode(docXml)},
+    {name:'word/_rels/document.xml.rels',data:enc.encode(relsXml)},
+    {name:'word/styles.xml',             data:enc.encode(stylesXml)},
+    {name:'docProps/app.xml',            data:enc.encode(appXml)},
+    {name:'docProps/core.xml',           data:enc.encode(coreXml)},
   ]);
 
   var blob=new Blob([zipData],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
