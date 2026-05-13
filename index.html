@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.40</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.41</div>
     </div>
   </aside>
 
@@ -1880,17 +1880,9 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
         <div class="field"><label>Grupo etario *</label>
           <select id="stroop-edad">
             <option value="">— Seleccionar —</option>
-            <option value="0">18–45 años (Adultos Jóvenes)</option>
-            <option value="1">46–65 años (Adultos)</option>
-            <option value="2">66+ años (Adultos Mayores)</option>
-          </select>
-        </div>
-        <div class="field"><label>Escolaridad *</label>
-          <select id="stroop-escol">
-            <option value="">— Seleccionar —</option>
-            <option value="0">Baja (sin secundario completo)</option>
-            <option value="1">Media (secundario completo)</option>
-            <option value="2">Alta (universitario)</option>
+            <option value="0">16–44 años (sin corrección)</option>
+            <option value="1">45–64 años (P+8, C+4, PC+5)</option>
+            <option value="2">65–80 años (P+14, C+11, PC+15)</option>
           </select>
         </div>
         <div class="field"><label>Fecha</label><input type="date" id="stroop-fecha"></div>
@@ -6013,11 +6005,14 @@ function renderCuestionariosFam(d) {
           var gi2 = d.gi != null ? d.gi : null;
           var ei2 = d.ei != null ? d.ei : null;
           var notaS = gi2!==null && ei2!==null ? 'Grupo: '+edadLabelsS[gi2]+' · Escol. '+escolLabelsS[ei2] : null;
-          rows += '<tr><td colspan="8" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">Stroop · Test de Colores y Palabras (Galaverna et al., 2018)</td></tr>';
-          if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,      gi2!==null?STROOP_BAR.P.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.P.DS[gi2][ei2]:null,   d.zP,   r.fecha, notaS);
-          if (d.c    != null) rows += filaTabla('Color (C)',               d.c,      gi2!==null?STROOP_BAR.C.M[gi2][ei2]:null,   gi2!==null?STROOP_BAR.C.DS[gi2][ei2]:null,   d.zC,   r.fecha, notaS);
-          if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,     gi2!==null?STROOP_BAR.PC.M[gi2][ei2]:null,  gi2!==null?STROOP_BAR.PC.DS[gi2][ei2]:null,  d.zPC,  r.fecha, notaS);
-          if (d.interf != null) rows += filaTabla("Interferencia (PC\u2212PC')", d.interf, gi2!==null?STROOP_BAR.INT.M[gi2][ei2]:null, gi2!==null?STROOP_BAR.INT.DS[gi2][ei2]:null, d.zInt, r.fecha, notaS);
+          rows += '<tr><td colspan="8" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">Stroop · Test de Colores y Palabras (Golden) — Tabla I, corrección por edad</td></tr>';
+          // Baremo Golden tabla T: no hay M/DS directos, Z viene de (PT−50)/10
+          var edLbls=['16–44','45–64','65–80'];
+          var notaST = 'Baremo Golden · Tabla I' + (d.gi!=null?' · '+edLbls[d.gi]:'') + (d.pCorr!=null?' · P corr.='+d.pCorr+', C corr.='+d.cCorr+', PC corr.='+d.pcCorr:'');
+          if (d.p    != null) rows += filaTabla('Palabras (P)',            d.p,    d.ptP!=null?50:null, d.ptP!=null?10:null, d.zP,   r.fecha, notaST+' · PT='+d.ptP);
+          if (d.c    != null) rows += filaTabla('Color (C)',               d.c,    d.ptC!=null?50:null, d.ptC!=null?10:null, d.zC,   r.fecha, notaST+' · PT='+d.ptC);
+          if (d.pc   != null) rows += filaTabla('Palabra-Color (PC)',      d.pc,   d.ptPC!=null?50:null,d.ptPC!=null?10:null,d.zPC,  r.fecha, notaST+' · PT='+d.ptPC);
+          if (d.interf != null) rows += filaTabla("Interferencia (PC\u2212PC')", d.interf, d.ptInt!=null?50:null, d.ptInt!=null?10:null, d.zInt, r.fecha, notaST+' · PT='+d.ptInt);
 
         } else {
           rows += filaTabla(testNombre, r.puntaje_total, null, null, r.puntaje_z, r.fecha);
@@ -11883,40 +11878,62 @@ function guardarDolor(tipo) {
 
 // ── Auto-iniciar si hay sesión ─────────────────
 // ══ STROOP · Test de Colores y Palabras ══════════════════════════════════════
-// Baremos: Galaverna et al. (2018) — Datos normativos Stroop versión 3 colores, Argentina
 // Tabla 2: [edad0=18-45, edad1=46-65, edad2=66+] x [escol0=Baja, escol1=Media, escol2=Alta]
-var STROOP_BAR = {
-  P: {
-    M:  [[112.00, 101.18, 103.75],[78.10, 89.87, 99.38],[68.73, 83.83, 81.00]],
-    DS: [[14.62,  15.14,  15.89], [11.95, 11.48, 16.92],[22.38, 26.00, 21.57]]
-  },
-  C: {
-    M:  [[69.75, 73.59, 74.99],[59.50, 64.35, 74.08],[46.91, 55.67, 49.80]],
-    DS: [[9.53,  9.16,  12.52],[9.08,  9.56,  13.97],[17.33, 14.73, 8.67]]
-  },
-  PC: {
-    M:  [[34.25, 43.47, 47.43],[31.30, 35.30, 42.21],[17.64, 29.33, 24.00]],
-    DS: [[9.70,  14.25, 11.58],[6.76,  8.98,  13.72],[13.12, 15.21, 6.51]]
-  },
-  INT: {
-    // Interferencia = PC - PC' donde PC'=(P×C)/(P+C)
-    // Z de interferencia: mayor interferencia = más negativo = déficit
-    // Invertimos el signo del Z para que Z negativo = déficit (coherente con el perfil)
-    M:  [[-8.30, 1.06, 4.14],[-2.24, -1.97, -0.01],[-10.06, -3.81, -6.72]],
-    DS: [[7.77,  11.27, 9.40],[8.42,  7.04,  10.81],[9.92,   8.37,  9.16]]
-  }
+// ── Stroop — Baremo Golden (manual español, Tabla I + Anexo B) ──────────────
+// Tabla I: Puntuación T → Puntuaciones directas corregidas por edad
+// Corrección previa: 16–44: sin corrección; 45–64: P+8,C+4,PC+5; 65–80: P+14,C+11,PC+15
+// Interferencia = PC − PC\'  donde PC\'=(P×C)/(P+C)  [Anexo A]
+// Z = (PT − 50) / 10  (escala T: M=50, DS=10)
+// La tabla mapea PT → PB corregida (para P, C, PC) y PT → interferencia bruta
+var STROOP_TABLA_T = {
+  // PT: [P_corregida, C_corregida, PC_corregida, Interferencia]
+  80: [168,125,75,30],  78:[164,122,73,28],  76:[160,119,71,26],
+  74: [156,116,69,24],  72:[152,113,67,22],  70:[148,110,65,20],
+  68: [144,107,63,18],  66:[140,104,61,16],  64:[136,101,59,14],
+  62: [132, 98,57,12],  60:[128, 95,55,10],  58:[124, 92,53, 8],
+  56: [120, 89,51, 6],  54:[116, 86,49, 4],  52:[112, 83,47, 2],
+  50: [108, 80,45, 0],  48:[104, 77,43,-2],  46:[100, 74,41,-4],
+  44: [ 96, 71,39,-6],  42:[ 92, 68,37,-8],  40:[ 88, 65,35,-10],
+  38: [ 84, 62,33,-12], 36:[ 80, 59,31,-14], 34:[ 76, 56,29,-16],
+  32: [ 72, 53,27,-18], 30:[ 68, 50,25,-20], 28:[ 64, 47,23,-22],
+  26: [ 60, 44,21,-24], 24:[ 56, 41,19,-26], 22:[ 52, 38,17,-28],
+  20: [ 48, 35,15,-30]
 };
+// Correcciones por edad antes de buscar en la tabla
+// gi: 0=16–44, 1=45–64, 2=65–80
+var STROOP_EDAD_CORR = [
+  {P:0, C:0,  PC:0 },   // 16–44: sin corrección
+  {P:8, C:4,  PC:5 },   // 45–64
+  {P:14,C:11, PC:15}    // 65–80
+];
+// Buscar PT más cercano en la tabla para un valor corregido y columna
+function stroopBuscarPT(valCorregido, col) {
+  // col: 0=P, 1=C, 2=PC, 3=Int
+  var pts = Object.keys(STROOP_TABLA_T).map(Number).sort(function(a,b){return b-a;});
+  var best = pts[0], bestDist = Infinity;
+  pts.forEach(function(pt) {
+    var d = Math.abs(STROOP_TABLA_T[pt][col] - valCorregido);
+    if (d < bestDist) { bestDist = d; best = pt; }
+  });
+  return best;
+}
 
 function stroopActualizar() {
   var p  = parseFloat(document.getElementById('stroop-p').value);
   var c  = parseFloat(document.getElementById('stroop-c').value);
   var pc = parseFloat(document.getElementById('stroop-pc').value);
+  var gi = parseInt(document.getElementById('stroop-edad').value);
   var el = document.getElementById('stroop-live');
   if (!el) return;
   if (isNaN(p) || isNaN(c) || isNaN(pc)) { el.innerHTML = ''; return; }
-  var pcp = parseFloat(((p * c) / (p + c)).toFixed(2));
-  var interf = parseFloat((pc - pcp).toFixed(2));
-  el.innerHTML = 'PC\' = ('+p+' × '+c+') / ('+p+' + '+c+') = <strong>'+pcp+'</strong> · Interferencia = '+pc+' − '+pcp+' = <strong style="color:'+(interf<0?'var(--red)':'var(--green)')+'">'+interf+'</strong>';
+  var corr   = (!isNaN(gi) && STROOP_EDAD_CORR[gi]) ? STROOP_EDAD_CORR[gi] : {P:0,C:0,PC:0};
+  var pCorr  = p  + corr.P;
+  var cCorr  = c  + corr.C;
+  var pcCorr = pc + corr.PC;
+  var pcp    = parseFloat(((pCorr * cCorr) / (pCorr + cCorr)).toFixed(2));
+  var interf = parseFloat((pcCorr - pcp).toFixed(2));
+  var corrTxt= corr.P>0 ? ' → corr. P='+pCorr+', C='+cCorr+', PC='+pcCorr+' · ' : ' · ';
+  el.innerHTML = corrTxt + 'PC\' = <strong>'+pcp+'</strong> · Interferencia = <strong style="color:'+(interf<0?'var(--red)':'var(--green)')+'">'+interf+'</strong>';
 }
 
 function limpiarStroop() {
@@ -11931,60 +11948,63 @@ function iniciarStroop() {
 }
 
 function calcularStroop() {
-  var gi   = parseInt(document.getElementById('stroop-edad').value);
-  var ei   = parseInt(document.getElementById('stroop-escol').value);
-  if (isNaN(gi) || isNaN(ei)) { toast('Seleccioná grupo etario y escolaridad.','error'); return; }
+  var gi = parseInt(document.getElementById('stroop-edad').value);
+  if (isNaN(gi)) { toast('Seleccioná el grupo etario.','error'); return; }
   var p  = parseFloat(document.getElementById('stroop-p').value);
   var c  = parseFloat(document.getElementById('stroop-c').value);
   var pc = parseFloat(document.getElementById('stroop-pc').value);
   if (isNaN(p) || isNaN(c) || isNaN(pc)) { toast('Ingresá los tres puntajes brutos.','error'); return; }
   if (p + c === 0) { toast('P y C no pueden ser cero.','error'); return; }
 
-  // PC' e Interferencia
-  var pcp   = parseFloat(((p * c) / (p + c)).toFixed(2));
-  var interf = parseFloat((pc - pcp).toFixed(2));
+  // Corrección por edad
+  var corr  = STROOP_EDAD_CORR[gi];
+  var pCorr = p  + corr.P;
+  var cCorr = c  + corr.C;
+  var pcCorr= pc + corr.PC;
 
-  // Z para cada puntuación
-  function zS(bruto, tipo) {
-    var m  = STROOP_BAR[tipo].M[gi][ei];
-    var ds = STROOP_BAR[tipo].DS[gi][ei];
-    return parseFloat(((bruto - m) / ds).toFixed(2));
-  }
-  var zP   = zS(p,  'P');
-  var zC   = zS(c,  'C');
-  var zPC  = zS(pc, 'PC');
-  // Para interferencia: Z se calcula igual (interf − M) / DS
-  // Interferencia positiva = resistencia (buena), negativa = mayor interferencia (mala)
-  // Para el perfil mantenemos la lógica: Z positivo = mejor rendimiento
-  var mI   = STROOP_BAR.INT.M[gi][ei];
-  var dsI  = STROOP_BAR.INT.DS[gi][ei];
-  var zInt = parseFloat(((interf - mI) / dsI).toFixed(2));
+  // PC\'  e Interferencia (sobre valores corregidos)
+  var pcp   = parseFloat(((pCorr * cCorr) / (pCorr + cCorr)).toFixed(2));
+  var interf= parseFloat((pcCorr - pcp).toFixed(2));
 
-  var edadLabels = ['18–45 años','46–65 años','66+ años'];
-  var escolLabels = ['Baja','Media','Alta'];
+  // PT desde tabla I (buscar PT más cercano al valor corregido)
+  var ptP   = stroopBuscarPT(pCorr,  0);
+  var ptC   = stroopBuscarPT(cCorr,  1);
+  var ptPC  = stroopBuscarPT(pcCorr, 2);
+  var ptInt = stroopBuscarPT(interf, 3);
 
-  function zLbl(z) { return z>=1.5?'Superior':z>=-0.5?'Normal':z>=-0.99?'Límite inferior normativo':z>=-1.49?'Dificultad leve':z>=-1.99?'Dificultad moderada':'Dificultad elevada'; }
+  // Z = (PT − 50) / 10
+  var zP   = parseFloat(((ptP   - 50) / 10).toFixed(2));
+  var zC   = parseFloat(((ptC   - 50) / 10).toFixed(2));
+  var zPC  = parseFloat(((ptPC  - 50) / 10).toFixed(2));
+  var zInt = parseFloat(((ptInt - 50) / 10).toFixed(2));
+
+  var edadLabels = ['16–44 años','45–64 años','65–80 años'];
+  function zLbl(z) { return z>=1.5?'Superior':z>=1.0?'Sobre el promedio':z>=-0.99?'Esperado':z>=-1.49?'Lím. inf. normativo':z>=-1.99?'Dificultad leve':'Dificultad moderada'; }
 
   var detalleHtml =
-    '<div class="detalle-item"><div class="detalle-num">'+(zP>=0?'+':'')+zP+'</div><div class="detalle-lbl">Z Palabras ('+p+')</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+(zC>=0?'+':'')+zC+'</div><div class="detalle-lbl">Z Color ('+c+')</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+(zPC>=0?'+':'')+zPC+'</div><div class="detalle-lbl">Z Pal-Color ('+pc+')</div></div>'+
-    '<div class="detalle-item"><div class="detalle-num">'+(zInt>=0?'+':'')+zInt+'</div><div class="detalle-lbl">Z Interferencia ('+interf+')</div></div>';
+    '<div class="detalle-item"><div class="detalle-num">'+(zP>=0?'+':'')+zP+'</div><div class="detalle-lbl">Z Palabras (P='+p+', corr.='+pCorr+', PT='+ptP+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zC>=0?'+':'')+zC+'</div><div class="detalle-lbl">Z Color (C='+c+', corr.='+cCorr+', PT='+ptC+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zPC>=0?'+':'')+zPC+'</div><div class="detalle-lbl">Z Pal-Color (PC='+pc+', corr.='+pcCorr+', PT='+ptPC+')</div></div>'+
+    '<div class="detalle-item"><div class="detalle-num">'+(zInt>=0?'+':'')+zInt+'</div><div class="detalle-lbl">Z Interferencia ('+interf+', PT='+ptInt+')</div></div>';
 
   var interp =
-    '<p><strong>Grupo:</strong> '+edadLabels[gi]+' · Escolaridad '+escolLabels[ei]+'</p>'+
+    '<p><strong>Grupo etario:</strong> '+edadLabels[gi]+
+    (gi>0?' · Corrección aplicada: P+'+corr.P+', C+'+corr.C+', PC+'+corr.PC:'· Sin corrección por edad')+'</p>'+
+    '<p><strong>Puntuaciones corregidas:</strong> P='+pCorr+' · C='+cCorr+' · PC='+pcCorr+'</p>'+
     '<p><strong>PC\' (esperado sin interferencia):</strong> '+pcp+' · <strong>Interferencia:</strong> '+interf+' (PC − PC\')</p>'+
-    '<p><strong>Palabras (P='+p+'):</strong> Z='+zP+' — '+zLbl(zP)+'</p>'+
-    '<p><strong>Color (C='+c+'):</strong> Z='+zC+' — '+zLbl(zC)+'</p>'+
-    '<p><strong>Palabra-Color (PC='+pc+'):</strong> Z='+zPC+' — '+zLbl(zPC)+'</p>'+
-    '<p><strong>Interferencia ('+interf+'):</strong> Z='+zInt+' — '+zLbl(zInt)+'</p>'+
-    '<p style="font-size:0.8rem;color:var(--muted);">Baremos: Galaverna et al. (2018). Test Stroop versión 3 colores — n=238, Argentina. Fórmula interferencia: PC\'=(P×C)/(P+C) · Interferencia=PC−PC\'</p>';
+    '<p><strong>Palabras:</strong> PT='+ptP+' → Z='+zP+' — '+zLbl(zP)+'</p>'+
+    '<p><strong>Color:</strong> PT='+ptC+' → Z='+zC+' — '+zLbl(zC)+'</p>'+
+    '<p><strong>Palabra-Color:</strong> PT='+ptPC+' → Z='+zPC+' — '+zLbl(zPC)+'</p>'+
+    '<p><strong>Interferencia:</strong> PT='+ptInt+' → Z='+zInt+' — '+zLbl(zInt)+
+    (zInt<0?' (Z negativo = mayor susceptibilidad a la interferencia)':' (Z positivo = resistencia a la interferencia)')+'</p>'+
+    '<p style="font-size:0.8rem;color:var(--muted);">Baremo: Golden (manual español). Tabla I — Puntuaciones T corregidas por edad. Interferencia=PC−PC\'=(PC×C)/(P+C). Z=(PT−50)/10.</p>';
 
-  window._stroopData = { p:p, c:c, pc:pc, pcp:pcp, interf:interf, zP:zP, zC:zC, zPC:zPC, zInt:zInt, gi:gi, ei:ei };
+  window._stroopData = { p:p, c:c, pc:pc, pCorr:pCorr, cCorr:cCorr, pcCorr:pcCorr, pcp:pcp, interf:interf,
+    ptP:ptP, ptC:ptC, ptPC:ptPC, ptInt:ptInt, zP:zP, zC:zC, zPC:zPC, zInt:zInt, gi:gi };
 
   document.getElementById('stroop-detalle').innerHTML = detalleHtml;
   document.getElementById('stroop-interp').innerHTML  = interp;
-  document.getElementById('stroop-form').style.display = 'none';
+  document.getElementById('stroop-form').style.display    = 'none';
   document.getElementById('stroop-resultado').style.display = 'block';
 }
 
@@ -11995,13 +12015,22 @@ function guardarStroop() {
   if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
   if (!window._stroopData) { toast('Calculá el resultado antes de guardar.','error'); return; }
   var d = window._stroopData;
+  var edadLabels = ['16–44','45–64','65–80'];
   supaFetch('/rest/v1/psico_resultados','POST',{
     user_id: SESSION.user.id, paciente_id: pacId,
     test: 'Stroop', fecha: fecha,
     puntaje_total: d.pc,
     puntaje_z: d.zInt,
     categoria: d.zInt >= -0.5 ? 'Sin interferencia significativa' : d.zInt >= -1.49 ? 'Interferencia leve' : d.zInt >= -1.99 ? 'Interferencia moderada' : 'Interferencia severa',
-    datos: { p:d.p, c:d.c, pc:d.pc, pcp:d.pcp, interf:d.interf, zP:d.zP, zC:d.zC, zPC:d.zPC, zInt:d.zInt, gi:d.gi, ei:d.ei }
+    datos: {
+      p:d.p, c:d.c, pc:d.pc,
+      pCorr:d.pCorr, cCorr:d.cCorr, pcCorr:d.pcCorr,
+      pcp:d.pcp, interf:d.interf,
+      ptP:d.ptP, ptC:d.ptC, ptPC:d.ptPC, ptInt:d.ptInt,
+      zP:d.zP, zC:d.zC, zPC:d.zPC, zInt:d.zInt,
+      gi:d.gi,
+      baremo:'Golden-manual-tablaI'
+    }
   }, SESSION.access_token).then(function(){
     cargarResultados(); toast('✓ Resultado guardado','success');
     var btnAll = document.querySelectorAll('.vista.active .btn-primary');
