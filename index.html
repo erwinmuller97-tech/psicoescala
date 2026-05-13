@@ -3858,6 +3858,86 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     </div>
 
     
+    <!-- ── TEST TAVEC ── -->
+    <div class="vista" id="vista-tavec">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">TAVEC · Test de Aprendizaje Verbal España-Complutense</div></div>
+
+      <div id="tavec-form">
+        <div class="card">
+          <div class="card-title">Datos de la evaluación</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="tavec-paciente"><option value="">— Seleccionar paciente —</option></select></div>
+            <div class="field">
+              <label>Grupo de edad *</label>
+              <select id="tavec-edad">
+                <option value="">— Seleccionar —</option>
+                <option value="1">Grupo 1 · 16–24 años</option>
+                <option value="2">Grupo 2 · 25–34 años</option>
+                <option value="3">Grupo 3 · 35–44 años</option>
+                <option value="4">Grupo 4 · 45–54 años</option>
+                <option value="5">Grupo 5 · 55–64 años</option>
+                <option value="6">Grupo 6 · 65–74 años</option>
+                <option value="7">Grupo 7 · &gt;74 años</option>
+              </select>
+            </div>
+            <div class="field"><label>Fecha</label><input type="date" id="tavec-fecha"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Puntajes brutos</div>
+
+          <div class="section-label">Ensayos de aprendizaje y Lista B</div>
+          <div class="form-grid">
+            <div class="field"><label>RI-A1 · 1er ensayo (0–16)</label><input type="number" id="tavec-v1" placeholder="0–16" min="0" max="16"></div>
+            <div class="field"><label>RI-A5 · 5to ensayo (0–16)</label><input type="number" id="tavec-v2" placeholder="0–16" min="0" max="16"></div>
+            <div class="field"><label>RI-AT · Total 5 ensayos (0–80)</label><input type="number" id="tavec-v3" placeholder="0–80" min="0" max="80"></div>
+            <div class="field"><label>RI-B · Recuerdo lista B (0–16)</label><input type="number" id="tavec-v4" placeholder="0–16" min="0" max="16"></div>
+          </div>
+
+          <div class="section-label">Recuerdo libre y con claves</div>
+          <div class="form-grid">
+            <div class="field"><label>RL-CP · Recuerdo libre corto plazo</label><input type="number" id="tavec-v8" placeholder="0–16" min="0" max="16"></div>
+            <div class="field"><label>RCL-CP · Con claves corto plazo</label><input type="number" id="tavec-v9" placeholder="0–16" min="0" max="16"></div>
+            <div class="field"><label>RL-LP · Recuerdo libre largo plazo</label><input type="number" id="tavec-v10" placeholder="0–16" min="0" max="16"></div>
+            <div class="field"><label>RCL-LP · Con claves largo plazo</label><input type="number" id="tavec-v11" placeholder="0–16" min="0" max="16"></div>
+          </div>
+
+          <div class="section-label">Errores</div>
+          <div class="form-grid">
+            <div class="field"><label>P · Perseveraciones</label><input type="number" id="tavec-v20" placeholder="0" min="0"></div>
+            <div class="field"><label>I-RL · Intrusiones recuerdo libre</label><input type="number" id="tavec-v21" placeholder="0" min="0"></div>
+            <div class="field"><label>I-RCL · Intrusiones con claves</label><input type="number" id="tavec-v22" placeholder="0" min="0"></div>
+          </div>
+
+          <div class="section-label">Reconocimiento</div>
+          <div class="form-grid">
+            <div class="field"><label>Recon-Ac · Aciertos (0–16)</label><input type="number" id="tavec-v23" placeholder="0–16" min="0" max="16" oninput="tavecDiscrim()"></div>
+            <div class="field"><label>FP · Falsos positivos</label><input type="number" id="tavec-v24" placeholder="0" min="0" oninput="tavecDiscrim()"></div>
+            <div class="field"><label>Discrim · (calculado automáticamente)</label><input type="number" id="tavec-v25" placeholder="—" step="0.01" disabled></div>
+          </div>
+          <div id="tavec-discrim-info" style="display:none;padding:10px 14px;background:#e6f7f9;border:1px solid #9ee0e8;border-radius:8px;font-size:0.82rem;color:#006978;margin-top:10px;"></div>
+
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="limpiarTavec()">🗑 Limpiar</button>
+            <button class="btn-primary" onclick="calcularTavec()">Calcular puntajes Z →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tavec-resultado" style="display:none;">
+        <div class="resultado-box">
+          <div class="resultado-detalle" id="tavec-detalle"></div>
+          <div class="interp-box"><div class="interp-titulo">📋 Interpretación clínica</div><div class="interp-texto" id="tavec-interp"></div></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="document.getElementById('tavec-resultado').style.display='none';document.getElementById('tavec-form').style.display='block';">← Modificar</button>
+          <button class="btn-primary" onclick="guardarTavec()">💾 Guardar resultado</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── TEST WAIS-IV ── -->
     <div class="vista" id="vista-waisiv">
       <div class="back-btn" onclick="volverSector()">← Volver</div>
@@ -5380,7 +5460,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
   }
 
   // ── Clasificación de tests ──
-  var NP = ['WAIS-IV','Rey Verbal','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+  var NP = ['WAIS-IV','Rey Verbal','TAVEC','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL = ['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD = ['ASRS-V1.1','WURS-25','DEX'];
   var DO = ['PCS','PBQ','CSQ','BPI'];
@@ -5549,6 +5629,7 @@ function _generarPDFConInforme(datos, pacInfo, pacNombre, pacEdad, pacFnac, pacS
       { dom: 'MEMORIA', tests: [
         { t:'Rey Verbal', fn: function(r){ var d=r.datos||{}; if(d.variables&&d.variables.length){d.variables.forEach(function(v){ if(v.z!==null&&v.z!==undefined) addPunto(v.label.replace('Ensayo ','A').replace('Recuerdo ','Rec. '),v.z,'MEMORIA'); });}else{addPunto('Rey Verbal',r.puntaje_z,'MEMORIA');} } },
         { t:'BEM 144 Signoret', fn: function(r){ addPunto('BEM', r.puntaje_z, 'MEMORIA'); } },
+        { t:'TAVEC', fn: function(r){ var d=r.datos||{}; var vars=[['RI-AT',d.zAT],['RL-LP',d.zRLLP],['RCL-LP',d.zRCLLP],['Discrim',d.zDiscrim]]; vars.forEach(function(v){if(v[1]!==null&&v[1]!==undefined) addPunto('TAVEC·'+v[0],v[1],'MEMORIA');}); } },
       ]},
       { dom: 'ATENCIÓN', tests: [
         { t:'D2',           fn: function(r){ var d=r.datos||{}; var idx=d.indices||{}; addPunto('d2 CON',idx.CON&&idx.CON.z,'ATENCIÓN'); addPunto('d2 TOT',idx.TOT&&idx.TOT.z,'ATENCIÓN'); } },
@@ -5738,7 +5819,7 @@ function renderCuestionariosFam(d) {
     // Agrupar por dominio
     var dominios = {
       'COGNITIVO GLOBAL':    ['MoCA','ACE-R','Test del Reloj (Cacho)'],
-      'MEMORIA':             ['Rey Verbal','BEM 144 Signoret'],
+      'MEMORIA':             ['Rey Verbal','TAVEC','BEM 144 Signoret'],
       'ATENCIÓN':            ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA'],
       'FUNC. EJECUTIVAS':    ['FAB','IFS','TMT A-B','Stroop','BADS-Zoo','BADS-Llaves','BADS-Juicio','Test del Hotel','WCST-64'],
       'LENGUAJE':            ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
@@ -5772,6 +5853,28 @@ function renderCuestionariosFam(d) {
           d.variables.forEach(function(v) {
             rows += filaTabla(v.label, v.bruto, v.m, v.ds, v.z, r.fecha);
           });
+
+        } else if (testNombre === 'TAVEC') {
+          var gi2t = d.gi ? d.gi - 1 : null;
+          var notaTAVEC = 'TAVEC · ' + (d.grupoLabel || '');
+          var tavecVars = [
+            ['RI-A1 · 1er ensayo',   d.v1,  gi2t!==null?TAVEC_BAR.v1[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v1[gi2t].d:null,  d.zA1],
+            ['RI-A5 · 5to ensayo',   d.v2,  gi2t!==null?TAVEC_BAR.v2[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v2[gi2t].d:null,  d.zA5],
+            ['RI-AT · Total ensayos', d.v3,  gi2t!==null?TAVEC_BAR.v3[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v3[gi2t].d:null,  d.zAT],
+            ['RI-B · Lista B',        d.v4,  gi2t!==null?TAVEC_BAR.v4[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v4[gi2t].d:null,  d.zRIB],
+            ['RL-CP · Rec. libre CP', d.v8,  gi2t!==null?TAVEC_BAR.v8[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v8[gi2t].d:null,  d.zRLCP],
+            ['RCL-CP · Claves CP',    d.v9,  gi2t!==null?TAVEC_BAR.v9[gi2t].m:null,  gi2t!==null?TAVEC_BAR.v9[gi2t].d:null,  d.zRCLCP],
+            ['RL-LP · Rec. libre LP', d.v10, gi2t!==null?TAVEC_BAR.v10[gi2t].m:null, gi2t!==null?TAVEC_BAR.v10[gi2t].d:null, d.zRLLP],
+            ['RCL-LP · Claves LP',    d.v11, gi2t!==null?TAVEC_BAR.v11[gi2t].m:null, gi2t!==null?TAVEC_BAR.v11[gi2t].d:null, d.zRCLLP],
+            ['P · Perseveraciones',   d.v20, gi2t!==null?TAVEC_BAR.v20[gi2t].m:null, gi2t!==null?TAVEC_BAR.v20[gi2t].d:null, d.zP],
+            ['I-RL · Intrusiones RL', d.v21, gi2t!==null?TAVEC_BAR.v21[gi2t].m:null, gi2t!==null?TAVEC_BAR.v21[gi2t].d:null, d.zIRL],
+            ['I-RCL · Intrusiones C', d.v22, gi2t!==null?TAVEC_BAR.v22[gi2t].m:null, gi2t!==null?TAVEC_BAR.v22[gi2t].d:null, d.zIRCL],
+            ['Recon-Ac · Aciertos',   d.v23, gi2t!==null?TAVEC_BAR.v23[gi2t].m:null, gi2t!==null?TAVEC_BAR.v23[gi2t].d:null, d.zRecon],
+            ['FP · Falsos positivos',  d.v24, gi2t!==null?TAVEC_BAR.v24[gi2t].m:null, gi2t!==null?TAVEC_BAR.v24[gi2t].d:null, d.zFP],
+            ['Discrim',               d.v25, gi2t!==null?TAVEC_BAR.v25[gi2t].m:null, gi2t!==null?TAVEC_BAR.v25[gi2t].d:null, d.zDiscrim]
+          ];
+          rows += '<tr><td colspan="8" style="padding:4px 10px;font-size:8.5px;font-weight:700;color:#214b1a;background:#d8ecd0;border-left:3px solid #325c28;border-bottom:0.5px solid #a8c4a0;">TAVEC · Test de Aprendizaje Verbal España-Complutense (Benedet & Alejandre, 1998)</td></tr>';
+          tavecVars.forEach(function(tv){ if(tv[1]!==null&&tv[1]!==undefined) rows += filaTabla(tv[0], tv[1], tv[2], tv[3], tv[4], r.fecha, notaTAVEC); });
 
         } else if (testNombre === 'BEM 144 Signoret') {
           // Calcular Z desde baremos + grupo edad del paciente
@@ -6485,6 +6588,7 @@ function renderCuestionariosFam(d) {
         'BNT-60':             'Test de Denominación de Boston — Versión completa 60 ítems (BNT-60)',
         'BNT-12':             'Test de Denominación de Boston — Versión abreviada 12 ítems (BNT-12)',
         'Rey Verbal':         'Test de Aprendizaje Auditivo-Verbal de Rey (RAVLT)',
+        'TAVEC':              'Test de Aprendizaje Verbal España-Complutense (TAVEC)',
         'BEM 144 Signoret':   'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
         'WCST-64':            'Wisconsin Card Sorting Test — Versión 64 cartas (WCST-64)',
         'Stroop':             'Test de Colores y Palabras Stroop — Versión 3 colores (Golden, 1978)',
@@ -6522,7 +6626,7 @@ function renderCuestionariosFam(d) {
         {label:'Screening cognitivo global',      tests:['MoCA','ACE-R']},
         {label:'Atención y velocidad de procesamiento', tests:['WAIS-IV','TMT A-B','SDMT-escrita','SDMT-oral','BTA']},
         {label:'Lenguaje',                         tests:['Fluencia Verbal','BNT-60','BNT-12']},
-        {label:'Memoria',                          tests:['Rey Verbal','BEM 144 Signoret']},
+        {label:'Memoria',                          tests:['Rey Verbal','TAVEC','BEM 144 Signoret']},
         {label:'Funciones ejecutivas',             tests:['WCST-64','IFS','Stroop','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo']},
         {label:'Evaluación cognitiva global',      tests:['Test del Reloj (Cacho)']},
         {label:'Psicología clínica',               tests:['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS']},
@@ -6670,6 +6774,7 @@ var NP_TESTS = [
   // Memoria
   {id:'rey',      n:'Rey Verbal',        d:'RAVLT · Aprendizaje verbal episódico',         t:'Memoria',            dom:'memoria'},
   {id:'signoret', n:'BEM 144',           d:'Signoret · Memoria lógica y episódica',       t:'Memoria',            dom:'memoria'},
+  {id:'tavec',    n:'TAVEC',             d:'Aprendizaje verbal España-Complutense · 7 grupos edad', t:'Memoria', dom:'memoria'},
   // Lenguaje
   {id:'token',    n:'Token Test',        d:'Comprensión auditiva verbal · De Renzi & Faglioni 1978 · Aranciva et al. 2012', t:'Lenguaje', dom:'lenguaje'},
   {id:'flv',      n:'Fluencia Verbal',   d:'Semántica y fonológica',                      t:'Lenguaje',           dom:'lenguaje'},
@@ -6894,6 +6999,7 @@ function irTest(t) {
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
   if (t === 'stroop') iniciarStroop();
+  if (t === 'tavec')  iniciarTavec();
   if (t === 'fcr') iniciarFCR();
   if (t === 'bta') iniciarBTA();
   if (t === 'd2') iniciarD2();
@@ -13096,7 +13202,7 @@ function generarWordHistorial() {
 
 function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pacOcup,pacDNI,fechaEval,inf) {
   // ── Clasificar tests (igual que PDF) ──
-  var NP_LIST=['WAIS-IV','Rey Verbal','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+  var NP_LIST=['WAIS-IV','Rey Verbal','TAVEC','Token Test','BNT-60','BNT-12','TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret','Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral','BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
   var CL_LIST=['BDI-II','STAI','PHQ-9','GAD-7','SPAI-B','SCL-90-R','MBI-HSS','CSI'];
   var TD_LIST=['ASRS-V1.1','WURS-25','DEX'];
   var DO_LIST=['PCS','PBQ','CSQ','BPI'];
@@ -13127,6 +13233,7 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     'BNT-60':'Test de Denominación de Boston — 60 ítems (BNT-60)',
     'BNT-12':'Test de Denominación de Boston — 12 ítems (BNT-12)',
     'Rey Verbal':'Test de Aprendizaje Auditivo-Verbal de Rey (RAVLT)',
+        'TAVEC':'Test de Aprendizaje Verbal España-Complutense (TAVEC)',
     'BEM 144 Signoret':'Batería de Eficacia Mnésica 144 — Signoret (BEM-144)',
     'WCST-64':'Wisconsin Card Sorting Test — 64 cartas (WCST-64)',
     'Stroop':'Test de Colores y Palabras Stroop (Golden, 1978)',
@@ -13178,7 +13285,7 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
     list.forEach(function(r){byTest[r.test]=r;});
     var DOMS={
       'COGNITIVO GLOBAL':   ['MoCA','ACE-R','Test del Reloj (Cacho)'],
-      'MEMORIA':            ['Rey Verbal','BEM 144 Signoret'],
+      'MEMORIA':            ['Rey Verbal','TAVEC','BEM 144 Signoret'],
       'ATENCIÓN':           ['D2','WAIS-IV','SDMT-escrita','SDMT-oral','BTA'],
       'FUNC. EJECUTIVAS':   ['FAB','IFS','TMT A-B','Stroop','BADS-Zoo','BADS-Llaves','BADS-Juicio','Test del Hotel','WCST-64'],
       'LENGUAJE':           ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
@@ -13198,6 +13305,21 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
         var r=byTest[tn];var d=r.datos||{};
         if(tn==='Rey Verbal'&&d.variables&&d.variables.length){
           d.variables.forEach(function(v){add(v.label,v.bruto,v.m,v.ds,v.z,null);});
+        } else if(tn==='TAVEC'){
+          var gi2tw=d.gi?d.gi-1:null;
+          var tvars=[
+            ['RI-A1 · 1er ensayo',d.v1,gi2tw!==null?TAVEC_BAR.v1[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v1[gi2tw].d:null,d.zA1,null],
+            ['RI-A5 · 5to ensayo',d.v2,gi2tw!==null?TAVEC_BAR.v2[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v2[gi2tw].d:null,d.zA5,null],
+            ['RI-AT · Total 5 ensayos',d.v3,gi2tw!==null?TAVEC_BAR.v3[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v3[gi2tw].d:null,d.zAT,null],
+            ['RI-B · Lista B',d.v4,gi2tw!==null?TAVEC_BAR.v4[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v4[gi2tw].d:null,d.zRIB,null],
+            ['RL-CP · Rec. libre CP',d.v8,gi2tw!==null?TAVEC_BAR.v8[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v8[gi2tw].d:null,d.zRLCP,null],
+            ['RCL-CP · Claves CP',d.v9,gi2tw!==null?TAVEC_BAR.v9[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v9[gi2tw].d:null,d.zRCLCP,null],
+            ['RL-LP · Rec. libre LP',d.v10,gi2tw!==null?TAVEC_BAR.v10[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v10[gi2tw].d:null,d.zRLLP,null],
+            ['RCL-LP · Claves LP',d.v11,gi2tw!==null?TAVEC_BAR.v11[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v11[gi2tw].d:null,d.zRCLLP,null],
+            ['Discrim',d.v25,gi2tw!==null?TAVEC_BAR.v25[gi2tw].m:null,gi2tw!==null?TAVEC_BAR.v25[gi2tw].d:null,d.zDiscrim,null]
+          ];
+          tvars.forEach(function(tv){if(tv[1]!==null&&tv[1]!==undefined) add(tv[0],tv[1],tv[2],tv[3],tv[4],null);});
+
         } else if(tn==='BEM 144 Signoret'){
           var gi=d.grupo_edad!=null?d.grupo_edad:bemGrupo;
           var SIG={
@@ -13546,6 +13668,231 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
   a.click();
   setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},2000);
   toast('Informe Word generado ✓','success');
+}
+
+// ══ TAVEC · Test de Aprendizaje Verbal España-Complutense ════════════════════
+// Baremos: Benedet & Alejandre (1998) — 7 grupos de edad, N=1015
+// Variables incluidas: V1,V2,V3,V4,V8,V9,V10,V11,V20,V21,V22,V23,V24,V25
+var TAVEC_BAR = {
+  v1:  [{m:7.70,d:1.98},{m:7.95,d:2.00},{m:7.34,d:1.87},{m:7.16,d:2.02},{m:6.67,d:2.03},{m:5.86,d:1.83},{m:4.92,d:2.17}],
+  v2:  [{m:13.86,d:1.81},{m:13.71,d:2.05},{m:13.38,d:2.33},{m:12.52,d:2.26},{m:12.38,d:2.13},{m:10.92,d:2.04},{m:9.52,d:3.08}],
+  v3:  [{m:58.19,d:9.04},{m:58.20,d:8.53},{m:55.82,d:9.17},{m:51.53,d:11.42},{m:50.76,d:9.44},{m:43.99,d:8.54},{m:38.26,d:12.11}],
+  v4:  [{m:7.03,d:2.04},{m:7.07,d:2.12},{m:6.64,d:2.06},{m:6.28,d:2.02},{m:5.78,d:2.21},{m:5.73,d:2.16},{m:5.06,d:2.10}],
+  v8:  [{m:12.96,d:2.41},{m:12.72,d:2.59},{m:12.16,d:2.95},{m:11.02,d:2.98},{m:10.57,d:2.79},{m:9.27,d:2.81},{m:7.17,d:3.80}],
+  v9:  [{m:13.45,d:2.16},{m:13.12,d:2.48},{m:12.57,d:2.75},{m:11.52,d:2.64},{m:11.21,d:2.83},{m:9.60,d:2.78},{m:7.47,d:3.91}],
+  v10: [{m:13.41,d:2.14},{m:13.38,d:2.17},{m:12.80,d:2.48},{m:11.91,d:2.55},{m:11.82,d:2.63},{m:10.64,d:2.77},{m:8.76,d:3.31}],
+  v11: [{m:13.76,d:2.16},{m:13.66,d:2.12},{m:13.24,d:2.50},{m:12.12,d:2.49},{m:12.05,d:2.67},{m:10.66,d:2.59},{m:8.68,d:3.50}],
+  v20: [{m:4.55,d:4.62},{m:5.76,d:5.00},{m:5.54,d:4.45},{m:7.04,d:5.26},{m:6.60,d:5.44},{m:5.71,d:4.91},{m:6.57,d:9.26}],
+  v21: [{m:2.50,d:3.13},{m:2.69,d:3.09},{m:2.97,d:3.81},{m:3.53,d:4.49},{m:3.88,d:4.43},{m:4.95,d:5.71},{m:7.11,d:6.41}],
+  v22: [{m:0.78,d:1.45},{m:1.21,d:1.87},{m:1.26,d:1.90},{m:1.66,d:2.21},{m:2.41,d:3.74},{m:3.45,d:4.62},{m:6.59,d:6.61}],
+  v23: [{m:15.37,d:0.99},{m:15.08,d:1.78},{m:15.14,d:1.22},{m:14.58,d:2.10},{m:14.69,d:1.60},{m:13.73,d:1.78},{m:13.34,d:2.29}],
+  v24: [{m:0.46,d:0.99},{m:0.88,d:2.66},{m:0.79,d:1.23},{m:0.99,d:1.27},{m:1.38,d:1.90},{m:2.32,d:2.55},{m:3.38,d:2.85}],
+  v25: [{m:96.92,d:3.16},{m:95.55,d:7.36},{m:95.77,d:4.31},{m:94.32,d:5.75},{m:93.97,d:5.48},{m:89.44,d:7.42},{m:86.17,d:8.66}]
+};
+// Variables de error: Z positivo = más errores = peor rendimiento
+var TAVEC_ERRORES = ['v20','v21','v22','v24'];
+
+var TAVEC_VARS = [
+  {k:'v1',  lbl:'RI-A1 · Recuerdo inmediato 1er ensayo',      max:16},
+  {k:'v2',  lbl:'RI-A5 · Recuerdo inmediato 5to ensayo',      max:16},
+  {k:'v3',  lbl:'RI-AT · Total 5 ensayos',                     max:80},
+  {k:'v4',  lbl:'RI-B · Recuerdo lista B',                     max:16},
+  {k:'v8',  lbl:'RL-CP · Recuerdo libre corto plazo',          max:16},
+  {k:'v9',  lbl:'RCL-CP · Recuerdo con claves corto plazo',    max:16},
+  {k:'v10', lbl:'RL-LP · Recuerdo libre largo plazo',          max:16},
+  {k:'v11', lbl:'RCL-LP · Recuerdo con claves largo plazo',    max:16},
+  {k:'v20', lbl:'P · Perseveraciones',                         max:null},
+  {k:'v21', lbl:'I-RL · Intrusiones recuerdo libre',           max:null},
+  {k:'v22', lbl:'I-RCL · Intrusiones con claves',              max:null},
+  {k:'v23', lbl:'Recon-Ac · Aciertos reconocimiento',          max:16},
+  {k:'v24', lbl:'FP · Falsos positivos',                       max:null},
+  {k:'v25', lbl:'Discrim · Índice de discriminabilidad',        max:100}
+];
+
+function iniciarTavec() {
+  document.getElementById('tavec-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('tavec-form').style.display = 'block';
+  document.getElementById('tavec-resultado').style.display = 'none';
+}
+
+function tavecDiscrim() {
+  var recon = parseFloat(document.getElementById('tavec-v23').value);
+  var fp    = parseFloat(document.getElementById('tavec-v24').value);
+  var info  = document.getElementById('tavec-discrim-info');
+  if (isNaN(recon) || isNaN(fp)) { document.getElementById('tavec-v25').value=''; info.style.display='none'; return; }
+  var omis   = 16 - recon;
+  var discrim = parseFloat(((1 - (fp + omis) / 44) * 100).toFixed(2));
+  document.getElementById('tavec-v25').value = discrim;
+  info.style.display = 'block';
+  info.innerHTML = '🧮 Omisiones = 16 − ' + recon + ' = ' + omis + ' · Discrim = (1 − (' + fp + ' + ' + omis + ') / 44) × 100 = <strong>' + discrim.toFixed(2) + '</strong>';
+}
+
+function limpiarTavec() {
+  ['tavec-v1','tavec-v2','tavec-v3','tavec-v4','tavec-v8','tavec-v9','tavec-v10','tavec-v11','tavec-v20','tavec-v21','tavec-v22','tavec-v23','tavec-v24'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('tavec-v25').value='';
+  document.getElementById('tavec-discrim-info').style.display='none';
+  document.getElementById('tavec-resultado').style.display='none';
+  document.getElementById('tavec-form').style.display='block';
+}
+
+function calcularTavec() {
+  var gi = parseInt(document.getElementById('tavec-edad').value);
+  if (isNaN(gi) || gi < 1 || gi > 7) { toast('Seleccioná el grupo de edad.','error'); return; }
+  var gi0 = gi - 1; // índice 0-based para el array
+
+  var grupoLabels = ['','16–24 años','25–34 años','35–44 años','45–54 años','55–64 años','65–74 años','>74 años'];
+
+  function getZ(vid) {
+    var el = document.getElementById('tavec-' + vid);
+    if (!el || el.value === '') return null;
+    var bruto = parseFloat(el.value);
+    var bar   = TAVEC_BAR[vid][gi0];
+    return parseFloat(((bruto - bar.m) / bar.d).toFixed(2));
+  }
+  function getBruto(vid) {
+    var el = document.getElementById('tavec-' + vid);
+    return (el && el.value !== '') ? parseFloat(el.value) : null;
+  }
+  function zLbl(z, esError) {
+    if (z === null) return '—';
+    if (esError) { return z<=0.5?'Esperado':z<=1.0?'Leve ↑':z<=1.5?'Moderado ↑':'Alto ↑'; }
+    return z>=-1.0?'Esperado':z>=-1.5?'Lím. inferior':z>=-2.0?'Dificultad leve':'Dificultad moderada';
+  }
+  function zColor(z, esError) {
+    if (z === null) return 'var(--muted)';
+    if (esError) return z>1.5?'var(--red)':z>0.5?'var(--yellow)':'var(--accentlt)';
+    return z<-2?'var(--red)':z<-1.5?'var(--orange)':z<-1?'var(--yellow)':'var(--accentlt)';
+  }
+
+  var zAT     = getZ('v3');
+  var zA1     = getZ('v1');
+  var zA5     = getZ('v2');
+  var zRIB    = getZ('v4');
+  var zRLCP   = getZ('v8');
+  var zRCLCP  = getZ('v9');
+  var zRLLP   = getZ('v10');
+  var zRCLLP  = getZ('v11');
+  var zP      = getZ('v20');
+  var zIRL    = getZ('v21');
+  var zIRCL   = getZ('v22');
+  var zRecon  = getZ('v23');
+  var zFP     = getZ('v24');
+  var zDiscrim= getZ('v25');
+
+  // Tabla de resultados
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">' +
+    '<thead><tr style="border-bottom:2px solid var(--border);">' +
+    '<th style="text-align:left;padding:8px 12px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">Variable</th>' +
+    '<th style="text-align:center;padding:8px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">PB</th>' +
+    '<th style="text-align:center;padding:8px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">M</th>' +
+    '<th style="text-align:center;padding:8px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">DS</th>' +
+    '<th style="text-align:center;padding:8px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">Z</th>' +
+    '<th style="text-align:center;padding:8px;font-size:0.71rem;color:var(--muted);text-transform:uppercase;">Clasificación</th>' +
+    '</tr></thead><tbody>';
+
+  TAVEC_VARS.forEach(function(v) {
+    var bruto = getBruto(v.k);
+    var z     = (v.k === 'v25') ? getZ('v25') : getZ(v.k);
+    var esErr = TAVEC_ERRORES.indexOf(v.k) >= 0;
+    var bar   = TAVEC_BAR[v.k] ? TAVEC_BAR[v.k][gi0] : null;
+    if (bruto === null && v.k !== 'v25') return;
+    if (v.k === 'v25' && getBruto('v25') === null && getBruto('v23') === null) return;
+    var zDisp = z !== null ? (z>=0?'+':'')+z.toFixed(2) : '—';
+    var col   = zColor(z, esErr);
+    var lbl   = zLbl(z, esErr);
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:8px 12px;">' + v.lbl + '</td>' +
+      '<td style="text-align:center;padding:8px;font-family:monospace;">' + (bruto !== null ? bruto : '—') + '</td>' +
+      '<td style="text-align:center;padding:8px;font-size:0.78rem;color:var(--muted);">' + (bar ? bar.m.toFixed(2) : '—') + '</td>' +
+      '<td style="text-align:center;padding:8px;font-size:0.78rem;color:var(--muted);">' + (bar ? bar.d.toFixed(2) : '—') + '</td>' +
+      '<td style="text-align:center;padding:8px;font-family:monospace;font-weight:700;color:' + col + ';">' + zDisp + '</td>' +
+      '<td style="text-align:center;padding:8px;"><span style="background:' + (lbl==='Esperado'?'#d4f0e2':lbl.indexOf('Leve')>=0||lbl.indexOf('Lím.')>=0?'#fdf0c4':lbl.indexOf('Mod')>=0||lbl.indexOf('Alto')>=0?'#fde8d0':'#fad8d8') + ';border-radius:12px;padding:3px 10px;font-size:0.71rem;font-weight:700;">' + lbl + '</span></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="font-size:0.78rem;color:var(--muted);margin-top:10px;">Baremo: Benedet & Alejandre (1998) TAVEC · ' + grupoLabels[gi] + ' · N=1015 sujetos normales españoles</div>';
+  document.getElementById('tavec-detalle').innerHTML = html;
+
+  // Interpretación
+  var interp = [];
+  if (zAT !== null) {
+    if (zAT >= -1.0) interp.push('El aprendizaje verbal total a lo largo de los cinco ensayos se encuentra dentro de los parámetros normativos (RI-AT: Z=' + zAT.toFixed(2) + ')' + (zA1!==null&&zA5!==null ? ', con una curva de aprendizaje progresiva (RI-A1 Z='+zA1.toFixed(2)+' → RI-A5 Z='+zA5.toFixed(2)+')' : '') + '.');
+    else if (zAT >= -1.5) interp.push('Se evidencia un rendimiento levemente por debajo de lo esperado en el aprendizaje verbal total (RI-AT: Z=' + zAT.toFixed(2) + ') para su grupo de edad.');
+    else interp.push('Se observa un rendimiento significativamente reducido en el aprendizaje verbal total (RI-AT: Z=' + zAT.toFixed(2) + '), sugiriendo dificultades en la adquisición de nueva información verbal.');
+  }
+  if (zRLCP !== null && zRLLP !== null) {
+    if (zRLCP >= -1.0 && zRLLP >= -1.0)
+      interp.push('La memoria verbal a corto (RL-CP: Z=' + zRLCP.toFixed(2) + ') y largo plazo (RL-LP: Z=' + zRLLP.toFixed(2) + ') se encuentran preservadas.');
+    else if (zRLCP < -1.0 && zRLLP < -1.0)
+      interp.push('Se registran dificultades tanto en la retención a corto (RL-CP: Z=' + zRLCP.toFixed(2) + ') como a largo plazo (RL-LP: Z=' + zRLLP.toFixed(2) + '), comprometiendo la consolidación de la información verbal.');
+    else if (zRLLP < zRLCP - 0.5)
+      interp.push('Se observa un decremento entre el recuerdo a corto (RL-CP: Z=' + zRLCP.toFixed(2) + ') y largo plazo (RL-LP: Z=' + zRLLP.toFixed(2) + '), que podría indicar dificultades en la consolidación o el almacenamiento diferido.');
+  }
+  if (zRLCP !== null && zRCLCP !== null) {
+    var v8v = getBruto('v8'), v9v = getBruto('v9');
+    if (v8v !== null && v9v !== null) {
+      var ben = v9v - v8v;
+      if (ben > 2) interp.push('El uso de claves semánticas produce una mejora notable en el recuerdo a corto plazo (+' + ben + ' puntos: RL-CP vs RCL-CP), sugiriendo que la información está almacenada pero con dificultades en la recuperación espontánea.');
+      else if (ben <= 0 && zRLCP !== null && zRLCP < -1.0) interp.push('Las claves semánticas no mejoran el recuerdo a corto plazo, lo que junto con el bajo rendimiento en recuerdo libre podría indicar compromisos en el almacenamiento.');
+    }
+  }
+  if (zDiscrim !== null) {
+    if (zDiscrim >= -1.0) interp.push('El índice de discriminabilidad se encuentra dentro de los parámetros esperados (Z=' + zDiscrim.toFixed(2) + '), indicando adecuada capacidad para reconocer el material aprendido frente a distractores.');
+    else interp.push('El índice de discriminabilidad es inferior a lo esperado (Z=' + zDiscrim.toFixed(2) + '), lo que puede indicar compromisos en el almacenamiento o en la memoria de reconocimiento.');
+  }
+  var errores = [];
+  if (zP    !== null && zP    > 1.0) errores.push('perseveraciones (Z=+' + zP.toFixed(2) + ')');
+  if (zIRL  !== null && zIRL  > 1.0) errores.push('intrusiones en recuerdo libre (Z=+' + zIRL.toFixed(2) + ')');
+  if (zIRCL !== null && zIRCL > 1.0) errores.push('intrusiones en recuerdo con claves (Z=+' + zIRCL.toFixed(2) + ')');
+  if (errores.length) interp.push('Se registra un número elevado de ' + errores.join(' y ') + ', lo que puede reflejar dificultades en el control inhibitorio y/o en la discriminación de estímulos aprendidos.');
+  if (!interp.length) interp.push('Complete las variables principales para obtener una síntesis interpretativa.');
+  interp.push('<em>Síntesis orientativa — integrar con el juicio clínico y el resto de la evaluación neuropsicológica.</em>');
+  document.getElementById('tavec-interp').innerHTML = interp.map(function(p){return '<p>'+p+'</p>';}).join('');
+
+  window._tavecData = {
+    gi: gi,
+    v1:getBruto('v1'), v2:getBruto('v2'), v3:getBruto('v3'), v4:getBruto('v4'),
+    v8:getBruto('v8'), v9:getBruto('v9'), v10:getBruto('v10'), v11:getBruto('v11'),
+    v20:getBruto('v20'), v21:getBruto('v21'), v22:getBruto('v22'),
+    v23:getBruto('v23'), v24:getBruto('v24'), v25:getBruto('v25'),
+    zA1:zA1, zA5:zA5, zAT:zAT, zRIB:zRIB,
+    zRLCP:zRLCP, zRCLCP:zRCLCP, zRLLP:zRLLP, zRCLLP:zRCLLP,
+    zP:zP, zIRL:zIRL, zIRCL:zIRCL, zRecon:zRecon, zFP:zFP, zDiscrim:zDiscrim
+  };
+
+  document.getElementById('tavec-form').style.display = 'none';
+  document.getElementById('tavec-resultado').style.display = 'block';
+}
+
+function guardarTavec() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('tavec-paciente').value;
+  var fecha = document.getElementById('tavec-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  if (!window._tavecData) { toast('Calculá el resultado antes de guardar.','error'); return; }
+  var d = window._tavecData;
+  var grupoLabels = ['','16–24','25–34','35–44','45–54','55–64','65–74','>74'];
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'TAVEC', fecha: fecha,
+    puntaje_total: d.v3,
+    puntaje_z: d.zAT,
+    categoria: d.zAT === null ? 'Sin datos' : d.zAT >= -1.0 ? 'Esperado' : d.zAT >= -1.5 ? 'Lím. inferior' : d.zAT >= -2.0 ? 'Dificultad leve' : 'Dificultad moderada',
+    datos: {
+      gi: d.gi, grupoLabel: grupoLabels[d.gi],
+      v1:d.v1, v2:d.v2, v3:d.v3, v4:d.v4,
+      v8:d.v8, v9:d.v9, v10:d.v10, v11:d.v11,
+      v20:d.v20, v21:d.v21, v22:d.v22, v23:d.v23, v24:d.v24, v25:d.v25,
+      zA1:d.zA1, zA5:d.zA5, zAT:d.zAT, zRIB:d.zRIB,
+      zRLCP:d.zRLCP, zRCLCP:d.zRCLCP, zRLLP:d.zRLLP, zRCLLP:d.zRCLLP,
+      zP:d.zP, zIRL:d.zIRL, zIRCL:d.zIRCL, zRecon:d.zRecon, zFP:d.zFP, zDiscrim:d.zDiscrim
+    }
+  }, SESSION.access_token).then(function(){
+    cargarResultados(); toast('✓ Resultado TAVEC guardado','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
 }
 
 window.addEventListener('DOMContentLoaded', function() {
