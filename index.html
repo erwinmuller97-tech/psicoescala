@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.43</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.44</div>
     </div>
   </aside>
 
@@ -652,6 +652,45 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Descripción de la conducta durante la evaluación</div>
         <div class="field"><div style="display:flex;gap:6px;margin-bottom:4px;"><button type="button" onclick="boldToolbar('inf-conducta')" style="padding:2px 10px;font-size:0.8rem;font-weight:700;background:var(--bg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:serif;" title="Seleccioná texto y presioná B"><b>B</b></button><span style="font-size:0.72rem;color:var(--muted);align-self:center;">Seleccioná texto → B para negrita</span></div><textarea id="inf-conducta" rows="4" placeholder="Actitud, colaboración, nivel de esfuerzo, observaciones conductuales..."></textarea></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px; border-left:3px solid var(--accent);">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="togglePerfilZ()">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1rem;">📊</span>
+            <div>
+              <div class="card-title" style="margin:0;">Perfil Z del paciente — guía de redacción</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Referencia de puntajes Z con interpretación clínica para residentes</div>
+            </div>
+          </div>
+          <span id="perfil-z-toggle-icon" style="font-size:1.2rem;color:var(--accent);transition:transform 0.2s;">▼</span>
+        </div>
+
+        <div id="perfil-z-panel" style="display:none;margin-top:16px;">
+
+          <!-- Leyenda de interpretación -->
+          <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+            <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Criterios de interpretación (puntuación Z)</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;font-size:0.75rem;">
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#1a6e3a;background:#d4f0e2;border-radius:4px;padding:1px 4px;">+1.5</span><span style="color:var(--text);">Superior</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#1565c0;background:#d8f0fa;border-radius:4px;padding:1px 4px;">+1</span><span style="color:var(--text);">Sobre el promedio</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#325c28;background:#e8f4e0;border-radius:4px;padding:1px 4px;">0</span><span style="color:var(--text);">Esperado (−1 a +1)</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#7a5c00;background:#fdf0c4;border-radius:4px;padding:1px 4px;">−1</span><span style="color:var(--text);">Límite inferior normativo</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#a04000;background:#fde8d0;border-radius:4px;padding:1px 4px;">−1.5</span><span style="color:var(--text);">Dificultad leve</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><span style="width:28px;text-align:center;font-weight:700;color:#a00000;background:#fad8d8;border-radius:4px;padding:1px 4px;">−2</span><span style="color:var(--text);">Dificultad moderada</span></div>
+            </div>
+          </div>
+
+          <!-- Tabla de Z -->
+          <div id="perfil-z-tabla" style="font-size:0.79rem;">
+            <div style="color:var(--muted);font-style:italic;padding:10px 0;">Cargando resultados del paciente...</div>
+          </div>
+
+          <!-- Nota para residentes -->
+          <div style="background:#f0f7e8;border:1px solid #b8ddb0;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:0.75rem;color:#325c28;line-height:1.6;">
+            <strong>Nota para residentes:</strong> Los puntajes Z indican cuántas desviaciones estándar se aleja el rendimiento del paciente respecto a la media de su grupo normativo. Un Z entre −1 y +1 abarca el 68% de la población normal. Resultados entre −1 y −1.5 son "límite inferior normativo" — no necesariamente patológicos, pero merecen descripción. Por debajo de −1.5 se habla de "dificultad" con gradación clínica. Siempre integrar con la historia clínica y el contexto.
+          </div>
+        </div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -11322,6 +11361,12 @@ function abrirInforme() {
   var pacId = filtro ? filtro.value : '';
   if (!pacId) { toast('Seleccioná un paciente primero.', 'error'); return; }
   INFORME_PAC_ID = pacId;
+  window._informePacId = pacId; // para el panel de perfil Z
+  // Cerrar el panel Z si estaba abierto (se re-renderizará al abrir)
+  var panel = document.getElementById('perfil-z-panel');
+  if (panel) { panel.style.display = 'none'; }
+  var icon = document.getElementById('perfil-z-toggle-icon');
+  if (icon) { icon.style.transform = 'rotate(0deg)'; }
   var pac = PACIENTES.find(function(p){ return p.id === pacId; });
   var nombre = pac ? pac.nombre : '—';
   document.getElementById('informe-pac-nombre').textContent = nombre;
@@ -14088,6 +14133,138 @@ function guardarTavec() {
     var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
     if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
   }).catch(function(){ toast('Error al guardar','error'); });
+}
+
+// ══ PANEL PERFIL Z — guía de redacción para residentes ══════════════════════
+function togglePerfilZ() {
+  var panel = document.getElementById('perfil-z-panel');
+  var icon  = document.getElementById('perfil-z-toggle-icon');
+  if (!panel) return;
+  var open = panel.style.display === 'block';
+  panel.style.display = open ? 'none' : 'block';
+  icon.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+  if (!open) renderPerfilZ();
+}
+
+function renderPerfilZ() {
+  var tabla = document.getElementById('perfil-z-tabla');
+  if (!tabla) return;
+
+  // Obtener paciente activo del informe
+  var pacId = window._informePacId || null;
+  var resultados = pacId
+    ? (RESULTADOS||[]).filter(function(r){ return String(r.paciente_id) === String(pacId); })
+    : (RESULTADOS||[]);
+
+  // Filtrar solo tests NP con Z
+  var NP_LIST = ['WAIS-IV','Rey Verbal','TAVEC','Token Test','BNT-60','BNT-12',
+    'TMT A-B','Fluencia Verbal','MoCA','IFS','ACE-R','WCST-64','BEM 144 Signoret',
+    'Test del Reloj (Cacho)','Stroop','Figura Rey','SDMT-escrita','SDMT-oral',
+    'BTA','D2','FAB','Test del Hotel','BADS-Llaves','BADS-Juicio','BADS-Zoo'];
+
+  var DOMINIOS = {
+    'Cognitivo global':    ['MoCA','ACE-R','Test del Reloj (Cacho)'],
+    'Atención':            ['TMT A-B','WAIS-IV','D2','SDMT-escrita','SDMT-oral','BTA'],
+    'Memoria':             ['Rey Verbal','TAVEC','BEM 144 Signoret'],
+    'Funciones ejecutivas':['FAB','IFS','Stroop','WCST-64','Test del Hotel','BADS-Zoo','BADS-Llaves','BADS-Juicio'],
+    'Lenguaje':            ['Token Test','BNT-60','BNT-12','Fluencia Verbal'],
+    'Visoconstructivo':    ['Figura Rey'],
+  };
+
+  function zColor(z) {
+    if (z === null || z === undefined) return {bg:'transparent',txt:'var(--muted)',lbl:'—'};
+    if (z >= 1.5)  return {bg:'#d8f0fa',txt:'#1565c0',lbl:'Superior'};
+    if (z >= 1.0)  return {bg:'#d8eaff',txt:'#1a4a8a',lbl:'Sobre el promedio'};
+    if (z >= -0.99)return {bg:'#e8f4e0',txt:'#325c28',lbl:'Esperado'};
+    if (z >= -1.49)return {bg:'#fdf0c4',txt:'#7a5c00',lbl:'Límite inferior normativo'};
+    if (z >= -1.99)return {bg:'#fde8d0',txt:'#a04000',lbl:'Dificultad leve'};
+    return             {bg:'#fad8d8',txt:'#a00000',lbl:'Dificultad moderada'};
+  }
+
+  function fmtZ(z) {
+    if (z === null || z === undefined) return '—';
+    return (z >= 0 ? '+' : '') + parseFloat(z).toFixed(2);
+  }
+
+  // Construir filas por dominio
+  var byTest = {};
+  resultados.forEach(function(r){ if(NP_LIST.indexOf(r.test) >= 0) byTest[r.test] = r; });
+
+  var html = '';
+  var hayDatos = false;
+
+  Object.keys(DOMINIOS).forEach(function(dom) {
+    var tests = DOMINIOS[dom].filter(function(t){ return byTest[t]; });
+    if (!tests.length) return;
+
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:0.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;padding:4px 8px;background:var(--surface2);border-radius:4px;margin-bottom:4px;">' + dom + '</div>';
+
+    tests.forEach(function(tn) {
+      var r = byTest[tn];
+      var d = r.datos || {};
+      var filas = [];
+
+      // Extraer variables con Z según test
+      if (tn === 'TMT A-B') {
+        if (d.tmt_a_z != null) filas.push({lbl:'TMT A', z: d.tmt_a_z});
+        if (d.tmt_b_z != null) filas.push({lbl:'TMT B', z: d.tmt_b_z});
+      } else if (tn === 'Stroop') {
+        if (d.zP  != null) filas.push({lbl:'Stroop Palabras', z: d.zP});
+        if (d.zC  != null) filas.push({lbl:'Stroop Color', z: d.zC});
+        if (d.zPC != null) filas.push({lbl:'Stroop Pal/Color', z: d.zPC});
+        if (d.zInt!= null) filas.push({lbl:'Stroop Interferencia', z: d.zInt});
+      } else if (tn === 'WAIS-IV') {
+        if (d.rd_z  != null) filas.push({lbl:'WAIS · Dígitos', z: d.rd_z});
+        if (d.cla_z != null) filas.push({lbl:'WAIS · Claves', z: d.cla_z});
+        if (d.sln_z != null) filas.push({lbl:'WAIS · Nro-Letra', z: d.sln_z});
+      } else if (tn === 'Fluencia Verbal' && d.variables && d.variables.length) {
+        d.variables.forEach(function(v){ filas.push({lbl: v.label, z: v.z}); });
+      } else if (tn === 'Rey Verbal' && d.variables && d.variables.length) {
+        d.variables.forEach(function(v){ filas.push({lbl: v.label, z: v.z}); });
+      } else if (tn === 'TAVEC') {
+        if (d.zAT    != null) filas.push({lbl:'TAVEC RI-AT', z: d.zAT});
+        if (d.zRLLP  != null) filas.push({lbl:'TAVEC RL-LP', z: d.zRLLP});
+        if (d.zRCLLP != null) filas.push({lbl:'TAVEC RCL-LP', z: d.zRCLLP});
+        if (d.zDiscrim!=null) filas.push({lbl:'TAVEC Discrim', z: d.zDiscrim});
+      } else if (tn === 'D2') {
+        var idx = d.indices || {};
+        if (idx.CON && idx.CON.z != null) filas.push({lbl:'D2 CON', z: idx.CON.z});
+        if (idx.TOT && idx.TOT.z != null) filas.push({lbl:'D2 TOT', z: idx.TOT.z});
+      } else if (tn === 'Figura Rey') {
+        if (d.zCopia != null) filas.push({lbl:'Rey Copia', z: d.zCopia});
+        if (d.zRI    != null) filas.push({lbl:'Rey Rec. Inm.', z: d.zRI});
+      } else if (tn === 'BEM 144 Signoret') {
+        ['rli','rld','as','rs','rc','reco'].forEach(function(k){
+          var lbs = {rli:'BEM Rec.Lóg.Inm',rld:'BEM Rec.Lóg.Dif',as:'BEM Aprendizaje',rs:'BEM Rec.Serial',rc:'BEM Rec.Claves',reco:'BEM Reconocimiento'};
+          if (d[k] != null) filas.push({lbl: lbs[k], z: null});
+        });
+        filas = []; // se omite si no hay Z calculado
+        if (r.puntaje_z != null) filas.push({lbl: tn, z: r.puntaje_z});
+      } else {
+        if (r.puntaje_z != null) filas.push({lbl: tn, z: r.puntaje_z});
+      }
+
+      filas.forEach(function(fila) {
+        if (fila.z === null || fila.z === undefined) return;
+        hayDatos = true;
+        var c = zColor(fila.z);
+        html += '<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:5px 8px;border-radius:5px;margin-bottom:2px;background:var(--surface);">';
+        html += '<span style="font-size:0.78rem;color:var(--text);">' + fila.lbl + '</span>';
+        html += '<span style="font-family:monospace;font-weight:700;font-size:0.82rem;color:' + c.txt + ';background:' + c.bg + ';padding:1px 8px;border-radius:4px;min-width:48px;text-align:center;">' + fmtZ(fila.z) + '</span>';
+        html += '<span style="font-size:0.72rem;color:' + c.txt + ';background:' + c.bg + ';padding:1px 8px;border-radius:4px;min-width:160px;text-align:center;">' + c.lbl + '</span>';
+        html += '</div>';
+      });
+    });
+
+    html += '</div>';
+  });
+
+  if (!hayDatos) {
+    html = '<div style="color:var(--muted);font-style:italic;padding:10px 0;font-size:0.82rem;">No hay resultados neuropsicológicos cargados para este paciente aún.</div>';
+  }
+
+  tabla.innerHTML = html;
 }
 
 window.addEventListener('DOMContentLoaded', function() {
