@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.44</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.45</div>
     </div>
   </aside>
 
@@ -3897,6 +3897,65 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     </div>
 
     
+    <!-- ── CUESTIONARIOS FAMILIARES ── -->
+    <div class="vista" id="vista-familiar">
+      <div class="back-btn" onclick="volverSector()">← Volver</div>
+      <div class="vista-header"><div class="vista-titulo">Cuestionarios del Acompañante / Familiar</div></div>
+
+      <div id="familiar-form">
+        <div class="card">
+          <div class="card-title">Datos</div>
+          <div class="form-grid-3">
+            <div class="field"><label>Paciente *</label><select id="familiar-paciente"><option value="">— Seleccionar —</option></select></div>
+            <div class="field"><label>Informante</label><input type="text" id="familiar-informante" placeholder="Nombre y relación con el paciente"></div>
+            <div class="field"><label>Fecha</label><input type="date" id="familiar-fecha"></div>
+          </div>
+        </div>
+
+        <!-- NPI-Q -->
+        <div class="card">
+          <div class="card-title">NPI-Q · Inventario Neuropsiquiátrico (Cummings et al.)</div>
+          <p style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;">Para cada síntoma indique si <strong>está presente</strong> y si lo está, la <strong>gravedad</strong> (1=Leve · 2=Moderado · 3=Severo).</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="npiq-grid">
+          </div>
+        </div>
+
+        <!-- AD8-ARG -->
+        <div class="card">
+          <div class="card-title">AD8-ARG · Cuestionario del Informante (versión argentina)</div>
+          <p style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;">Indique si hubo <strong>cambio</strong> en los últimos años en cada área (Sí / No / No sé). Puntaje ≥ 2 es clínicamente significativo.</p>
+          <div id="ad8-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+          <div id="ad8-total-box" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.85rem;font-weight:600;"></div>
+        </div>
+
+        <!-- AVD Básicas -->
+        <div class="card">
+          <div class="card-title">AVD Básicas (Índice de Katz adaptado)</div>
+          <p style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;">Indique el nivel de <strong>independencia</strong>: 1=Independiente · 2=Necesita ayuda · 3=Dependiente.</p>
+          <div id="avdb-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <!-- AVD Instrumentales -->
+        <div class="card">
+          <div class="card-title">AVD Instrumentales (Lawton & Brody adaptado)</div>
+          <p style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;">Indique el nivel de <strong>independencia</strong>: 1=Independiente · 2=Necesita ayuda · 3=Dependiente.</p>
+          <div id="avdi-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <!-- AVD Expansivas -->
+        <div class="card">
+          <div class="card-title">AVD Expansivas</div>
+          <p style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;">Indique el nivel de <strong>independencia</strong>: 1=Independiente · 2=Necesita ayuda · 3=Dependiente.</p>
+          <div id="avde-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top:8px;">
+          <button class="btn-secondary" onclick="limpiarFamiliar()">🗑 Limpiar</button>
+          <button class="btn-primary" onclick="guardarFamiliar()">💾 Guardar cuestionarios</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── TEST TAVEC ── -->
     <div class="vista" id="vista-tavec">
       <div class="back-btn" onclick="volverSector()">← Volver</div>
@@ -5205,7 +5264,7 @@ function llenarSelectPacientes() {
   ['bdi-paciente','stai-paciente','rey-paciente','tmt-paciente','flv-paciente',
    'phq-paciente','gad-paciente','spaib-paciente','moca-paciente','ifs-paciente',
    'bnt-paciente','token-paciente','waisiv-paciente','acer-paciente','wcst-paciente','scl90-paciente','signoret-paciente','asrs-paciente','wurs-paciente','dex-paciente','reloj-paciente','mbi-paciente',
-   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente','tavec-paciente'].forEach(function(id){
+   'pcs-paciente','csq-paciente','pbq-paciente','bpi-paciente','stroop-paciente','csi-paciente','fcr-paciente','sdmt-paciente','bta-paciente','hotel-paciente','d2-paciente','fab-paciente','llaves-paciente','juicio-paciente','zoo-paciente','tavec-paciente','familiar-paciente'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.innerHTML = opciones;
   });
@@ -6829,6 +6888,8 @@ var NP_TESTS = [
   {id:'llaves',   n:'BADS — Llaves',     d:'Búsqueda de Llaves · BADS',                 t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'juicio',   n:'BADS — Juicio',     d:'Juicio Temporal · BADS',                    t:'Ejecutivas',         dom:'ejecutivas'},
   {id:'zoo',      n:'BADS — Zoo',        d:'Mapa del Zoo · V1 y V2',                    t:'Ejecutivas',         dom:'ejecutivas'},
+  // Cuestionarios del acompañante
+  {id:'familiar', n:'Cuest. Familiares', d:'NPI-Q · AD8-ARG · AVD Básicas · Instrumentales · Expansivas', t:'Familiar/Acompañante', dom:'familiar'},
 ];
 
 // Íconos SVG por dominio
@@ -6838,7 +6899,8 @@ var NP_ICONS = {
   memoria:    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="2" stroke="#325c28" stroke-width="1.3"/><path d="M5 4V3a3 3 0 0 1 6 0v1" stroke="#325c28" stroke-width="1.3"/><path d="M8 8v2M6 9h4" stroke="#325c28" stroke-width="1.3" stroke-linecap="round"/></svg>',
   lenguaje:   '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12v6H9l-3 3V10H2V4z" stroke="#325c28" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 7h6M5 9.5h3" stroke="#325c28" stroke-width="1.3" stroke-linecap="round"/></svg>',
   visoc:      '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="#325c28" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="#325c28" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="#325c28" stroke-width="1.3"/><path d="M9 11.5h5M11.5 9v5" stroke="#325c28" stroke-width="1.3" stroke-linecap="round"/></svg>',
-  ejecutivas: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 13L6 7l3 4 2-3 2 2" stroke="#325c28" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4" r="2" stroke="#325c28" stroke-width="1.3"/></svg>'
+  ejecutivas: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 13L6 7l3 4 2-3 2 2" stroke="#325c28" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4" r="2" stroke="#325c28" stroke-width="1.3"/></svg>',
+  familiar:   '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="#325c28" stroke-width="1.3"/><circle cx="11" cy="4" r="1.8" stroke="#325c28" stroke-width="1.3"/><path d="M1 13c0-2.76 2.24-4 5-4s5 1.24 5 4" stroke="#325c28" stroke-width="1.3" stroke-linecap="round"/><path d="M11 7c1.66 0 3 .9 3 3" stroke="#325c28" stroke-width="1.3" stroke-linecap="round"/></svg>'
 };
 
 var _npChipActivo = 'todos';
@@ -6943,6 +7005,7 @@ function irSector(s) {
           '<span class="np-chip" onclick="npChip(this,\'lenguaje\')">Lenguaje</span>' +
           '<span class="np-chip" onclick="npChip(this,\'visoc\')">Visoconstructivo</span>' +
           '<span class="np-chip" onclick="npChip(this,\'ejecutivas\')">Ejecutivas</span>' +
+          '<span class="np-chip" onclick="npChip(this,\'familiar\')">Familiar</span>' +
         '</div>' +
       '</div>' +
       '<div id="np-grid" class="tests-grid"></div>';
@@ -7038,7 +7101,8 @@ function irTest(t) {
   if (t === 'acer') iniciarACER();
   if (t === 'wcst') iniciarWCST();
   if (t === 'stroop') iniciarStroop();
-  if (t === 'tavec')  iniciarTavec();
+  if (t === 'tavec')    iniciarTavec();
+  if (t === 'familiar') iniciarFamiliar();
   if (t === 'fcr') iniciarFCR();
   if (t === 'bta') iniciarBTA();
   if (t === 'd2') iniciarD2();
@@ -14265,6 +14329,232 @@ function renderPerfilZ() {
   }
 
   tabla.innerHTML = html;
+}
+
+// ══ CUESTIONARIOS FAMILIARES ══════════════════════════════════════════════════
+var FAM_NPIQ = [
+  {id:'delirios', label:'Delirios'},
+  {id:'alucin',   label:'Alucinaciones'},
+  {id:'agitacion',label:'Agitación / Agresión'},
+  {id:'depresion',label:'Depresión / Disforia'},
+  {id:'ansiedad', label:'Ansiedad'},
+  {id:'euforia',  label:'Euforia / Elación'},
+  {id:'apatia',   label:'Apatía / Indiferencia'},
+  {id:'desinhib', label:'Desinhibición'},
+  {id:'irritab',  label:'Irritabilidad / Labilidad'},
+  {id:'motora',   label:'Conducta Motora Anormal'},
+  {id:'sueno',    label:'Cambios en el Sueño'},
+  {id:'apetito',  label:'Cambios en el Apetito'}
+];
+var FAM_AD8 = [
+  {id:'ad8_1', label:'Cambios en el juicio o decisiones'},
+  {id:'ad8_2', label:'Menor interés en hobbies o actividades'},
+  {id:'ad8_3', label:'Repite preguntas, historias o frases'},
+  {id:'ad8_4', label:'Dificultad con aparatos o dispositivos'},
+  {id:'ad8_5', label:'Olvida el mes o el año'},
+  {id:'ad8_6', label:'Dificultad para finanzas complejas'},
+  {id:'ad8_7', label:'Olvida citas o compromisos'},
+  {id:'ad8_8', label:'Problemas de memoria o razonamiento'},
+];
+var FAM_AVDB = [
+  {id:'identif',  label:'Alimentación'},
+  {id:'aseo',     label:'Higiene personal'},
+  {id:'vestirse', label:'Vestirse / Desvestirse'},
+  {id:'continen', label:'Continencia esfínteres'},
+];
+var FAM_AVDI = [
+  {id:'telefono', label:'Uso del teléfono'},
+  {id:'compras',  label:'Compras'},
+  {id:'comida',   label:'Preparar comida'},
+  {id:'transp',   label:'Transporte / movilidad'},
+  {id:'medic',    label:'Medicación'},
+  {id:'dinero',   label:'Manejo del dinero'},
+];
+var FAM_AVDE = [
+  {id:'inform',    label:'Acceso a información'},
+  {id:'social',    label:'Contacto social'},
+  {id:'recreat',   label:'Actividades recreativas'},
+  {id:'autono',    label:'Autonomía'},
+  {id:'planes',    label:'Planes de futuro'},
+  {id:'responsab', label:'Responsabilidades'},
+  {id:'opinion',   label:'Expresión de opinión'},
+  {id:'aprende',   label:'Aprendizaje de cosas nuevas'},
+];
+
+function iniciarFamiliar() {
+  document.getElementById('familiar-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('familiar-form').style.display = 'block';
+  _renderFamiliarGrids();
+}
+
+function _renderFamiliarGrids() {
+  // NPI-Q
+  var npiqG = document.getElementById('npiq-grid');
+  npiqG.innerHTML = '';
+  FAM_NPIQ.forEach(function(item) {
+    var d = document.createElement('div');
+    d.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;';
+    d.innerHTML = '<div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:8px;">'+item.label+'</div>'+
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
+      '<label style="display:flex;align-items:center;gap:4px;font-size:0.78rem;cursor:pointer;">'+
+        '<input type="checkbox" id="npiq-'+item.id+'-pres" onchange="npiqChk(\''+item.id+'\')"> Presente'+
+      '</label>'+
+      '<select id="npiq-'+item.id+'-grav" disabled style="font-size:0.78rem;padding:2px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg);">'+
+        '<option value="0">— gravedad —</option>'+
+        '<option value="1">1 · Leve</option>'+
+        '<option value="2">2 · Moderado</option>'+
+        '<option value="3">3 · Severo</option>'+
+      '</select>'+
+      '</div>';
+    npiqG.appendChild(d);
+  });
+
+  // AD8
+  var ad8G = document.getElementById('ad8-grid');
+  ad8G.innerHTML = '';
+  FAM_AD8.forEach(function(item) {
+    var d = document.createElement('div');
+    d.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;';
+    d.innerHTML = '<div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:8px;">'+item.label+'</div>'+
+      '<div style="display:flex;gap:8px;">'+
+      ['si','no','nose'].map(function(v,i){
+        var lbl = ['Sí','No','No sé'][i];
+        return '<label style="display:flex;align-items:center;gap:4px;font-size:0.78rem;cursor:pointer;">'+
+          '<input type="radio" name="ad8-'+item.id+'" value="'+v+'" onchange="ad8Calc()"> '+lbl+'</label>';
+      }).join('')+
+      '</div>';
+    ad8G.appendChild(d);
+  });
+
+  // AVD grids
+  function renderAvd(items, containerId) {
+    var g = document.getElementById(containerId);
+    g.innerHTML = '';
+    items.forEach(function(item) {
+      var d = document.createElement('div');
+      d.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;';
+      d.innerHTML = '<div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:8px;">'+item.label+'</div>'+
+        '<div style="display:flex;gap:8px;">'+
+        [[1,'Independiente'],[2,'Necesita ayuda'],[3,'Dependiente']].map(function(pair){
+          return '<label style="display:flex;align-items:center;gap:4px;font-size:0.78rem;cursor:pointer;">'+
+            '<input type="radio" name="'+containerId+'-'+item.id+'" value="'+pair[0]+'"> '+pair[1]+'</label>';
+        }).join('')+
+        '</div>';
+      g.appendChild(d);
+    });
+  }
+  renderAvd(FAM_AVDB, 'avdb-grid');
+  renderAvd(FAM_AVDI, 'avdi-grid');
+  renderAvd(FAM_AVDE, 'avde-grid');
+}
+
+function npiqChk(id) {
+  var pres = document.getElementById('npiq-'+id+'-pres');
+  var grav = document.getElementById('npiq-'+id+'-grav');
+  grav.disabled = !pres.checked;
+  if (!pres.checked) grav.value = '0';
+}
+
+function ad8Calc() {
+  var total = FAM_AD8.filter(function(item){
+    var sel = document.querySelector('input[name="ad8-'+item.id+'"]:checked');
+    return sel && sel.value === 'si';
+  }).length;
+  var box = document.getElementById('ad8-total-box');
+  box.style.display = 'block';
+  var sig = total >= 2;
+  box.style.background = sig ? '#fad8d8' : '#d4f0e2';
+  box.style.color = sig ? '#a00000' : '#1a6e3a';
+  box.style.border = '1px solid ' + (sig ? '#e6b0b0' : '#9fd4b8');
+  box.textContent = 'Total AD8-ARG: ' + total + '/8 — ' + (sig ? 'Significativo (≥ 2 · posible deterioro cognitivo)' : 'Sin significancia clínica (< 2)');
+}
+
+function limpiarFamiliar() {
+  document.getElementById('familiar-informante').value = '';
+  _renderFamiliarGrids();
+  document.getElementById('ad8-total-box').style.display = 'none';
+}
+
+function _getFamData() {
+  // NPI-Q
+  var npiq = {};
+  FAM_NPIQ.forEach(function(item){
+    var pres = document.getElementById('npiq-'+item.id+'-pres');
+    var grav = document.getElementById('npiq-'+item.id+'-grav');
+    npiq[item.id] = (pres && pres.checked) ? parseInt(grav.value)||1 : 0;
+  });
+  var npiqTotal = Object.values(npiq).reduce(function(a,b){return a+(b>0?1:0);},0);
+  var hayNpiq = npiqTotal > 0;
+
+  // AD8
+  var ad8 = {};
+  var ad8Total = 0;
+  FAM_AD8.forEach(function(item){
+    var sel = document.querySelector('input[name="ad8-'+item.id+'"]:checked');
+    ad8[item.id] = sel ? sel.value : null;
+    if (sel && sel.value === 'si') ad8Total++;
+  });
+  var hayAD8 = FAM_AD8.some(function(item){ return ad8[item.id] !== null; });
+
+  // AVD helper
+  function getAvd(items, prefix) {
+    var avd = {}, total = 0, hay = false;
+    items.forEach(function(item){
+      var sel = document.querySelector('input[name="'+prefix+'-'+item.id+'"]:checked');
+      avd[item.id] = sel ? parseInt(sel.value) : null;
+      if (sel) { hay = true; total += parseInt(sel.value); }
+    });
+    return {data: avd, total: total, hay: hay};
+  }
+  var avdb = getAvd(FAM_AVDB, 'avdb-grid');
+  var avdi = getAvd(FAM_AVDI, 'avdi-grid');
+  var avde = getAvd(FAM_AVDE, 'avde-grid');
+
+  return {
+    informante: document.getElementById('familiar-informante').value || null,
+    npiq: hayNpiq ? npiq : null,
+    npiqTotal: npiqTotal,
+    ad8: hayAD8 ? ad8 : null,
+    ad8Total: ad8Total,
+    avdb: avdb.hay ? avdb.data : null,
+    avdbTotal: avdb.total,
+    avdi: avdi.hay ? avdi.data : null,
+    avdiTotal: avdi.total,
+    avde: avde.hay ? avde.data : null,
+    avdeTotal: avde.total
+  };
+}
+
+function guardarFamiliar() {
+  if (!SESSION) return;
+  var pacId = document.getElementById('familiar-paciente').value;
+  var fecha = document.getElementById('familiar-fecha').value;
+  if (!pacId) { toast('Seleccioná un paciente.','error'); return; }
+  var d = _getFamData();
+  if (!d.npiq && !d.ad8 && !d.avdb && !d.avdi && !d.avde) {
+    toast('Completá al menos un cuestionario antes de guardar.','error'); return;
+  }
+  var resumen = [];
+  if (d.npiq)  resumen.push('NPI-Q: '+ d.npiqTotal +' síntomas');
+  if (d.ad8)   resumen.push('AD8: '+ d.ad8Total +'/8');
+  if (d.avdb)  resumen.push('AVD Básicas: '+ d.avdbTotal);
+  if (d.avdi)  resumen.push('AVD Instr.: '+ d.avdiTotal);
+  if (d.avde)  resumen.push('AVD Expan.: '+ d.avdeTotal);
+
+  supaFetch('/rest/v1/psico_resultados','POST',{
+    user_id: SESSION.user.id, paciente_id: pacId,
+    test: 'Cuestionarios Familiares', fecha: fecha,
+    puntaje_total: d.ad8Total,
+    puntaje_z: null,
+    categoria: resumen.join(' · '),
+    datos: d
+  }, SESSION.access_token).then(function(){
+    cargarResultados();
+    toast('✓ Cuestionarios familiares guardados','success');
+    var btnAll = document.querySelectorAll('.vista.active .btn-primary');
+    var btn = btnAll.length ? btnAll[btnAll.length-1] : null;
+    if (btn) { btn.classList.add('btn-saved'); setTimeout(function(){ btn.classList.remove('btn-saved'); },1500); }
+  }).catch(function(){ toast('Error al guardar','error'); });
 }
 
 window.addEventListener('DOMContentLoaded', function() {
