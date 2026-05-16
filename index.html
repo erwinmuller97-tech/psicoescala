@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PsicoEscala</title>
+<title>Erwin Müller</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -380,7 +380,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 <!-- ══ PASSWORD GATE ══ -->
 <div id="screen-gate" class="screen active" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:48px 40px;max-width:360px;width:100%;text-align:center;box-shadow:var(--shadow);">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--accent);margin-bottom:8px;">PsicoEscala</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--accent);margin-bottom:8px;">Erwin Müller</div>
     <div style="font-size:0.85rem;color:var(--muted);margin-bottom:32px;">Acceso restringido</div>
     <div style="font-size:1.5rem;margin-bottom:24px;">🔒</div>
     <input type="password" id="gate-input" placeholder="Contraseña de acceso"
@@ -396,7 +396,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   <div class="login-box">
     <div class="login-logo">
       <div class="login-logo-icon">🧩</div>
-      <div class="login-titulo">PsicoEscala</div>
+      <div class="login-titulo">Erwin Müller</div>
       <div class="login-sub">Plataforma de evaluación psicológica</div>
     </div>
     <div class="login-error" id="login-error"></div>
@@ -422,7 +422,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
   <circle cx="66" cy="80" r="2.8" fill="#325c28" opacity="0.65"/>
   <circle cx="42" cy="42" r="2.8" fill="#325c28" opacity="0.65"/>
 </svg></div>
-      <div class="sidebar-nombre">PsicoEscala</div>
+      <div class="sidebar-nombre">Erwin Müller</div>
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section active" id="snav-inicio" onclick="irVista('inicio')">
@@ -452,7 +452,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
     <div class="sidebar-bottom">
       <div class="sidebar-user" id="topbar-email"></div>
       <button class="sidebar-btn-salir" onclick="doLogout()">Cerrar sesión</button>
-      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.45</div>
+      <div style="text-align:center;font-size:10px;color:#b8a090;margin-top:6px;letter-spacing:0.5px;font-family:monospace;">v1.10.46</div>
     </div>
   </aside>
 
@@ -475,7 +475,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
             <circle cx="42" cy="42" r="2.8" fill="#325c28" opacity="0.65"/>
           </svg>
         </div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--accentdk);letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;">PsicoEscala</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--accentdk);letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;">Erwin Müller</div>
         <div style="font-size:0.87rem;color:var(--muted);max-width:400px;line-height:1.75;letter-spacing:0.2px;">Plataforma profesional para administración y puntuación automatizada de tests psicológicos y neuropsicológicos.</div>
         <div style="display:flex;gap:32px;margin-top:44px;" id="home-stats">
           <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--accentdk);" id="stat-pacientes">—</div><div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Pacientes</div></div>
@@ -13937,9 +13937,9 @@ function _buildWord(datos,pacInfo,pacNombre,pacEdad,pacFnac,pacSexo,pacEscol,pac
 
   var coreXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
     '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/">'+
-    '<dc:creator>PsicoEscala</dc:creator><dc:title>Informe Neuropsicológico</dc:title></cp:coreProperties>';
+    '<dc:creator>Erwin Müller</dc:creator><dc:title>Informe Neuropsicológico</dc:title></cp:coreProperties>';
   var appXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
-    '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>PsicoEscala</Application></Properties>';
+    '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>Erwin Müller</Application></Properties>';
 
   // Decodificar base64 → Uint8Array para las imágenes
   function b64ToBytes(b64) {
